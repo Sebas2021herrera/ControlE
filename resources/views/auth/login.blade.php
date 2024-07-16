@@ -1,51 +1,51 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión</title>
-    <!-- Estilos de Bootstrap (puedes usar CDN o descargar Bootstrap) -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        /* Estilos adicionales si es necesario */
-        body, html {
-            height: 100%;
-        }
-        .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh; /* Asegura que el contenedor ocupe toda la altura de la pantalla */
-        }
-        .card {
-            max-width: 400px; /* Ancho máximo para el formulario */
-            padding: 20px;
-        }
-    </style>
+    <title>Inicio de Sesión</title>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <!-- Enlace a Bootstrap para estilos -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ asset('css/styles_login.css') }}">
+    <!-- Enlace a archivo de estilos personalizados -->
+ 
 </head>
+
 <body>
-    <div class="container">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title text-center">Iniciar Sesión</h5>
-                <form action="#" method="POST">
-                    <!-- Campos del formulario -->
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Correo Electrónico</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Contraseña</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                    </div>
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary btn-block">Iniciar Sesión</button>
-                    </div>
-                </form>
+    <!-- Contenedor principal -->
+    <div class="container d-flex flex-column align-items-center justify-content-center min-vh-100">
+        <!-- Contenedor del logo del SENA -->
+        <div class="logo-container">
+            <img src="{{ asset('imagenes/logo_sena.png') }}" alt="SENA Logo" class="img-fluid mb-4 logo-sena">
+        </div>
+        <!-- Tarjeta personalizada para el formulario -->
+        <div class="custom-card">
+            <form>
+                <!-- Grupo de entrada para el correo -->
+                <div class="form-group">
+                    <label for="email" class="form-label">Correo</label>
+                    <input type="email" class="form-control" id="email" placeholder="Institucional">
+                </div>
+                <!-- Grupo de entrada para la contraseña -->
+                <div class="form-group">
+                    <label for="password" class="form-label">Contraseña</label>
+                    <input type="password" class="form-control" id="password" placeholder="*******">
+                </div>
+                <!-- Botón de inicio de sesión -->
+                <button type="submit" class="btn btn-dark btn-block">Iniciar sesión</button>
+            </form>
+            <!-- Enlace para recordar contraseña -->
+            <div class="remember-link">
+                <a href="#">Recordar contraseña</a>
             </div>
         </div>
+        <!-- Texto del pie de página -->
+        <p class="text-center footer-text"><img src="{{asset('imagenes/logo_copyrigth.png') }}" class="bombilla"> Derechos
+            reservados al
+            SENA Regional Casanare, 2024.</p>
     </div>
-    <!-- Scripts de Bootstrap y cualquier otro script necesario -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

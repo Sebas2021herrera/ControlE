@@ -13,8 +13,13 @@ return new class extends Migration
     {
         Schema::create('elementos', function (Blueprint $table) {
             $table->id();
-            $table->string('elemento');
-            $table->string('serial');
+            $table->foreignId('categoria_id')->constrained('categorias');//guarda id de el tipo al que pertence la categoria
+            $table->string('descripcion');
+            $table->string('marca', 20);
+            $table->string('modelo', 20);
+            $table->string('numero de serie o identificador del fabricante',100)->unique();
+            $table->string('especificaciones tecnicas')->nullable();
+            $table->string('foto_url')->nullable();
             $table->timestamps();
         });
     }

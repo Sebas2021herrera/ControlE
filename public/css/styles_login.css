@@ -11,6 +11,15 @@
     justify-content: space-between;
     margin-top: -20px; /* Ajuste para centrar verticalmente */
 }
+.custom-card-header {
+    background-color: #202020; /* Gris claro */
+    color: #fff; /* Texto blanco */
+    font-size: 1.5em;
+    text-align: center;
+    font-weight: bold;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
 
 .logo-sena {
     width: 149px;

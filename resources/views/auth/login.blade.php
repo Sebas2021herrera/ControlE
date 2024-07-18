@@ -22,6 +22,9 @@
         </div>
         <!-- Tarjeta personalizada para el formulario -->
         <div class="custom-card">
+            <div class="custom-card-header">
+                CONTROL E
+            </div>
             <form>
                 <!-- Grupo de entrada para el correo -->
                 <div class="form-group">

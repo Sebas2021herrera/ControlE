@@ -13,6 +13,6 @@ class AuthController extends Controller
 
     public function createLogin()
     {
-        return view('auth.');
+        return view('auth.create');
     }
 }

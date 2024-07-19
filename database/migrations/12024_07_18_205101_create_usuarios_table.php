@@ -20,21 +20,37 @@ return new class extends Migration
             $table->string('correo_personal', 100)->unique();
             $table->string('correo_institucional', 100)->unique();
             $table->string('telefono', 20);
-            $table->foreignId('roles_id')->constrained('roles');//guarda id de el tipo al que pertence el rol
+            $table->foreignId('roles_id')->constrained('roles');
             $table->string('numero_ficha', 50);
             $table->string('contraseña', 255);
             $table->timestamps();
         });
 
+        Schema::create('sessions', function (Blueprint $table) {
+            $table->string('id')->primary();
+            $table->foreignId('user_id')->nullable()->index();
+            $table->string('ip_address', 45)->nullable();
+            $table->text('user_agent')->nullable();
+            $table->text('payload');
+            $table->integer('last_activity')->index();
+        });
+
+        Schema::create('tokens', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained('usuarios')->onDelete('cascade');
+            $table->string('token', 64)->unique();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('expires_at')->nullable();
+        });
     }
 
     /**
      * Reverse the migrations.
      */
-    public function down(): void
+    public function down()
     {
+        Schema::dropIfExists('tokens');
+        Schema::dropIfExists('sessions');
         Schema::dropIfExists('usuarios');
-   
-
     }
 };

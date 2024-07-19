@@ -6,6 +6,7 @@
     <title>Registro de Usuario</title>
 </head>
 <body>
+    <h1>hola</h1>
     <h1>Registro de Usuario</h1>
     <form method="POST" action="">
         @csrf

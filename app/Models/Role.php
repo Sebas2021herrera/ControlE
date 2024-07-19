@@ -14,8 +14,8 @@ class Role extends Model
 
     // Campos asignables en masa
     protected $fillable = [
-        'name',
-        'description',
+        'nombre',
+        
     ];
 
     // Relación con el modelo Usuario

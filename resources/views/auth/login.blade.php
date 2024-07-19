@@ -15,7 +15,7 @@
 
 <body>
     <!-- Contenedor principal -->
-    <div class="container d-flex flex-column align-items-center justify-content-center min-vh-100">
+    <div class="container d-flex flex-column align-items-center justify-content-center min-vh-100 ">
         <!-- Contenedor del logo del SENA -->
         <div class="logo-container">
             <img src="{{ asset('imagenes/logo_sena.png') }}" alt="SENA Logo" class="img-fluid mb-4 logo-sena">
@@ -42,7 +42,9 @@
             <!-- Enlace para recordar contraseña -->
             <div class="remember-link">
                 <a href="#">Recordar contraseña</a>
+                
             </div>
+            <br>
         </div>
         <!-- Texto del pie de página -->
         <p class="text-center footer-text"><img src="{{asset('imagenes/logo_copyrigth.png') }}" class="bombilla"> Derechos

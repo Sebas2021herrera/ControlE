@@ -1,0 +1,104 @@
+body {
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+h2 {
+    border: 10px #343a40;
+    padding: 10px;
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card {
+    border-radius: 15px;
+    box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+    padding: 20px;
+    max-width: 500px;
+    width: 90%;
+    overflow-y: auto;
+    max-height: 80vh;
+    background-color: #ffffff;
+    -webkit-overflow-scrolling: touch;
+}
+
+.card::-webkit-scrollbar {
+    width: 0px;
+}
+
+h2 {
+    background-color: #343a40;
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            display: inline-block;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form .form-label {
+    font-weight: bold; /* Aplica negrita a las etiquetas del formulario */
+}
+
+form .form-control {
+    font-weight: normal; /* Mantén el texto de los campos en peso normal */
+}
+
+/* Estilo personalizado para el botón Registrar */
+form button.btn.btn-custom {
+    background-color: #343a40 !important;
+    color: white !important;
+    border: none !important;
+    font-size: 18px; /* Aumenta el tamaño del texto del botón */
+    padding: 10px 1px; /* Aumenta el padding para hacer el botón más grande */
+    border-radius: 8px; /* Opcional: ajusta el borde redondeado del botón */
+    text-transform: uppercase; /* Opcional: convierte el texto a mayúsculas */
+}
+
+form button.btn.btn-custom:hover,
+form button.btn.btn-custom:focus,
+form button.btn.btn-custom:active {
+    background-color: rgba(44, 44, 44,1) !important;
+    color: white !important;
+    box-shadow: none !important;
+}
+
+btn btn-custom{
+    padding:30px;
+}
+@media (max-width: 600px) {
+    .card {
+        width: 100%;
+        border-radius: 0;
+        box-shadow: none;
+        max-height: 100vh;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 8px;
+    }
+}

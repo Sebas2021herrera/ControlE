@@ -21,8 +21,16 @@
                 <input type="text" id="apellidos" name="apellidos" required>
 
                 <label for="tipoDocumento">Tipo de Documento:</label>
-                <input type="text" id="tipoDocumento" name="tipoDocumento" required>
-
+                <select id="tipoDocumento" name="tipoDocumento" required class="form-control">
+                    <option value="" disabled selected>Seleccione un tipo de documento</option>
+                    <option value="CC">Cédula de Ciudadanía</option>
+                    <option value="TI">Tarjeta de Identidad</option>
+                    <option value="CE">Cédula de Extranjería</option>
+                    <option value="PP">Pasaporte</option>
+                    <option value="RC">Registro Civil</option>
+                    <!-- Puedes agregar más tipos de documentos si es necesario -->
+                </select>
+                
                 <label for="numeroDocumento">Número de Documento:</label>
                 <input type="text" id="numeroDocumento" name="numeroDocumento" required>
 
@@ -44,7 +52,7 @@
                 <input type="tel" id="telefono" name="telefono" required>
 
                 <label for="rol">Rol:</label>
-                <select id="rol" name="rol" required>
+                <select id="rol" name="rol" required  class="form-control">
                     <option value="3">Aprendiz</option>
                     <option value="4">Visitante</option>
                     <option value="5">Funcionario</option>

@@ -13,7 +13,7 @@
 <body>
     <div class="container d-flex flex-column align-items-center justify-content-center min-vh-100">
         <div class="logo-container mb-4 text-center">
-            <img src="{{ asset('imagenes/logo_sena.png') }}" alt="SENA Logo" class="img-fluid logo-sena">
+            <img src="{{ asset('imagenes/logo-del-sena-01.png') }}" alt="SENA Logo" class="img-fluid logo-sena">
         </div>
         <div class="card custom-card shadow-sm" style="max-width: 400px; width: 100%;">
             <div class="card-header text-center font-weight-bold">

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,107 +8,97 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/styles_formulario_elementos.css') }}">
 </head>
-
 <body>
-    <div class="container">
-        <div class="card">
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <div class="card p-4 shadow">
             <h2 class="text-center mb-4">Registro de Elementos</h2>
-            <form>
-                <div class="mb-3">
-                    <label for="categoria" class="form-label">Categoría:</label>
-                    <select class="form-select" id="categoria" name="categoria" required>
-                        <option value="Archiveros">Archiveros</option>
-                        <option value="Automóviles">Automóviles</option>
-                        <option value="Balanzas">Balanzas</option>
-                        <option value="Baterías">Baterías</option>
-                        <option value="Bicicletas">Bicicletas</option>
-                        <option value="Camioneta">Camioneta</option>
-                        <option value="Cámaras">Cámaras</option>
-                        <option value="Cámaras de Seguridad">Cámaras de Seguridad</option>
-                        <option value="Carros de Limpieza">Carros de Limpieza</option>
-                        <option value="Carros de Servicio">Carros de Servicio</option>
-                        <option value="Centrifugas">Centrifugas</option>
-                        <option value="Computadoras">Computadoras</option>
-                        <option value="Detectores de Humo">Detectores de Humo</option>
-                        <option value="Dispositivos de Red(Routers, Switches)">Dispositivos de Red(Routers, Switches)</option>
-                        <option value="Equipos de Atletismo">Equipos de Atletismo</option>
-                        <option value="Equipos de Baloncesto">Equipos de Baloncesto</option>
-                        <option value="Equipos de Difusión">Equipos de Difusión</option>
-                        <option value="Equipos de Futbol">Equipos de Futbol</option>
-                        <option value="Equipos de Gimnasio">Equipos de Gimnasio</option>
-                        <option value="Equipos de Jardinería">Equipos de Jardinería</option>
-                        <option value="Equipos de Limpieza">Equipos de Limpieza</option>
-                        <option value="Equipos de Medición">Equipos de Medición</option>
-                        <option value="Equipos de Protección Personal">Equipos de Protección Personal</option>
-                        <option value="Equipos de Refrigeración">Equipos de Refrigeración</option>
-                        <option value="Equipos de Telecomunicaciones">Equipos de Telecomunicaciones</option>
-                        <option value="Equipos de Video Conferencia">Equipos de Video Conferencia</option>
-                        <option value="Escritorios">Escritorios</option>
-                        <option value="Escáneres">Escáneres</option>
-                        <option value="Estanterías">Estanterías</option>
-                        <option value="Estación de Carga">Estación de Carga</option>
-                        <option value="Estufas y Hornos">Estufas y Hornos</option>
-                        <option value="Extintores">Extintores</option>
-                        <option value="Fax">Fax</option>
-                        <option value="Fotocopiadoras">Fotocopiadoras</option>
-                        <option value="Generadores">Generadores</option>
-                        <option value="Herramientas Eléctricas">Herramientas Eléctricas</option>
-                        <option value="Herramientas Manuales">Herramientas Manuales</option>
-                        <option value="Impresoras">Impresoras</option>
-                        <option value="Inversores">Inversores</option>
-                        <option value="Lavavajillas">Lavavajillas</option>
-                        <option value="Maquinas de Escribir">Maquinas de Escribir</option>
-                        <option value="Mesas de Preparación">Mesas de Preparación</option>
-                        <option value="Microscopios">Microscopios</option>
-                        <option value="Montacargas">Montacargas</option>
-                        <option value="Motocicletas">Motocicletas</option>
-                        <option value="Paneles Solares">Paneles Solares</option>
-                        <option value="Patinetas Eléctricas">Patinetas Eléctricas</option>
-                        <option value="Proyectores">Proyectores</option>
-                        <option value="Servidores">Servidores</option>
-                        <option value="Shedderes(Destructoras de Papel)">Shedderes(Destructoras de Papel)</option>
-                        <option value="Sillas">Sillas</option>
-                        <option value="Sistemas de Alarma">Sistemas de Alarma</option>
-                        <option value="Sistemas de Audio">Sistemas de Audio</option>
-                        <option value="Sistemas de Radio">Sistemas de Radio</option>
-                        <option value="Sistemas de Video Conferencia">Sistemas de Video Conferencia</option>
-                        <option value="Telefonía">Telefonía</option>
-                        <option value="Televisores">Televisores</option>
-                        <option value="Utensilios de Cocina">Utensilios de Cocina</option>
-                        <option value="Vehículos Especializados(Ambulancias, Camiones de Bomberos)">Vehículos Especializados(Ambulancias, Camiones de Bomberos)</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="descripcion" class="form-label">Descripción:</label>
-                    <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required></textarea>
-                </div>
-                <div class="mb-3">
-                    <label for="marca" class="form-label">Marca:</label>
-                    <input type="text" class="form-control" id="marca" name="marca" required placeholder="Mac, Asus, Lenovo, Acer, Hewlett-Packard Etc.... ">
-                </div>
-                <div class="mb-3 d-flex align-items-center">
-                    <label for="modelo" class="form-label me-2">Modelo:</label>
-                    <a href="#" class="me-2" data-bs-toggle="modal" data-bs-target="#messageBox">Ayuda</a>
-                </div>
-                <div class="mb-3">
-                    <input type="text" class="form-control" id="modelo" name="modelo" required>
-                </div>
-                <button type="submit" class="btn btn-custom" style="background-color: #6c757d; color: white; border: none;" onmouseover="this.style.backgroundColor='#6c757d'" onmouseout="this.style.backgroundColor='#007bff'">Registrate</button>
+            <form action="{{ route('elementos.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
 
+                <!-- Agrupación de campos -->
+                <div class="mb-4">
+                    <!-- Campo Categoría -->
+                    <div class="mb-3">
+                        <label for="categoria" class="form-label">Categoría</label>
+                        <select name="categoria" id="categoria" class="form-select" aria-label="Seleccionar categoría" required>
+                            @foreach($categorias as $categoria)
+                                <option value="{{ $categoria->id }}"><strong>{{ $categoria->nombre }}</strong></option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Campo Descripción -->
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <input type="text" name="descripcion" id="descripcion" class="form-control" placeholder="Ingrese una descripción" required aria-describedby="descripcionHelp">
+                        <small id="descripcionHelp" class="form-text text-muted">Descripción del elemento (requerido).</small>
+                    </div>
+
+                    <!-- Campo Marca -->
+                    <div class="mb-3">
+                        <label for="marca" class="form-label">Marca</label>
+                        <input type="text" name="marca" id="marca" class="form-control" placeholder="Ingrese la marca" required aria-describedby="marcaHelp">
+                        <small id="marcaHelp" class="form-text text-muted">Marca del elemento (requerido).</small>
+                    </div>
+
+                    <!-- Campo Modelo con botón de ayuda -->
+                    <div class="mb-3 d-flex align-items-center position-relative">
+                        <div class="me-3">
+                            <label for="modelo" class="form-label">Modelo</label>
+                            <input type="text" name="modelo" id="modelo" class="form-control" placeholder="Ingrese el modelo" required aria-describedby="modeloHelp">
+                            <small id="modeloHelp" class="form-text text-muted">Modelo del elemento (requerido).</small>
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modeloHelpModal">
+                            <i class="bi bi-info-circle"></i> <!-- Icono de ayuda -->
+                        </button>
+                    </div>
+
+                    <!-- Campo Serie -->
+                    <div class="mb-3">
+                        <label for="serie" class="form-label">Serie</label>
+                        <input type="text" name="serie" id="serie" class="form-control" placeholder="Ingrese el número de serie (opcional)" aria-describedby="serieHelp">
+                        <small id="serieHelp" class="form-text text-muted">Número de serie del elemento (opcional).</small>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <!-- Campo Especificaciones Técnicas -->
+                    <div class="mb-3">
+                        <label for="especificaciones_tecnicas" class="form-label">Especificaciones Técnicas</label>
+                        <textarea name="especificaciones_tecnicas" id="especificaciones_tecnicas" class="form-control" placeholder="Ingrese especificaciones técnicas (opcional)" aria-describedby="especificacionesHelp"></textarea>
+                        <small id="especificacionesHelp" class="form-text text-muted">Detalles técnicos del elemento (opcional).</small>
+                    </div>
+
+                    <!-- Campo Foto -->
+                    <div class="mb-3">
+                        <label for="foto" class="form-label">Foto</label>
+                        <input type="file" name="foto" id="foto" class="form-control" accept="image/*" aria-describedby="fotoHelp" onchange="previewImage(event)">
+                        <small id="fotoHelp" class="form-text text-muted">Cargar una imagen del elemento (opcional, máximo 5MB).</small>
+                        <!-- Contenedor para la vista previa de la imagen -->
+                        <div class="image-preview mt-3">
+                            <img id="imagePreview" src="#" alt="Vista previa de la imagen" style="display: none;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botón de Enviar -->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="messageBox" tabindex="-1" aria-labelledby="messageBoxLabel" aria-hidden="true">
-        <div class="modal-dialog">
+    <!-- Modal de ayuda del campo Modelo -->
+    <div class="modal fade" id="modeloHelpModal" tabindex="-1" aria-labelledby="modeloHelpModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="messageBoxLabel">Ayuda</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title" id="modeloHelpModalLabel">Ayuda - Campo Modelo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
-                    Aquí puedes incluir la información de ayuda para el modelo.
+                    Aquí puedes ingresar el modelo del elemento. Este campo es obligatorio y debe contener información específica sobre el modelo del producto.
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -119,6 +108,31 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+    <script>
+        // Función para previsualizar la imagen cargada
+        function previewImage(event) {
+            const file = event.target.files[0];
+            const preview = document.getElementById('imagePreview');
+            
+            if (file) {
+                // Validar el tamaño del archivo
+                if (file.size > 5242880) { // 5MB en bytes
+                    alert('El tamaño del archivo debe ser menor o igual a 5MB.');
+                    event.target.value = ''; // Limpiar el archivo seleccionado
+                    preview.style.display = 'none'; // Ocultar la vista previa
+                    return;
+                }
 
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block'; // Mostrar la vista previa
+                }
+                reader.readAsDataURL(file);
+            } else {
+                preview.style.display = 'none'; // Ocultar la vista previa si no hay archivo
+            }
+        }
+    </script>
+</body>
 </html>

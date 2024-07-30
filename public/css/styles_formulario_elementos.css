@@ -1,104 +1,106 @@
 body {
-    background-color: #f4f4f4;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-}
-
-.text-center {
-    text-align: center;
-}
-
-.mb-4 {
-    margin-bottom: 1.5rem;
-}
-
-h2 {
-    border: 10px #343a40;
-    padding: 10px;
+    background-color: #f4f4f4; /* Color de fondo general */
+    margin: 0; /* Elimina márgenes predeterminados */
+    padding: 0; /* Elimina rellenos predeterminados */
+    overflow: hidden; /* Oculta el desbordamiento del contenido */
+    font-family: 'Work Sans', sans-serif; /* Fuente general */
 }
 
 .container {
-    width: 100%;
-    height: 100%;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: center; /* Centra horizontalmente el contenedor */
+    align-items: center; /* Centra verticalmente el contenedor */
+    height: 100vh; /* Altura completa de la ventana del navegador */
+    overflow: hidden; /* Oculta el desbordamiento del contenedor */
+    padding: 20px; /* Relleno del contenedor */
 }
 
 .card {
-    border-radius: 15px;
-    box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
-    padding: 20px;
-    max-width: 500px;
-    width: 90%;
-    overflow-y: auto;
-    max-height: 80vh;
-    background-color: #ffffff;
-    -webkit-overflow-scrolling: touch;
+    border-radius: 15px; /* Bordes redondeados de la tarjeta */
+    box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px; /* Sombra de la tarjeta */
+    padding: 20px; /* Relleno interno de la tarjeta */
+    max-width: 500px; /* Ancho máximo de la tarjeta */
+    width: 100%; /* Ancho total disponible */
+    max-height: 80vh; /* Altura máxima de la tarjeta */
+    background-color: #ffffff; /* Color de fondo de la tarjeta */
+    overflow-y: auto; /* Desplazamiento vertical automático */
+    -webkit-overflow-scrolling: touch; /* Habilita el desplazamiento suave en dispositivos táctiles */
 }
 
 .card::-webkit-scrollbar {
-    width: 0px;
+    width: 0; /* Oculta la barra de desplazamiento en navegadores webkit */
 }
 
 h2 {
-    background-color: #343a40;
-            color: white;
-            padding: 10px;
-            border-radius: 10px;
-            display: inline-block;
+    background-color: #343a40; /* Color de fondo del título */
+    color: white; /* Color del texto del título */
+    padding: 10px; /* Relleno del título */
+    border-radius: 10px; /* Bordes redondeados del título */
+    display: inline-block; /* Muestra el título en línea */
 }
 
-form {
-    display: flex;
-    flex-direction: column;
+.mb-3 {
+    margin-bottom: 1rem !important; /* Márgenes inferiores */
 }
 
-form .form-label {
-    font-weight: bold; /* Aplica negrita a las etiquetas del formulario */
+.btn-primary {
+    background-color: #343a40; /* Color de fondo del botón primario */
+    border: none; /* Sin borde */
 }
 
-form .form-control {
-    font-weight: normal; /* Mantén el texto de los campos en peso normal */
+.btn-primary:hover {
+    background-color: #23272b; /* Color de fondo del botón en hover */
 }
 
-/* Estilo personalizado para el botón Registrar */
-form button.btn.btn-custom {
-    background-color: #343a40 !important;
-    color: white !important;
-    border: none !important;
-    font-size: 18px; /* Aumenta el tamaño del texto del botón */
-    padding: 10px 1px; /* Aumenta el padding para hacer el botón más grande */
-    border-radius: 8px; /* Opcional: ajusta el borde redondeado del botón */
-    text-transform: uppercase; /* Opcional: convierte el texto a mayúsculas */
+.text-center {
+    text-align: center; /* Alinea el texto al centro */
 }
 
-form button.btn.btn-custom:hover,
-form button.btn.btn-custom:focus,
-form button.btn.btn-custom:active {
-    background-color: rgba(44, 44, 44,1) !important;
-    color: white !important;
-    box-shadow: none !important;
+.position-relative {
+    position: relative; /* Posición relativa para el botón de ayuda */
 }
 
-btn btn-custom{
-    padding:30px;
+.position-absolute {
+    position: absolute; /* Posición absoluta para el botón de ayuda */
 }
-@media (max-width: 600px) {
-    .card {
-        width: 100%;
-        border-radius: 0;
-        box-shadow: none;
-        max-height: 100vh;
-    }
 
-    button {
-        font-size: 14px;
-        padding: 8px;
-    }
+.top-50 {
+    top: 50%; /* Posiciona el botón a mitad de la altura del contenedor */
+}
+
+.end-0 {
+    right: 0; /* Posiciona el botón al final del contenedor */
+}
+
+.translate-middle-y {
+    transform: translateY(-50%); /* Centra verticalmente el botón */
+}
+
+.modal-content {
+    padding: 20px; /* Relleno interno del contenido del modal */
+}
+
+.modal-body {
+    font-size: 16px; /* Tamaño de fuente del contenido del modal */
+}
+
+.image-preview img {
+    max-width: 100%; /* Ajusta la imagen a la anchura del contenedor */
+    height: auto; /* Mantiene la proporción de la imagen */
+    border-radius: 5px; /* Bordes redondeados de la vista previa de la imagen */
+    border: 1px solid #ddd; /* Borde de la vista previa de la imagen */
+}
+
+.form-label strong {
+    font-weight: bold; /* Negrita para los nombres de las categorías */
+}
+
+.btn-outline-secondary {
+    border-color: #6c757d; /* Color del borde del botón de ayuda */
+    color: #6c757d; /* Color del texto del botón de ayuda */
+}
+
+.btn-outline-secondary:hover {
+    background-color: #6c757d; /* Color de fondo del botón en hover */
+    color: white; /* Color del texto en hover */
 }

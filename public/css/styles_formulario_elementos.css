@@ -7,6 +7,34 @@ body {
     font-family: 'Work Sans', sans-serif; /* Fuente general */
 }
 
+.image-preview {
+            width: 150px; /* Ajusta el ancho a un tamaño fijo */
+            height: 150px; /* Ajusta la altura a un tamaño fijo */
+            overflow: hidden; /* Oculta cualquier parte de la imagen que se desborde */
+        }
+        .image-preview-img {
+            width: 100%; /* Ajusta la imagen al ancho del contenedor */
+            height: auto; /* Mantiene la proporción de la imagen */
+        }
+        .btn-custom {
+            background-color: #343a40;; /* Color de fondo */
+            color: #fff; /* Color del texto */
+            border: none; /* Sin borde */
+            border-radius: 0.375rem; /* Bordes redondeados */
+            padding: 0.75rem 1.5rem; /* Espaciado */
+            font-size: 1rem; /* Tamaño de la fuente */
+            text-transform: uppercase; /* Texto en mayúsculas */
+            width: 100%; /* Ancho completo */
+        }
+        .btn-custom:hover {
+            background-color: #23272b; /* Color de fondo en hover */
+            color: #fff; /* Color del texto en hover */
+        }
+        .btn-custom-container {
+            text-align: center; /* Centra el texto del contenedor */
+            margin-top: 1rem; /* Margen superior */
+        }
+
 /* Estilos para el contenedor principal */
 .container {
     display: flex; /* Usa flexbox para el layout */
@@ -104,3 +132,4 @@ a:hover {
 .form-label strong {
     font-weight: bold;
 }
+

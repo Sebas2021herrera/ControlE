@@ -4,35 +4,36 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateElementosTable extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * @return void
      */
     public function up()
     {
         Schema::create('elementos', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('categoria_id'); // O el nombre correcto de la columna
-            // Si hay una relación con una tabla de categorías
-            $table->foreign('categoria_id')->references('id')->on('categorias');
+            $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade'); // Foreign key referencing categorias
+            $table->foreignId('usuario_id')->constrained('usuarios')->onDelete('cascade'); // Foreign key referencing usuarios
             $table->string('descripcion');
             $table->string('marca');
             $table->string('modelo');
-            $table->string('serie');
+            $table->string('serie')->nullable();
             $table->text('especificaciones_tecnicas')->nullable();
             $table->string('foto')->nullable();
             $table->timestamps();
-
-            
         });
     }
 
     /**
      * Reverse the migrations.
+     *
+     * @return void
      */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('elementos');
     }
-};
+}

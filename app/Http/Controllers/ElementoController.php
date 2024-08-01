@@ -1,47 +1,46 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Models\Categoria;
-use App\Models\Elemento;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Elemento;
+use App\Models\Categoria;
 
 class ElementoController extends Controller
 {
     public function create()
     {
-        $categorias = Categoria::all(); // Obtener todas las categorías
-        return view('elementos.create', compact('categorias')); // Pasar las categorías a la vista
+        $categorias = Categoria::all();
+        return view('elementos.create', compact('categorias'));
     }
 
     public function store(Request $request)
     {
-        // Validamos los datos del formulario
-        $request->validate([
-            'categoria' => 'required|exists:categorias,id', // La categoría es obligatoria
-            'descripcion' => 'required', // La descripción es obligatoria
-            'marca' => 'required', // La marca es obligatoria
-            'modelo' => 'required', // El modelo es obligatorio
-            'serie' => 'nullable|string', // La serie es opcional y debe ser una cadena de texto
-            'especificaciones_tecnicas' => 'nullable|string', // Las especificaciones técnicas son opcionales y deben ser una cadena de texto
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048' // La foto es opcional y debe ser una imagen con un tamaño máximo de 2MB
+        $validatedData = $request->validate([
+            'categoria.*' => 'required|exists:categorias,id',
+            'descripcion.*' => 'required|string|max:255',
+            'marca.*' => 'required|string|max:255',
+            'modelo.*' => 'required|string|max:255',
+            'serie.*' => 'nullable|string|max:255',
+            'especificaciones_tecnicas.*' => 'nullable|string',
+            'foto.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB
         ]);
 
-        $data = $request->all(); // Obtenemos todos los datos del formulario
-        if ($request->hasFile('foto')) {
-            // Si se subió una foto, la almacenamos en la carpeta 'fotos' en el almacenamiento público
-            $data['foto'] = $request->file('foto')->store('fotos', 'public');
+        foreach ($validatedData['categoria'] as $index => $categoriaId) {
+            $elemento = new Elemento();
+            $elemento->categoria_id = $categoriaId;
+            $elemento->descripcion = $validatedData['descripcion'][$index];
+            $elemento->marca = $validatedData['marca'][$index];
+            $elemento->modelo = $validatedData['modelo'][$index];
+            $elemento->serie = $validatedData['serie'][$index] ?? null;
+            $elemento->especificaciones_tecnicas = $validatedData['especificaciones_tecnicas'][$index] ?? null;
+
+            if (isset($validatedData['foto'][$index])) {
+                $elemento->foto = $validatedData['foto'][$index]->store('fotos', 'public');
+            }
+
+            $elemento->save();
         }
 
-        $data['user_id'] = Auth::id(); // Asignamos el ID del usuario autenticado
-
-        // Aquí se cambia 'categoria' por 'categoria_id'
-        $data['categoria_id'] = $data['categoria'];
-        unset($data['categoria']);
-
-        Elemento::create($data); // Creamos el nuevo elemento en la base de datos
-
-        return redirect()->back()->with('success', 'Elemento registrado exitosamente.'); // Redirigimos al usuario con un mensaje de éxito
+        return redirect()->back()->with('success', '¡Elementos registrados exitosamente!');
     }
 }

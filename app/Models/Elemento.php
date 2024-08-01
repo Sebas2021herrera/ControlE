@@ -10,7 +10,7 @@ class Elemento extends Model
     use HasFactory; // Utiliza el trait HasFactory para las factorías de Eloquent.
 
     protected $fillable = [
-        'categoria', 'descripcion', 'marca', 'modelo', 'serie', 'especificaciones_tecnicas', 'foto'
+        'categoria_id', 'descripcion', 'marca', 'modelo', 'serie', 'especificaciones_tecnicas', 'foto'
     ]; // Define los campos que pueden ser asignados masivamente.
 
     public function user()

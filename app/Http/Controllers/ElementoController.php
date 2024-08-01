@@ -19,7 +19,7 @@ class ElementoController extends Controller
     {
         // Validamos los datos del formulario
         $request->validate([
-            'categoria' => 'required', // La categoría es obligatoria
+            'categoria' => 'required|exists:categorias,id', // La categoría es obligatoria
             'descripcion' => 'required', // La descripción es obligatoria
             'marca' => 'required', // La marca es obligatoria
             'modelo' => 'required', // El modelo es obligatorio
@@ -36,9 +36,12 @@ class ElementoController extends Controller
 
         $data['user_id'] = Auth::id(); // Asignamos el ID del usuario autenticado
 
+        // Aquí se cambia 'categoria' por 'categoria_id'
+        $data['categoria_id'] = $data['categoria'];
+        unset($data['categoria']);
+
         Elemento::create($data); // Creamos el nuevo elemento en la base de datos
 
         return redirect()->back()->with('success', 'Elemento registrado exitosamente.'); // Redirigimos al usuario con un mensaje de éxito
     }
 }
- 

@@ -41,6 +41,14 @@ class ElementoController extends Controller
             $elemento->save();
         }
 
-        return redirect()->back()->with('success', '¡Elementos registrados exitosamente!');
+        return redirect()->route('user.panel')->with('success', '¡Elementos registrados exitosamente!');
+    }
+
+    public function showUserElements()
+    {
+        $user = auth()->user();
+        $elementos = $user->elementos; // Asumiendo que tienes una relación definida en el modelo User
+
+        return view('index.vistausuario', compact('elementos'));
     }
 }

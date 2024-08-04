@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -10,7 +9,7 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable; // Utiliza los traits HasFactory y Notifiable
 
-    protected $table = 'usuarios';
+    protected $table = 'usuarios'; // Tabla asociada en la base de datos
 
     protected $fillable = [
         'nombres', 'apellidos', 'tipo_documento', 'numero_documento',
@@ -29,11 +28,11 @@ class User extends Authenticatable
 
     public function role()
     {
-        return $this->belongsTo(Role::class, 'roles_id');
+        return $this->belongsTo(Role::class, 'roles_id'); // Relación con el modelo Role
     }
 
     public function elementos()
     {
-        return $this->hasMany(Elemento::class); // Define una relación de uno a muchos con el modelo Elemento
+        return $this->hasMany(Elemento::class, 'usuario_id'); // Relación de uno a muchos con el modelo Elemento
     }
 }

@@ -14,4 +14,9 @@ class Categoria extends Model
 
     // Campos que se pueden llenar mediante asignación masiva
     protected $fillable = ['nombre'];
+
+    public function elementos()
+    {
+        return $this->hasMany(Elemento::class);
+    }
 }

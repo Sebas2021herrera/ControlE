@@ -17,4 +17,9 @@ class Elemento extends Model
     {
         return $this->belongsTo(User::class, 'usuario_id'); // Define una relación de pertenencia con el modelo User.
     }
+
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class);
+    }
 }; 

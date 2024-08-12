@@ -20,7 +20,13 @@ Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware('auth')->group(function () {
     // Rutas para la gestión de elementos
     Route::get('elementos/create', [ElementoController::class, 'create'])->name('elementos.create');
-    Route::post('elementos', [ElementoController::class, 'store'])->name('elementos.store');
+    Route::post('/elementos', [ElementoController::class, 'store'])->name('elementos.store');
+
+    // Nueva ruta para eliminar un elemento
+    Route::delete('/elementos/{id}', [ElementoController::class, 'destroy'])->name('elementos.destroy');
+    
+    // Nueva ruta para editar un elemento
+    Route::get('/elementos/{id}/edit', [ElementoController::class, 'edit'])->name('elementos.edit');
     
     // Rutas para los paneles de administración, control y usuario
     Route::get('admin/panel', function () {
@@ -30,6 +36,8 @@ Route::middleware('auth')->group(function () {
     Route::get('control/panel', function () {
         return view('index.vistacontrol');
     })->name('control.panel');
+
+    Route::put('elementos/{id}', [ElementoController::class, 'update'])->name('elementos.update');
 
     Route::get('user/panel', [UserController::class, 'userPanel'])->name('user.panel');
 });

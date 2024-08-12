@@ -79,13 +79,23 @@ h2 {
 
 /* Estilos para el botón primario */
 .btn-primary {
-    background-color: #343a40; /* Color de fondo del botón primario */
+    background-color: #007832; /* Color de fondo del botón primario */
     border: none; /* Sin borde */
 }
 
 /* Estilos para el botón primario en hover */
 .btn-primary:hover {
-    background-color: #23272b; /* Color de fondo del botón en hover */
+    background-color: #2bb866; /* Color de fondo del botón en hover */
+}
+
+.btn-segundario {
+    background-color: #007832; /* Color de fondo del botón primario */
+    border: none; /* Sin borde */
+
+}
+.btn-segundario:hover{
+
+    background-color: #23272b;
 }
 
 /* Alinea el texto al centro */

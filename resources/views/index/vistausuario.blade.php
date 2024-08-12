@@ -346,10 +346,22 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('js/scripts.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            const successMessage = $('.alert-success');
+            if (successMessage.length) {
+                setTimeout(() => {
+                    successMessage.fadeOut(500); // Desvanecer el mensaje en 0.5 segundos
+                }, 5000); // Mostrar el mensaje por 5 segundos antes de desvanecerlo
+            }
+        });
+    </script>
+    
 </body>
 
 </html>

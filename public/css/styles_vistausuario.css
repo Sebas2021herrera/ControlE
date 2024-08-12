@@ -1,0 +1,135 @@
+body,
+html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.container-fluid {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.left-panel {
+    flex: 0 0 350px;
+    border-right: 1px solid #ccc;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.right-panel {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+}
+
+.right-panel::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    height: 350px;
+    width: 270px;
+    left: 22px;
+    top:-24px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.3s;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #ddd;
+}
+
+.card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 10px 20px;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    flex: 1;
+}
+
+.card-body::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+
+.card img {
+    width: 100%;
+    height: 150px;
+    object-fit: contain;
+    margin-bottom: 15px;
+}
+
+
+.card-title {
+    margin-top: 0;
+    font-size: 24px;
+    text-align: center;
+}
+
+.card-text {
+    font-size: 14px;
+    margin-bottom: 0;
+    text-align: center;
+}
+
+.right-panel {
+    padding-bottom: 60px;
+}
+
+.welcome-text {
+    font-size: 30px;
+}
+
+.other-welcome {
+    font-size: 20px;
+}
+
+@media (max-width: 768px) {
+    .right-panel {
+        grid-template-columns: 1fr;
+    }
+}
+
+.modal-body img {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    display: block;
+    margin: 0 auto 20px auto;
+}
+
+.modal-dialog {
+    max-width: 500px;
+    margin: 30px auto;
+}
+
+.btn-link:focus,
+.btn-link:active {
+    outline: none;
+    box-shadow: none;
+    border: none;
+    color: inherit;
+}
+
+.alert {
+    transition: opacity 0.5s ease-out;
+}
+

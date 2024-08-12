@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Elemento;
 use App\Models\Categoria;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class ElementoController extends Controller
 {
@@ -15,48 +16,41 @@ class ElementoController extends Controller
         return view('elementos.create', compact('categorias'));
     }
 
+  
     public function store(Request $request)
     {
         // Validación de los datos del formulario
         $validatedData = $request->validate([
-            'categoria' => 'required|array',
-            'categoria.*' => 'required|integer|exists:categorias,id',
-            'descripcion' => 'required|array',
-            'descripcion.*' => 'required|string|max:255',
-            'marca' => 'required|array',
-            'marca.*' => 'required|string|max:255',
-            'modelo' => 'required|array',
-            'modelo.*' => 'required|string|max:255',
-            'serie' => 'nullable|array',
-            'serie.*' => 'nullable|string|max:255',
-            'especificaciones_tecnicas' => 'nullable|array',
-            'especificaciones_tecnicas.*' => 'nullable|string',
-            'foto' => 'nullable|array',
-            'foto.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB por imagen
+            'categoria_id' => 'required|integer|exists:categorias,id',
+            'descripcion' => 'required|string|max:255',
+            'marca' => 'required|string|max:255',
+            'modelo' => 'required|string|max:255',
+            'serie' => 'nullable|string|max:255',
+            'especificaciones_tecnicas' => 'nullable|string',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB por imagen
         ]);
-
-        // Iterar sobre los elementos y guardarlos en la base de datos
-        foreach ($validatedData['categoria'] as $index => $categoriaId) {
-            $elemento = new Elemento();
-            $elemento->categoria_id = $categoriaId;
-            $elemento->descripcion = $validatedData['descripcion'][$index];
-            $elemento->marca = $validatedData['marca'][$index];
-            $elemento->modelo = $validatedData['modelo'][$index];
-            $elemento->serie = $validatedData['serie'][$index] ?? null;
-            $elemento->especificaciones_tecnicas = $validatedData['especificaciones_tecnicas'][$index] ?? null;
-            $elemento->usuario_id = Auth::id(); // Asignar el ID del usuario autenticado
-
-            // Guardar la foto si está presente
-            if (isset($validatedData['foto'][$index])) {
-                $elemento->foto = $validatedData['foto'][$index]->store('fotos', 'public');
-            }
-
-            $elemento->save();
+    
+        // Crear un nuevo elemento
+        $elemento = new Elemento();
+        $elemento->categoria_id = $validatedData['categoria_id'];
+        $elemento->descripcion = $validatedData['descripcion'];
+        $elemento->marca = $validatedData['marca'];
+        $elemento->modelo = $validatedData['modelo'];
+        $elemento->serie = $validatedData['serie'] ?? null;
+        $elemento->especificaciones_tecnicas = $validatedData['especificaciones_tecnicas'] ?? null;
+        $elemento->usuario_id = Auth::id(); // Asignar el ID del usuario autenticado
+    
+        // Guardar la foto si está presente
+        if (isset($validatedData['foto'])) {
+            $elemento->foto = $validatedData['foto']->store('fotos', 'public');
         }
-
+    
+        $elemento->save();
+    
         // Redireccionar con un mensaje de éxito
-        return redirect()->route('user.panel')->with('success', '¡Elementos registrados exitosamente!');
+        return redirect()->route('user.panel')->with('success', '¡Elemento registrado exitosamente!');
     }
+    
 
     public function showUserElements()
     {
@@ -67,7 +61,7 @@ class ElementoController extends Controller
     }
 
     // Método para eliminar un elemento
-    public function destroy($id)
+   public function destroy($id)
     {
         $elemento = Elemento::findOrFail($id);
         
@@ -85,6 +79,7 @@ class ElementoController extends Controller
         
         return redirect()->route('user.panel')->with('success', '¡Elemento eliminado exitosamente!');
     }
+        
 
     // Método para mostrar el formulario de edición de un elemento
     public function edit($id)

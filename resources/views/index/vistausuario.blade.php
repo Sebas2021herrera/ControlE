@@ -178,6 +178,12 @@
             </ul>
         </div>
     </nav>
+<!-- Bloque para mostrar mensajes de éxito -->
+@if (session('success'))
+<div class="alert alert-success text-center">
+    {{ session('success') }}
+</div>
+@endif
 
     <div class="container-fluid mt-4">
         <div class="left-panel">
@@ -280,12 +286,7 @@
                 </div>
                 <div class="modal-body">
                     <div>
-                        <!-- Bloque para mostrar mensajes de éxito -->
-                        @if (session('success'))
-                            <div class="alert alert-success text-center">
-                                {{ session('success') }}
-                            </div>
-                        @endif
+                        
 
                         <form id="elementos-form" action="{{ route('elementos.store') }}" method="POST"
                             enctype="multipart/form-data">

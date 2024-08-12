@@ -20,6 +20,7 @@ Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware('auth')->group(function () {
     // Rutas para la gestión de elementos
     Route::get('elementos/create', [ElementoController::class, 'create'])->name('elementos.create');
+    
     Route::post('/elementos', [ElementoController::class, 'store'])->name('elementos.store');
 
     // Nueva ruta para eliminar un elemento

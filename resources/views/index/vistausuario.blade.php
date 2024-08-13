@@ -15,7 +15,21 @@
         .d-none {
             display: none;
         }
-       
+
+        /* En tu archivo de estilos CSS */
+        .fade-out {
+            animation: fadeOut 1s forwards;
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 
@@ -37,6 +51,11 @@
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
                                 data-bs-target="#registroModal">Registrar Elementos</a></li>
+
+                        <li >
+                            <a class="dropdown-item" href="#" data-bs-toggle="modal"
+                                data-bs-target="#editarPerfilModal">Editar Perfil</a>  </li>
+
                         <li>
                             <a class="dropdown-item" href="{{ route('logout') }}"
                                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -120,7 +139,8 @@
                                     <p><strong>Marca:</strong> {{ $elemento->marca }}</p>
                                     <p><strong>Modelo:</strong> {{ $elemento->modelo }}</p>
                                     <p><strong>Serial:</strong> {{ $elemento->serie }}</p>
-                                    <p><strong>Especificaciones Técnicas:</strong> {{ $elemento->especificaciones_tecnicas }}</p>
+                                    <p><strong>Especificaciones Técnicas:</strong>
+                                        {{ $elemento->especificaciones_tecnicas }}</p>
                                 </div>
 
                                 <!-- Vista de edición (oculta por defecto) -->
@@ -130,8 +150,10 @@
                                         @csrf
                                         @method('PUT')
                                         <div class="mb-3">
-                                            <label for="categoria_id-{{ $elemento->id }}" class="form-label">Categoría</label>
-                                            <select id="categoria_id-{{ $elemento->id }}" name="categoria_id" class="form-select" required>
+                                            <label for="categoria_id-{{ $elemento->id }}"
+                                                class="form-label">Categoría</label>
+                                            <select id="categoria_id-{{ $elemento->id }}" name="categoria_id"
+                                                class="form-select" required>
                                                 @foreach ($categorias as $categoria)
                                                     <option value="{{ $categoria->id }}"
                                                         {{ $categoria->id == $elemento->categoria_id ? 'selected' : '' }}>
@@ -140,37 +162,41 @@
                                             </select>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="descripcion-{{ $elemento->id }}" class="form-label">Descripción</label>
-                                            <input type="text" id="descripcion-{{ $elemento->id }}" name="descripcion" class="form-control"
+                                            <label for="descripcion-{{ $elemento->id }}"
+                                                class="form-label">Descripción</label>
+                                            <input type="text" id="descripcion-{{ $elemento->id }}"
+                                                name="descripcion" class="form-control"
                                                 value="{{ $elemento->descripcion }}" required>
                                         </div>
                                         <div class="mb-3">
                                             <label for="marca-{{ $elemento->id }}" class="form-label">Marca</label>
-                                            <input type="text" id="marca-{{ $elemento->id }}" name="marca" class="form-control"
-                                                value="{{ $elemento->marca }}" required>
+                                            <input type="text" id="marca-{{ $elemento->id }}" name="marca"
+                                                class="form-control" value="{{ $elemento->marca }}" required>
                                         </div>
                                         <div class="mb-3">
                                             <label for="modelo-{{ $elemento->id }}" class="form-label">Modelo</label>
-                                            <input type="text" id="modelo-{{ $elemento->id }}" name="modelo" class="form-control"
-                                                value="{{ $elemento->modelo }}" required>
+                                            <input type="text" id="modelo-{{ $elemento->id }}" name="modelo"
+                                                class="form-control" value="{{ $elemento->modelo }}" required>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="serie-{{ $elemento->id }}" class="form-label">Número de Serie</label>
-                                            <input type="text" id="serie-{{ $elemento->id }}" name="serie" class="form-control"
-                                                value="{{ $elemento->serie }}" required>
+                                            <label for="serie-{{ $elemento->id }}" class="form-label">Número de
+                                                Serie</label>
+                                            <input type="text" id="serie-{{ $elemento->id }}" name="serie"
+                                                class="form-control" value="{{ $elemento->serie }}" required>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="especificaciones_tecnicas-{{ $elemento->id }}" class="form-label">Especificaciones Técnicas</label>
+                                            <label for="especificaciones_tecnicas-{{ $elemento->id }}"
+                                                class="form-label">Especificaciones Técnicas</label>
                                             <textarea id="especificaciones_tecnicas-{{ $elemento->id }}" name="especificaciones_tecnicas" class="form-control"
                                                 rows="3" required>{{ $elemento->especificaciones_tecnicas }}</textarea>
                                         </div>
                                         <div class="mb-3">
                                             <label for="foto-{{ $elemento->id }}" class="form-label">Foto</label>
-                                            <input type="file" id="foto-{{ $elemento->id }}" name="foto" class="form-control"
-                                                accept="image/*">
+                                            <input type="file" id="foto-{{ $elemento->id }}" name="foto"
+                                                class="form-control" accept="image/*">
                                             @if ($elemento->foto)
-                                                <img src="{{ asset('storage/' . $elemento->foto) }}" alt="Foto del elemento"
-                                                    class="img-fluid mt-3">
+                                                <img src="{{ asset('storage/' . $elemento->foto) }}"
+                                                    alt="Foto del elemento" class="img-fluid mt-3">
                                             @endif
                                         </div>
                                     </form>
@@ -184,12 +210,15 @@
                                     <button type="submit" class="btn btn-danger">Eliminar</button>
                                 </form>
                                 <!-- Botón para guardar cambios (oculto por defecto) -->
-                                <button type="button" class="btn btn-primary d-none" id="save-changes-btn-{{ $elemento->id }}"
+                                <button type="button" class="btn btn-primary d-none"
+                                    id="save-changes-btn-{{ $elemento->id }}"
                                     onclick="saveChanges({{ $elemento->id }})">Guardar Cambios</button>
                                 <!-- Botón para editar elementos -->
-                                <button type="button" class="btn btn-warning" onclick="editElement({{ $elemento->id }})">Editar</button>
+                                <button type="button" class="btn btn-warning"
+                                    onclick="editElement({{ $elemento->id }})">Editar</button>
                                 <!-- Botón para cerrar el modal -->
-                                <button type="button" class="btn btn-secondary" onclick="closeModal({{ $elemento->id }})">Cerrar</button>
+                                <button type="button" class="btn btn-secondary"
+                                    onclick="closeModal({{ $elemento->id }})">Cerrar</button>
                             </div>
                         </div>
                     </div>
@@ -199,7 +228,8 @@
     </div>
 
     <!-- Modal para registrar elementos -->
-    <div class="modal fade" id="registroModal" tabindex="-1" aria-labelledby="registroModalLabel" aria-hidden="true">
+    <div class="modal fade" id="registroModal" tabindex="-1" aria-labelledby="registroModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -234,13 +264,15 @@
                             <input type="text" id="serie" name="serie" class="form-control" required>
                         </div>
                         <div class="mb-3">
-                            <label for="especificaciones_tecnicas" class="form-label">Especificaciones Técnicas</label>
-                            <textarea id="especificaciones_tecnicas" name="especificaciones_tecnicas" class="form-control"
-                                rows="3" required></textarea>
+                            <label for="especificaciones_tecnicas" class="form-label">Especificaciones
+                                Técnicas</label>
+                            <textarea id="especificaciones_tecnicas" name="especificaciones_tecnicas" class="form-control" rows="3"
+                                required></textarea>
                         </div>
                         <div class="mb-3">
                             <label for="foto" class="form-label">Foto</label>
-                            <input type="file" id="foto" name="foto" class="form-control" accept="image/*">
+                            <input type="file" id="foto" name="foto" class="form-control"
+                                accept="image/*">
                         </div>
                         <button type="submit" class="btn btn-primary">Registrar</button>
                     </form>
@@ -249,7 +281,97 @@
         </div>
     </div>
 
+    <!-- Modal para editar perfil -->
+    <div class="modal fade" id="editarPerfilModal" tabindex="-1" aria-labelledby="editarPerfilModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editarPerfilModalLabel">Editar Perfil</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editarPerfilForm" method="POST" action="{{ route('updateProfile') }}">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="nombres" class="form-label">Nombres:</label>
+                            <input type="text" id="nombres" name="nombres" class="form-control"
+                                value="{{ Auth::user()->nombres }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="apellidos" class="form-label">Apellidos:</label>
+                            <input type="text" id="apellidos" name="apellidos" class="form-control"
+                                value="{{ Auth::user()->apellidos }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tipoDocumento" class="form-label">Tipo de Documento:</label>
+                            <select id="tipoDocumento" name="tipoDocumento" class="form-select" required>
+                                <option value="CC" {{ Auth::user()->tipoDocumento == 'CC' ? 'selected' : '' }}>
+                                    Cédula de Ciudadanía</option>
+                                <option value="TI" {{ Auth::user()->tipoDocumento == 'TI' ? 'selected' : '' }}>
+                                    Tarjeta de Identidad</option>
+                                <option value="CE" {{ Auth::user()->tipoDocumento == 'CE' ? 'selected' : '' }}>
+                                    Cédula de Extranjería</option>
+                                <option value="PP" {{ Auth::user()->tipoDocumento == 'PP' ? 'selected' : '' }}>
+                                    Pasaporte</option>
+                                <option value="RC" {{ Auth::user()->tipoDocumento == 'RC' ? 'selected' : '' }}>
+                                    Registro Civil</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="numeroDocumento" class="form-label">Número de Documento:</label>
+                            <input type="text" id="numeroDocumento" name="numeroDocumento" class="form-control"
+                                value="{{ Auth::user()->numeroDocumento }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="correo_personal" class="form-label">Correo Personal:</label>
+                            <input type="email" id="correo_personal" name="correo_personal" class="form-control"
+                                value="{{ Auth::user()->correo_personal }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="correo_institucional" class="form-label">Correo Institucional:</label>
+                            <input type="email" id="correo_institucional" name="correo_institucional"
+                                class="form-control" value="{{ Auth::user()->correo_institucional }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="telefono" class="form-label">Teléfono:</label>
+                            <input type="tel" id="telefono" name="telefono" class="form-control"
+                                value="{{ Auth::user()->telefono }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="rol" class="form-label">Rol:</label>
+                            <select id="rol" name="rol" class="form-select" required>
+                                <option value="3" {{ Auth::user()->rol == 3 ? 'selected' : '' }}>Aprendiz
+                                </option>
+                                <option value="4" {{ Auth::user()->rol == 4 ? 'selected' : '' }}>Visitante
+                                </option>
+                                <option value="5" {{ Auth::user()->rol == 5 ? 'selected' : '' }}>Funcionario
+                                </option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="numeroFicha" class="form-label">Número de Ficha:</label>
+                            <input type="text" id="numeroFicha" name="numeroFicha" class="form-control"
+                                value="{{ Auth::user()->numeroFicha }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contrasena" class="form-label">Contraseña:</label>
+                            <input type="password" id="contrasena" name="contrasena" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contrasena_confirmation" class="form-label">Confirmar Contraseña:</label>
+                            <input type="password" id="contrasena_confirmation" name="contrasena_confirmation"
+                                class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
     <script>
@@ -279,6 +401,17 @@
             }
         }
     </script>
+    <script>
+        $(document).ready(function() {
+            const successMessage = $('.alert-success');
+            if (successMessage.length) {
+                setTimeout(() => {
+                    successMessage.fadeOut(500); // Desvanecer el mensaje en 0.5 segundos
+                }, 5000); // Mostrar el mensaje por 5 segundos antes de desvanecerlo
+            }
+        });
+    </script>
+
 </body>
 
 </html>

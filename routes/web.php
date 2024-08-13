@@ -41,4 +41,7 @@ Route::middleware('auth')->group(function () {
     Route::put('elementos/{id}', [ElementoController::class, 'update'])->name('elementos.update');
 
     Route::get('user/panel', [UserController::class, 'userPanel'])->name('user.panel');
+
+    Route::post('/updateProfile', [AuthController::class, 'updateProfile'])->name('updateProfile');
+
 });

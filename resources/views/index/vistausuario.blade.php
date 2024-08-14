@@ -52,9 +52,10 @@
                         <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
                                 data-bs-target="#registroModal">Registrar Elementos</a></li>
 
-                        <li >
+                        <li>
                             <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                data-bs-target="#editarPerfilModal">Editar Perfil</a>  </li>
+                                data-bs-target="#editarPerfilModal">Editar Perfil</a>
+                        </li>
 
                         <li>
                             <a class="dropdown-item" href="{{ route('logout') }}"
@@ -87,8 +88,14 @@
 
     <div class="container-fluid mt-4">
         <div class="left-panel">
-            <div class="welcome-text">Bienvenido <br />{{ Auth::user()->nombres }} {{ Auth::user()->apellidos }}</div>
-            <div class="other-welcome"><br /><strong> Estos son tus elementos:</strong> </div>
+            <div class="welcome-text" id="welcomeMessage">
+                Bienvenido <br />{{ Auth::user()->nombres }} {{ Auth::user()->apellidos }}
+            </div>
+
+            <div class="other-welcome">
+                <br /><strong> Estos son tus elementos:</strong>
+            </div>
+
         </div>
         <div class="right-panel">
             @foreach ($elementos as $elemento)
@@ -304,34 +311,34 @@
                                 value="{{ Auth::user()->apellidos }}" required>
                         </div>
                         <div class="mb-3">
-                            <label for="tipoDocumento" class="form-label">Tipo de Documento:</label>
-                            <select id="tipoDocumento" name="tipoDocumento" class="form-select" required>
-                                <option value="CC" {{ Auth::user()->tipoDocumento == 'CC' ? 'selected' : '' }}>
+                            <label for="tipo_documento" class="form-label">Tipo de Documento:</label>
+                            <select id="tipo_documento" name="tipo_documento" class="form-select" required>
+                                <option value="CC" {{ Auth::user()->tipo_documento == 'CC' ? 'selected' : '' }}>
                                     Cédula de Ciudadanía</option>
-                                <option value="TI" {{ Auth::user()->tipoDocumento == 'TI' ? 'selected' : '' }}>
+                                <option value="TI" {{ Auth::user()->tipo_documento == 'TI' ? 'selected' : '' }}>
                                     Tarjeta de Identidad</option>
-                                <option value="CE" {{ Auth::user()->tipoDocumento == 'CE' ? 'selected' : '' }}>
+                                <option value="CE" {{ Auth::user()->tipo_documento == 'CE' ? 'selected' : '' }}>
                                     Cédula de Extranjería</option>
-                                <option value="PP" {{ Auth::user()->tipoDocumento == 'PP' ? 'selected' : '' }}>
+                                <option value="PP" {{ Auth::user()->tipo_documento == 'PP' ? 'selected' : '' }}>
                                     Pasaporte</option>
-                                <option value="RC" {{ Auth::user()->tipoDocumento == 'RC' ? 'selected' : '' }}>
+                                <option value="RC" {{ Auth::user()->tipo_documento == 'RC' ? 'selected' : '' }}>
                                     Registro Civil</option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="numeroDocumento" class="form-label">Número de Documento:</label>
-                            <input type="text" id="numeroDocumento" name="numeroDocumento" class="form-control"
-                                value="{{ Auth::user()->numeroDocumento }}" required>
+                            <label for="numero_documento" class="form-label">Número de Documento:</label>
+                            <input type="text" id="numero_documento" name="numero_documento" class="form-control"
+                                value="{{ Auth::user()->numero_documento }}" required>
                         </div>
                         <div class="mb-3">
                             <label for="correo_personal" class="form-label">Correo Personal:</label>
                             <input type="email" id="correo_personal" name="correo_personal" class="form-control"
-                                value="{{ Auth::user()->correo_personal }}" required>
+                                value="{{ Auth::user()->correo_personal }}" readonly>
                         </div>
                         <div class="mb-3">
                             <label for="correo_institucional" class="form-label">Correo Institucional:</label>
                             <input type="email" id="correo_institucional" name="correo_institucional"
-                                class="form-control" value="{{ Auth::user()->correo_institucional }}" required>
+                                class="form-control" value="{{ Auth::user()->correo_institucional }}" readonly>
                         </div>
                         <div class="mb-3">
                             <label for="telefono" class="form-label">Teléfono:</label>
@@ -350,25 +357,58 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="numeroFicha" class="form-label">Número de Ficha:</label>
-                            <input type="text" id="numeroFicha" name="numeroFicha" class="form-control"
-                                value="{{ Auth::user()->numeroFicha }}" required>
+                            <label for="numero_ficha" class="form-label">Número de Ficha:</label>
+                            <input type="text" id="numero_ficha" name="numero_ficha" class="form-control"
+                                value="{{ Auth::user()->numero_ficha }}" required>
                         </div>
                         <div class="mb-3">
                             <label for="contrasena" class="form-label">Contraseña:</label>
-                            <input type="password" id="contrasena" name="contrasena" class="form-control" required>
+                            <input type="password" id="contrasena" name="contrasena" class="form-control" readonly>
                         </div>
                         <div class="mb-3">
                             <label for="contrasena_confirmation" class="form-label">Confirmar Contraseña:</label>
                             <input type="password" id="contrasena_confirmation" name="contrasena_confirmation"
-                                class="form-control" required>
+                                class="form-control" readonly>
                         </div>
                         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                     </form>
+
+                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                    <script>
+                        $(document).ready(function() {
+                            $('#editarPerfilForm').on('submit', function(event) {
+                                event.preventDefault(); // Evita que el formulario se envíe de la forma tradicional
+
+                                $.ajax({
+                                    url: '{{ route('updateProfile') }}', // Cambia esta URL si es diferente
+                                    type: 'POST',
+                                    data: $(this).serialize(),
+                                    success: function(response) {
+                                        alert(response.success); // Muestra mensaje de éxito
+                                        $('#editarPerfilModal').modal('hide'); // Cierra el modal
+                                        // Actualiza la vista si es necesario
+                                        updateUserProfile(response.user);
+                                    },
+                                    error: function(xhr) {
+                                        alert(xhr.responseJSON.error); // Muestra mensaje de error
+                                    }
+                                });
+                            });
+
+                            function updateUserProfile(user) {
+                                // Actualiza los elementos en la vista con la información del usuario
+                                // Por ejemplo:
+                                $('#userName').text(user.nombres + ' ' + user.apellidos);
+                                $('#userEmail').text(user.correo_institucional);
+                                // Añade más actualizaciones según sea necesario
+                            }
+                        });
+                    </script>
                 </div>
             </div>
         </div>
     </div>
+
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -410,7 +450,68 @@
                 }, 5000); // Mostrar el mensaje por 5 segundos antes de desvanecerlo
             }
         });
-    </script>
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('#editarPerfilForm').on('submit', function(event) {
+                event.preventDefault();
+
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        $('#editarPerfilModal').modal('hide');
+                        // Mostrar mensaje de éxito
+                        $('#success-message').text(response.success).fadeIn().delay(5000)
+                            .fadeOut();
+                    },
+                    error: function(response) {
+                        // Manejar errores si es necesario
+                        $('#error-message').text('Ocurrió un error al actualizar el perfil.')
+                            .fadeIn().delay(5000).fadeOut();
+                    }
+                });
+            });
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#editarPerfilForm').on('submit', function(event) {
+                event.preventDefault(); // Evita el envío tradicional del formulario
+
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        // Actualiza la vista con la nueva información del usuario
+                        updateUserProfile(response.user);
+
+                        // Cierra el modal
+                        $('#editarPerfilModal').modal('hide');
+
+                        // Muestra un mensaje de éxito si es necesario
+                        $('#success-message').text(response.success).fadeIn().delay(5000)
+                            .fadeOut();
+                    },
+                    error: function(response) {
+                        // Muestra un mensaje de error si es necesario
+                        $('#error-message').text('Ocurrió un error al actualizar el perfil.')
+                            .fadeIn().delay(5000).fadeOut();
+                    }
+                });
+            });
+
+            function updateUserProfile(user) {
+                $('#welcomeMessage').html(`Bienvenido <br />${user.nombres} ${user.apellidos}`);
+                $('.navbar-nav .nav-link').text(user.nombres);
+            }
+        });
+    </script>
+
 
 </body>
 

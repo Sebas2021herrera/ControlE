@@ -70,14 +70,14 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'nombres' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
-            'tipoDocumento' => 'required|string|max:255',
-            'numeroDocumento' => 'required|string|max:255|unique:usuarios,numero_documento',
+            'tipo_documento' => 'required|string|max:255',
+            'numero_documento' => 'required|string|max:255|unique:usuarios,numero_documento',
             'correo_personal' => 'required|email|max:255|unique:usuarios,correo_personal',
             'correo_institucional' => 'required|email|max:255|unique:usuarios,correo_institucional',
             'contrasena' => 'required|string|min:6|confirmed',
             'telefono' => 'required|string|max:20',
             'rol' => 'required|integer|in:3,4,5',
-            'numeroFicha' => 'required|string|max:255',
+            'numero_ficha' => 'required|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -91,14 +91,14 @@ class AuthController extends Controller
             $user = new User();
             $user->nombres = $request->input('nombres');
             $user->apellidos = $request->input('apellidos');
-            $user->tipo_documento = $request->input('tipoDocumento');
-            $user->numero_documento = $request->input('numeroDocumento');
+            $user->tipo_documento = $request->input('tipo_documento');
+            $user->numero_documento = $request->input('numero_documento');
             $user->correo_personal = $request->input('correo_personal');
             $user->correo_institucional = $request->input('correo_institucional');
             $user->contraseña = Hash::make($request->input('contrasena'));
             $user->telefono = $request->input('telefono');
             $user->roles_id = $request->input('rol');
-            $user->numero_ficha = $request->input('numeroFicha');
+            $user->numero_ficha = $request->input('numero_ficha');
             $user->save();
 
             return redirect()->route('login')->with('success', 'Registro exitoso, por favor inicie sesión.');
@@ -114,8 +114,29 @@ class AuthController extends Controller
         }
     }
 
+    public function showEditProfile()
+    {
+        // Implementa la lógica para mostrar el formulario de edición de perfil si es necesario
+    }
+
     public function updateProfile(Request $request)
     {
+        $user = Auth::user();
+
+        // Aquí puedes agregar la lógica para determinar si el usuario tiene permisos de administrador
+        $esAdmin = $user->roles_id == 1; // Este es un ejemplo, ajusta según tu lógica real.
+
+        if (!$esAdmin) {  // Si no es administrador, entonces se asegura de no modificar ciertos campos.
+            $request->merge([
+                'correo_personal' => $user->correo_personal,
+                'correo_institucional' => $user->correo_institucional,
+                'contrasena' => $user->contrasena,
+                'tipoDocumento' => $user->tipo_documento,
+                'numeroDocumento' => $user->numero_documento,
+                'numeroFicha' => $user->numero_ficha,
+            ]);
+        }
+
         // Validar los datos del formulario
         $validator = Validator::make($request->all(), [
             'nombres' => 'required|string|max:255',
@@ -129,31 +150,21 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()
-                             ->withErrors($validator)
-                             ->withInput();
+            return response()->json(['error' => $validator->errors()->all()], 400);
         }
 
         try {
-            // Obtener el usuario autenticado
-            $user = Auth::user();
+            // Actualizar los campos del usuario
+            $user->update($request->all());
 
-            // Actualizar el usuario
-            $user->nombres = $request->input('nombres');
-            $user->apellidos = $request->input('apellidos');
-            $user->tipo_documento = $request->input('tipoDocumento');
-            $user->numero_documento = $request->input('numeroDocumento');
-            $user->correo_personal = $request->input('correo_personal');
-            $user->correo_institucional = $request->input('correo_institucional');
-            $user->telefono = $request->input('telefono');
-            $user->numero_ficha = $request->input('numeroFicha');
-            $user->save();
-
-            return redirect()->back()->with('success', 'Perfil actualizado con éxito.');
+            // Respuesta JSON con los datos actualizados
+            return response()->json([
+                'success' => 'Perfil actualizado con éxito.',
+                'user' => $user
+            ]);
         } catch (QueryException $e) {
             // Manejo de errores
-            return redirect()->back()->with('error', 'Ha ocurrido un error al actualizar el perfil.')
-                                     ->withInput();
+            return response()->json(['error' => 'Ha ocurrido un error al actualizar el perfil.'], 500);
         }
     }
 }

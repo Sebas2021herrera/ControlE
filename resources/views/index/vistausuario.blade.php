@@ -411,10 +411,108 @@
 
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ asset('js/scripts.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script>
+        function editElement(id) {
+            document.getElementById('details-view-' + id).classList.add('d-none');
+            document.getElementById('edit-view-' + id).classList.remove('d-none');
+            document.getElementById('save-changes-btn-' + id).classList.remove('d-none');
+        }
+
+        function saveChanges(id) {
+            document.getElementById('edit-view-' + id).querySelector('form').submit();
+        }
+
+        function closeModal(id) {
+            const editView = document.getElementById('edit-view-' + id);
+            const detailsView = document.getElementById('details-view-' + id);
+            const saveChangesBtn = document.getElementById('save-changes-btn-' + id);
+
+            if (!editView.classList.contains('d-none')) {
+                // Cambia a la vista de detalles si se está en la vista de edición
+                editView.classList.add('d-none');
+                detailsView.classList.remove('d-none');
+                saveChangesBtn.classList.add('d-none');
+            } else {
+                // Cierra el modal si ya está en la vista de detalles
+                document.querySelector(`#modal-${id} .btn-close`).click();
+            }
+        }
+    </script>
+    <script>
+        $(document).ready(function() {
+            const successMessage = $('.alert-success');
+            if (successMessage.length) {
+                setTimeout(() => {
+                    successMessage.fadeOut(500); // Desvanecer el mensaje en 0.5 segundos
+                }, 5000); // Mostrar el mensaje por 5 segundos antes de desvanecerlo
+            }
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('#editarPerfilForm').on('submit', function(event) {
+                event.preventDefault();
+
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        $('#editarPerfilModal').modal('hide');
+                        // Mostrar mensaje de éxito
+                        $('#success-message').text(response.success).fadeIn().delay(5000)
+                            .fadeOut();
+                    },
+                    error: function(response) {
+                        // Manejar errores si es necesario
+                        $('#error-message').text('Ocurrió un error al actualizar el perfil.')
+                            .fadeIn().delay(5000).fadeOut();
+                    }
+                });
+            });
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#editarPerfilForm').on('submit', function(event) {
+                event.preventDefault(); // Evita el envío tradicional del formulario
+
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        // Actualiza la vista con la nueva información del usuario
+                        updateUserProfile(response.user);
+
+                        // Cierra el modal
+                        $('#editarPerfilModal').modal('hide');
+
+                        // Muestra un mensaje de éxito si es necesario
+                        $('#success-message').text(response.success).fadeIn().delay(5000)
+                            .fadeOut();
+                    },
+                    error: function(response) {
+                        // Muestra un mensaje de error si es necesario
+                        $('#error-message').text('Ocurrió un error al actualizar el perfil.')
+                            .fadeIn().delay(5000).fadeOut();
+                    }
+                });
+            });
+
+            function updateUserProfile(user) {
+                $('#welcomeMessage').html(`Bienvenido <br />${user.nombres} ${user.apellidos}`);
+                $('.navbar-nav .nav-link').text(user.nombres);
+            }
+        });
+    </script>
+
+
 </body>
 
 </html>

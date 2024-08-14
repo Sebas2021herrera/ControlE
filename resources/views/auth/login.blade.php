@@ -57,7 +57,7 @@
                     <button type="submit" class="btn btn-dark btn-block">Iniciar sesión</button>
                 </form>
                 <div class="text-center mt-3">
-                    <a href="#">Recordar contraseña</a>
+                    <a href="{{ route('create') }}">Registrate !</a>
                 </div>
             </div>
         </div>

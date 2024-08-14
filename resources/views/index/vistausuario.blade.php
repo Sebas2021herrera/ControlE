@@ -11,138 +11,25 @@
     <link rel="stylesheet" href="{{ asset('css/styles_formulario_elementos.css') }}">
     <link rel="stylesheet" href="{{ asset('css/styles_vistausuario.css') }}">
     <style>
-        body,
-        html {
-            height: 100%;
-            margin: 0;
-            padding: 0;
+        /* Aquí puedes agregar estilos personalizados si es necesario */
+        .d-none {
+            display: none;
         }
 
-        .container-fluid {
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
+        /* En tu archivo de estilos CSS */
+        .fade-out {
+            animation: fadeOut 1s forwards;
         }
 
-        .left-panel {
-            flex: 0 0 350px;
-            border-right: 1px solid #ccc;
-            padding: 20px;
-            box-sizing: border-box;
-        }
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
 
-        .right-panel {
-            flex: 1;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            padding: 20px;
-            box-sizing: border-box;
-            overflow-y: auto;
-            scroll-behavior: smooth;
-        }
-
-        .right-panel::-webkit-scrollbar {
-            width: 0px;
-            background: transparent;
-        }
-
-        .card {
-            display: flex;
-            flex-direction: column;
-            height: 350px;
-            width: 270px;
-            left: 22px;
-            top:-10px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: box-shadow 0.3s;
-            overflow: hidden;
-            background: #fff;
-            border: 1px solid #ddd;
-        }
-
-        .card:hover {
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
-        }
-
-        .card-body {
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            padding: 10px 20px;
-            overflow-y: scroll;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-            flex: 1;
-        }
-
-        .card-body::-webkit-scrollbar {
-            width: 0;
-            height: 0;
-        }
-
-        .card img {
-            width: 100%;
-            height: 150px;
-            object-fit: contain;
-            margin-bottom: 15px;
-        }
-
-
-        .card-title {
-            margin-top: 0;
-            font-size: 24px;
-            text-align: center;
-        }
-
-        .card-text {
-            font-size: 14px;
-            margin-bottom: 0;
-            text-align: center;
-        }
-
-        .right-panel {
-            padding-bottom: 60px;
-        }
-
-        .welcome-text {
-            font-size: 30px;
-        }
-
-        .other-welcome {
-            font-size: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .right-panel {
-                grid-template-columns: 1fr;
+            to {
+                opacity: 0;
             }
         }
-
-        .modal-body img {
-            width: 100%;
-            max-width: 300px;
-            height: auto;
-            display: block;
-            margin: 0 auto 20px auto;
-        }
-
-        .modal-dialog {
-            max-width: 500px;
-            margin: 30px auto;
-        }
-
-        .btn-link:focus,
-        .btn-link:active {
-            outline: none;
-            box-shadow: none;
-            border: none;
-            color: inherit;
-        }
-
-
     </style>
 </head>
 
@@ -164,6 +51,12 @@
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
                                 data-bs-target="#registroModal">Registrar Elementos</a></li>
+
+                        <li>
+                            <a class="dropdown-item" href="#" data-bs-toggle="modal"
+                                data-bs-target="#editarPerfilModal">Editar Perfil</a>
+                        </li>
+
                         <li>
                             <a class="dropdown-item" href="{{ route('logout') }}"
                                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -178,17 +71,31 @@
             </ul>
         </div>
     </nav>
-<!-- Bloque para mostrar mensajes de éxito -->
-@if (session('success'))
-<div class="alert alert-success text-center">
-    {{ session('success') }}
-</div>
-@endif
+
+    <!-- Bloque para mostrar mensajes de éxito -->
+    @if (session('success'))
+        <div id="success-message" class="alert alert-success text-center">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <!-- Bloque para mostrar mensajes de error -->
+    @if (session('error'))
+        <div id="error-message" class="alert alert-danger text-center">
+            {{ session('error') }}
+        </div>
+    @endif
 
     <div class="container-fluid mt-4">
         <div class="left-panel">
-            <div class="welcome-text">Bienvenido <br />{{ Auth::user()->nombres }} {{ Auth::user()->apellidos }}</div>
-            <div class="other-welcome"><br /><strong> Estos son tus elementos:</strong> </div>
+            <div class="welcome-text" id="welcomeMessage">
+                Bienvenido <br />{{ Auth::user()->nombres }} {{ Auth::user()->apellidos }}
+            </div>
+
+            <div class="other-welcome">
+                <br /><strong> Estos son tus elementos:</strong>
+            </div>
+
         </div>
         <div class="right-panel">
             @foreach ($elementos as $elemento)
@@ -217,7 +124,7 @@
                     </div>
                 </div>
 
-                <!-- Modal para ver más detalles -->
+                <!-- Modal para ver más detalles y editar -->
                 <div class="modal fade" id="modal-{{ $elemento->id }}" tabindex="-1"
                     aria-labelledby="modalLabel-{{ $elemento->id }}" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
@@ -228,46 +135,97 @@
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <!-- Mostrar la foto si existe -->
-                                @if ($elemento->foto)
-                                    <img src="{{ asset('storage/' . $elemento->foto) }}" alt="Foto del elemento"
-                                        class="img-fluid mb-3">
-                                @endif
+                                <!-- Vista de detalles -->
+                                <div id="details-view-{{ $elemento->id }}" class="details-view">
+                                    @if ($elemento->foto)
+                                        <img src="{{ asset('storage/' . $elemento->foto) }}" alt="Foto del elemento"
+                                            class="img-fluid mb-3">
+                                    @endif
+                                    <p><strong>Categoría:</strong> {{ $elemento->categoria->nombre }}</p>
+                                    <p><strong>Descripción:</strong> {{ $elemento->descripcion }}</p>
+                                    <p><strong>Marca:</strong> {{ $elemento->marca }}</p>
+                                    <p><strong>Modelo:</strong> {{ $elemento->modelo }}</p>
+                                    <p><strong>Serial:</strong> {{ $elemento->serie }}</p>
+                                    <p><strong>Especificaciones Técnicas:</strong>
+                                        {{ $elemento->especificaciones_tecnicas }}</p>
+                                </div>
 
-                                <!-- Mostrar la categoría -->
-                                <p><strong>Categoría:</strong> {{ $elemento->categoria->nombre }}</p>
-                                <!-- Mostrar la descripción -->
-                                <p><strong>Descripción:</strong> {{ $elemento->descripcion }}</p>
-
-                                <!-- Mostrar la marca -->
-                                <p><strong>Marca:</strong> {{ $elemento->marca }}</p>
-
-                                <!-- Mostrar el modelo -->
-                                <p><strong>Modelo:</strong> {{ $elemento->modelo }}</p>
-
-                                <!-- Mostrar el número de serie -->
-                                <p><strong>Serial:</strong> {{ $elemento->serie }}</p>
-
-                                <!-- Mostrar especificaciones técnicas -->
-                                <p><strong>Especificaciones Técnicas:</strong>
-                                    {{ $elemento->especificaciones_tecnicas }}</p>
+                                <!-- Vista de edición (oculta por defecto) -->
+                                <div id="edit-view-{{ $elemento->id }}" class="edit-view d-none">
+                                    <form action="{{ route('elementos.update', $elemento->id) }}" method="POST"
+                                        enctype="multipart/form-data">
+                                        @csrf
+                                        @method('PUT')
+                                        <div class="mb-3">
+                                            <label for="categoria_id-{{ $elemento->id }}"
+                                                class="form-label">Categoría</label>
+                                            <select id="categoria_id-{{ $elemento->id }}" name="categoria_id"
+                                                class="form-select" required>
+                                                @foreach ($categorias as $categoria)
+                                                    <option value="{{ $categoria->id }}"
+                                                        {{ $categoria->id == $elemento->categoria_id ? 'selected' : '' }}>
+                                                        {{ $categoria->nombre }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="descripcion-{{ $elemento->id }}"
+                                                class="form-label">Descripción</label>
+                                            <input type="text" id="descripcion-{{ $elemento->id }}"
+                                                name="descripcion" class="form-control"
+                                                value="{{ $elemento->descripcion }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="marca-{{ $elemento->id }}" class="form-label">Marca</label>
+                                            <input type="text" id="marca-{{ $elemento->id }}" name="marca"
+                                                class="form-control" value="{{ $elemento->marca }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="modelo-{{ $elemento->id }}" class="form-label">Modelo</label>
+                                            <input type="text" id="modelo-{{ $elemento->id }}" name="modelo"
+                                                class="form-control" value="{{ $elemento->modelo }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="serie-{{ $elemento->id }}" class="form-label">Número de
+                                                Serie</label>
+                                            <input type="text" id="serie-{{ $elemento->id }}" name="serie"
+                                                class="form-control" value="{{ $elemento->serie }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="especificaciones_tecnicas-{{ $elemento->id }}"
+                                                class="form-label">Especificaciones Técnicas</label>
+                                            <textarea id="especificaciones_tecnicas-{{ $elemento->id }}" name="especificaciones_tecnicas" class="form-control"
+                                                rows="3" required>{{ $elemento->especificaciones_tecnicas }}</textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="foto-{{ $elemento->id }}" class="form-label">Foto</label>
+                                            <input type="file" id="foto-{{ $elemento->id }}" name="foto"
+                                                class="form-control" accept="image/*">
+                                            @if ($elemento->foto)
+                                                <img src="{{ asset('storage/' . $elemento->foto) }}"
+                                                    alt="Foto del elemento" class="img-fluid mt-3">
+                                            @endif
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                <div class="modal-footer">
-                                    <!-- Botón de Eliminar -->
-                                    <form action="{{ route('elementos.destroy', $elemento->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este elemento?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger">Eliminar</button>
-                                    </form>
-                                
-                                    <!-- Botón de Editar -->
-                                    <a href="{{ route('elementos.edit', $elemento->id) }}" class="btn btn-primary">Editar</a>
-                                
-                                    <!-- Botón de Cerrar -->
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                </div>
+                                <!-- Botón para eliminar elemento -->
+                                <form action="{{ route('elementos.destroy', $elemento->id) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                                </form>
+                                <!-- Botón para guardar cambios (oculto por defecto) -->
+                                <button type="button" class="btn btn-primary d-none"
+                                    id="save-changes-btn-{{ $elemento->id }}"
+                                    onclick="saveChanges({{ $elemento->id }})">Guardar Cambios</button>
+                                <!-- Botón para editar elementos -->
+                                <button type="button" class="btn btn-warning"
+                                    onclick="editElement({{ $elemento->id }})">Editar</button>
+                                <!-- Botón para cerrar el modal -->
+                                <button type="button" class="btn btn-secondary"
+                                    onclick="closeModal({{ $elemento->id }})">Cerrar</button>
                             </div>
                         </div>
                     </div>
@@ -276,8 +234,9 @@
         </div>
     </div>
 
-    <!-- Modal para el registro de elementos -->
-    <div class="modal fade" id="registroModal" tabindex="-1" aria-labelledby="registroModalLabel" aria-hidden="true">
+    <!-- Modal para registrar elementos -->
+    <div class="modal fade" id="registroModal" tabindex="-1" aria-labelledby="registroModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -285,83 +244,177 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div>
-                        
-
-                        <form id="elementos-form" action="{{ route('elementos.store') }}" method="POST"
-                            enctype="multipart/form-data">
-                            @csrf
-                            <div id="form-container">
-                                <!-- Formulario de Elemento -->
-                                <div class="elemento-form mb-3">
-                                    <div class="mb-3">
-                                        <label for="categoria_id" class="form-label">Categoría</label>
-                                        <select id="categoria_id" name="categoria_id" class="form-select" required>
-                                            <option value="" disabled selected>Selecciona una categoría</option>
-                                            @foreach ($categorias as $categoria)
-                                                <option value="{{ $categoria->id }}">{{ $categoria->nombre }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="descripcion" class="form-label">Descripción</label>
-                                        <input type="text" id="descripcion" name="descripcion"
-                                            class="form-control" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="marca" class="form-label">Marca</label>
-                                        <input type="text" id="marca" name="marca" class="form-control"
-                                            required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="modelo" class="form-label">Modelo</label>
-                                        <input type="text" id="modelo" name="modelo" class="form-control"
-                                            required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="serie" class="form-label">Número de Serie</label>
-                                        <input type="text" id="serie" name="serie" class="form-control"
-                                            required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="especificaciones_tecnicas" class="form-label">Especificaciones
-                                            Técnicas</label>
-                                        <textarea id="especificaciones_tecnicas" name="especificaciones_tecnicas" class="form-control" rows="3"
-                                            required></textarea>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="foto" class="form-label">Foto</label>
-                                        <input type="file" id="foto" name="foto" class="form-control"
-                                            accept="image/*">
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Registrar</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+                    <form action="{{ route('elementos.store') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="categoria_id" class="form-label">Categoría</label>
+                            <select id="categoria_id" name="categoria_id" class="form-select" required>
+                                @foreach ($categorias as $categoria)
+                                    <option value="{{ $categoria->id }}">{{ $categoria->nombre }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label">Descripción</label>
+                            <input type="text" id="descripcion" name="descripcion" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="marca" class="form-label">Marca</label>
+                            <input type="text" id="marca" name="marca" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modelo" class="form-label">Modelo</label>
+                            <input type="text" id="modelo" name="modelo" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="serie" class="form-label">Número de Serie</label>
+                            <input type="text" id="serie" name="serie" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="especificaciones_tecnicas" class="form-label">Especificaciones
+                                Técnicas</label>
+                            <textarea id="especificaciones_tecnicas" name="especificaciones_tecnicas" class="form-control" rows="3"
+                                required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="foto" class="form-label">Foto</label>
+                            <input type="file" id="foto" name="foto" class="form-control"
+                                accept="image/*">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Registrar</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Modal para editar perfil -->
+    <div class="modal fade" id="editarPerfilModal" tabindex="-1" aria-labelledby="editarPerfilModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editarPerfilModalLabel">Editar Perfil</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editarPerfilForm" method="POST" action="{{ route('updateProfile') }}">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="nombres" class="form-label">Nombres:</label>
+                            <input type="text" id="nombres" name="nombres" class="form-control"
+                                value="{{ Auth::user()->nombres }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="apellidos" class="form-label">Apellidos:</label>
+                            <input type="text" id="apellidos" name="apellidos" class="form-control"
+                                value="{{ Auth::user()->apellidos }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tipo_documento" class="form-label">Tipo de Documento:</label>
+                            <select id="tipo_documento" name="tipo_documento" class="form-select" required>
+                                <option value="CC" {{ Auth::user()->tipo_documento == 'CC' ? 'selected' : '' }}>
+                                    Cédula de Ciudadanía</option>
+                                <option value="TI" {{ Auth::user()->tipo_documento == 'TI' ? 'selected' : '' }}>
+                                    Tarjeta de Identidad</option>
+                                <option value="CE" {{ Auth::user()->tipo_documento == 'CE' ? 'selected' : '' }}>
+                                    Cédula de Extranjería</option>
+                                <option value="PP" {{ Auth::user()->tipo_documento == 'PP' ? 'selected' : '' }}>
+                                    Pasaporte</option>
+                                <option value="RC" {{ Auth::user()->tipo_documento == 'RC' ? 'selected' : '' }}>
+                                    Registro Civil</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="numero_documento" class="form-label">Número de Documento:</label>
+                            <input type="text" id="numero_documento" name="numero_documento" class="form-control"
+                                value="{{ Auth::user()->numero_documento }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="correo_personal" class="form-label">Correo Personal:</label>
+                            <input type="email" id="correo_personal" name="correo_personal" class="form-control"
+                                value="{{ Auth::user()->correo_personal }}" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="correo_institucional" class="form-label">Correo Institucional:</label>
+                            <input type="email" id="correo_institucional" name="correo_institucional"
+                                class="form-control" value="{{ Auth::user()->correo_institucional }}" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="telefono" class="form-label">Teléfono:</label>
+                            <input type="tel" id="telefono" name="telefono" class="form-control"
+                                value="{{ Auth::user()->telefono }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="rol" class="form-label">Rol:</label>
+                            <select id="rol" name="rol" class="form-select" required>
+                                <option value="3" {{ Auth::user()->rol == 3 ? 'selected' : '' }}>Aprendiz
+                                </option>
+                                <option value="4" {{ Auth::user()->rol == 4 ? 'selected' : '' }}>Visitante
+                                </option>
+                                <option value="5" {{ Auth::user()->rol == 5 ? 'selected' : '' }}>Funcionario
+                                </option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="numero_ficha" class="form-label">Número de Ficha:</label>
+                            <input type="text" id="numero_ficha" name="numero_ficha" class="form-control"
+                                value="{{ Auth::user()->numero_ficha }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contrasena" class="form-label">Contraseña:</label>
+                            <input type="password" id="contrasena" name="contrasena" class="form-control" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contrasena_confirmation" class="form-label">Confirmar Contraseña:</label>
+                            <input type="password" id="contrasena_confirmation" name="contrasena_confirmation"
+                                class="form-control" readonly>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </form>
+
+                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                    <script>
+                        $(document).ready(function() {
+                            $('#editarPerfilForm').on('submit', function(event) {
+                                event.preventDefault(); // Evita que el formulario se envíe de la forma tradicional
+
+                                $.ajax({
+                                    url: '{{ route('updateProfile') }}', // Cambia esta URL si es diferente
+                                    type: 'POST',
+                                    data: $(this).serialize(),
+                                    success: function(response) {
+                                        alert(response.success); // Muestra mensaje de éxito
+                                        $('#editarPerfilModal').modal('hide'); // Cierra el modal
+                                        // Actualiza la vista si es necesario
+                                        updateUserProfile(response.user);
+                                    },
+                                    error: function(xhr) {
+                                        alert(xhr.responseJSON.error); // Muestra mensaje de error
+                                    }
+                                });
+                            });
+
+                            function updateUserProfile(user) {
+                                // Actualiza los elementos en la vista con la información del usuario
+                                // Por ejemplo:
+                                $('#userName').text(user.nombres + ' ' + user.apellidos);
+                                $('#userEmail').text(user.correo_institucional);
+                                // Añade más actualizaciones según sea necesario
+                            }
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('js/scripts.js') }}"></script>
-    <script>
-        $(document).ready(function() {
-            const successMessage = $('.alert-success');
-            if (successMessage.length) {
-                setTimeout(() => {
-                    successMessage.fadeOut(500); // Desvanecer el mensaje en 0.5 segundos
-                }, 5000); // Mostrar el mensaje por 5 segundos antes de desvanecerlo
-            }
-        });
-    </script>
-    
 </body>
 
 </html>

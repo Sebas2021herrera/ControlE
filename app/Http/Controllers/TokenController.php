@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Token;
+use App\Models\User;
 use App\Models\Usuario;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
@@ -17,7 +18,7 @@ class TokenController extends Controller
             'contraseña' => 'required',
         ]);
 
-        $user = Usuario::where('correo_personal', $request->correo_personal)->first();
+        $user = User::where('correo_personal', $request->correo_personal)->first();
 
         if ($user && Hash::check($request->contraseña, $user->getAuthPassword())) {
             $token = Str::random(64);

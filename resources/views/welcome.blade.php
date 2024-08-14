@@ -14,7 +14,7 @@
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="collapse navbar-collapse" id="navbarNav">  
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="#">Inicio</a>
@@ -23,7 +23,7 @@
                     <a class="nav-link" href="{{ route('login') }}">Iniciar sesión</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('register') }}">Registrarse</a>
+                    <a class="nav-link" href="{{ route('create') }}">Registrarse</a>
                 </li>
             </ul>
         </div>
@@ -36,7 +36,7 @@
             <p class="lead animated fadeIn">Control de elementos para la Regional Casanare, SENA.</p>
             <div class="buttons mt-4">
                 <a class="btn btn-light btn-lg animated bounceIn" href="{{ route('login') }}" role="button">Iniciar sesión</a>
-                <a class="btn btn-secondary btn-lg ml-3 animated bounceIn" href="{{ route('register') }}" role="button">Registrarse</a>
+                <a class="btn btn-secondary btn-lg ml-3 animated bounceIn" href="{{ route('create') }}" role="button">Registrarse</a>
             </div>
         </div>
     </header>

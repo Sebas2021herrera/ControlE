@@ -1,0 +1,98 @@
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 90%;
+    max-width: 500px;
+    margin: 10px;
+    max-height: 80vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; /* Para desplazamiento suave en dispositivos táctiles */
+}
+
+.card::-webkit-scrollbar {
+    width: 0px; /* Oculta la barra de desplazamiento en Chrome, Safari y Opera */
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin: 10px 0 5px;
+    font-weight: bold;
+}
+
+input, select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.error {
+    color: red;
+    font-size: 14px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
+@media (max-width: 600px) {
+    .card {
+        width: 100%;
+        border-radius: 0;
+        box-shadow: none;
+        max-height: 100vh;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 8px;
+    }
+}
+
+

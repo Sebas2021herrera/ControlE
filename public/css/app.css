@@ -5,11 +5,12 @@ body {
     height: 100vh;
     display: flex;
     flex-direction: column;
+    
 }
 
 .hero {
     height: 100vh;
-    background: url('') no-repeat center center;
+    background: url('/imagenes/backia-transformed.jpeg') no-repeat center center;
     background-size: cover;
     display: flex;
     align-items: center;

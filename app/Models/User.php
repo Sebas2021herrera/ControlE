@@ -1,47 +1,38 @@
 <?php
-
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable; // Utiliza los traits HasFactory y Notifiable
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    protected $table = 'usuarios'; // Tabla asociada en la base de datos
+
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'nombres', 'apellidos', 'tipo_documento', 'numero_documento',
+        'correo_personal', 'correo_institucional', 'telefono', 'roles_id',
+        'numero_ficha', 'contraseña',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
-        'password',
-        'remember_token',
+        'contraseña', 'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    public function getAuthPassword()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->contraseña;
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'roles_id'); // Relación con el modelo Role
+    }
+
+    public function elementos()
+    {
+        return $this->hasMany(Elemento::class, 'usuario_id'); // Relación de uno a muchos con el modelo Elemento
     }
 }

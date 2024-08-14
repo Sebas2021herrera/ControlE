@@ -1,90 +1,39 @@
-.custom-card {
-    width: 100%;
-    height: 322px;
-    max-width: 320px;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    margin-top: -20px; /* Ajuste para centrar verticalmente */
-}
-.custom-card-header {
-    background-color: #202020; /* Gris claro */
-    color: #fff; /* Texto blanco */
-    font-size: 1.5em;
-    text-align: center;
-    font-weight: bold;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
+/* public/css/styles_login.css */
+
+body {
+    font-family: 'Work Sans', sans-serif;
+    background-color: #f8f9fa; /* Color de fondo para el cuerpo */
 }
 
-.logo-sena {
-    width: 149px;
-    height: 134px;
-    position: static; /* Posición estática para el logo */
+.logo-container img {
+    max-width: 200px; /* Ajusta el tamaño del logo */
+}
+
+.custom-card {
+    border-radius: 8px;
+    padding: 20px;
+    margin: 0 auto;
+}
+
+.card-header {
+    background-color: #343a40;
+    color: #ffffff;
+    font-size: 1.25rem;
+}
+
+.card-body {
+    padding: 20px;
 }
 
 .form-label {
-    text-align: left;
-    display: block;
-    margin-left: 2.5px; /* Margen izquierdo para etiquetas de formulario */
+    font-weight: bold;
 }
 
 .footer-text {
-    text-decoration: underline;
-    white-space: nowrap; /* Evita el salto de línea */
-    margin-top: 30px; /* Margen superior */
-    margin-bottom: 10px; /* Margen inferior */
-}
-
-.remember-link {
-    text-align: left;
-    display: block;
-    margin-top: 10px;
-    margin-left: 2.5px; /* Margen izquierdo para enlaces */
-    margin-bottom: 3px; /* Margen inferior para enlaces */
-}
-
-.remember-link a {
-    text-decoration: underline;
-    cursor: pointer;
-    color: black; /* Color del enlace */
-}
-
-.form-group {
-    margin-bottom: 15px; /* Margen inferior para grupos de formulario */
-}
-
-form {
-    margin-top: 0; /* Elimina el margen superior del formulario */
-}
-
-.form-control {
-    margin: auto; /* Centra horizontalmente */
-    width: 272px;
-    height: 40px;
-    border-radius: 8px; /* Borde redondeado */
-}
-
-.btn-block {
-    margin: auto; /* Centra horizontalmente */
-    margin-top: 30px; /* Margen superior */
-    width: 272px;
-    height: 40px;
-    border-radius: 8px; /* Borde redondeado */
+    color: #6c757d;
+    font-size: 0.875rem;
 }
 
 .bombilla {
-    margin-bottom: 11px;
-}
-.hero-content {
-    position: relative;
-    z-index: 2;
-    max-width: 600px;
-    padding: 20px;
-    background-color: rgba(28, 164, 28, 0.5); /* Fondo oscuro semitransparente */
-    border-radius: 10px;
+    max-width: 24px; /* Ajusta el tamaño del ícono */
 }

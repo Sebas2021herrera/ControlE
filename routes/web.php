@@ -36,7 +36,6 @@ Route::post('/update-profile', [AuthController::class, 'updateProfile'])->name('
     })->name('control.panel');
     Route::put('elementos/{id}', [ElementoController::class, 'update'])->name('elementos.update');
     Route::get('user/panel', [UserController::class, 'userPanel'])->name('user.panel');
-    Route::post('/updateProfile', [AuthController::class, 'updateProfile'])->name('updateProfile');
     Route::get('/editProfile', [AuthController::class, 'showEditProfile'])->name('editProfile');
     
 });

@@ -48,10 +48,10 @@
                     </div>
 
                     <div class="field">
-                        <label class="label" for="tipoDocumento">Tipo de Documento:</label>
+                        <label class="label" for="tipo_documento">Tipo de Documento:</label>
                         <div class="control">
-                            <div class="select @error('tipoDocumento') is-danger @enderror">
-                                <select id="tipoDocumento" name="tipoDocumento" required>
+                            <div class="select @error('tipo_documento') is-danger @enderror">
+                                <select id="tipo_documento" name="tipo_documento" required>
                                     <option value="" disabled selected>Seleccione un tipo de documento</option>
                                     <option value="CC">Cédula de Ciudadanía</option>
                                     <option value="TI">Tarjeta de Identidad</option>
@@ -61,15 +61,15 @@
                                 </select>
                             </div>
                         </div>
-                        @error('tipoDocumento')
+                        @error('tipo_documento')
                             <p class="help is-danger">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div class="field">
-                        <label class="label" for="numeroDocumento">Número de Documento:</label>
+                        <label class="label" for="numero_documento">Número de Documento:</label>
                         <div class="control">
-                            <input class="input @error('numeroDocumento') is-danger @enderror" type="text" id="numeroDocumento" name="numeroDocumento" value="{{ old('numeroDocumento') }}" required>
+                            <input class="input @error('numero_documento') is-danger @enderror" type="text" id="numero_documento" name="numero_documento" value="{{ old('numero_documento') }}" required>
                         </div>
                         @error('numeroDocumento')
                             <p class="help is-danger">{{ $message }}</p>
@@ -145,11 +145,11 @@
                     </div>
 
                     <div class="field">
-                        <label class="label" for="numeroFicha">Número de Ficha:</label>
+                        <label class="label" for="numero_ficha">Número de Ficha:</label>
                         <div class="control">
-                            <input class="input @error('numeroFicha') is-danger @enderror" type="text" id="numeroFicha" name="numeroFicha" value="{{ old('numeroFicha') }}" required>
+                            <input class="input @error('numero_ficha') is-danger @enderror" type="text" id="numero_ficha" name="numero_ficha" value="{{ old('numero_ficha') }}" required>
                         </div>
-                        @error('numeroFicha')
+                        @error('numero_ficha')
                             <p class="help is-danger">{{ $message }}</p>
                         @enderror
                     </div>

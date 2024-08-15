@@ -82,8 +82,8 @@ class AuthController extends Controller
 
         if ($validator->fails()) {
             return redirect()->back()
-                             ->withErrors($validator)
-                             ->withInput();
+                ->withErrors($validator)
+                ->withInput();
         }
 
         try {
@@ -105,12 +105,12 @@ class AuthController extends Controller
         } catch (QueryException $e) {
             if ($e->errorInfo[0] == '23505') { // Código de error para violación de unicidad en PostgreSQL
                 return redirect()->back()->with('error', 'Error: El documento o correo ya está registrado.')
-                                         ->withInput();
+                    ->withInput();
             }
 
             // Otra lógica de manejo de errores
             return redirect()->back()->with('error', 'Ha ocurrido un error al registrar el usuario.')
-                                     ->withInput();
+                ->withInput();
         }
     }
 
@@ -131,9 +131,9 @@ class AuthController extends Controller
                 'correo_personal' => $user->correo_personal,
                 'correo_institucional' => $user->correo_institucional,
                 'contrasena' => $user->contrasena,
-                'tipoDocumento' => $user->tipo_documento,
-                'numeroDocumento' => $user->numero_documento,
-                'numeroFicha' => $user->numero_ficha,
+                'tipo_documento' => $user->tipo_documento,
+                'numero_documento' => $user->numero_documento,
+                'numero_ficha' => $user->numero_ficha,
             ]);
         }
 
@@ -141,12 +141,12 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'nombres' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
-            'tipoDocumento' => 'required|string|max:255',
-            'numeroDocumento' => 'required|string|max:255',
+            'tipo_documento' => 'required|string|max:255',
+            'numero_documento' => 'required|string|max:255',
             'correo_personal' => 'required|email|max:255',
             'correo_institucional' => 'required|email|max:255',
             'telefono' => 'required|string|max:20',
-            'numeroFicha' => 'required|string|max:255',
+            'numero_ficha' => 'required|string|max:255',
         ]);
 
         if ($validator->fails()) {

@@ -346,7 +346,7 @@
                                 value="{{ Auth::user()->telefono }}" required>
                         </div>
                         <div class="mb-3">
-                            <label for="rol" class="form-label">Rol:</label>
+                            <label for="rol" class="form-label">Rol:</label>  
                             <select id="rol" name="rol" class="form-select" required>
                                 <option value="3" {{ Auth::user()->rol == 3 ? 'selected' : '' }}>Aprendiz
                                 </option>

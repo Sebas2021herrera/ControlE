@@ -91,11 +91,22 @@
             <div class="welcome-text" id="welcomeMessage">
                 Bienvenido <br />{{ Auth::user()->nombres }} {{ Auth::user()->apellidos }}
             </div>
-
-            <div class="other-welcome">
-                <br /><strong> Estos son tus elementos:</strong>
+            <!-- Mostrar la foto de perfil -->
+            <div class="image-container" style="margin-top: 15px;">
+                @if (isset($usuario) && $usuario->foto && file_exists(storage_path('app/public/fotos_perfil/' . $usuario->foto)))
+                    <img src="{{ asset('storage/fotos_perfil/' . $usuario->foto) }}"
+                         alt="Foto de perfil" class="foto-perfil"
+                         style="width: 150px; height: 150px; object-fit: cover; border-radius: 20px;">
+                @else
+                    <img src="{{ asset('imagenes/sin_foto_perfil.webp') }}"
+                         alt="Foto de perfil predeterminada" class="foto-perfil"
+                         style="width: 150px; height: 150px; object-fit: cover; border-radius: 20px;">
+                @endif
             </div>
-
+        
+            <div class="other-welcome">
+                <br /><strong>Estos son tus elementos:</strong>
+            </div>
         </div>
         <div class="right-panel">
             @foreach ($elementos as $elemento)
@@ -279,7 +290,11 @@
                         <div class="mb-3">
                             <label for="foto" class="form-label">Foto</label>
                             <input type="file" id="foto" name="foto" class="form-control"
-                                accept="image/*">
+                                accept="image/*" onchange="previewImage(event)">
+                        </div>
+                        <div class="mb-3">
+                            <img id="preview" src="#" alt="Previsualización de la imagen"
+                                style="display: none; max-width: 100%; height: auto;">
                         </div>
                         <button type="submit" class="btn btn-primary">Registrar</button>
                     </form>
@@ -287,6 +302,26 @@
             </div>
         </div>
     </div>
+
+    <!-- Script para previsualizar la imagen -->
+    <script>
+        function previewImage(event) {
+            const reader = new FileReader();
+            const preview = document.getElementById('preview');
+
+            reader.onload = function() {
+                preview.src = reader.result;
+                preview.style.display = 'block';
+            }
+
+            if (event.target.files.length > 0) {
+                reader.readAsDataURL(event.target.files[0]);
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+    </script>
+
 
     <!-- Modal para editar perfil -->
     <div class="modal fade" id="editarPerfilModal" tabindex="-1" aria-labelledby="editarPerfilModalLabel"
@@ -346,7 +381,7 @@
                                 value="{{ Auth::user()->telefono }}" required>
                         </div>
                         <div class="mb-3">
-                            <label for="rol" class="form-label">Rol:</label>  
+                            <label for="rol" class="form-label">Rol:</label>
                             <select id="rol" name="rol" class="form-select" required>
                                 <option value="3" {{ Auth::user()->rol == 3 ? 'selected' : '' }}>Aprendiz
                                 </option>
@@ -452,30 +487,7 @@
         });
     </script>
 
-    <script>
-        $(document).ready(function() {
-            $('#editarPerfilForm').on('submit', function(event) {
-                event.preventDefault();
 
-                $.ajax({
-                    url: $(this).attr('action'),
-                    method: 'POST',
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        $('#editarPerfilModal').modal('hide');
-                        // Mostrar mensaje de éxito
-                        $('#success-message').text(response.success).fadeIn().delay(5000)
-                            .fadeOut();
-                    },
-                    error: function(response) {
-                        // Manejar errores si es necesario
-                        $('#error-message').text('Ocurrió un error al actualizar el perfil.')
-                            .fadeIn().delay(5000).fadeOut();
-                    }
-                });
-            });
-        });
-    </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {

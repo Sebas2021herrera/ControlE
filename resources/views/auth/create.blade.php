@@ -1,19 +1,23 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulario de Registro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"> <!-- Enlaza el archivo CSS de Bulma -->
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <!-- Enlaza el archivo CSS de Bulma -->
     <link rel="stylesheet" href="{{ asset('css/styles_create.css') }}"> <!-- Enlaza el archivo CSS personalizado -->
 </head>
+
 <body>
     <div class="container">
         <div class="card">
             <div class="card-content">
                 <h2 class="title is-4">Registro de Usuarios</h2>
- 
+
                 @if ($errors->any())
                     <div class="notification is-danger">
                         <ul>
@@ -24,13 +28,14 @@
                     </div>
                 @endif
 
-                <form id="registroForm" method="POST" action="{{ route('createpost') }}">
+                <form id="registroForm" method="POST" action="{{ route('createpost') }}" enctype="multipart/form-data">
                     @csrf <!-- Para Laravel CSRF Token -->
-                    
+
                     <div class="field">
                         <label class="label" for="nombres">Nombres:</label>
                         <div class="control">
-                            <input class="input @error('nombres') is-danger @enderror" type="text" id="nombres" name="nombres" value="{{ old('nombres') }}" required>
+                            <input class="input @error('nombres') is-danger @enderror" type="text" id="nombres"
+                                name="nombres" value="{{ old('nombres') }}" required>
                         </div>
                         @error('nombres')
                             <p class="help is-danger">{{ $message }}</p>
@@ -40,7 +45,8 @@
                     <div class="field">
                         <label class="label" for="apellidos">Apellidos:</label>
                         <div class="control">
-                            <input class="input @error('apellidos') is-danger @enderror" type="text" id="apellidos" name="apellidos" value="{{ old('apellidos') }}" required>
+                            <input class="input @error('apellidos') is-danger @enderror" type="text" id="apellidos"
+                                name="apellidos" value="{{ old('apellidos') }}" required>
                         </div>
                         @error('apellidos')
                             <p class="help is-danger">{{ $message }}</p>
@@ -69,9 +75,11 @@
                     <div class="field">
                         <label class="label" for="numero_documento">Número de Documento:</label>
                         <div class="control">
-                            <input class="input @error('numero_documento') is-danger @enderror" type="text" id="numero_documento" name="numero_documento" value="{{ old('numero_documento') }}" required>
+                            <input class="input @error('numero_documento') is-danger @enderror" type="text"
+                                id="numero_documento" name="numero_documento" value="{{ old('numero_documento') }}"
+                                required>
                         </div>
-                        @error('numeroDocumento')
+                        @error('numero_documento')
                             <p class="help is-danger">{{ $message }}</p>
                         @enderror
                     </div>
@@ -79,7 +87,9 @@
                     <div class="field">
                         <label class="label" for="correo_personal">Correo Personal:</label>
                         <div class="control">
-                            <input class="input @error('correo_personal') is-danger @enderror" type="email" id="correo_personal" name="correo_personal" value="{{ old('correo_personal') }}" required>
+                            <input class="input @error('correo_personal') is-danger @enderror" type="email"
+                                id="correo_personal" name="correo_personal" value="{{ old('correo_personal') }}"
+                                required>
                         </div>
                         @error('correo_personal')
                             <p class="help is-danger">{{ $message }}</p>
@@ -89,7 +99,9 @@
                     <div class="field">
                         <label class="label" for="correo_institucional">Correo Institucional:</label>
                         <div class="control">
-                            <input class="input @error('correo_institucional') is-danger @enderror" type="email" id="correo_institucional" name="correo_institucional" value="{{ old('correo_institucional') }}" required>
+                            <input class="input @error('correo_institucional') is-danger @enderror" type="email"
+                                id="correo_institucional" name="correo_institucional"
+                                value="{{ old('correo_institucional') }}" required>
                         </div>
                         @error('correo_institucional')
                             <p class="help is-danger">{{ $message }}</p>
@@ -97,31 +109,35 @@
                     </div>
 
                     <div class="field">
-                        <label class="label" for="contrasena">Contraseña:</label>
+                        <label class="label" for="contraseña">Contraseña:</label>
                         <div class="control">
-                            <input class="input @error('contrasena') is-danger @enderror" type="password" id="contrasena" name="contrasena" required>
+                            <input class="input @error('contraseña') is-danger @enderror" type="password"
+                                id="contraseña" name="contraseña" required>
                         </div>
-                        <p id="contrasenaError" class="help is-danger"></p>
-                        @error('contrasena')
+                        <p id="contraseaError" class="help is-danger"></p>
+                        @error('contraseña')
                             <p class="help is-danger">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div class="field">
-                        <label class="label" for="contrasena_confirmation">Confirmar Contraseña:</label>
+                        <label class="label" for="contraseña_confirmation">Confirmar Contraseña:</label>
                         <div class="control">
-                            <input class="input @error('contrasena_confirmation') is-danger @enderror" type="password" id="contrasena_confirmation" name="contrasena_confirmation" required>
+                            <input class="input @error('contraseña_confirmation') is-danger @enderror" type="password"
+                                id="contraseña_confirmation" name="contraseña_confirmation" required>
                         </div>
                         <p id="confirmarContrasenaError" class="help is-danger"></p>
-                        @error('contrasena_confirmation')
+                        @error('contraseña_confirmation')
                             <p class="help is-danger">{{ $message }}</p>
                         @enderror
                     </div>
+
 
                     <div class="field">
                         <label class="label" for="telefono">Teléfono:</label>
                         <div class="control">
-                            <input class="input @error('telefono') is-danger @enderror" type="tel" id="telefono" name="telefono" value="{{ old('telefono') }}" required>
+                            <input class="input @error('telefono') is-danger @enderror" type="tel" id="telefono"
+                                name="telefono" value="{{ old('telefono') }}" required>
                         </div>
                         @error('telefono')
                             <p class="help is-danger">{{ $message }}</p>
@@ -135,7 +151,8 @@
                                 <select id="rol" name="rol" required>
                                     <option value="3" {{ old('rol') == 3 ? 'selected' : '' }}>Aprendiz</option>
                                     <option value="4" {{ old('rol') == 4 ? 'selected' : '' }}>Visitante</option>
-                                    <option value="5" {{ old('rol') == 5 ? 'selected' : '' }}>Funcionario</option>
+                                    <option value="5" {{ old('rol') == 5 ? 'selected' : '' }}>Funcionario
+                                    </option>
                                 </select>
                             </div>
                         </div>
@@ -147,11 +164,26 @@
                     <div class="field">
                         <label class="label" for="numero_ficha">Número de Ficha:</label>
                         <div class="control">
-                            <input class="input @error('numero_ficha') is-danger @enderror" type="text" id="numero_ficha" name="numero_ficha" value="{{ old('numero_ficha') }}" required>
+                            <input class="input @error('numero_ficha') is-danger @enderror" type="text"
+                                id="numero_ficha" name="numero_ficha" value="{{ old('numero_ficha') }}" required>
                         </div>
                         @error('numero_ficha')
                             <p class="help is-danger">{{ $message }}</p>
                         @enderror
+                    </div>
+
+                    <div class="field">
+                        <label class="label" for="foto">Foto de Perfil:</label>
+                        <div class="control">
+                            <input class="input" type="file" id="foto" name="foto" accept="image/*"
+                                onchange="previewImage(event)">
+                        </div>
+                        @error('foto')
+                            <p class="help is-danger">{{ $message }}</p>
+                        @enderror
+                        <!-- Elemento para la previsualización -->
+                        <img id="preview" src="#" alt="Previsualización de Foto"
+                            style="display: none; margin-top: 10px; width: 150px; height: 150px; object-fit: cover;">
                     </div>
 
                     <div class="field">
@@ -165,28 +197,49 @@
     </div>
 
     <script>
-    document.getElementById('registroForm').addEventListener('submit', function(event) {
-        var contrasena = document.getElementById('contrasena').value;
-        var confirmarContrasena = document.getElementById('contrasena_confirmation').value;
-        var contrasenaError = document.getElementById('contrasenaError');
-        var confirmarContrasenaError = document.getElementById('confirmarContrasenaError');
+        function previewImage(event) {
+            var input = event.target;
+            var preview = document.getElementById('preview');
 
-        // Limpiar mensajes de error
-        contrasenaError.textContent = '';
-        confirmarContrasenaError.textContent = '';
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
 
-        if (contrasena.length < 6) {
-            contrasenaError.textContent = 'La contraseña debe tener al menos 6 caracteres.';
-            event.preventDefault(); // Evita el envío del formulario
-            return;
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.src = '#';
+                preview.style.display = 'none';
+            }
         }
+    </script>
 
-        if (contrasena !== confirmarContrasena) {
-            confirmarContrasenaError.textContent = 'Las contraseñas no coinciden.';
-            event.preventDefault(); // Evita el envío del formulario
-            return;
-        }
-    });
+    <script>
+        document.getElementById('registroForm').addEventListener('submit', function(event) {
+            var contrasena = document.getElementById('contrasena').value;
+            var confirmarContrasena = document.getElementById('contrasena_confirmation').value;
+            var contrasenaError = document.getElementById('contrasenaError');
+            var confirmarContrasenaError = document.getElementById('confirmarContrasenaError');
+
+            // Limpiar mensajes de error
+            contrasenaError.textContent = '';
+            confirmarContrasenaError.textContent = '';
+
+            if (contrasena.length < 6) {
+                contrasenaError.textContent = 'La contraseña debe tener al menos 6 caracteres.';
+                event.preventDefault(); // Evita el envío del formulario
+                return;
+            }
+
+            if (contrasena !== confirmarContrasena) {
+                confirmarContrasenaError.textContent = 'Las contraseñas no coinciden.';
+                event.preventDefault(); // Evita el envío del formulario
+                return;
+            }
+        });
     </script>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -202,5 +255,18 @@
             }
         });
     </script>
+    <script>
+        function validateFileSize(event) {
+            const file = event.target.files[0];
+            const maxSize = 6 * 1024 * 1024; // 6 MB en bytes
+
+            if (file && file.size > maxSize) {
+                alert('El tamaño del archivo no debe superar los 6 MB.');
+                event.target.value = ''; // Limpia el campo de archivo
+            }
+        }
+    </script>
+
 </body>
+
 </html>

@@ -18,15 +18,18 @@ Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
 // Rutas protegidas por autenticación
 Route::middleware('auth')->group(function () {
-// routes/web.php
-Route::post('/update-profile', [AuthController::class, 'updateProfile'])->name('updateProfile');
+    // Ruta para actualizar el perfil
+    Route::post('/update-profile', [AuthController::class, 'updateProfile'])->name('updateProfile');
+    
     // Rutas para la gestión de elementos
     Route::get('elementos/create', [ElementoController::class, 'create'])->name('elementos.create');
     Route::post('/elementos', [ElementoController::class, 'store'])->name('elementos.store');
-    // Nueva ruta para eliminar un elemento
+    // Ruta para eliminar un elemento
     Route::delete('/elementos/{id}', [ElementoController::class, 'destroy'])->name('elementos.destroy');
-    // Nueva ruta para editar un elemento
+    // Ruta para editar un elemento
     Route::get('/elementos/{id}/edit', [ElementoController::class, 'edit'])->name('elementos.edit');
+    Route::put('/elementos/{id}', [ElementoController::class, 'update'])->name('elementos.update');
+    
     // Rutas para los paneles de administración, control y usuario
     Route::get('admin/panel', function () {
         return view('index.vistaadmin');
@@ -34,8 +37,12 @@ Route::post('/update-profile', [AuthController::class, 'updateProfile'])->name('
     Route::get('control/panel', function () {
         return view('index.vistacontrol');
     })->name('control.panel');
-    Route::put('elementos/{id}', [ElementoController::class, 'update'])->name('elementos.update');
     Route::get('user/panel', [UserController::class, 'userPanel'])->name('user.panel');
-    Route::get('/editProfile', [AuthController::class, 'showEditProfile'])->name('editProfile');
+    Route::put('elementos/{id}', [ElementoController::class, 'update'])->name('elementos.update');
 
+    // Ruta para mostrar el perfil
+    Route::get('/editProfile', [AuthController::class, 'showEditProfile'])->name('editProfile');
+    Route::get('/usuario/{id}', [UserController::class, 'show'])->name('user.show');
+    Route::get('/usuario/panel', [UserController::class, 'mostrarPerfil']);
+    Route::get('/perfil', [UserController::class, 'mostrarPerfil'])->name('perfil');
 });

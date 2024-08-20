@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
+    /** 
      * Run the migrations.
      */
     public function up()
@@ -23,6 +23,7 @@ return new class extends Migration
             $table->foreignId('roles_id')->constrained('roles');
             $table->string('numero_ficha', 50);
             $table->string('contraseña', 255);
+            $table->string('foto')->nullable(); // Columna para la foto de perfil
             $table->timestamps();
         });
 

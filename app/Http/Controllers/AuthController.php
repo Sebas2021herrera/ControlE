@@ -39,9 +39,9 @@ class AuthController extends Controller
             'correo_personal' => 'required|email|max:255|unique:usuarios',
             'correo_institucional' => 'required|email|max:255|unique:usuarios',
             'telefono' => 'required|string|max:20',
-            'numero_ficha' => 'required|string|max:255',
             'contraseña' => 'required|string|min:6|confirmed',
-            'rol' => 'required|exists:roles,id',
+            'rol' => 'required|exists:roles,id', 
+            'numero_ficha' => $request->input('rol') == 3 ? 'required|string|max:255' : 'nullable|string|max:255',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:6144'
         ]);
 
@@ -58,7 +58,7 @@ class AuthController extends Controller
             $usuario->correo_personal = $request->correo_personal;
             $usuario->correo_institucional = $request->correo_institucional;
             $usuario->telefono = $request->telefono;
-            $usuario->numero_ficha = $request->numero_ficha;
+            $usuario->numero_ficha = $request->input('numero_ficha');
             $usuario->contraseña = Hash::make($request->contraseña);
             $usuario->roles_id = $request->rol;  // Asigna el rol seleccionado
 
@@ -96,12 +96,12 @@ class AuthController extends Controller
             $usuario = Auth::user();
             Log::info('Usuario autenticado', ['user' => $usuario]);
 
-            switch ($usuario->roles_id) {
-                case 1:
-                    return redirect()->route('admin.panel');
-                case 2:
-                    return redirect()->route('control.panel');
+            switch ($usuario->roles_id) { 
                 case 3:
+                    return redirect()->route('user.panel');
+                case 4:
+                    return redirect()->route('user.panel');
+                case 5:
                     return redirect()->route('user.panel');
                 default:
                     return redirect('/')->with('error', 'Rol no reconocido');

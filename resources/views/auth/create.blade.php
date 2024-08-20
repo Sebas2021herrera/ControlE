@@ -161,13 +161,13 @@
                         @enderror
                     </div>
 
-                    <div class="field">
-                        <label class="label" for="numero_ficha">Número de Ficha:</label>
+                    <div class="field" id="numeroFichaField">
+                        <label class="label" for="numeroFicha">Número de Ficha:</label>
                         <div class="control">
-                            <input class="input @error('numero_ficha') is-danger @enderror" type="text"
-                                id="numero_ficha" name="numero_ficha" value="{{ old('numero_ficha') }}" required>
+                            <input class="input @error('numeroFicha') is-danger @enderror" type="text"
+                                id="numeroFicha" name="numeroFicha" value="{{ old('numeroFicha') }}">
                         </div>
-                        @error('numero_ficha')
+                        @error('numeroFicha')
                             <p class="help is-danger">{{ $message }}</p>
                         @enderror
                     </div>
@@ -265,6 +265,28 @@
                 event.target.value = ''; // Limpia el campo de archivo
             }
         }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var rolSelect = document.getElementById('rol');
+            var numeroFichaField = document.getElementById('numeroFicha');
+            var numeroFichaDiv = numeroFichaField.closest('.field');
+
+            function toggleNumeroFicha() {
+                if (rolSelect.value == 3) { // Aprendiz
+                    numeroFichaDiv.style.display = 'block';
+                    numeroFichaField.setAttribute('required', 'required');
+                } else {
+                    numeroFichaDiv.style.display = 'none';
+                    numeroFichaField.removeAttribute('required');
+                }
+            }
+
+            rolSelect.addEventListener('change', toggleNumeroFicha);
+
+            // Llamar a la función para inicializar el estado correcto en caso de que el rol esté preseleccionado
+            toggleNumeroFicha();
+        });
     </script>
 
 </body>

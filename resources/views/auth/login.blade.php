@@ -59,7 +59,7 @@
                 <div class="text-center mt-3">
                     <a href="{{ route('create') }}">Registrate !</a>
                 </div>
-            </div>
+            </div>  
         </div>
         <p class="text-center footer-text mt-4">
             <img src="{{ asset('imagenes/logo_copyrigth.png') }}" class="bombilla"> Derechos reservados al SENA Regional Casanare, 2024.

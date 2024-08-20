@@ -30,7 +30,7 @@ class Usuario extends Authenticatable
     public function role()
     {
         return $this->belongsTo(Role::class, 'roles_id');
-    }
+    } 
 
     public function elementos()
     {

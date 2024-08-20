@@ -27,7 +27,7 @@ class UserController extends Controller
         // Retornar la vista 'index.vistausuario' con los datos del usuario
         return view('index.vistausuario', ['usuario' => $usuario]);
     }
-
+  
     // Mostrar el perfil del usuario autenticado
     public function mostrarPerfil()
     {

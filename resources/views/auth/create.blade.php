@@ -162,15 +162,16 @@
                     </div>
 
                     <div class="field" id="numeroFichaField">
-                        <label class="label" for="numeroFicha">Número de Ficha:</label>
+                        <label class="label" for="numero_ficha">Número de Ficha:</label>
                         <div class="control">
-                            <input class="input @error('numeroFicha') is-danger @enderror" type="text"
-                                id="numeroFicha" name="numeroFicha" value="{{ old('numeroFicha') }}">
+                            <input class="input @error('numero_ficha') is-danger @enderror" type="text"
+                                id="numero_ficha" name="numero_ficha" value="{{ old('numero_ficha') }}">
                         </div>
-                        @error('numeroFicha')
+                        @error('numero_ficha')
                             <p class="help is-danger">{{ $message }}</p>
                         @enderror
                     </div>
+
 
                     <div class="field">
                         <label class="label" for="foto">Foto de Perfil:</label>
@@ -269,7 +270,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var rolSelect = document.getElementById('rol');
-            var numeroFichaField = document.getElementById('numeroFicha');
+            var numeroFichaField = document.getElementById('numero_ficha'); // Actualizado
             var numeroFichaDiv = numeroFichaField.closest('.field');
 
             function toggleNumeroFicha() {
@@ -288,6 +289,7 @@
             toggleNumeroFicha();
         });
     </script>
+
 
 </body>
 

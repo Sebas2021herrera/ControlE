@@ -94,16 +94,16 @@
             <!-- Mostrar la foto de perfil -->
             <div class="image-container" style="margin-top: 15px;">
                 @if (isset($usuario) && $usuario->foto && file_exists(storage_path('app/public/fotos_perfil/' . $usuario->foto)))
-                    <img src="{{ asset('storage/fotos_perfil/' . $usuario->foto) }}"
-                         alt="Foto de perfil" class="foto-perfil"
-                         style="width: 150px; height: 150px; object-fit: cover; border-radius: 20px;">
+                    <img src="{{ asset('storage/fotos_perfil/' . $usuario->foto) }}" alt="Foto de perfil"
+                        class="foto-perfil"
+                        style="width: 150px; height: 150px; object-fit: cover; border-radius: 20px;">
                 @else
-                    <img src="{{ asset('imagenes/sin_foto_perfil.webp') }}"
-                         alt="Foto de perfil predeterminada" class="foto-perfil"
-                         style="width: 150px; height: 150px; object-fit: cover; border-radius: 20px;">
+                    <img src="{{ asset('imagenes/sin_foto_perfil.webp') }}" alt="Foto de perfil predeterminada"
+                        class="foto-perfil"
+                        style="width: 150px; height: 150px; object-fit: cover; border-radius: 20px;">
                 @endif
             </div>
-        
+
             <div class="other-welcome">
                 <br /><strong>Estos son tus elementos:</strong>
             </div>
@@ -302,27 +302,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Script para previsualizar la imagen -->
-    <script>
-        function previewImage(event) {
-            const reader = new FileReader();
-            const preview = document.getElementById('preview');
-
-            reader.onload = function() {
-                preview.src = reader.result;
-                preview.style.display = 'block';
-            }
-
-            if (event.target.files.length > 0) {
-                reader.readAsDataURL(event.target.files[0]);
-            } else {
-                preview.style.display = 'none';
-            }
-        }
-    </script>
-
-
     <!-- Modal para editar perfil -->
     <div class="modal fade" id="editarPerfilModal" tabindex="-1" aria-labelledby="editarPerfilModalLabel"
         aria-hidden="true">
@@ -408,37 +387,7 @@
                         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                     </form>
 
-                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                    <script>
-                        $(document).ready(function() {
-                            $('#editarPerfilForm').on('submit', function(event) {
-                                event.preventDefault(); // Evita que el formulario se envíe de la forma tradicional
 
-                                $.ajax({
-                                    url: '{{ route('updateProfile') }}', // Cambia esta URL si es diferente
-                                    type: 'POST',
-                                    data: $(this).serialize(),
-                                    success: function(response) {
-                                        alert(response.success); // Muestra mensaje de éxito
-                                        $('#editarPerfilModal').modal('hide'); // Cierra el modal
-                                        // Actualiza la vista si es necesario
-                                        updateUserProfile(response.user);
-                                    },
-                                    error: function(xhr) {
-                                        alert(xhr.responseJSON.error); // Muestra mensaje de error
-                                    }
-                                });
-                            });
-
-                            function updateUserProfile(user) {
-                                // Actualiza los elementos en la vista con la información del usuario
-                                // Por ejemplo:
-                                $('#userName').text(user.nombres + ' ' + user.apellidos);
-                                $('#userEmail').text(user.correo_institucional);
-                                // Añade más actualizaciones según sea necesario
-                            }
-                        });
-                    </script>
                 </div>
             </div>
         </div>
@@ -486,7 +435,24 @@
             }
         });
     </script>
+    <!-- Script para previsualizar la imagen -->
+    <script>
+        function previewImage(event) {
+            const reader = new FileReader();
+            const preview = document.getElementById('preview');
 
+            reader.onload = function() {
+                preview.src = reader.result;
+                preview.style.display = 'block';
+            }
+
+            if (event.target.files.length > 0) {
+                reader.readAsDataURL(event.target.files[0]);
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+    </script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
@@ -523,7 +489,37 @@
             }
         });
     </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#editarPerfilForm').on('submit', function(event) {
+                event.preventDefault(); // Evita que el formulario se envíe de la forma tradicional
 
+                $.ajax({
+                    url: '{{ route('updateProfile') }}', // Cambia esta URL si es diferente
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        alert(response.success); // Muestra mensaje de éxito
+                        $('#editarPerfilModal').modal('hide'); // Cierra el modal
+                        // Actualiza la vista si es necesario
+                        updateUserProfile(response.user);
+                    },
+                    error: function(xhr) {
+                        alert(xhr.responseJSON.error); // Muestra mensaje de error
+                    }
+                });
+            });
+
+            function updateUserProfile(user) {
+                // Actualiza los elementos en la vista con la información del usuario
+                // Por ejemplo:
+                $('#userName').text(user.nombres + ' ' + user.apellidos);
+                $('#userEmail').text(user.correo_institucional);
+                // Añade más actualizaciones según sea necesario
+            }
+        });
+    </script>
 
 </body>
 

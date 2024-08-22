@@ -370,11 +370,12 @@
                                 </option>
                             </select>
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3" id="numeroFichaFieldModal">
                             <label for="numero_ficha" class="form-label">Número de Ficha:</label>
-                            <input type="text" id="numero_ficha" name="numero_ficha" class="form-control"
-                                value="{{ Auth::user()->numero_ficha }}" required>
+                            <input type="text" id="numero_ficha_modal" name="numero_ficha" class="form-control"
+                                value="{{ Auth::user()->numero_ficha }}">
                         </div>
+
                         <div class="mb-3">
                             <label for="contrasena" class="form-label">Contraseña:</label>
                             <input type="password" id="contrasena" name="contrasena" class="form-control" readonly>
@@ -383,6 +384,7 @@
                             <label for="contrasena_confirmation" class="form-label">Confirmar Contraseña:</label>
                             <input type="password" id="contrasena_confirmation" name="contrasena_confirmation"
                                 class="form-control" readonly>
+                                
                         </div>
                         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                     </form>
@@ -520,6 +522,33 @@
             }
         });
     </script>
+
+    <!--ocualtar ficha en caso de rol visitante o funcionario-->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const rolSelect = document.getElementById('rol');
+            const numeroFichaField = document.getElementById('numeroFichaFieldModal');
+            const numeroFichaInput = document.getElementById('numero_ficha_modal');
+
+            function toggleNumeroFichaField() {
+                const rolValue = rolSelect.value;
+                if (rolValue == 4 || rolValue == 5) { // 4: Visitante, 5: Funcionario
+                    numeroFichaField.style.display = 'none';
+                    numeroFichaInput.required = false;
+                    numeroFichaInput.value = ''; // Limpia el valor si se oculta el campo
+                } else {
+                    numeroFichaField.style.display = 'block';
+                    numeroFichaInput.required = true;
+                }
+            }
+
+            // Ejecutar la función al cargar la página y cuando se cambia el rol
+            toggleNumeroFichaField();
+            rolSelect.addEventListener('change', toggleNumeroFichaField);
+        });
+    </script>
+
+
 
 </body>
 

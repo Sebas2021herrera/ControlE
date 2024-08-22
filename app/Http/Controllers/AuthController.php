@@ -40,7 +40,7 @@ class AuthController extends Controller
             'correo_institucional' => 'required|email|max:255|unique:usuarios',
             'telefono' => 'required|string|max:20',
             'contraseña' => 'required|string|min:6|confirmed',
-            'rol' => 'required|exists:roles,id', 
+            'rol' => 'required|exists:roles,id',
             'numero_ficha' => $request->input('rol') == 3 ? 'required|string|max:255' : 'nullable|string|max:255',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:6144'
         ]);
@@ -96,7 +96,7 @@ class AuthController extends Controller
             $usuario = Auth::user();
             Log::info('Usuario autenticado', ['user' => $usuario]);
 
-            switch ($usuario->roles_id) { 
+            switch ($usuario->roles_id) {
                 case 3:
                     return redirect()->route('user.panel');
                 case 4:
@@ -126,6 +126,7 @@ class AuthController extends Controller
         $esAdmin = $usuario->roles_id == 1;
 
         if (!$esAdmin) {
+            // En este caso, mantén los valores actuales del usuario si no es admin
             $request->merge([
                 'correo_personal' => $usuario->correo_personal,
                 'correo_institucional' => $usuario->correo_institucional,
@@ -136,7 +137,8 @@ class AuthController extends Controller
             ]);
         }
 
-        $validator = Validator::make($request->all(), [
+        // Definir las reglas de validación
+        $rules = [
             'nombres' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
             'tipo_documento' => 'required|string|max:255',
@@ -144,15 +146,19 @@ class AuthController extends Controller
             'correo_personal' => 'required|email|max:255',
             'correo_institucional' => 'required|email|max:255',
             'telefono' => 'required|string|max:20',
-            'numero_ficha' => 'required|string|max:255',
+            'numero_ficha' => 'nullable|required_if:rol,3|string|max:255', // Requerido solo si el rol es 'Aprendiz'
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
-        ]);
+        ];
+
+        // Validar los datos del request
+        $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->all()], 400);
         }
 
         try {
+            // Manejo del archivo de foto
             if ($request->hasFile('foto')) {
                 if ($usuario->foto) {
                     Storage::delete('public/fotos_perfil/' . $usuario->foto);
@@ -163,6 +169,7 @@ class AuthController extends Controller
                 $usuario->foto = basename($path);
             }
 
+            // Actualizar el perfil del usuario
             $usuario->update($request->except('foto'));
 
             return response()->json([

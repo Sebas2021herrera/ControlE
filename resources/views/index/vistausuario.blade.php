@@ -11,12 +11,10 @@
     <link rel="stylesheet" href="{{ asset('css/styles_formulario_elementos.css') }}">
     <link rel="stylesheet" href="{{ asset('css/styles_vistausuario.css') }}">
     <style>
-        /* Aquí puedes agregar estilos personalizados si es necesario */
         .d-none {
             display: none;
         }
 
-        /* En tu archivo de estilos CSS */
         .fade-out {
             animation: fadeOut 1s forwards;
         }
@@ -94,15 +92,16 @@
             <!-- Mostrar la foto de perfil -->
             <div class="image-container" style="margin-top: 15px;">
                 @if (isset($usuario) && $usuario->foto && file_exists(storage_path('app/public/fotos_perfil/' . $usuario->foto)))
-                    <img src="{{ asset('storage/fotos_perfil/' . $usuario->foto) }}" alt="Foto de perfil"
-                        class="foto-perfil"
+                    <img id="left-panel-img" src="{{ asset('storage/fotos_perfil/' . $usuario->foto) }}"
+                        alt="Foto de perfil" class="foto-perfil"
                         style="width: 150px; height: 150px; object-fit: cover; border-radius: 20px;">
                 @else
-                    <img src="{{ asset('imagenes/sin_foto_perfil.webp') }}" alt="Foto de perfil predeterminada"
-                        class="foto-perfil"
+                    <img id="left-panel-img" src="{{ asset('imagenes/sin_foto_perfil.webp') }}"
+                        alt="Foto de perfil predeterminada" class="foto-perfil"
                         style="width: 150px; height: 150px; object-fit: cover; border-radius: 20px;">
                 @endif
             </div>
+
 
             <div class="other-welcome">
                 <br /><strong>Estos son tus elementos:</strong>
@@ -384,7 +383,17 @@
                             <label for="contrasena_confirmation" class="form-label">Confirmar Contraseña:</label>
                             <input type="password" id="contrasena_confirmation" name="contrasena_confirmation"
                                 class="form-control" readonly>
-                                
+                            <div class="mb-3">
+                                <label for="foto" class="form-label">Foto de Perfil:</label>
+                                <input type="file" id="foto" name="foto" class="form-control"
+                                    accept="image/*" onchange="previewImage(event)">
+                            </div>
+                            <img id="previewImagen"
+                                src="{{ Auth::user()->foto ? asset('storage/fotos_perfil/' . Auth::user()->foto) : asset('imagenes/sin_foto_perfil.webp') }}"
+                                alt="Previsualización de la Foto"
+                                style="display: block; width: 150px; height: 150px; object-fit: cover; border-radius: 20px;">
+
+
                         </div>
                         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                     </form>
@@ -547,6 +556,80 @@
             rolSelect.addEventListener('change', toggleNumeroFichaField);
         });
     </script>
+    <!--editar foto perfil, y tambien en el left-panel-->
+    <script>
+        function previewImage(event) {
+            const reader = new FileReader();
+            const preview = document.getElementById('previewImagen');
+
+            reader.onload = function() {
+                preview.src = reader.result;
+                preview.style.display = 'block';
+            }
+
+            if (event.target.files.length > 0) {
+                reader.readAsDataURL(event.target.files[0]);
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+
+        $(document).ready(function() {
+            $('#editarPerfilForm').on('submit', function(event) {
+                event.preventDefault(); // Evita el envío tradicional del formulario
+
+                let formData = new FormData(this);
+
+                $.ajax({
+                    url: '{{ route('updateProfile') }}',
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        // Actualiza la vista con la nueva información del usuario
+                        updateUserProfile(response.user);
+
+                        // Cierra el modal
+                        $('#editarPerfilModal').modal('hide');
+
+                        // Muestra un mensaje de éxito si es necesario
+                        $('#success-message').text(response.success).fadeIn().delay(5000)
+                            .fadeOut();
+                    },
+                    error: function(response) {
+                        // Muestra un mensaje de error si es necesario
+                        $('#error-message').text('Ocurrió un error al actualizar el perfil.')
+                            .fadeIn().delay(5000).fadeOut();
+                    }
+                });
+            });
+
+            function updateUserProfile(user) {
+                $('#welcomeMessage').html(`Bienvenido <br />${user.nombres} ${user.apellidos}`);
+                $('.navbar-nav .nav-link').text(user.nombres);
+
+                // Genera un parámetro único basado en la fecha y hora actual
+                const timestamp = new Date().getTime();
+
+                // Forza la recarga de la imagen al agregar el timestamp y remover la imagen anterior del DOM
+                if (user.foto) {
+                    const newSrc = `{{ asset('storage/fotos_perfil/') }}/${user.foto}?t=${timestamp}`;
+                    $('#left-panel-img').fadeOut(300, function() {
+                        $(this).attr('src', newSrc).fadeIn(300);
+                    });
+                } else {
+                    const newSrc = `{{ asset('imagenes/sin_foto_perfil.webp') }}?t=${timestamp}`;
+                    $('#left-panel-img').fadeOut(300, function() {
+                        $(this).attr('src', newSrc).fadeIn(300);
+                    });
+                }
+            }
+        });
+    </script>
+
+
+
 
 
 

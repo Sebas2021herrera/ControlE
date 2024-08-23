@@ -122,11 +122,10 @@ class AuthController extends Controller
     public function updateProfile(Request $request)
     {
         $usuario = Auth::user();
-
         $esAdmin = $usuario->roles_id == 1;
 
         if (!$esAdmin) {
-            // En este caso, mantén los valores actuales del usuario si no es admin
+            // Mantén los valores actuales del usuario si no es admin
             $request->merge([
                 'correo_personal' => $usuario->correo_personal,
                 'correo_institucional' => $usuario->correo_institucional,
@@ -172,6 +171,7 @@ class AuthController extends Controller
             // Actualizar el perfil del usuario
             $usuario->update($request->except('foto'));
 
+            // Devolver una respuesta con los datos actualizados
             return response()->json([
                 'success' => 'Perfil actualizado con éxito.',
                 'user' => $usuario

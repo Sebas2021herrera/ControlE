@@ -174,7 +174,8 @@ class AuthController extends Controller
             // Devolver una respuesta con los datos actualizados
             return response()->json([
                 'success' => 'Perfil actualizado con éxito.',
-                'user' => $usuario
+                'user' => $usuario,
+                'newPhotoUrl' => $usuario->foto ? Storage::url('public/fotos_perfil/' . $usuario->foto) : null
             ]);
         } catch (QueryException $e) {
             Log::error('Error al actualizar el perfil: ' . $e->getMessage());

@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Usuario</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -102,31 +103,22 @@
                 @endif
             </div>
 
-
             <div class="other-welcome">
                 <br /><strong>Estos son tus elementos:</strong>
             </div>
         </div>
+        <!--cards de los elementos-->
         <div class="right-panel">
             @foreach ($elementos as $elemento)
                 <div class="card">
                     <div class="card-body">
-                        <!-- Mostrar el nombre de la categoría -->
                         <h5 class="card-title"><strong>{{ $elemento->categoria->nombre }}</strong></h5>
-
-                        <!-- Mostrar la foto si existe -->
                         @if ($elemento->foto)
                             <img src="{{ asset('storage/' . $elemento->foto) }}" alt="Foto del elemento"
                                 class="img-fluid mt-3">
                         @endif
-
-                        <!-- Mostrar el número de serie -->
                         <p class="card-text"><strong>Serial:</strong> {{ $elemento->serie }}</p>
-
-                        <!-- Mostrar la marca -->
                         <p class="card-text"><strong>Marca:</strong> {{ $elemento->marca }}</p>
-
-                        <!-- Enlace para ver más detalles -->
                         <a href="#" class="btn btn-link" data-bs-toggle="modal"
                             data-bs-target="#modal-{{ $elemento->id }}">
                             Ver más
@@ -209,13 +201,20 @@
                                         </div>
                                         <div class="mb-3">
                                             <label for="foto-{{ $elemento->id }}" class="form-label">Foto</label>
-                                            <input type="file" id="foto-{{ $elemento->id }}" name="foto"
-                                                class="form-control" accept="image/*">
-                                            @if ($elemento->foto)
-                                                <img src="{{ asset('storage/' . $elemento->foto) }}"
+                                            <div class="mb-3">
+                                                <label for="foto-{{ $elemento->id }}" class="form-label">Foto del
+                                                    Elemento</label>
+                                                <input type="file" id="foto-{{ $elemento->id }}" name="foto"
+                                                    class="form-control" accept="image/*"
+                                                    onchange="previewImage(event, 'previewImagen-{{ $elemento->id }}')">
+                                                <img id="previewImagen-{{ $elemento->id }}"
+                                                    src="{{ asset('storage/' . $elemento->foto) }}"
                                                     alt="Foto del elemento" class="img-fluid mt-3">
-                                            @endif
+
+                                            </div>
+
                                         </div>
+
                                     </form>
                                 </div>
                             </div>
@@ -288,9 +287,14 @@
                         </div>
                         <div class="mb-3">
                             <label for="foto" class="form-label">Foto</label>
-                            <input type="file" id="foto" name="foto" class="form-control"
-                                accept="image/*" onchange="previewImage(event)">
+                            <input type="file" id="fotoElemento" name="foto" class="form-control"
+                                accept="image/*" onchange="previewImage(event, 'previewElemento')">
                         </div>
+                        <div class="mb-3">
+                            <img id="previewElemento" src="#" alt="Previsualización de la imagen"
+                                style="display: none; max-width: 100%; height: auto;">
+                        </div>
+
                         <div class="mb-3">
                             <img id="preview" src="#" alt="Previsualización de la imagen"
                                 style="display: none; max-width: 100%; height: auto;">
@@ -386,7 +390,7 @@
                             <div class="mb-3">
                                 <label for="foto" class="form-label">Foto de Perfil:</label>
                                 <input type="file" id="foto" name="foto" class="form-control"
-                                    accept="image/*" onchange="previewImage(event)">
+                                    accept="image/*" onchange="previewImage(event, 'previewImagen')">
                             </div>
                             <img id="previewImagen"
                                 src="{{ Auth::user()->foto ? asset('storage/fotos_perfil/' . Auth::user()->foto) : asset('imagenes/sin_foto_perfil.webp') }}"
@@ -404,11 +408,36 @@
         </div>
     </div>
 
-
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <!-- Script Unificado para Previsualizar Imágenes -->
+    <script>
+        function previewImage(event, previewId) {
+            const input = event.target;
+            const file = input.files[0];
+            const preview = document.getElementById(previewId);
+
+            const reader = new FileReader();
+
+            reader.onload = function() {
+                preview.src = reader.result;
+                preview.style.display = 'block';
+            }
+
+            if (file) {
+                reader.readAsDataURL(file);
+            } else {
+                preview.src = ""; // O deja la imagen actual si no se selecciona un nuevo archivo
+                preview.style.display = 'none';
+            }
+        }
+    </script>
+
+
+
     <script>
         function editElement(id) {
             document.getElementById('details-view-' + id).classList.add('d-none');
@@ -445,24 +474,6 @@
                 }, 5000); // Mostrar el mensaje por 5 segundos antes de desvanecerlo
             }
         });
-    </script>
-    <!-- Script para previsualizar la imagen -->
-    <script>
-        function previewImage(event) {
-            const reader = new FileReader();
-            const preview = document.getElementById('preview');
-
-            reader.onload = function() {
-                preview.src = reader.result;
-                preview.style.display = 'block';
-            }
-
-            if (event.target.files.length > 0) {
-                reader.readAsDataURL(event.target.files[0]);
-            } else {
-                preview.style.display = 'none';
-            }
-        }
     </script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -556,81 +567,34 @@
             rolSelect.addEventListener('change', toggleNumeroFichaField);
         });
     </script>
-    <!--editar foto perfil, y tambien en el left-panel-->
+
     <script>
-        function previewImage(event) {
-            const reader = new FileReader();
-            const preview = document.getElementById('previewImagen');
+        document.getElementById('editarPerfilForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
 
-            reader.onload = function() {
-                preview.src = reader.result;
-                preview.style.display = 'block';
-            }
-
-            if (event.target.files.length > 0) {
-                reader.readAsDataURL(event.target.files[0]);
-            } else {
-                preview.style.display = 'none';
-            }
-        }
-
-        $(document).ready(function() {
-            $('#editarPerfilForm').on('submit', function(event) {
-                event.preventDefault(); // Evita el envío tradicional del formulario
-
-                let formData = new FormData(this);
-
-                $.ajax({
-                    url: '{{ route('updateProfile') }}',
+            fetch('{{ route('updateProfile') }}', {
                     method: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        // Actualiza la vista con la nueva información del usuario
-                        updateUserProfile(response.user);
-
-                        // Cierra el modal
-                        $('#editarPerfilModal').modal('hide');
-
-                        // Muestra un mensaje de éxito si es necesario
-                        $('#success-message').text(response.success).fadeIn().delay(5000)
-                            .fadeOut();
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
                     },
-                    error: function(response) {
-                        // Muestra un mensaje de error si es necesario
-                        $('#error-message').text('Ocurrió un error al actualizar el perfil.')
-                            .fadeIn().delay(5000).fadeOut();
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Forzar recarga de la página
+                        window.location.reload();
+                    } else {
+                        alert('Hubo un error al actualizar el perfil.');
                     }
+                })
+                .catch(error => {
+                    console.error('Error al actualizar el perfil:', error);
+                    alert('Hubo un error al actualizar el perfil.');
                 });
-            });
-
-            function updateUserProfile(user) {
-                $('#welcomeMessage').html(`Bienvenido <br />${user.nombres} ${user.apellidos}`);
-                $('.navbar-nav .nav-link').text(user.nombres);
-
-                // Genera un parámetro único basado en la fecha y hora actual
-                const timestamp = new Date().getTime();
-
-                // Forza la recarga de la imagen al agregar el timestamp y remover la imagen anterior del DOM
-                if (user.foto) {
-                    const newSrc = `{{ asset('storage/fotos_perfil/') }}/${user.foto}?t=${timestamp}`;
-                    $('#left-panel-img').fadeOut(300, function() {
-                        $(this).attr('src', newSrc).fadeIn(300);
-                    });
-                } else {
-                    const newSrc = `{{ asset('imagenes/sin_foto_perfil.webp') }}?t=${timestamp}`;
-                    $('#left-panel-img').fadeOut(300, function() {
-                        $(this).attr('src', newSrc).fadeIn(300);
-                    });
-                }
-            }
         });
     </script>
-
-
-
-
 
 
 </body>

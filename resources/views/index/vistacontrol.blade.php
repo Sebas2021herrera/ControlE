@@ -104,7 +104,7 @@
         }
 
         .contenido .derecho {
-            width: 845px;
+            width: 980px;
             background-color: #ffffff;
             /* Fondo más claro */
             border: 1px solid #ddd;
@@ -118,20 +118,6 @@
             /* Incluir bordes y relleno en el tamaño total */
         }
 
-        .contenido .semaforo {
-            width: 60px;
-            background-color: #ffffff;
-            /* Fondo más claro */
-            border: 1px solid #ddd;
-            /* Borde más sutil */
-            border-radius: 8px;
-            /* Esquinas más redondeadas */
-            padding: 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            /* Box shadow más suave */
-            box-sizing: border-box;
-            /* Incluir bordes y relleno en el tamaño total */
-        }
     </style>
 </head>
 
@@ -152,9 +138,6 @@
             </div>
             <div class="derecho">
                 <!-- Contenedor derecho (ancho fijo de 820px) -->
-            </div>
-            <div class="semaforo">
-                <!-- Contenedor semáforo (ancho fijo de 180px) -->
             </div>
         </div>
     </div>

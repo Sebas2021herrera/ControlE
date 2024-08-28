@@ -34,7 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::get('admin/panel', function () {
         return view('index.vistaadmin');
     })->name('admin.panel');
-    Route::get('control/panel', function () {
+    Route::get('control/panel', function () { 
         return view('index.vistacontrol');
     })->name('control.panel');
     Route::get('user/panel', [UserController::class, 'userPanel'])->name('user.panel');

@@ -17,7 +17,7 @@
         <div class="card">
             <div class="card-content">
                 <h2 class="title is-4">Registro de Usuarios</h2>
-
+ 
                 @if ($errors->any())
                     <div class="notification is-danger">
                         <ul>

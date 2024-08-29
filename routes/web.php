@@ -46,3 +46,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/usuario/panel', [UserController::class, 'mostrarPerfil']);
     Route::get('/perfil', [UserController::class, 'mostrarPerfil'])->name('perfil');
 });
+
+Route::middleware(['auth', 'checkRole:admin'])->group(function () {
+    // Rutas que solo pueden acceder los usuarios con el rol de 'admin'
+});

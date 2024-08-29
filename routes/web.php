@@ -40,6 +40,18 @@ Route::middleware('auth')->group(function () {
     Route::get('user/panel', [UserController::class, 'userPanel'])->name('user.panel');
     Route::put('elementos/{id}', [ElementoController::class, 'update'])->name('elementos.update');
 
+    //Ruta para el panel del vigilante
+    Route::get('control/panel', function () {
+        return view('index.vistacontrol');
+    })->name('control.panel');
+    
+    // Ruta para buscar por documento en la vista del vigilante
+    Route::get('/vigilante/buscar', [UserController::class, 'buscarPorDocumento'])->name('vigilante.buscar');
+    
+    // Ruta para mostrar el panel de usuario
+    Route::get('user/panel', [UserController::class, 'userPanel'])->name('user.panel');
+
+    
     // Ruta para mostrar el perfil
     Route::get('/editProfile', [AuthController::class, 'showEditProfile'])->name('editProfile');
     Route::get('/usuario/{id}', [UserController::class, 'show'])->name('user.show');

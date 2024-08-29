@@ -38,16 +38,16 @@ class UserController extends Controller
     // Consulta del número de documento del aprendiz
     public function buscarPorDocumento(Request $request)
     {
-        $request -> validate([
+        $request->validate([
             'documento' => 'required|string|max:255',
         ]);
-
-        $usuario = User :: where('numero_documento', $request -> input('documento')) -> first();
-
+    
+        $usuario = Usuario::where('numero_documento', $request->input('documento'))->first();
+    
         if (!$usuario) {
             return redirect()->back()->with('error', 'Usuario no encontrado.');
         }
-
-        return view('usuario.detalles', compact('usuario'));
+    
+        return view('index.vistacontrol', compact('usuario'));
     }
 }

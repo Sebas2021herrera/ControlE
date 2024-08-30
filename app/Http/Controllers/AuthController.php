@@ -122,30 +122,22 @@ class AuthController extends Controller
     public function updateProfile(Request $request)
     {
         $usuario = Auth::user();
-        $esAdmin = $usuario->roles_id == 1;
+        $esAprendiz = $usuario->roles_id == 3; // Verifica si el usuario es Aprendiz
 
-        if (!$esAdmin) {
-            // Mantén los valores actuales del usuario si no es admin
-            $request->merge([
-                'correo_personal' => $usuario->correo_personal,
-                'correo_institucional' => $usuario->correo_institucional,
-                'contraseña' => $usuario->contraseña,
-                'tipo_documento' => $usuario->tipo_documento,
-                'numero_documento' => $usuario->numero_documento,
-                'numero_ficha' => $usuario->numero_ficha,
-            ]);
-        }
+        // Mantén los valores actuales del usuario para los campos que no deben ser editados
+        $request->merge([
+            'numero_documento' => $usuario->numero_documento, // No se puede editar el número de documento
+            'correo_personal' => $usuario->correo_personal,
+            'correo_institucional' => $usuario->correo_institucional,
+        ]);
 
         // Definir las reglas de validación
         $rules = [
             'nombres' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
-            'tipo_documento' => 'required|string|max:255',
-            'numero_documento' => 'required|string|max:255',
-            'correo_personal' => 'required|email|max:255',
-            'correo_institucional' => 'required|email|max:255',
+            'tipo_documento' => 'required|string|max:255', // Ahora es editable
             'telefono' => 'required|string|max:20',
-            'numero_ficha' => 'nullable|required_if:rol,3|string|max:255', // Requerido solo si el rol es 'Aprendiz'
+            'numero_ficha' => $esAprendiz ? 'required|string|max:255' : 'nullable|string|max:255', // Obligatorio si es Aprendiz
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ];
 

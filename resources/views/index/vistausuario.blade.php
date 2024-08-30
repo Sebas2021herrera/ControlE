@@ -286,7 +286,7 @@
                                 required></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="foto" class="form-label">Foto</label>
+                            <label for="fotoElemento" class="form-label">Foto</label>
                             <input type="file" id="fotoElemento" name="foto" class="form-control"
                                 accept="image/*" onchange="previewImage(event, 'previewElemento')">
                         </div>
@@ -295,16 +295,13 @@
                                 style="display: none; max-width: 100%; height: auto;">
                         </div>
 
-                        <div class="mb-3">
-                            <img id="preview" src="#" alt="Previsualización de la imagen"
-                                style="display: none; max-width: 100%; height: auto;">
-                        </div>
                         <button type="submit" class="btn btn-primary">Registrar</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+
     <!-- Modal para editar perfil -->
     <div class="modal fade" id="editarPerfilModal" tabindex="-1" aria-labelledby="editarPerfilModalLabel"
         aria-hidden="true">
@@ -315,7 +312,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="editarPerfilForm" method="POST" action="{{ route('updateProfile') }}">
+                    <form id="editarPerfilForm" method="POST" action="{{ route('updateProfile') }}"
+                        enctype="multipart/form-data">
                         @csrf
                         <div class="mb-3">
                             <label for="nombres" class="form-label">Nombres:</label>
@@ -345,98 +343,70 @@
                         <div class="mb-3">
                             <label for="numero_documento" class="form-label">Número de Documento:</label>
                             <input type="text" id="numero_documento" name="numero_documento" class="form-control"
-                                value="{{ Auth::user()->numero_documento }}" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="correo_personal" class="form-label">Correo Personal:</label>
-                            <input type="email" id="correo_personal" name="correo_personal" class="form-control"
-                                value="{{ Auth::user()->correo_personal }}" readonly>
-                        </div>
-                        <div class="mb-3">
-                            <label for="correo_institucional" class="form-label">Correo Institucional:</label>
-                            <input type="email" id="correo_institucional" name="correo_institucional"
-                                class="form-control" value="{{ Auth::user()->correo_institucional }}" readonly>
+                                value="{{ Auth::user()->numero_documento }}" readonly>
                         </div>
                         <div class="mb-3">
                             <label for="telefono" class="form-label">Teléfono:</label>
                             <input type="tel" id="telefono" name="telefono" class="form-control"
                                 value="{{ Auth::user()->telefono }}" required>
                         </div>
-                        <div class="mb-3">
-                            <label for="rol" class="form-label">Rol:</label>
-                            <select id="rol" name="rol" class="form-select" required>
-                                <option value="3" {{ Auth::user()->rol == 3 ? 'selected' : '' }}>Aprendiz
-                                </option>
-                                <option value="4" {{ Auth::user()->rol == 4 ? 'selected' : '' }}>Visitante
-                                </option>
-                                <option value="5" {{ Auth::user()->rol == 5 ? 'selected' : '' }}>Funcionario
-                                </option>
-                            </select>
-                        </div>
-                        <div class="mb-3" id="numeroFichaFieldModal">
-                            <label for="numero_ficha" class="form-label">Número de Ficha:</label>
-                            <input type="text" id="numero_ficha_modal" name="numero_ficha" class="form-control"
-                                value="{{ Auth::user()->numero_ficha }}">
-                        </div>
 
-                        <div class="mb-3">
-                            <label for="contrasena" class="form-label">Contraseña:</label>
-                            <input type="password" id="contrasena" name="contrasena" class="form-control" readonly>
-                        </div>
-                        <div class="mb-3">
-                            <label for="contrasena_confirmation" class="form-label">Confirmar Contraseña:</label>
-                            <input type="password" id="contrasena_confirmation" name="contrasena_confirmation"
-                                class="form-control" readonly>
-                            <div class="mb-3">
-                                <label for="foto" class="form-label">Foto de Perfil:</label>
-                                <input type="file" id="foto" name="foto" class="form-control"
-                                    accept="image/*" onchange="previewImage(event, 'previewImagen')">
+                        @if (Auth::check() && Auth::user()->roles_id == 3)
+                            <div class="mb-3" id="numeroFichaFieldModal">
+                                <label for="numero_ficha" class="form-label">Número de Ficha:</label>
+                                <input type="text" id="numero_ficha_modal" name="numero_ficha"
+                                    class="form-control" value="{{ Auth::user()->numero_ficha }}">
                             </div>
-                            <img id="previewImagen"
-                                src="{{ Auth::user()->foto ? asset('storage/fotos_perfil/' . Auth::user()->foto) : asset('imagenes/sin_foto_perfil.webp') }}"
-                                alt="Previsualización de la Foto"
-                                style="display: block; width: 150px; height: 150px; object-fit: cover; border-radius: 20px;">
+                        @endif
 
-
+                        <div class="mb-3">
+                            <label for="foto" class="form-label">Foto de Perfil:</label>
+                            <!-- Contenedor para la previsualización de la foto -->
+                            <div class="mb-3">
+                                @if (Auth::user()->foto && file_exists(storage_path('app/public/fotos_perfil/' . Auth::user()->foto)))
+                                    <img id="previewPerfil"
+                                        src="{{ asset('storage/fotos_perfil/' . Auth::user()->foto) }}"
+                                        alt="Foto de perfil actual" style="max-width: 100px; height: auto;">
+                                @else
+                                    <img id="previewPerfil" src="{{ asset('imagenes/sin_foto_perfil.webp') }}"
+                                        alt="Foto de perfil predeterminada" style="max-width: 100px; height: auto;">
+                                @endif
+                            </div>
+                            <input type="file" id="foto" name="foto" class="form-control"
+                                accept="image/*" onchange="previewImage(event, 'previewPerfil')">
                         </div>
+
                         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                     </form>
-
-
                 </div>
             </div>
         </div>
     </div>
+
+
+
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 
-    <!-- Script Unificado para Previsualizar Imágenes -->
+
+    <!-- mostrar ficha solo si es roll aprendiz -->
     <script>
-        function previewImage(event, previewId) {
-            const input = event.target;
-            const file = input.files[0];
-            const preview = document.getElementById(previewId);
+        document.addEventListener('DOMContentLoaded', function() {
+            const numeroFichaField = document.getElementById('numeroFichaFieldModal');
+            const numeroFichaInput = document.getElementById('numero_ficha_modal');
 
-            const reader = new FileReader();
-
-            reader.onload = function() {
-                preview.src = reader.result;
-                preview.style.display = 'block';
-            }
-
-            if (file) {
-                reader.readAsDataURL(file);
+            if (numeroFichaField) {
+                numeroFichaField.style.display = 'block';
+                numeroFichaInput.required = true;
             } else {
-                preview.src = ""; // O deja la imagen actual si no se selecciona un nuevo archivo
-                preview.style.display = 'none';
+                numeroFichaField.style.display = 'none';
+                numeroFichaInput.required = false;
             }
-        }
+        });
     </script>
-
-
 
     <script>
         function editElement(id) {
@@ -543,31 +513,6 @@
         });
     </script>
 
-    <!--ocualtar ficha en caso de rol visitante o funcionario-->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const rolSelect = document.getElementById('rol');
-            const numeroFichaField = document.getElementById('numeroFichaFieldModal');
-            const numeroFichaInput = document.getElementById('numero_ficha_modal');
-
-            function toggleNumeroFichaField() {
-                const rolValue = rolSelect.value;
-                if (rolValue == 4 || rolValue == 5) { // 4: Visitante, 5: Funcionario
-                    numeroFichaField.style.display = 'none';
-                    numeroFichaInput.required = false;
-                    numeroFichaInput.value = ''; // Limpia el valor si se oculta el campo
-                } else {
-                    numeroFichaField.style.display = 'block';
-                    numeroFichaInput.required = true;
-                }
-            }
-
-            // Ejecutar la función al cargar la página y cuando se cambia el rol
-            toggleNumeroFichaField();
-            rolSelect.addEventListener('change', toggleNumeroFichaField);
-        });
-    </script>
-
     <script>
         document.getElementById('editarPerfilForm').addEventListener('submit', function(event) {
             event.preventDefault();
@@ -594,6 +539,49 @@
                     alert('Hubo un error al actualizar el perfil.');
                 });
         });
+    </script>
+    <!-- ver imagen en el editar perfil y editar elemento -->
+    <script>
+        function previewImage(event, previewId) {
+            var file = event.target.files[0];
+            var preview = document.getElementById(previewId);
+
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    console.log("Nueva foto de perfil seleccionada: ", e.target.result); // Log para la nueva imagen
+                };
+                reader.readAsDataURL(file);
+            } else {
+                // Reestablecer la imagen a la original si no se selecciona un archivo
+                var originalPhotoUrl =
+                    '{{ Auth::user()->foto ? asset('storage/fotos_perfil/' . Auth::user()->foto) : asset('imagenes/sin_foto_perfil.webp') }}';
+                preview.src = originalPhotoUrl;
+                console.log("Foto de perfil actual o predeterminada: ", originalPhotoUrl); // Log para la foto actual
+            }
+        }
+    </script>
+
+    <!-- previsualziar la foto en registrar un nuevo elemento -->
+    <script>
+        function previewImage(event, previewId) {
+            var file = event.target.files[0];
+            var preview = document.getElementById(previewId);
+
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block'; // Asegúrate de que la imagen sea visible
+                    console.log("Imagen seleccionada: ", e.target.result); // Log para la nueva imagen
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.src = '#'; // Ocultar imagen si no se selecciona archivo
+                preview.style.display = 'none';
+            }
+        }
     </script>
 
 

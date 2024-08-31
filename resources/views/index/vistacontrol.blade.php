@@ -16,7 +16,7 @@
             <form action="{{ route('vigilante.buscar') }}" method="GET">
                 <input type="text" name="documento" placeholder="Buscar por documento...">
                 <button type="submit">Buscar</button>
-            </form>
+            </form>       
         </div>
 
         <div class="contenedor-intermedio">

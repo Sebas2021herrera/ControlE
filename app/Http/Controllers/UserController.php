@@ -23,8 +23,6 @@ class UserController extends Controller
     public function show($id)
     {
         $usuario = Usuario::findOrFail($id); // Buscar el usuario por su ID
-
-        // Retornar la vista 'index.vistausuario' con los datos del usuario
         return view('index.vistausuario', ['usuario' => $usuario]);
     }
   
@@ -48,6 +46,8 @@ class UserController extends Controller
             return redirect()->back()->with('error', 'Usuario no encontrado.');
         }
     
-        return view('index.vistacontrol', compact('usuario'));
+        $elementos = $usuario->elementos; // Obtener los elementos relacionados con el usuario
+    
+        return view('index.vistacontrol', compact('usuario', 'elementos'));
     }
 }

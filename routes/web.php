@@ -4,7 +4,7 @@ use App\Http\Middleware\CheckRole;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\ElementoController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserController; 
 use Illuminate\Support\Facades\Route;
 use App\Models\Categoria;
 
@@ -29,6 +29,7 @@ Route::middleware('auth')->group(function () {
     // Ruta para editar un elemento
     Route::get('/elementos/{id}/edit', [ElementoController::class, 'edit'])->name('elementos.edit');
     Route::put('/elementos/{id}', [ElementoController::class, 'update'])->name('elementos.update');
+    Route::put('elementos/{id}', [ElementoController::class, 'update'])->name('elementos.update');
     
     // Rutas para los paneles de administración, control y usuario
     Route::get('admin/panel', function () {
@@ -38,7 +39,6 @@ Route::middleware('auth')->group(function () {
         return view('index.vistacontrol');
     })->name('control.panel');
     Route::get('user/panel', [UserController::class, 'userPanel'])->name('user.panel');
-    Route::put('elementos/{id}', [ElementoController::class, 'update'])->name('elementos.update');
 
     //Ruta para el panel del vigilante
     Route::get('control/panel', function () {

@@ -40,7 +40,7 @@ html {
     height: 350px;
     width: 270px;
     left: 22px;
-    top:-24px;
+    top: -24px;
     margin-bottom: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -76,7 +76,6 @@ html {
     object-fit: contain;
     margin-bottom: 15px;
 }
-
 
 .card-title {
     margin-top: 0;
@@ -133,3 +132,20 @@ html {
     transition: opacity 0.5s ease-out;
 }
 
+.d-none {
+    display: none;
+}
+
+.fade-out {
+    animation: fadeOut 1s forwards;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}

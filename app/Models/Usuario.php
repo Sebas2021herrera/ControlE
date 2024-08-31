@@ -61,3 +61,4 @@ class Usuario extends Authenticatable
 
     // Validaciones o métodos adicionales pueden ir aquí
 }
+  

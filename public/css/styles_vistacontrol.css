@@ -4,30 +4,29 @@ html, body {
     height: 100%;
     overflow-x: hidden; /* Oculta el scroll horizontal */
     scroll-behavior: smooth; /* Hace que el scroll sea más suave */
+    font-family: Arial, sans-serif; /* Fuente predeterminada */
 }
 
+/* Contenedor principal */
 .container {
     display: flex; 
     flex-direction: column;
     height: 100vh;
-    /* Altura total de la ventana */
-    box-sizing: border-box;
-    /* Incluir bordes y relleno en el tamaño total */
     padding: 0 8px 15px;
-    /* Espacio de 8px a los lados y 15px al final para el margen inferior */
     overflow-y: auto; /* Permite el scroll vertical */
 }
 
+/* Estilo del buscador */
 .buscador {
-    width: calc(100% - 16px); /* 100% menos el margen de ambos lados (8px a cada lado) */
-    height: 50px;
-    background-color: #ffffff;
-    border-bottom: 1px solid #ddd;
+    width: calc(100% - 16px); /* Ajusta el ancho */
+    height: 70px;
+    background-color: #0b00a3; 
+    border-bottom: 1px solid #0056b3; /* Opcional: borde inferior más oscuro para dar contraste */
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin: 15px 0; /* Margen en la parte superior e inferior */
+    margin: 15px 0;
     border-radius: 8px;
 }
 
@@ -46,35 +45,34 @@ html, body {
     box-shadow: 0 0 4px rgba(0, 123, 255, 0.2);
 }
 
+/* Contenedor intermedio */
 .contenedor-intermedio {
-    width: calc(100% - 16px); /* 100% menos el margen de ambos lados (8px a cada lado) */
-    height: 130px;
-    background-color: #ffffff;
-    border: 1px solid #ddd;
+    display: flex; /* Permite el alineamiento en fila */
+    flex-direction: row; /* Alinea los elementos en fila */
+    flex-wrap: wrap; /* Permite que los elementos se ajusten si hay overflow */
+    gap: 20px; /* Espacio entre los elementos */
+    padding: 20px;
+    background-color: #f4f4f9; /* Color de fondo opcional */
     border-radius: 8px;
-    margin: 0 0 15px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    box-sizing: border-box;
 }
 
+/* Estilos del contenedor principal */
 .contenido {
     display: flex;
-    flex-direction: row;
-    margin: 0; /* Sin margen adicional */
     gap: 15px;
-    box-sizing: border-box;
-    width: calc(100% - 16px); /* 100% menos el margen de ambos lados (8px a cada lado) */
+    width: calc(100% - 16px);
 }
 
+/* Estilos de los contenedores izquierdo y derecho */
 .contenido .izquierdo, .contenido .derecho {
-    overflow-y: auto; /* Permite el scroll vertical en estos contenedores */
-    height: calc(100vh - 195px); /* Altura ajustada teniendo en cuenta la altura del buscador y el contenedor intermedio */
+    overflow-y: auto;
+    height: calc(100vh - 195px);
     box-sizing: border-box;
-    scrollbar-width: none; /* Oculta la barra de scroll en Firefox */
+    scrollbar-width: none; /* Oculta el scroll en Firefox */
 }
 
 .contenido .izquierdo::-webkit-scrollbar, .contenido .derecho::-webkit-scrollbar {
-    display: none; /* Oculta la barra de scroll en Chrome y Safari */
+    display: none; /* Oculta el scroll en Chrome y Safari */
 }
 
 .contenido .izquierdo {
@@ -95,6 +93,7 @@ html, body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* Estilos del contenedor de tarjetas */
 .card-container {
     display: flex;
     flex-wrap: wrap;
@@ -102,6 +101,7 @@ html, body {
     justify-content: center;
 }
 
+/* Estilo de las tarjetas */
 .card {
     background-color: #ffffff;
     border: 1px solid #ddd;
@@ -129,4 +129,19 @@ html, body {
 .card p {
     font-size: 14px;
     margin-bottom: 5px;
+}
+
+.foto-perfil {
+    width: 190px; /* Ajusta el tamaño de la foto según lo que necesites */
+    height: 205px; /* Ajusta el tamaño de la foto según lo que necesites */
+    border-radius: 20px; /* Aumenta este valor para bordes más redondeados */
+    object-fit: cover; /* Asegura que la imagen mantenga su proporción */
+    margin: 10px auto; /* Centra la imagen y añade algo de espacio alrededor */
+    display: block; /* Hace que la imagen se centre dentro de su contenedor */
+    border: 2px solid #ddd; /* Opcional: agrega un borde suave */
+}
+
+.logo-sena {
+    width: 60px;
+    height: auto;
 }

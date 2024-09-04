@@ -174,4 +174,4 @@ class AuthController extends Controller
             return response()->json(['error' => 'Ha ocurrido un error al actualizar el perfil.'], 500);
         }
     }
-}
+} 

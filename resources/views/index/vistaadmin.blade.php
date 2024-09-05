@@ -6,11 +6,13 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Administrador</title>
     <link rel="stylesheet" href="{{ asset('css/styles_vista_admin.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <!-- Enlaza el archivo CSS de Bulma -->
 </head>
 <body>
     <header class="main-header">
         <div class="container">
-            <a href="#" id="registerLink" class="registrar">Registrar usuarios</a> <!-- Cambiado a "Registro" -->
+            <a href="#" id="registerLink" class="registrar">Registrar usuarios</a>
             <nav class="nav">
                 <ul class="nav-list">
                     <li><a href="#">Inicio</a></li>
@@ -145,6 +147,8 @@
                 <div class="control">
                     <div class="select @error('rol') is-danger @enderror">
                         <select id="rol" name="rol" required>
+                            <option value="3" {{ old('rol') == 1 ? 'selected' : '' }}>Administrador</option>
+                            <option value="3" {{ old('rol') == 2 ? 'selected' : '' }}>Control</option>
                             <option value="3" {{ old('rol') == 3 ? 'selected' : '' }}>Aprendiz</option>
                             <option value="4" {{ old('rol') == 4 ? 'selected' : '' }}>Visitante</option>
                             <option value="5" {{ old('rol') == 5 ? 'selected' : '' }}>Funcionario

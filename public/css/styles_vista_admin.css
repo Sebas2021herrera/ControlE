@@ -61,6 +61,7 @@ body {
     font-family: Arial, sans-serif;
     display: none; /* Oculto por defecto */
     position: fixed;
+    
     z-index: 1000;
     left: 0;
     top: 0;
@@ -73,6 +74,7 @@ body {
     font-family: Arial, sans-serif;
     background-color: #fefefe;
     margin: 5% auto;
+    font-size: 20px;
     padding: 20px;
     border: 1px solid #888;
     width: 50%;
@@ -181,4 +183,3 @@ body {
 .ventana-formulario button:hover {
     background-color: #59db7c; /* Color de botón al pasar el cursor */
 }
-

@@ -16,6 +16,7 @@ Route::post('registrado', [AuthController::class, 'createpost'])->name('createpo
 Route::post('login', [AuthController::class, 'login'])->name('login.post');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
+
 // Rutas protegidas por autenticación
 Route::middleware('auth')->group(function () {
     // Ruta para actualizar el perfil

@@ -13,8 +13,8 @@ body {
     flex-direction: column;
     height: 100vh;
     box-sizing: border-box;
-    padding: 16px;
-    gap: 16px;
+    padding: 10px;
+    gap: 10px;
 }
 
 .buscador {
@@ -27,6 +27,7 @@ body {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     margin-top: -16px;
     padding: 0 20px;
+    margin-left: -16px;
 }
 
 .buscador input {
@@ -40,7 +41,7 @@ body {
     color: #00324d;
     background-color: #ffffff;
     transition: all 0.3s ease;
-    margin-right: 5px; /* Espacio entre el input y el botón */
+    margin-right: 5px;
     box-sizing: border-box;
 }
 
@@ -64,22 +65,43 @@ body {
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-left: 5px; /* Asegura que el botón quede a la derecha del input con un pequeño margen */
+    margin-left: 5px;
     box-sizing: border-box;
 }
 
+.contenido-superior {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    flex-wrap: nowrap;
+}
+
 .contenedor-intermedio {
-    padding-bottom: 40px;
-    position: relative;
     width: 39.5%;
-    height: 200px;
     background-color: #e0e0e0;
     border-radius: 8px;
     padding: 15px;
     display: flex;
     align-items: center;
+    position: relative;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
+    margin-right: -6px;
+}
+
+.contenedor-reportes {
+    width: 60.5%;
+    background-color: #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    height: calc(
+        100% - 0px
+    ); /* Ajusta esta altura según el espacio que necesites */
 }
 
 .info-text {
@@ -127,7 +149,7 @@ body {
 
 #semifooter {
     position: absolute;
-    bottom: 10px;
+    bottom: 12px;
     left: 10px;
     font-size: 12.5px;
     line-height: 1.2;
@@ -146,19 +168,6 @@ body {
     border-radius: 8px;
     object-fit: cover;
     border: 10px #ddd;
-}
-
-.contenedor-derecho {
-    padding-bottom: 40px;
-    width: 39.5%;
-    height: 200px;
-    background-color: #e0e0e0;
-    border-radius: 8px;
-    padding: 15px;
-    display: flex;
-    align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    box-sizing: border-box;
 }
 
 .contenido {
@@ -192,8 +201,8 @@ body {
 .card-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
-    justify-content: center;
+    gap: 20px; /* Espacio entre los cards */
+    justify-content: center; /* Centra los cards dentro del contenedor */
 }
 
 .card {
@@ -201,26 +210,128 @@ body {
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 220px;
-    padding: 10px;
+    width: 220px; /* Ancho fijo para mantener la consistencia */
+    padding: 15px;
     text-align: center;
     box-sizing: border-box;
+    max-height: 300px; /* Altura máxima para evitar desbordamiento */
 }
 
 .card img.elemento-foto {
     width: 100%;
-    height: 150px;
+    height: 140px; /* Altura ajustada para una visualización adecuada */
     object-fit: cover;
     border-radius: 8px;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 
 .card h3 {
-    font-size: 16px;
-    margin-bottom: 8px;
+    font-size: 16px; /* Tamaño de fuente adecuado para el título */
+    margin-bottom: 8px; /* Espacio entre el título y el contenido */
 }
 
 .card p {
-    font-size: 12px;
-    margin-bottom: 4px;
+    font-size: 14px; /* Tamaño de fuente adecuado para el texto */
+    margin-bottom: 6px; /* Espacio entre los párrafos */
+}
+
+/* Estilo para el modal */
+.modal {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    z-index: 9999; /* Asegúrate de que esté sobre otros elementos */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro */
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 800px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.modal-title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.close {
+    font-size: 24px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: #333;
+}
+
+.close:hover {
+    color: #000;
+}
+
+.modal-body {
+    display: flex;
+    gap: 20px;
+}
+
+.modal-body img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.modal-body .info {
+    flex: 1;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+}
+
+.modal-footer .btn-close {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.modal-footer .btn-close:hover {
+    background-color: #0056b3;
+}
+
+/* Estilo para los enlaces "Ver más" */
+.link-ver-mas {
+    color: blue;
+    text-decoration: none;
+}
+
+/* Mantener color azul después de ser visitado */
+.link-ver-mas:visited {
+    color: blue;
+}
+
+/* Opcional: Efecto hover para mejorar la interacción del usuario */
+.link-ver-mas:hover {
+    text-decoration: underline;
 }

@@ -6,10 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vista del Vigilante</title>
     <link rel="stylesheet" href="{{ asset('css/styles_vistacontrol.css') }}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet">   
 </head>
 
 <body>
@@ -18,43 +14,48 @@
         <div class="buscador">
             <form action="{{ route('vigilante.buscar') }}" method="GET">
                 <input type="text" name="documento" placeholder="Buscar por documento...">
-                <button type="submit">Buscar</button>
+                <button type="submit" class="btn btn-primary">Buscar</button>
             </form>
         </div>
 
-        <div class="contenedor-intermedio">
-            <div class="usuario-info">
-                <!-- Logo y barra -->
-                <div class="foto-logo">
-                    <!-- Logo del SENA -->
-                    <img src="{{ asset('imagenes/logo-del-sena-01.png') }}" alt="Logo del SENA" class="logo-sena">
-                    <div class="barra-separadora"></div>
-                </div>
-                @if (isset($usuario))
-                    <div class="info-text">
-                        <p class="verde">{{ $usuario->nombres }}</p>
-                        <p class="verde"> {{ $usuario->apellidos }}</p>
-                        <p><strong> Doc: {{ $usuario->numero_documento }} </strong></p>
-                        <p><strong>Cel:{{ $usuario->telefono }}</strong></p><br />
-                        <p><strong> {{ $usuario->role->nombre }}</strong></p>
-                        <p><strong> Ficha:{{ $usuario->numero_ficha }}</strong></p>
-                        <p class="verde" id="semifooter"> Regional Casanare | Centro Agroindustrial y Fortalecimiento
-                            Empresarial del Casanare</p>
+        <div class="contenido-superior">
+            <div class="contenedor-intermedio">
+                <div class="usuario-info">
+                    <div class="foto-logo">
+                        <img src="{{ asset('imagenes/logo-del-sena-01.png') }}" alt="Logo del SENA" class="logo-sena">
+                        <div class="barra-separadora"></div>
                     </div>
+                    @if (isset($usuario))
+                        <div class="info-text">
+                            <p class="verde">{{ $usuario->nombres }}</p>
+                            <p class="verde"> {{ $usuario->apellidos }}</p>
+                            <p><strong> Doc: {{ $usuario->numero_documento }} </strong></p>
+                            <p><strong>Cel:{{ $usuario->telefono }}</strong></p><br />
+                            <p><strong> {{ $usuario->role->nombre }}</strong></p>
+                            <p><strong> Ficha:{{ $usuario->numero_ficha }}</strong></p>
+                            <p class="verde" id="semifooter"> Regional Casanare | Centro Agroindustrial y
+                                Fortalecimiento Empresarial del Casanare</p>
+                        </div>
 
-                    <!-- Foto del usuario -->
-                    <div class="foto-usuario">
-                        @if ($usuario->foto && file_exists(storage_path('app/public/fotos_perfil/' . $usuario->foto)))
-                            <img src="{{ asset('storage/fotos_perfil/' . $usuario->foto) }}" alt="Foto de perfil"
-                                class="foto-perfil-usuario">
-                        @else
-                            <img src="{{ asset('imagenes/sin_foto_perfil.webp') }}" alt="Foto de perfil predeterminada"
-                                class="foto-perfil-usuario">
-                        @endif
-                    </div>
-                @else
-                    <p>No se ha seleccionado ningún usuario.</p>
-                @endif
+                        <div class="foto-usuario">
+                            @if ($usuario->foto && file_exists(storage_path('app/public/fotos_perfil/' . $usuario->foto)))
+                                <img src="{{ asset('storage/fotos_perfil/' . $usuario->foto) }}" alt="Foto de perfil"
+                                    class="foto-perfil-usuario">
+                            @else
+                                <img src="{{ asset('imagenes/sin_foto_perfil.webp') }}"
+                                    alt="Foto de perfil predeterminada" class="foto-perfil-usuario">
+                            @endif
+                        </div>
+                    @else
+                        <p>No se ha seleccionado ningún usuario.</p>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Nuevo contenedor al lado del contenedor intermedio -->
+            <div class="contenedor-reportes">
+                <!-- Contenido del nuevo contenedor (reportes) aquí -->
+                <p>Contenido del contenedor de reportes.</p>
             </div>
         </div>
 
@@ -64,14 +65,40 @@
                     <div class="card-container">
                         @foreach ($elementos as $elemento)
                             <div class="card">
+                                <h3>{{ $elemento->marca }}</h3>
                                 <img src="{{ asset('storage/fotos_elementos/' . $elemento->foto) }}"
                                     alt="Foto del elemento" class="elemento-foto">
-
-                                <h3>{{ $elemento->categoria->nombre }}</h3>
-                                <p><strong>Marca:</strong> {{ $elemento->marca }}</p>
-                                <p><strong>Modelo:</strong> {{ $elemento->modelo }}</p>
                                 <p><strong>Serie:</strong> {{ $elemento->serie }}</p>
-                                <p><strong>Especificaciones:</strong> {{ $elemento->especificaciones_tecnicas }}</p>
+                                <a href="#" class="link-ver-mas" data-bs-toggle="modal"
+                                    data-bs-target="#modal-{{ $elemento->id }}">
+                                    Ver más
+                                </a>
+                            </div>
+
+                            <!-- Modal -->
+                            <div class="modal" id="modal-{{ $elemento->id }}">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">{{ $elemento->categoria->nombre }}</h5>
+                                        <button type="button" class="close"
+                                            onclick="document.getElementById('modal-{{ $elemento->id }}').style.display='none'">&times;</button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <img src="{{ asset('storage/fotos_elementos/' . $elemento->foto) }}"
+                                            alt="Foto del elemento" class="img-fluid">
+                                        <div class="info">
+                                            <p><strong>Marca:</strong> {{ $elemento->marca }}</p>
+                                            <p><strong>Modelo:</strong> {{ $elemento->modelo }}</p>
+                                            <p><strong>Serie:</strong> {{ $elemento->serie }}</p>
+                                            <p><strong>Especificaciones:</strong>
+                                                {{ $elemento->especificaciones_tecnicas }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn-close"
+                                            onclick="document.getElementById('modal-{{ $elemento->id }}').style.display='none'">Cerrar</button>
+                                    </div>
+                                </div>
                             </div>
                         @endforeach
                     </div>
@@ -81,6 +108,23 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('click', function(e) {
+            if (e.target.matches('[data-bs-toggle="modal"]')) {
+                const targetId = e.target.getAttribute('data-bs-target');
+                document.querySelector(targetId).style.display = 'block';
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (e.target.matches('.modal')) {
+                e.target.style.display = 'none';
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

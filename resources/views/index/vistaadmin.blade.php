@@ -41,6 +41,7 @@
             <div class="ventana-formulario">
                 <h2>Registro de usuarios</h2>
                 <form>
+                    <form id="registroForm" method="POST" action="{{ route('createpost') }}" enctype="multipart/form-data">
                         <div class="field">
                             <label class="label" for="nombres">Nombres:</label>
                             <div class="control">
@@ -268,6 +269,50 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function previewImage(event) {
+            var input = event.target;
+            var preview = document.getElementById('preview');
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.src = '#';
+                preview.style.display = 'none';
+            }
+        }
+    </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var rolSelect = document.getElementById('rol');
+        var numeroFichaField = document.getElementById('numero_ficha'); // Actualizado
+        var numeroFichaDiv = numeroFichaField.closest('.field');
+
+        function toggleNumeroFicha() {
+            if (rolSelect.value == 3) { // Aprendiz
+                numeroFichaDiv.style.display = 'block';
+                numeroFichaField.setAttribute('required', 'required');
+            } else {
+                numeroFichaDiv.style.display = 'none';
+                numeroFichaField.removeAttribute('required');
+            }
+        }
+
+        rolSelect.addEventListener('change', toggleNumeroFicha);
+
+        // Llamar a la función para inicializar el estado correcto en caso de que el rol esté preseleccionado
+        toggleNumeroFicha();
+    });
+</script>
 
     <script>
         // Selección de elementos

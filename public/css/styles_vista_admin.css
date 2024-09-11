@@ -10,10 +10,14 @@ body {
 
 /* Estilos del header */
 .main-header {
-    background-color: #f7f7f7;
+    background-color: #00304D;
     color: #ffffff;
     font-size: 1.25rem;
     padding: 10px 0;
+}
+
+.main-header a:hover {
+    color: #00ff2a;
 }
 
 .container {
@@ -30,7 +34,7 @@ body {
     font-family: Arial, sans-serif;
     font-size: 24px;
     font-weight: bold;
-    color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
     text-decoration: none;
 }
 
@@ -46,7 +50,7 @@ body {
 }
 
 .nav-list a {
-    color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
     text-decoration: none;
     font-size: 18px;
     transition: color 0.3s;

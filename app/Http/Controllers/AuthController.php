@@ -26,58 +26,121 @@ class AuthController extends Controller
     }
 
     // Manejar el registro de un nuevo usuario
-    public function createpost(Request $request)
-    {
-        Log::info('Datos del formulario:', $request->all());
+public function createpost(Request $request)
+{
+    Log::info('Datos del formulario:', $request->all());
 
-        // Validar los datos del formulario
-        $validator = Validator::make($request->all(), [
-            'nombres' => 'required|string|max:255',
-            'apellidos' => 'required|string|max:255',
-            'tipo_documento' => 'required|string|max:255',
-            'numero_documento' => 'required|string|max:255|unique:usuarios',
-            'correo_personal' => 'required|email|max:255|unique:usuarios',
-            'correo_institucional' => 'required|email|max:255|unique:usuarios',
-            'telefono' => 'required|string|max:20',
-            'contraseña' => 'required|string|min:6|confirmed',
-            'rol' => 'required|exists:roles,id',
-            'numero_ficha' => $request->input('rol') == 3 ? 'required|string|max:255' : 'nullable|string|max:255',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:6144'
-        ]);
+    // Validar los datos del formulario
+    $validator = Validator::make($request->all(), [
+        'nombres' => 'required|string|max:255',
+        'apellidos' => 'required|string|max:255',
+        'tipo_documento' => 'required|string|max:255',
+        'numero_documento' => 'required|string|max:255|unique:usuarios',
+        'correo_personal' => 'required|email|max:255|unique:usuarios',
+        'correo_institucional' => 'required|email|max:255|unique:usuarios',
+        'telefono' => 'required|string|max:20',
+        'contraseña' => 'required|string|min:6|confirmed',
+        'rol' => 'required|exists:roles,id', // Verificar que el rol exista
+        'numero_ficha' => $request->input('rol') == 3 ? 'required|string|max:255' : 'nullable|string|max:255',
+        'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:6144' // Validación de la imagen
+    ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        try {
-            $usuario = new Usuario();
-            $usuario->nombres = $request->nombres;
-            $usuario->apellidos = $request->apellidos;
-            $usuario->tipo_documento = $request->tipo_documento;
-            $usuario->numero_documento = $request->numero_documento;
-            $usuario->correo_personal = $request->correo_personal;
-            $usuario->correo_institucional = $request->correo_institucional;
-            $usuario->telefono = $request->telefono;
-            $usuario->numero_ficha = $request->input('numero_ficha');
-            $usuario->contraseña = Hash::make($request->contraseña);
-            $usuario->roles_id = $request->rol;  // Asigna el rol seleccionado
-
-            if ($request->hasFile('foto')) {
-                $file = $request->file('foto');
-                $path = $file->store('public/fotos_perfil');
-                $usuario->foto = basename($path);
-            }
-
-            $usuario->save();
-
-            Auth::login($usuario);
-
-            return redirect()->route('user.panel')->with('success', 'Registro exitoso. ¡Bienvenido!');
-        } catch (QueryException $e) {
-            Log::error('Error al registrar el usuario: ' . $e->getMessage());
-            return redirect()->back()->withErrors(['error' => 'Ha ocurrido un error al registrar el usuario.'])->withInput();
-        }
+    if ($validator->fails()) {
+        return redirect()->back()->withErrors($validator)->withInput();
     }
+
+    try {
+        // Crear una nueva instancia del modelo Usuario
+        $usuario = new Usuario();
+        $usuario->nombres = $request->nombres;
+        $usuario->apellidos = $request->apellidos;
+        $usuario->tipo_documento = $request->tipo_documento;
+        $usuario->numero_documento = $request->numero_documento;
+        $usuario->correo_personal = $request->correo_personal;
+        $usuario->correo_institucional = $request->correo_institucional;
+        $usuario->telefono = $request->telefono;
+        $usuario->numero_ficha = $request->input('numero_ficha');
+        $usuario->contraseña = Hash::make($request->contraseña);
+        $usuario->roles_id = $request->rol; // Asigna el rol seleccionado
+
+        // Manejo del archivo de foto si se sube una
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $path = $file->store('public/fotos_perfil'); // Guarda la foto en el almacenamiento público
+            $usuario->foto = basename($path); // Guarda solo el nombre del archivo en la base de datos
+        }
+
+        // Guardar el usuario en la base de datos
+        $usuario->save();
+
+        // Autenticar al usuario recién registrado
+        Auth::login($usuario);
+
+        // Redirigir al panel de usuario con un mensaje de éxito
+        return redirect()->route('user.panel')->with('success', 'Registro exitoso. ¡Bienvenido!');
+    } catch (QueryException $e) {
+        Log::error('Error al registrar el usuario: ' . $e->getMessage());
+        return redirect()->back()->withErrors(['error' => 'Ha ocurrido un error al registrar el usuario.'])->withInput();
+    }
+}
+public function createpostadmin(Request $request)
+{
+    Log::info('Datos del formulario:', $request->all());
+
+    // Validar los datos del formulario
+    $validator = Validator::make($request->all(), [
+        'nombres' => 'required|string|max:255',
+        'apellidos' => 'required|string|max:255',
+        'tipo_documento' => 'required|string|max:255',
+        'numero_documento' => 'required|string|max:255|unique:usuarios',
+        'correo_personal' => 'required|email|max:255|unique:usuarios',
+        'correo_institucional' => 'required|email|max:255|unique:usuarios',
+        'telefono' => 'required|string|max:20',
+        'contraseña' => 'required|string|min:6|confirmed',
+        'rol' => 'required|exists:roles,id', // Verificar que el rol exista
+        'numero_ficha' => $request->input('rol') == 3 ? 'required|string|max:255' : 'nullable|string|max:255',
+        'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:6144' // Validación de la imagen
+    ]);
+
+    if ($validator->fails()) {
+        return redirect()->back()->withErrors($validator)->withInput();
+    }
+
+    try {
+        // Crear una nueva instancia del modelo Usuario
+        $usuario = new Usuario();
+        $usuario->nombres = $request->nombres;
+        $usuario->apellidos = $request->apellidos;
+        $usuario->tipo_documento = $request->tipo_documento;
+        $usuario->numero_documento = $request->numero_documento;
+        $usuario->correo_personal = $request->correo_personal;
+        $usuario->correo_institucional = $request->correo_institucional;
+        $usuario->telefono = $request->telefono;
+        $usuario->numero_ficha = $request->input('numero_ficha');
+        $usuario->contraseña = Hash::make($request->contraseña);
+        $usuario->roles_id = $request->rol; // Asigna el rol seleccionado
+
+        // Manejo del archivo de foto si se sube una
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $path = $file->store('public/fotos_perfil'); // Guarda la foto en el almacenamiento público
+            $usuario->foto = basename($path); // Guarda solo el nombre del archivo en la base de datos
+        }
+
+        // Guardar el usuario en la base de datos
+        $usuario->save();
+
+        // Autenticar al usuario recién registrado
+        Auth::login($usuario);
+
+        // Redirigir al panel de usuario con un mensaje de éxito
+        return redirect()->route('admin.panel')->with('success', 'Registro exitoso. ¡Bienvenido!');
+    } catch (QueryException $e) {
+        Log::error('Error al registrar el usuario: ' . $e->getMessage());
+        return redirect()->back()->withErrors(['error' => 'Ha ocurrido un error al registrar el usuario.'])->withInput();
+    }
+}
+
 
     // Manejar el inicio de sesión
     public function login(Request $request)

@@ -7,6 +7,7 @@ use App\Models\Elemento;
 use App\Models\Categoria;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class ElementoController extends Controller
 {
@@ -26,9 +27,9 @@ class ElementoController extends Controller
             'modelo' => 'required|string|max:255',
             'serie' => 'nullable|string|max:255',
             'especificaciones_tecnicas' => 'nullable|string',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB por imagen
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240', // 10MB por imagen
         ]);
-    
+
         // Crear un nuevo elemento
         $elemento = new Elemento();
         $elemento->categoria_id = $validatedData['categoria_id'];
@@ -38,21 +39,21 @@ class ElementoController extends Controller
         $elemento->serie = $validatedData['serie'] ?? null;
         $elemento->especificaciones_tecnicas = $validatedData['especificaciones_tecnicas'] ?? null;
         $elemento->usuario_id = Auth::id(); // Asignar el ID del usuario autenticado
-    
+
         // Guardar la foto si está presente
-        if (isset($validatedData['foto'])) {
-            $elemento->foto = $validatedData['foto']->store('fotos', 'public');
+        if ($request->hasFile('foto')) {
+            $elemento->foto = $request->file('foto')->store('fotos', 'public');
         }
-    
+
         $elemento->save();
-    
+
         // Redireccionar con un mensaje de éxito
         return redirect()->route('user.panel')->with('success', '¡Elemento registrado exitosamente!');
     }
 
     public function showUserElements()
     {
-        $user = auth()->User();
+        $user = auth()->user();
         $elementos = $user->elementos; // Asumiendo que tienes una relación definida en el modelo User
 
         return view('index.vistausuario', compact('elementos'));
@@ -62,19 +63,19 @@ class ElementoController extends Controller
     public function destroy($id)
     {
         $elemento = Elemento::findOrFail($id);
-        
+
         // Verifica si el elemento pertenece al usuario autenticado
         if ($elemento->usuario_id != Auth::id()) {
             return redirect()->route('user.panel')->with('error', 'No tienes permiso para eliminar este elemento.');
         }
-        
+
         // Elimina el archivo de la foto si existe
         if ($elemento->foto) {
-            \Storage::delete('public/' . $elemento->foto);
+            Storage::delete('public/' . $elemento->foto);
         }
-        
+
         $elemento->delete();
-        
+
         return redirect()->route('user.panel')->with('success', '¡Elemento eliminado exitosamente!');
     }
 
@@ -103,7 +104,7 @@ class ElementoController extends Controller
             'modelo' => 'required|string|max:255',
             'serie' => 'nullable|string|max:255',
             'especificaciones_tecnicas' => 'nullable|string',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB por imagen
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240', // 10MB por imagen
         ]);
 
         // Buscar el elemento por su ID
@@ -123,13 +124,13 @@ class ElementoController extends Controller
         $elemento->especificaciones_tecnicas = $validatedData['especificaciones_tecnicas'] ?? null;
 
         // Manejar la foto, si se sube una nueva
-        if (isset($validatedData['foto'])) {
+        if ($request->hasFile('foto')) {
             // Eliminar la foto anterior si existe
             if ($elemento->foto) {
-                \Storage::delete('public/' . $elemento->foto);
+                Storage::delete('public/' . $elemento->foto);
             }
             // Guardar la nueva foto
-            $elemento->foto = $validatedData['foto']->store('fotos', 'public');
+            $elemento->foto = $request->file('foto')->store('fotos', 'public');
         }
 
         // Guardar los cambios en la base de datos

@@ -39,7 +39,7 @@ Route::middleware('auth')->group(function () {
     })->name('admin.panel');
     Route::get('control/panel', function () { 
         return view('index.vistacontrol');
-    })->name('control.panel');
+    })->name('control.panel'); 
     Route::get('user/panel', [UserController::class, 'userPanel'])->name('user.panel');
 
     //Ruta para el panel del vigilante

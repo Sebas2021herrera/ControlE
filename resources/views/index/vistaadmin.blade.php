@@ -20,6 +20,7 @@
                     <div class="dropdown-content">
                         <a href="#" class="dropdown-item" id="registerUsers">Registrar usuarios</a>
                         <a href="#" class="dropdown-item" id="registerElements">Registrar elementos</a>
+
                     </div>
                 </div>
             </div>
@@ -40,6 +41,7 @@
             <div class="ventana-formulario">
                 <h2>Registro de usuarios</h2>
                 <form>
+                    <form id="registroForm" method="POST" action="{{ route('createpost') }}" enctype="multipart/form-data">
                         <div class="field">
                             <label class="label" for="nombres">Nombres:</label>
                             <div class="control">
@@ -214,11 +216,49 @@
                 <h2>Registro de elementos</h2>
                 <form>
                     <!-- Aquí puedes agregar los campos para registrar elementos -->
-                    <div class="field">
-                        <label class="label" for="elementName">Categoría</label>
-                        <div class="control">
-                            <input class="input" type="text" id="elementName" name="elementName" required>
-                        </div>
+                    <!-- Campo de Número Documento Usuario -->
+                <div class="mb-3">
+                        <label for="numeroDocumentoUsuario" class="form-label">Número documento usuario</label>
+                        <input type="text" class="form-control" id="numeroDocumentoUsuario" name="numeroDocumentoUsuario" placeholder="Ingrese el número de documento del usuario">
+                </div>
+                    <!-- Campo Categoría -->
+                    <div class="mb-3">
+                        <label for="categoria" class="form-label">Categoría</label>
+                        <select class="form-select" id="categoria" name="categoria">
+                        <option selected>Archiveros</option>
+                            <!-- Agregar más opciones si es necesario -->
+                        </select>
+                    <!-- Campo de Descripción -->
+            <div class="mb-3">
+                <label for="descripcion" class="form-label">Descripción</label>
+                <input type="text" class="form-control" id="descripcion" name="descripcion" placeholder="Ingrese la descripción">
+            </div>
+            <!-- Campo de Marca -->
+            <div class="mb-3">
+                <label for="marca" class="form-label">Marca</label>
+                <input type="text" class="form-control" id="marca" name="marca" placeholder="Ingrese la marca">
+            </div>
+             <!-- Campo de Modelo -->
+             <div class="mb-3">
+                <label for="modelo" class="form-label">Modelo</label>
+                <input type="text" class="form-control" id="modelo" name="modelo" placeholder="Ingrese el modelo">
+            </div>
+            <!-- Campo de Número de Serie -->
+            <div class="mb-3">
+                <label for="numeroSerie" class="form-label">Número de Serie</label>
+                <input type="text" class="form-control" id="numeroSerie" name="numeroSerie" placeholder="Ingrese el número de serie">
+            </div>
+            <!-- Campo de Especificaciones Técnicas -->
+            <div class="mb-3">
+                <label for="especificacionesTecnicas" class="form-label">Especificaciones Técnicas</label>
+                <textarea class="form-control" id="especificacionesTecnicas" name="especificacionesTecnicas" rows="3" placeholder="Ingrese las especificaciones técnicas"></textarea>
+            </div>
+            <!-- Campo de Foto -->
+            <div class="mb-3">
+                <label for="foto" class="form-label">Foto</label>
+                <input type="file" class="form-control" id="foto" name="foto">
+            </div>
+                
                     </div>
                     <div class="field">
                         <div class="control">
@@ -229,6 +269,50 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function previewImage(event) {
+            var input = event.target;
+            var preview = document.getElementById('preview');
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.src = '#';
+                preview.style.display = 'none';
+            }
+        }
+    </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var rolSelect = document.getElementById('rol');
+        var numeroFichaField = document.getElementById('numero_ficha'); // Actualizado
+        var numeroFichaDiv = numeroFichaField.closest('.field');
+
+        function toggleNumeroFicha() {
+            if (rolSelect.value == 3) { // Aprendiz
+                numeroFichaDiv.style.display = 'block';
+                numeroFichaField.setAttribute('required', 'required');
+            } else {
+                numeroFichaDiv.style.display = 'none';
+                numeroFichaField.removeAttribute('required');
+            }
+        }
+
+        rolSelect.addEventListener('change', toggleNumeroFicha);
+
+        // Llamar a la función para inicializar el estado correcto en caso de que el rol esté preseleccionado
+        toggleNumeroFicha();
+    });
+</script>
 
     <script>
         // Selección de elementos

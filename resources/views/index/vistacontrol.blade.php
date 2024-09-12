@@ -28,12 +28,12 @@
                     @if (isset($usuario))
                         <div class="info-text">
                             <p class="verde">{{ $usuario->nombres }}</p>
-                            <p class="verde"> {{ $usuario->apellidos }}</p>
-                            <p><strong> Doc: {{ $usuario->numero_documento }} </strong></p>
-                            <p><strong>Cel:{{ $usuario->telefono }}</strong></p><br />
-                            <p><strong> {{ $usuario->role->nombre }}</strong></p>
-                            <p><strong> Ficha:{{ $usuario->numero_ficha }}</strong></p>
-                            <p class="verde" id="semifooter"> Regional Casanare | Centro Agroindustrial y
+                            <p class="verde">{{ $usuario->apellidos }}</p>
+                            <p><strong>Doc: {{ $usuario->numero_documento }}</strong></p>
+                            <p><strong>Cel: {{ $usuario->telefono }}</strong></p><br />
+                            <p><strong>{{ $usuario->role->nombre }}</strong></p>
+                            <p><strong>Ficha: {{ $usuario->numero_ficha }}</strong></p>
+                            <p class="verde" id="semifooter">Regional Casanare | Centro Agroindustrial y
                                 Fortalecimiento Empresarial del Casanare</p>
                         </div>
 
@@ -54,7 +54,6 @@
 
             <!-- Nuevo contenedor al lado del contenedor intermedio -->
             <div class="contenedor-reportes">
-                <!-- Contenido del nuevo contenedor (reportes) aquí -->
                 <p>Contenido del contenedor de reportes.</p>
             </div>
         </div>
@@ -65,35 +64,53 @@
                     <div class="card-container">
                         @foreach ($elementos as $elemento)
                             <div class="card">
-                                <h3>{{ $elemento->marca }}</h3>
-                                <img src="{{ asset('storage/fotos_elementos/' . $elemento->foto) }}"
-                                    alt="Foto del elemento" class="elemento-foto">
+                                <h3 class="cabeza">{{ $elemento->categoria->nombre }}</h3>
+                                @if (file_exists(public_path('storage/' . $elemento->foto)))
+                                    <img src="{{ asset('storage/' . $elemento->foto) }}" alt="Foto del elemento"
+                                        class="img-fluid mt-3 elemento-foto">
+                                @else
+                                    <p>Imagen no encontrada: {{ asset('storage/' . $elemento->foto) }}</p>
+                                @endif
+
                                 <p><strong>Serie:</strong> {{ $elemento->serie }}</p>
+                                <p><strong>Marca:</strong> {{ $elemento->marca }}</p>
                                 <a href="#" class="link-ver-mas" data-bs-toggle="modal"
                                     data-bs-target="#modal-{{ $elemento->id }}">
                                     Ver más
                                 </a>
+
+                                <div class="btn-container">
+                                    <button class="btn-ingresa">Ingresa</button>
+                                </div>
                             </div>
 
-                            <!-- Modal -->
+                            <!-- Modal ver más adaptado -->
                             <div class="modal" id="modal-{{ $elemento->id }}">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title">{{ $elemento->categoria->nombre }}</h5>
-                                        <button type="button" class="close"
+                                        <button type="button" class="btn-close"
                                             onclick="document.getElementById('modal-{{ $elemento->id }}').style.display='none'">&times;</button>
                                     </div>
                                     <div class="modal-body">
-                                        <img src="{{ asset('storage/fotos_elementos/' . $elemento->foto) }}"
-                                            alt="Foto del elemento" class="img-fluid">
-                                        <div class="info">
-                                            <p><strong>Marca:</strong> {{ $elemento->marca }}</p>
-                                            <p><strong>Modelo:</strong> {{ $elemento->modelo }}</p>
-                                            <p><strong>Serie:</strong> {{ $elemento->serie }}</p>
-                                            <p><strong>Especificaciones:</strong>
-                                                {{ $elemento->especificaciones_tecnicas }}</p>
+                                        <div class="modal-body-content text-center">
+                                            <!-- Clase para centrar el contenido -->
+                                            @if (file_exists(public_path('storage/' . $elemento->foto)))
+                                                <img src="{{ asset('storage/' . $elemento->foto) }}"
+                                                    alt="Foto del elemento" class="img-modal-ver-mas">
+                                            @else
+                                                <p>Imagen no encontrada: {{ asset('storage/' . $elemento->foto) }}</p>
+                                            @endif
+                                            <div class="info mt-3">
+                                                <p><strong>Marca:</strong> {{ $elemento->marca }}</p>
+                                                <p><strong>Modelo:</strong> {{ $elemento->modelo }}</p>
+                                                <p><strong>Serie:</strong> {{ $elemento->serie }}</p>
+                                                <p><strong>Especificaciones:</strong>
+                                                    {{ $elemento->especificaciones_tecnicas }}</p>
+                                            </div>
                                         </div>
                                     </div>
+
                                     <div class="modal-footer">
                                         <button type="button" class="btn-close"
                                             onclick="document.getElementById('modal-{{ $elemento->id }}').style.display='none'">Cerrar</button>

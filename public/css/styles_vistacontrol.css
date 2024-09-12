@@ -19,7 +19,7 @@ body {
 
 .buscador {
     width: 100%;
-    height: 80px;
+    height: 110px;
     background-color: #00324d;
     display: flex;
     align-items: center;
@@ -42,17 +42,13 @@ body {
     background-color: #ffffff;
     transition: all 0.3s ease;
     margin-right: 5px;
+    margin-top: 6px;
     box-sizing: border-box;
 }
 
 .buscador input::placeholder {
     color: #00324d;
     opacity: 0.8;
-}
-
-.buscador input:focus {
-    border-color: #39a900;
-    box-shadow: 0 0 10px rgba(57, 169, 0, 0.5);
 }
 
 .buscador button {
@@ -99,9 +95,7 @@ body {
     justify-content: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
-    height: calc(
-        100% - 0px
-    ); /* Ajusta esta altura según el espacio que necesites */
+    height: calc(100% - 0px);
 }
 
 .info-text {
@@ -187,65 +181,94 @@ body {
     overflow-y: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    flex: 1;
+}
+
+.contenido .elementos .card {
+    overflow-y: scroll; 
+    scrollbar-width: none; 
+    -ms-overflow-style: none;
 }
 
 .contenido .elementos::-webkit-scrollbar {
     display: none;
 }
 
-.contenido .elementos {
-    flex: 1;
-    min-width: 300px;
-}
-
 .card-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px; /* Espacio entre los cards */
-    justify-content: center; /* Centra los cards dentro del contenedor */
+    gap: 21px;
+    justify-content: center;
 }
 
 .card {
     background-color: #ffffff;
     border: 1px solid #ddd;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 220px; /* Ancho fijo para mantener la consistencia */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    width: 240px;
+    height: 380px;
     padding: 15px;
     text-align: center;
     box-sizing: border-box;
-    max-height: 300px; /* Altura máxima para evitar desbordamiento */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    max-height: 400px;
+    overflow: auto;
+    position: relative;
+}
+
+.cabeza {
+    margin-top: 0px;
 }
 
 .card img.elemento-foto {
-    width: 100%;
-    height: 140px; /* Altura ajustada para una visualización adecuada */
-    object-fit: cover;
+    margin-top: -15px; 
+    width: auto;
+    height: auto;
+    max-height: 100px;
+    object-fit: contain;
     border-radius: 8px;
-    margin-bottom: 10px;
-}
-
-.card h3 {
-    font-size: 16px; /* Tamaño de fuente adecuado para el título */
-    margin-bottom: 8px; /* Espacio entre el título y el contenido */
 }
 
 .card p {
-    font-size: 14px; /* Tamaño de fuente adecuado para el texto */
-    margin-bottom: 6px; /* Espacio entre los párrafos */
+    margin: 0;
+    font-size: 14px;
 }
 
-/* Estilo para el modal */
+.card p + p {
+    margin-top: -8px;
+}
+
+.card-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.card-footer .link-ver-mas {
+    margin-top: 10px;
+    font-size: 14px;
+    color: blue;
+    text-decoration: none;
+}
+
+.card-footer .link-ver-mas:hover {
+    text-decoration: underline;
+}
+
 .modal {
-    display: none; /* Oculto por defecto */
+    display: none;
     position: fixed;
-    z-index: 9999; /* Asegúrate de que esté sobre otros elementos */
+    z-index: 9999;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro */
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .modal-content {
@@ -254,7 +277,7 @@ body {
     padding: 20px;
     border-radius: 8px;
     width: 80%;
-    max-width: 800px;
+    max-width: 400px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -262,48 +285,51 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 10px;
+    border-bottom: 2px solid #ddd; 
+    padding-bottom: 15px; 
     margin-bottom: 20px;
+    width: 100%; 
 }
 
 .modal-title {
     font-size: 24px;
     font-weight: bold;
-}
-
-.close {
-    font-size: 24px;
-    cursor: pointer;
-    background: none;
-    border: none;
-    color: #333;
-}
-
-.close:hover {
-    color: #000;
+    text-align: center;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
 }
 
 .modal-body {
+    padding-top: 15px; 
+    border-bottom: 2px solid #ddd;
     display: flex;
-    gap: 20px;
+    flex-direction: column;
+    align-items: center;
 }
 
-.modal-body img {
+.modal-body-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.img-modal-ver-mas {
     max-width: 100%;
     height: auto;
-    border-radius: 8px;
-}
-
-.modal-body .info {
-    flex: 1;
+    margin-bottom: 20px; 
+    display: block;
 }
 
 .modal-footer {
     display: flex;
     justify-content: flex-end;
-    border-top: 1px solid #ddd;
-    padding-top: 10px;
+    border-top: 1px solid #ddd; 
+    padding-top: 10px; 
 }
 
 .modal-footer .btn-close {
@@ -320,18 +346,86 @@ body {
     background-color: #0056b3;
 }
 
-/* Estilo para los enlaces "Ver más" */
+.close {
+    font-size: 24px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: #333;
+}
+
+.close:hover {
+    color: #000;
+}
+
+.elemento-foto {
+    max-width: 100%;
+    height: auto;
+}
+
 .link-ver-mas {
     color: blue;
     text-decoration: none;
+    font-size: 22px;
 }
 
-/* Mantener color azul después de ser visitado */
 .link-ver-mas:visited {
     color: blue;
 }
 
-/* Opcional: Efecto hover para mejorar la interacción del usuario */
 .link-ver-mas:hover {
     text-decoration: underline;
+}
+
+.btn-ingresa {
+    background-color: #28a745;
+    border: none;
+    color: white;
+    padding: 10px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    font-size: 16px;
+    margin: 4px auto;
+    cursor: pointer;
+    border-radius: 8px;
+    width: 80%;
+}
+
+.btn-ingresa:hover {
+    background-color: #218838;
+    color: white;
+}
+
+.contenido .elementos .card {
+    flex-direction: column;
+    max-height: 290px;
+}
+
+.footer {
+    width: 100%;
+    height: 20px;
+    background-color: #00324d;
+    color: #ffffff;
+    text-align: center;
+    padding: 10px;
+    font-size: 12px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin-bottom: -10px;
+}
+
+.card .link-ver-mas {
+    position: relative;
+    bottom: 0;
+    text-decoration: none;
+    color: blue;
+    font-size: 14px;
+}
+
+.card .link-ver-mas:hover {
+    text-decoration: underline;
+    color: blue;
 }

@@ -149,6 +149,8 @@
                         <div class="control">
                             <div class="select @error('rol') is-danger @enderror">
                                 <select id="rol" name="rol" required>
+                                    <option value="1" {{ old('rol') == 1 ? 'selected' : '' }}>Vigilante</option>
+                                    <option value="2" {{ old('rol') == 2 ? 'selected' : '' }}>Administrador</option>
                                     <option value="3" {{ old('rol') == 3 ? 'selected' : '' }}>Aprendiz</option>
                                     <option value="4" {{ old('rol') == 4 ? 'selected' : '' }}>Visitante</option>
                                     <option value="5" {{ old('rol') == 5 ? 'selected' : '' }}>Funcionario

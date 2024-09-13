@@ -77,7 +77,12 @@ public function createpost(Request $request)
         Auth::login($usuario);
 
         // Redirigir al panel de usuario con un mensaje de éxito
-        return redirect()->route('user.panel')->with('success', 'Registro exitoso. ¡Bienvenido!');
+        if ($request->input('rol') == 'admin') {
+            return redirect()->route('admin.panel')->with('success', 'Registro exitoso como administrador.');
+        } else {
+            return redirect()->route('user.panel')->with('success', 'Registro exitoso. ¡Bienvenido!');
+        }
+        
     } catch (QueryException $e) {
         Log::error('Error al registrar el usuario: ' . $e->getMessage());
         return redirect()->back()->withErrors(['error' => 'Ha ocurrido un error al registrar el usuario.'])->withInput();
@@ -85,6 +90,15 @@ public function createpost(Request $request)
 }
 public function createpostadmin(Request $request)
 {
+
+    // Lógica de registro...
+
+    // Si el registro es exitoso, guarda un mensaje flash en la sesión
+    session()->flash('success', 'Registro exitoso.');
+
+    // Redirige a la vista de administración
+    return redirect()->route('admin.panel');
+
     Log::info('Datos del formulario:', $request->all());
 
     // Validar los datos del formulario

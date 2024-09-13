@@ -15,12 +15,13 @@
             <div class="dropdown is-hoverable">
                 <div class="dropdown-trigger">
                     <a href="#" id="registerLink" class="registrar">Registro</a>
+                    <a href="#" id="registerLink" class="reporte">Reportes ingreso</a>
                 </div>
                 <div class="dropdown-menu" id="dropdown-menu" role="menu">
                     <div class="dropdown-content">
                         <a href="#" class="dropdown-item" id="registerUsers">Registrar usuarios</a>
                         <a href="#" class="dropdown-item" id="registerElements">Registrar elementos</a>
-
+                        <a href="#" class="dropdown-item" id="consultarUsuarios">Consultar usuarios</a>
                     </div>
                 </div>
             </div>
@@ -162,6 +163,8 @@
                         <div class="control">
                             <div class="select @error('rol') is-danger @enderror">
                                 <select id="rol" name="rol" required>
+                                    <option value="1" {{ old('rol') == 1 ? 'selected' : '' }}>Vigilante</option>
+                                    <option value="2" {{ old('rol') == 2 ? 'selected' : '' }}>Administrador</option>
                                     <option value="3" {{ old('rol') == 3 ? 'selected' : '' }}>Aprendiz</option>
                                     <option value="4" {{ old('rol') == 4 ? 'selected' : '' }}>Visitante</option>
                                     <option value="5" {{ old('rol') == 5 ? 'selected' : '' }}>Funcionario
@@ -202,7 +205,20 @@
 
                     <div class="field">
                         <div class="control">
-                            <button class="button is-success" type="submit">Registrar</button>
+                            <button class="button is-success_admin" type="submit">Registrar</button>
+                            
+                    <!-- Mostrar mensajes de éxito y error -->
+                    @if (session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                @if (session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+                @endif
                         </div>
                     </div>
                 </form>
@@ -271,6 +287,20 @@
             </div>
         </div>
     </div>
+
+            <!-- Mostrar mensajes de éxito y error -->
+            @if (session('success_admin'))
+            <div class="alert alert-success_admin">
+                {{ session('success_admin') }}
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+
 
     <script>
         document.getElementById('registroForm').addEventListener('submit', function(event) {
@@ -342,7 +372,7 @@
 </script>
 <script>
         $(document).ready(function() {
-            const successMessage = $('.alert-success');
+            const successMessage = $('.alert-success_admin');
             if (successMessage.length) {
                 setTimeout(() => {
                     successMessage.fadeOut(500); // Desvanecer el mensaje en 0.5 segundos

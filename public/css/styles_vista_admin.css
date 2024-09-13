@@ -38,6 +38,17 @@ body {
     text-decoration: none;
 }
 
+.reporte {
+    font-family: Arial, sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    color: rgb(255, 255, 255);
+    text-decoration: none;
+    position: relative;
+    top: 0px;    /* Mueve el texto hacia abajo */
+    left: 30px;   /* Mueve el texto hacia la derecha */
+}
+
 /* Estilos de la navegación */
 .nav {
     display: flex;

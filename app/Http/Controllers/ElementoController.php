@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Elemento;
 use App\Models\Categoria;
+use App\Models\Usuario;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -30,8 +31,13 @@ class ElementoController extends Controller
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240', // 10MB por imagen
         ]);
 
+        // Buscar el usuario por el número de documento
+        $usuario = Usuario::where('numero_documento', $validatedData['numeroDocumentoUsuario'])->firstOrFail();
+
+
         // Crear un nuevo elemento
         $elemento = new Elemento();
+        $elemento->usuario_id = $usuario->id; // Asignar el ID del usuario encontrado
         $elemento->categoria_id = $validatedData['categoria_id'];
         $elemento->descripcion = $validatedData['descripcion'];
         $elemento->marca = $validatedData['marca'];
@@ -77,6 +83,12 @@ class ElementoController extends Controller
         $elemento->delete();
 
         return redirect()->route('user.panel')->with('success', '¡Elemento eliminado exitosamente!');
+    }
+
+    public function mostrarVistaAdmin()
+    {
+        $categorias = Categoria::all(); // O la consulta adecuada para obtener las categorías
+        return view('index.vistaadmin', compact('categorias'));
     }
 
     // Método para mostrar el formulario de edición de un elemento
@@ -138,5 +150,7 @@ class ElementoController extends Controller
 
         // Redirigir con mensaje de éxito
         return redirect()->route('user.panel')->with('success', '¡Elemento actualizado exitosamente!');
+
+        
     }
 }

@@ -59,6 +59,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/usuario/{id}', [UserController::class, 'show'])->name('user.show');
     Route::get('/usuario/panel', [UserController::class, 'mostrarPerfil']);
     Route::get('/perfil', [UserController::class, 'mostrarPerfil'])->name('perfil');
+
+    //Ruta para registrar elementos desde vista admin
+    Route::get('admin/panel', [ElementoController::class, 'mostrarVistaAdmin']);
+
 });
 
 Route::middleware(['auth', 'checkRole:admin'])->group(function () {

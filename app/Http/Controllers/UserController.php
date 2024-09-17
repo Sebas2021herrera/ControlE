@@ -50,4 +50,10 @@ class UserController extends Controller
     
         return view('index.vistacontrol', compact('usuario', 'elementos'));
     }
+
+    public function categoriasElementosVistaAdmin()
+    {
+        $categorias = Categoria::all(); // O la consulta adecuada para obtener las categorías
+        return view('index.vistaadmin', compact('categorias'));
+    }
 }

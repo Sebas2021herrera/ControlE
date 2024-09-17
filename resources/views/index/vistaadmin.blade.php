@@ -241,9 +241,14 @@
                 </div>
                     <!-- Campo Categoría -->
                     <div class="mb-3">
+                        <form action="{{ route('elementos.store') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
                         <label for="categoria" class="form-label">Categoría</label>
-                        <select class="form-select" id="categoria" name="categoria">
+                        <select id="categoria_id" name="categoria_id" class="form-select" required>
                         <option selected>Archiveros</option>
+                        @foreach ($categorias as $categoria)
+                                    <option value="{{ $categoria->id }}">{{ $categoria->nombre }}</option>
+                        @endforeach
                             <!-- Agregar más opciones si es necesario -->
                         </select>
                     <!-- Campo de Descripción -->

@@ -10,7 +10,6 @@
 
 <body>
     <div class="container">
-        <!-- Formulario para buscar por número de documento -->
         <div class="buscador">
             <form action="{{ route('vigilante.buscar') }}" method="GET">
                 <input type="text" name="documento" placeholder="Buscar por documento...">
@@ -52,11 +51,29 @@
                 </div>
             </div>
 
-            <!-- Nuevo contenedor al lado del contenedor intermedio -->
             <div class="contenedor-reportes">
-                <p>Contenido del contenedor de reportes.</p>
+                <div class="tabla-container">
+                    <table class="tabla-reportes" id="tabla-reportes">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th class="centro">NOMBRE CENTRO</th>
+                                <th>FECHA INGRESO</th>
+                                <th>FECHA EGRESO</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-reportes-body">
+
+                        </tbody>
+                    </table>
+                    <div class="contenedor-botones">
+                        <button class="boton" id="agregar-registro">Nuevo Registro</button>
+                        <button class="boton">Guardar Registros</button>
+                    </div>
+                </div>
             </div>
         </div>
+
 
         <div class="contenido">
             <div class="elementos">
@@ -125,7 +142,7 @@
             </div>
         </div>
     </div>
-
+    <!--sccript para  mostrar modal-->
     <script>
         document.addEventListener('click', function(e) {
             if (e.target.matches('[data-bs-toggle="modal"]')) {
@@ -140,8 +157,73 @@
             }
         });
     </script>
-
+    <!--script  para mostrar modal-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!--script para agregar nuevas filas en la tabla de reportes
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tablaReportesBody = document.getElementById('tabla-reportes-body');
+            const filas = [
+                // Agrega aquí las filas con los datos que desees
+                // Las celdas de la columna 'centro' tendrán 'Yopal'
+                ['', 'Yopal', '', ''],
+                ['', 'Yopal', '', ''],
+                ['', 'Yopal', '', ''],
+                ['', 'Yopal', '', '']
+            ];
+
+            // Limpiar el cuerpo de la tabla antes de agregar nuevas filas
+            tablaReportesBody.innerHTML = '';
+
+            filas.forEach(fila => {
+                const tr = document.createElement('tr');
+                fila.forEach((dato, index) => {
+                    const td = document.createElement('td');
+                    // Solo las celdas en la columna con clase 'centro' tendrán el texto 'Yopal'
+                    if (index === 1) {
+                        td.textContent = 'Yopal';
+                    } else {
+                        td.textContent = 'new register'; // Las demás celdas quedarán en blanco
+                    }
+                    tr.appendChild(td);
+                });
+                tablaReportesBody.appendChild(tr);
+            });
+        });
+    </script>-->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tablaReportesBody = document.getElementById('tabla-reportes-body');
+            const agregarRegistroBtn = document.getElementById('agregar-registro');
+
+            // Función para crear una nueva fila
+            function crearNuevaFila() {
+                const tr = document.createElement('tr');
+
+                // Crear celdas para la fila
+                for (let i = 0; i < 4; i++) {
+                    const td = document.createElement('td');
+                    if (i === 1) { // La columna con clase 'centro' (índice 1)
+                        td.textContent = 'Yopal'; // Contenido para la columna 'centro'
+                    } else {
+                        td.textContent = ''; // Celdas en blanco para las demás columnas
+                    }
+                    tr.appendChild(td);
+                }
+
+                tablaReportesBody.appendChild(tr);
+            }
+
+            // Evento para el botón de agregar registro
+            agregarRegistroBtn.addEventListener('click', function() {
+                crearNuevaFila();
+            });
+        });
+    </script>
+
+
 </body>
 
 </html>

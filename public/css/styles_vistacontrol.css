@@ -87,15 +87,113 @@ body {
 
 .contenedor-reportes {
     width: 60.5%;
+    height: 216px;
     background-color: #e0e0e0;
     border-radius: 8px;
-    padding: 15px;
+    padding: 0; /* Eliminamos el padding para que no haya espacio interno */
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    position: relative;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
-    height: calc(100% - 0px);
+    overflow: hidden;
+}
+
+.tabla-container {
+    max-height: 200px;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 0; /* Sin padding en el contenedor */
+}
+
+.tabla-container::-webkit-scrollbar {
+    display: none;
+}
+
+.tabla-reportes {
+    table-layout: fixed; /* Mantén la distribución fija */
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin: 0;
+}
+
+.tabla-reportes th,
+.tabla-reportes td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid white;
+}
+
+.tabla-reportes th:nth-child(1),
+.tabla-reportes td:nth-child(1) {
+    width: 15%; /* Ajusta este porcentaje según lo necesites para la primera columna */
+}
+
+.tabla-reportes th:nth-child(2),
+.tabla-reportes td:nth-child(2) {
+    width: 25%; /* Ajusta este porcentaje según lo necesites para la segunda columna */
+}
+
+.tabla-reportes thead {
+    position: sticky;
+    top: 0;
+    background-color: #f0f0f0;
+    z-index: 1;
+}
+
+.tabla-reportes th {
+    padding: 10px;
+    background-color: #00324d;
+    color: white;
+    border-bottom: 1px solid white;
+}
+
+.tabla-container {
+    max-height: 200px;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 0;
+}
+
+.tabla-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Estilos para el contenedor de los botones */
+/* Estilos para el contenedor de los botones */
+.contenedor-botones {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #e0e0e0; /* Fondo del contenedor */
+    border-top: 1px solid #ddd; /* Línea superior */
+    display: flex;
+    justify-content: center; /* Alineación de los botones a la izquierda */
+}
+
+/* Estilos para los botones */
+.boton {
+    padding: 10px 20px; 
+    background-color: #00324d; /* Color de fondo azul oscuro */
+    color: white; /* Color del texto blanco */
+    border: none; /* Sin bordes */
+    border-radius: 8px; /* Bordes redondeados */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    font-size: 14px; /* Tamaño de fuente */
+    transition: background-color 0.3s ease; /* Transición suave */
+}
+
+.boton:first-child {
+    margin-right: 10px; /* Espacio entre los botones */
+}
+
+/* Efecto hover para los botones */
+.boton:hover {
+    background-color: #39a900; /* Cambia a verde cuando se pasa el cursor */
 }
 
 .info-text {
@@ -185,8 +283,8 @@ body {
 }
 
 .contenido .elementos .card {
-    overflow-y: scroll; 
-    scrollbar-width: none; 
+    overflow-y: scroll;
+    scrollbar-width: none;
     -ms-overflow-style: none;
 }
 
@@ -224,7 +322,7 @@ body {
 }
 
 .card img.elemento-foto {
-    margin-top: -15px; 
+    margin-top: -15px;
     width: auto;
     height: auto;
     max-height: 100px;
@@ -285,10 +383,10 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 2px solid #ddd; 
-    padding-bottom: 15px; 
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 15px;
     margin-bottom: 20px;
-    width: 100%; 
+    width: 100%;
 }
 
 .modal-title {
@@ -303,7 +401,7 @@ body {
 }
 
 .modal-body {
-    padding-top: 15px; 
+    padding-top: 15px;
     border-bottom: 2px solid #ddd;
     display: flex;
     flex-direction: column;
@@ -321,15 +419,15 @@ body {
 .img-modal-ver-mas {
     max-width: 100%;
     height: auto;
-    margin-bottom: 20px; 
+    margin-bottom: 20px;
     display: block;
 }
 
 .modal-footer {
     display: flex;
     justify-content: flex-end;
-    border-top: 1px solid #ddd; 
-    padding-top: 10px; 
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
 }
 
 .modal-footer .btn-close {
@@ -378,7 +476,7 @@ body {
 }
 
 .btn-ingresa {
-    background-color: #28a745;
+    background-color: #39a900;
     border: none;
     color: white;
     padding: 10px 0;
@@ -394,7 +492,7 @@ body {
 }
 
 .btn-ingresa:hover {
-    background-color: #218838;
+    background-color: #2e8801;
     color: white;
 }
 

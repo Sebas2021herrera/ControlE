@@ -21,7 +21,7 @@ html {
 .right-panel {
     flex: 1;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px;
     padding: 20px;
     box-sizing: border-box;
@@ -32,6 +32,32 @@ html {
 .right-panel::-webkit-scrollbar {
     width: 0px;
     background: transparent;
+}
+
+.navbar-light.bg-light {
+    background-color: #00304d !important;
+}
+
+.navbar-light .navbar-nav .nav-link {
+    color: white !important;
+}
+
+.navbar-light .navbar-brand {
+    color: white !important;
+}
+
+.navbar-light .dropdown-menu {
+    background-color: #00304d !important;
+    color: white !important;
+}
+
+.navbar-light .dropdown-menu .dropdown-item {
+    color: white !important;
+}
+
+.navbar-light .dropdown-menu .dropdown-item:hover {
+    background-color: #001f33 !important;
+    color: white !important;
 }
 
 .card {

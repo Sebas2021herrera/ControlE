@@ -25,7 +25,8 @@ Route::middleware('auth')->group(function () {
     
     // Rutas para la gestión de elementos
     Route::get('elementos/create', [ElementoController::class, 'create'])->name('elementos.create');
-    Route::post('/elementos', [ElementoController::class, 'store'])->name('elementos.store');
+    Route::post('/elementos', [ElementoController::class, 'store'])->name('elementos.store'); // Añade esta línea para la ruta de almacenamiento
+    
     // Ruta para eliminar un elemento
     Route::delete('/elementos/{id}', [ElementoController::class, 'destroy'])->name('elementos.destroy');
     // Ruta para editar un elemento

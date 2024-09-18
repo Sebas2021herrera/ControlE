@@ -46,6 +46,12 @@ class ElementoController extends Controller
         $elemento->especificaciones_tecnicas = $validatedData['especificaciones_tecnicas'] ?? null;
         $elemento->usuario_id = Auth::id(); // Asignar el ID del usuario autenticado
 
+        // Relacionar el elemento con el usuario
+        $usuario->elementos()->save($elemento);
+
+        // Redireccionar o mostrar vista de éxito
+        return redirect()->route('admin.panel')->with('success', 'Elemento registrado correctamente.');
+
         // Guardar la foto si está presente
         if ($request->hasFile('foto')) {
             $elemento->foto = $request->file('foto')->store('fotos', 'public');

@@ -15,24 +15,41 @@
             <div class="dropdown is-hoverable">
                 <div class="dropdown-trigger">
                     <a href="#" id="registerLink" class="registrar">Registro</a>
-                    <a href="#" id="registerLink" class="reporte">Reportes ingreso</a>
+                    <a href="#" id="reportLink" class="reporte">Reportes ingreso</a>
                 </div>
-                <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                
+                <!-- Menú para el enlace "Registro" -->
+                <div class="dropdown-menu" id="dropdown-menu-register" role="menu">
                     <div class="dropdown-content">
                         <a href="#" class="dropdown-item" id="registerUsers">Registrar usuarios</a>
                         <a href="#" class="dropdown-item" id="registerElements">Registrar elementos</a>
                         <a href="#" class="dropdown-item" id="consultarUsuarios">Consultar usuarios</a>
                     </div>
                 </div>
+        
+                <!-- Menú para el enlace "Reportes ingreso" -->
+                <div class="dropdown-menu" id="dropdown-menu-report" role="menu">
+                    <div class="dropdown-content">
+                        <a href="#" class="dropdown-item" id="reporteDiario">Reporte diario</a>
+                        <a href="#" class="dropdown-item" id="reporteMensual">Reporte mensual</a>
+                        <a href="#" class="dropdown-item" id="consultarIngresos">Consultar ingresos</a>
+                    </div>
+                </div>
             </div>
-            <nav class="nav">
-                <ul class="nav-list">
-                    <li><a href="#">Inicio</a></li>
-                    <li><a href="#">Acerca de</a></li>
-                    <li><a href="#">Servicios</a></li>
-                </ul>
-            </nav>
         </div>
+
+        <!-- Agrega estilos para mostrar el menú correcto -->
+<style>
+    #dropdown-menu-register, #dropdown-menu-report {
+        display: none;
+    }
+    .registrar:hover + #dropdown-menu-register {
+        display: block;
+    }
+    .reporte:hover + #dropdown-menu-report {
+        display: block;
+    }
+</style>
     </header>
 
     <!-- Modal de Registro de Usuarios -->
@@ -306,6 +323,30 @@
             </div>
         @endif
 
+
+
+        <!-- Script para mostrar los menús al hacer clic -->
+<script>
+    document.getElementById('registerLink').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('dropdown-menu-register').style.display = 'block';
+        document.getElementById('dropdown-menu-report').style.display = 'none';
+    });
+
+    document.getElementById('reportLink').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('dropdown-menu-register').style.display = 'none';
+        document.getElementById('dropdown-menu-report').style.display = 'block';
+    });
+
+    // Para cerrar el menú cuando se hace clic fuera de ellos
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.dropdown-trigger')) {
+            document.getElementById('dropdown-menu-register').style.display = 'none';
+            document.getElementById('dropdown-menu-report').style.display = 'none';
+        }
+    });
+</script>
 
     <script>
         document.getElementById('registroForm').addEventListener('submit', function(event) {

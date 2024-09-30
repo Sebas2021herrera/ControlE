@@ -26,6 +26,7 @@ Route::middleware('auth')->group(function () {
     // Rutas para la gestión de elementos
     Route::get('elementos/create', [ElementoController::class, 'create'])->name('elementos.create');
     Route::post('/elementos', [ElementoController::class, 'store'])->name('elementos.store'); // Añade esta línea para la ruta de almacenamiento
+    Route::post('/elementos-admin', [ElementoController::class, 'storeadmin'])->name('elementos.storeadmin'); // Añade esta línea para la ruta de almacenamiento
     
     // Ruta para eliminar un elemento
     Route::delete('/elementos/{id}', [ElementoController::class, 'destroy'])->name('elementos.destroy');
@@ -51,6 +52,9 @@ Route::middleware('auth')->group(function () {
     // Ruta para buscar por documento en la vista del vigilante
     Route::get('/vigilante/buscar', [UserController::class, 'buscarPorDocumento'])->name('vigilante.buscar');
     
+    // Route::post('/admin/consultar-usuario', [UserController::class, 'buscarPorDocumento'])->name('admin.consultarUsuario');
+
+    Route::post('/admin/consultar-usuario', [UserController::class, 'consultarUsuario'])->name('admin.consultarUsuario');
     // Ruta para mostrar el panel de usuario
     Route::get('user/panel', [UserController::class, 'userPanel'])->name('user.panel');
 

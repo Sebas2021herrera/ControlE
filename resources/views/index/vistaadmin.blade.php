@@ -2,12 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Administrador</title>
     <link rel="stylesheet" href="{{ asset('css/styles_vista_admin.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     <!-- Enlaza el archivo CSS de Bulma -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Biblioteca jQuery -->
 </head>
 <body>
     <header class="main-header">
@@ -21,7 +24,7 @@
                 <!-- Menú para el enlace "Registro" -->
                 <div class="dropdown-menu" id="dropdown-menu-register" role="menu">
                     <div class="dropdown-content">
-                        <a href="#" class="dropdown-item" id="registerUsers">Registrar usuarios</a>
+                        <a href="#" class="dropdown-item" data-bs-toggle="modal" id="registerUsers">Registrar usuarios</a>
                         <a href="#" class="dropdown-item" id="registerElements">Registrar elementos</a>
                         <a href="#" class="dropdown-item" id="consultarUsuarios">Consultar usuarios</a>
                     </div>
@@ -38,19 +41,62 @@
             </div>
         </div>
 
-        <!-- Agrega estilos para mostrar el menú correcto -->
-<style>
-    #dropdown-menu-register, #dropdown-menu-report {
-        display: none;
-    }
-    .registrar:hover + #dropdown-menu-register {
-        display: block;
-    }
-    .reporte:hover + #dropdown-menu-report {
-        display: block;
-    }
-</style>
     </header>
+    
+    <!-- Modal de Registro de elementos -->
+    <div id="registerModal" class="modal">
+    <div class="container">
+        <div class="ventana-formulario">
+        <form action="{{ route('elementos.storeadmin') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <label for="numeroDocumentoUsuario">Número de Documento:</label>
+            <input type="text" name="numeroDocumentoUsuario" id="numeroDocumentoUsuario" required>
+    
+            <div class="mb-3">
+                <label for="categoria_id" class="form-label">Categoría</label>
+                <select id="categoria_id" name="categoria_id" class="form-select" required>
+                    @foreach ($categorias as $categoria)
+                        <option value="{{ $categoria->id }}">{{ $categoria->nombre }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="descripcion" class="form-label">Descripción</label>
+                <input type="text" id="descripcion" name="descripcion" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="marca" class="form-label">Marca</label>
+                <input type="text" id="marca" name="marca" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="modelo" class="form-label">Modelo</label>
+                <input type="text" id="modelo" name="modelo" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="serie" class="form-label">Número de Serie</label>
+                <input type="text" id="serie" name="serie" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="especificaciones_tecnicas" class="form-label">Especificaciones
+                    Técnicas</label>
+                <textarea id="especificaciones_tecnicas" name="especificaciones_tecnicas" class="form-control" rows="3"
+                    required></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="fotoElemento" class="form-label">Foto</label>
+                <input type="file" id="fotoElemento" name="foto" class="form-control"
+                    accept="image/*" onchange="previewImage(event, 'previewElemento')">
+            </div>
+            <div class="mb-3">
+                <img id="previewElemento" src="#" alt="Previsualización de la imagen"
+                    style="display: none; max-width: 100%; height: auto;">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Registrar</button>
+            </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal de Registro de Usuarios -->
     <div id="registerModal" class="modal">
@@ -163,7 +209,6 @@
                         @enderror
                     </div>
 
-
                     <div class="field">
                         <label class="label" for="telefono">Teléfono:</label>
                         <div class="control">
@@ -205,11 +250,10 @@
                         @enderror
                     </div>
 
-
                     <div class="field">
                         <label class="label" for="foto">Foto de Perfil:</label>
                         <div class="control">
-                            <input class="input" type="file" id="foto" name="foto" accept="image/*"
+                            <input class="input" type="file" id="foto1" name="foto" accept="image/*"
                                 onchange="previewImage(event)">
                         </div>
                         @error('foto')
@@ -243,7 +287,7 @@
         </div>
     </div>
 
-    <!-- Modal de Registro de Elementos -->
+    {{-- <!-- Modal de Registro de Elementos -->
     <div id="elementsModal" class="modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
@@ -308,115 +352,134 @@
                 </form>
             </div>
         </div>
-    </div>
-
-            <!-- Mostrar mensajes de éxito y error -->
-            @if (session('success_admin'))
-            <div class="alert alert-success_admin">
-                {{ session('success_admin') }}
-            </div>
-        @endif
-
-        @if (session('error'))
-            <div class="alert alert-danger">
-                {{ session('error') }}
-            </div>
-        @endif
+    </div> --}}
 
 
 
-        <!-- Script para mostrar los menús al hacer clic -->
 <script>
+    // Agrega un evento al enlace de registro para mostrar el menú correspondiente
     document.getElementById('registerLink').addEventListener('click', function(e) {
-        e.preventDefault();
+        e.preventDefault(); // Previene el comportamiento predeterminado del enlace
+        // Muestra el menú de registro y oculta el menú de reportes
         document.getElementById('dropdown-menu-register').style.display = 'block';
         document.getElementById('dropdown-menu-report').style.display = 'none';
     });
 
+    // Agrega un evento al enlace de reportes para mostrar el menú correspondiente
     document.getElementById('reportLink').addEventListener('click', function(e) {
-        e.preventDefault();
+        e.preventDefault(); // Previene el comportamiento predeterminado del enlace
+        // Muestra el menú de reportes y oculta el menú de registro
         document.getElementById('dropdown-menu-register').style.display = 'none';
         document.getElementById('dropdown-menu-report').style.display = 'block';
     });
 
-    // Para cerrar el menú cuando se hace clic fuera de ellos
+    // Agrega un evento para cerrar los menús al hacer clic fuera de ellos
     document.addEventListener('click', function(e) {
+        // Verifica si el clic no fue en un elemento con la clase 'dropdown-trigger'
         if (!e.target.closest('.dropdown-trigger')) {
+            // Oculta ambos menús
             document.getElementById('dropdown-menu-register').style.display = 'none';
             document.getElementById('dropdown-menu-report').style.display = 'none';
         }
     });
+</script> 
+
+{{-- <script>
+    // Agrega un evento para manejar el envío del formulario con id 'registroForm'
+    document.getElementById('registroForm').addEventListener('submit', function(event) {
+        // Obtiene el valor de la contraseña y la confirmación de contraseña
+        var contrasena = document.getElementById('contrasena').value;
+        var confirmarContrasena = document.getElementById('contrasena_confirmation').value;
+        // Obtiene los elementos para mostrar mensajes de error
+        var contrasenaError = document.getElementById('contrasenaError');
+        var confirmarContrasenaError = document.getElementById('confirmarContrasenaError');
+
+        // Limpia los mensajes de error previos
+        contrasenaError.textContent = '';
+        confirmarContrasenaError.textContent = '';
+
+        // Verifica si la contraseña tiene al menos 6 caracteres
+        if (contrasena.length < 6) {
+            contrasenaError.textContent = 'La contraseña debe tener al menos 6 caracteres.';
+            event.preventDefault(); // Evita el envío del formulario
+            return; // Sale de la función
+        }
+
+        // Verifica si las contraseñas coinciden
+        if (contrasena !== confirmarContrasena) {
+            confirmarContrasenaError.textContent = 'Las contraseñas no coinciden.';
+            event.preventDefault(); // Evita el envío del formulario
+            return; // Sale de la función
+        }
+    });
 </script>
 
-    <script>
-        document.getElementById('registroForm').addEventListener('submit', function(event) {
-            var contrasena = document.getElementById('contrasena').value;
-            var confirmarContrasena = document.getElementById('contrasena_confirmation').value;
-            var contrasenaError = document.getElementById('contrasenaError');
-            var confirmarContrasenaError = document.getElementById('confirmarContrasenaError');
+<script>
+    // Función para previsualizar una imagen seleccionada
+    function previewImage(event) {
+        // Obtiene el input que disparó el evento
+        var input = event.target;
+        // Obtiene el elemento de imagen donde se mostrará la previsualización
+        var preview = document.getElementById('preview');
 
-            // Limpiar mensajes de error
-            contrasenaError.textContent = '';
-            confirmarContrasenaError.textContent = '';
+        // Verifica si hay archivos seleccionados
+        if (input.files && input.files[0]) {
+            // Crea un nuevo objeto FileReader para leer el archivo
+            var reader = new FileReader();
 
-            if (contrasena.length < 6) {
-                contrasenaError.textContent = 'La contraseña debe tener al menos 6 caracteres.';
-                event.preventDefault(); // Evita el envío del formulario
-                return;
+            // Cuando el archivo se ha cargado
+            reader.onload = function(e) {
+                // Establece la fuente de la imagen de previsualización al contenido del archivo
+                preview.src = e.target.result;
+                // Muestra el elemento de previsualización
+                preview.style.display = 'block';
             }
 
-            if (contrasena !== confirmarContrasena) {
-                confirmarContrasenaError.textContent = 'Las contraseñas no coinciden.';
-                event.preventDefault(); // Evita el envío del formulario
-                return;
-            }
-        });
-    </script>
-
-    <script>
-        function previewImage(event) {
-            var input = event.target;
-            var preview = document.getElementById('preview');
-
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                }
-
-                reader.readAsDataURL(input.files[0]);
-            } else {
-                preview.src = '#';
-                preview.style.display = 'none';
-            }
+            // Lee el primer archivo como una URL de datos
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            // Si no hay archivos, restablece la imagen de previsualización
+            preview.src = '#';
+            // Oculta el elemento de previsualización
+            preview.style.display = 'none';
         }
-    </script>
+    }
+</script>
 
 <script>
+    // Espera a que el contenido del documento esté completamente cargado
     document.addEventListener('DOMContentLoaded', function() {
+        // Obtiene el elemento select con el id 'rol'
         var rolSelect = document.getElementById('rol');
+        // Obtiene el campo de número de ficha y su contenedor más cercano con la clase 'field'
         var numeroFichaField = document.getElementById('numero_ficha'); // Actualizado
         var numeroFichaDiv = numeroFichaField.closest('.field');
 
+        // Función para mostrar u ocultar el campo de número de ficha
         function toggleNumeroFicha() {
+            // Si el rol seleccionado es '3' (Aprendiz)
             if (rolSelect.value == 3) { // Aprendiz
+                // Muestra el campo de número de ficha
                 numeroFichaDiv.style.display = 'block';
+                // Marca el campo como requerido
                 numeroFichaField.setAttribute('required', 'required');
             } else {
+                // Oculta el campo de número de ficha
                 numeroFichaDiv.style.display = 'none';
+                 // Elimina la marca de requerido
                 numeroFichaField.removeAttribute('required');
             }
         }
 
+        // Añade un evento para cambiar la visibilidad del campo al cambiar el rol
         rolSelect.addEventListener('change', toggleNumeroFicha);
 
         // Llamar a la función para inicializar el estado correcto en caso de que el rol esté preseleccionado
         toggleNumeroFicha();
     });
 </script>
-<script>
+<script> --}}
+    <script>
         $(document).ready(function() {
             const successMessage = $('.alert-success_admin');
             if (successMessage.length) {

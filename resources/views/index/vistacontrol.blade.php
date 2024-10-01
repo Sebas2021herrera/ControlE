@@ -160,39 +160,7 @@
     <!--script  para mostrar modal-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!--script para agregar nuevas filas en la tabla de reportes
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const tablaReportesBody = document.getElementById('tabla-reportes-body');
-            const filas = [
-                // Agrega aquí las filas con los datos que desees
-                // Las celdas de la columna 'centro' tendrán 'Yopal'
-                ['', 'Yopal', '', ''],
-                ['', 'Yopal', '', ''],
-                ['', 'Yopal', '', ''],
-                ['', 'Yopal', '', '']
-            ];
-
-            // Limpiar el cuerpo de la tabla antes de agregar nuevas filas
-            tablaReportesBody.innerHTML = '';
-
-            filas.forEach(fila => {
-                const tr = document.createElement('tr');
-                fila.forEach((dato, index) => {
-                    const td = document.createElement('td');
-                    // Solo las celdas en la columna con clase 'centro' tendrán el texto 'Yopal'
-                    if (index === 1) {
-                        td.textContent = 'Yopal';
-                    } else {
-                        td.textContent = 'new register'; // Las demás celdas quedarán en blanco
-                    }
-                    tr.appendChild(td);
-                });
-                tablaReportesBody.appendChild(tr);
-            });
-        });
-    </script>-->
-
+    <!--script para boton de nuevos registro-->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const tablaReportesBody = document.getElementById('tabla-reportes-body');

@@ -4,9 +4,9 @@ use App\Http\Middleware\CheckRole;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\ElementoController;
-use App\Http\Controllers\UserController; 
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-use App\Models\Categoria;
+use App\Http\Controllers\VigilanteController;
 
 // Rutas para autenticación y registro
 Route::get('/', [WelcomeController::class, 'index']);
@@ -16,44 +16,44 @@ Route::post('registrado', [AuthController::class, 'createpost'])->name('createpo
 Route::post('login', [AuthController::class, 'login'])->name('login.post');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
-
-// Rutas protegidas por autenticación
+// Agrupación de rutas protegidas con autenticación 
 Route::middleware('auth')->group(function () {
+
     // Ruta para actualizar el perfil
     Route::post('/update-profile', [AuthController::class, 'updateProfile'])->name('updateProfile');
-    
+
     // Rutas para la gestión de elementos
     Route::get('elementos/create', [ElementoController::class, 'create'])->name('elementos.create');
     Route::post('/elementos', [ElementoController::class, 'store'])->name('elementos.store');
-    // Ruta para eliminar un elemento
     Route::delete('/elementos/{id}', [ElementoController::class, 'destroy'])->name('elementos.destroy');
-    // Ruta para editar un elemento
     Route::get('/elementos/{id}/edit', [ElementoController::class, 'edit'])->name('elementos.edit');
     Route::put('/elementos/{id}', [ElementoController::class, 'update'])->name('elementos.update');
-    Route::put('elementos/{id}', [ElementoController::class, 'update'])->name('elementos.update');
-    
+
     // Rutas para los paneles de administración, control y usuario
-    Route::get('admin/panel', function () {
-        return view('index.vistaadmin');
-    })->name('admin.panel');
-    Route::get('control/panel', function () { 
-        return view('index.vistacontrol');
-    })->name('control.panel'); 
-    Route::get('user/panel', [UserController::class, 'userPanel'])->name('user.panel');
+    Route::middleware(CheckRole::class . ':1')->group(function () {
+        Route::get('admin/panel', function () {
+            return view('index.vistaadmin');
+        })->name('admin.panel');
+    });
 
-    //Ruta para el panel del vigilante
-    Route::get('control/panel', function () {
-        return view('index.vistacontrol');
-    })->name('control.panel');
-    
-    // Ruta para buscar por documento en la vista del vigilante
-    Route::get('/vigilante/buscar', [UserController::class, 'buscarPorDocumento'])->name('vigilante.buscar');
-    
-    // Ruta para mostrar el panel de usuario
-    Route::get('user/panel', [UserController::class, 'userPanel'])->name('user.panel');
+    // Solo rol 2 puede acceder al panel de control
+    Route::middleware(CheckRole::class . ':2')->group(function () {
+        Route::get('control/panel', function () {
+            return view('index.vistacontrol');
+        })->name('control.panel');
+    });
 
-    
-    // Ruta para mostrar el perfil
+    // Ruta para buscar por documento en la vista del vigilante (solo rol 2)
+    Route::middleware(CheckRole::class . ':2')->group(function () {
+        Route::get('/vigilante/buscar', [VigilanteController::class, 'buscarPorDocumento'])->name('vigilante.buscar');
+    });
+
+    // Panel de usuario (roles 3, 4 y 5)
+    Route::middleware(CheckRole::class . ':3,4,5')->group(function () {
+        Route::get('user/panel', [UserController::class, 'userPanel'])->name('user.panel');
+    });
+
+    // Rutas generales
     Route::get('/editProfile', [AuthController::class, 'showEditProfile'])->name('editProfile');
     Route::get('/usuario/{id}', [UserController::class, 'show'])->name('user.show');
     Route::get('/usuario/panel', [UserController::class, 'mostrarPerfil']);

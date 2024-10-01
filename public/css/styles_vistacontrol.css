@@ -9,7 +9,7 @@ body {
 }
 
 .container {
-    display: flex;
+    display: flex; 
     flex-direction: column;
     height: 100vh;
     box-sizing: border-box;
@@ -162,8 +162,6 @@ body {
     display: none;
 }
 
-/* Estilos para el contenedor de los botones */
-/* Estilos para el contenedor de los botones */
 .contenedor-botones {
     position: absolute;
     bottom: 0;
@@ -489,10 +487,12 @@ body {
     cursor: pointer;
     border-radius: 8px;
     width: 80%;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
 }
 
 .btn-ingresa:hover {
-    background-color: #2e8801;
+    background-color: #00324d;
     color: white;
 }
 

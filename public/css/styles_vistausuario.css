@@ -35,7 +35,7 @@ html {
 }
 
 .navbar-light.bg-light {
-    background-color: #00304d !important;
+    background-color: #00324d!important;
 }
 
 .navbar-light .navbar-nav .nav-link {
@@ -47,7 +47,7 @@ html {
 }
 
 .navbar-light .dropdown-menu {
-    background-color: #00304d !important;
+    background-color: #39a900 !important;
     color: white !important;
 }
 
@@ -56,7 +56,7 @@ html {
 }
 
 .navbar-light .dropdown-menu .dropdown-item:hover {
-    background-color: #001f33 !important;
+    background-color: #429419 !important;
     color: white !important;
 }
 

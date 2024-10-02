@@ -24,7 +24,9 @@
                         <img src="{{ asset('imagenes/logo-del-sena-01.png') }}" alt="Logo del SENA" class="logo-sena">
                         <div class="barra-separadora"></div>
                     </div>
+
                     @if (isset($usuario))
+                        <!-- Mostrar la información del usuario si existe -->
                         <div class="info-text">
                             <p class="verde">{{ $usuario->nombres }}</p>
                             <p class="verde">{{ $usuario->apellidos }}</p>
@@ -36,6 +38,7 @@
                                 Fortalecimiento Empresarial del Casanare</p>
                         </div>
 
+                        <!-- Mostrar la foto del usuario si existe -->
                         <div class="foto-usuario">
                             @if ($usuario->foto && file_exists(storage_path('app/public/fotos_perfil/' . $usuario->foto)))
                                 <img src="{{ asset('storage/fotos_perfil/' . $usuario->foto) }}" alt="Foto de perfil"
@@ -46,10 +49,15 @@
                             @endif
                         </div>
                     @else
-                        <p>No se ha seleccionado ningún usuario.</p>
+                        <!-- Mostrar el mensaje si no se ha encontrado ningún usuario -->
+                        <div class="info-text">
+                            <p>No se ha seleccionado ningún usuario o el documento ingresado no existe en la base de
+                                datos.</p>
+                        </div>
                     @endif
                 </div>
             </div>
+
 
             <div class="contenedor-reportes">
                 <div class="tabla-container">

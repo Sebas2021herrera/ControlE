@@ -123,18 +123,15 @@ body {
 .tabla-reportes td {
     padding: 8px;
     text-align: left;
-    border: 1px solid white;
+    border: 1px solid white; /* Aplica el borde a todas las celdas */
 }
 
-.tabla-reportes th:nth-child(1),
-.tabla-reportes td:nth-child(1) {
-    width: 15%; /* Ajusta este porcentaje según lo necesites para la primera columna */
+.tabla-reportes th:nth-child(5),
+.tabla-reportes td:nth-child(5) {
+    width: 15%; /* O el valor que prefieras */
 }
 
-.tabla-reportes th:nth-child(2),
-.tabla-reportes td:nth-child(2) {
-    width: 25%; /* Ajusta este porcentaje según lo necesites para la segunda columna */
-}
+
 
 .tabla-reportes thead {
     position: sticky;

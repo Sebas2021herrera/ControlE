@@ -327,6 +327,11 @@
                                 value="{{ Auth::user()->numero_documento }}" readonly>
                         </div>
                         <div class="mb-3">
+                            <label for="rh" class="form-label">Tipo de Sangre (RH):</label>
+                            <input type="text" id="rh" name="rh" class="form-control"
+                                value="{{ Auth::user()->rh }}" readonly>
+                        </div>
+                        <div class="mb-3">
                             <label for="telefono" class="form-label">Teléfono:</label>
                             <input type="tel" id="telefono" name="telefono" class="form-control"
                                 value="{{ Auth::user()->telefono }}" required>

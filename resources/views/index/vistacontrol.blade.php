@@ -31,7 +31,8 @@
                             <p class="verde">{{ $usuario->nombres }}</p>
                             <p class="verde">{{ $usuario->apellidos }}</p>
                             <p><strong>Doc: {{ $usuario->numero_documento }}</strong></p>
-                            <p><strong>Cel: {{ $usuario->telefono }}</strong></p><br />
+                            <p><strong>Cel: {{ $usuario->telefono }}</strong></p>
+                            <p><strong>RH: {{ $usuario->rh }}</strong></p>
                             <p><strong>{{ $usuario->role->nombre }}</strong></p>
                             <p><strong>Ficha: {{ $usuario->numero_ficha }}</strong></p>
                             <p class="verde" id="semifooter">Regional Casanare | Centro Agroindustrial y
@@ -68,6 +69,7 @@
                                 <th class="centro">NOMBRE CENTRO</th>
                                 <th>FECHA INGRESO</th>
                                 <th>FECHA EGRESO</th>
+                                <th>ESTADO</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-reportes-body">
@@ -168,7 +170,6 @@
     <!--script  para mostrar modal-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!--script para boton de nuevos registro-->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const tablaReportesBody = document.getElementById('tabla-reportes-body');
@@ -179,13 +180,32 @@
                 const tr = document.createElement('tr');
 
                 // Crear celdas para la fila
-                for (let i = 0; i < 4; i++) {
+                for (let i = 0; i < 5; i++) { // Cambiamos a 5 para agregar la columna de 'Estado'
                     const td = document.createElement('td');
-                    if (i === 1) { // La columna con clase 'centro' (índice 1)
-                        td.textContent = 'Yopal'; // Contenido para la columna 'centro'
-                    } else {
-                        td.textContent = ''; // Celdas en blanco para las demás columnas
+
+                    // Añadir contenido específico por columna
+                    switch (i) {
+                        case 0:
+                            td.textContent = 'ID'; // Puedes reemplazar con el ID correspondiente
+                            break;
+                        case 1:
+                            td.textContent = 'Yopal'; // Columna de NOMBRE CENTRO
+                            td.classList.add('centro'); // Añadimos la clase 'centro' si es necesario
+                            break;
+                        case 2:
+                            td.textContent = 'Fecha Ingreso'; // Puedes reemplazar con la fecha
+                            break;
+                        case 3:
+                            td.textContent = 'Fecha Egreso'; // Puedes reemplazar con la fecha
+                            break;
+                        case 4:
+                            td.textContent = 'Activo'; // Columna de ESTADO, puedes cambiarlo
+                            break;
                     }
+
+                    // Aplicamos el estilo de borde a cada celda
+                    td.style.border = '1px solid white';
+
                     tr.appendChild(td);
                 }
 
@@ -198,6 +218,7 @@
             });
         });
     </script>
+
 
 
 </body>

@@ -36,6 +36,7 @@ class AuthController extends Controller
             'apellidos' => 'required|string|max:255',
             'tipo_documento' => 'required|string|max:255',
             'numero_documento' => 'required|string|max:255|unique:usuarios',
+            'rh' => 'required|string|max:7', // Validar que el campo rh sea obligatorio
             'correo_personal' => 'required|email|max:255|unique:usuarios',
             'correo_institucional' => 'required|email|max:255|unique:usuarios',
             'telefono' => 'required|string|max:20',
@@ -56,6 +57,7 @@ class AuthController extends Controller
             $usuario->apellidos = $request->apellidos;
             $usuario->tipo_documento = $request->tipo_documento;
             $usuario->numero_documento = $request->numero_documento;
+            $usuario->rh = $request->rh; // Asignar el valor del campo rh
             $usuario->correo_personal = $request->correo_personal;
             $usuario->correo_institucional = $request->correo_institucional;
             $usuario->telefono = $request->telefono;
@@ -83,7 +85,6 @@ class AuthController extends Controller
             return redirect()->back()->withErrors(['error' => 'Ha ocurrido un error al registrar el usuario.'])->withInput();
         }
     }
-
 
     // Manejar el inicio de sesión
     public function login(Request $request)
@@ -123,7 +124,6 @@ class AuthController extends Controller
         }
     }
 
-
     // Manejar el cierre de sesión
     public function logout(Request $request)
     {
@@ -150,6 +150,7 @@ class AuthController extends Controller
             'apellidos' => 'required|string|max:255',
             'tipo_documento' => 'required|string|max:255', // Ahora es editable
             'telefono' => 'required|string|max:20',
+            'rh' => 'required|string|max:7', // Validación del campo rh en el perfil
             'numero_ficha' => $esAprendiz ? 'required|string|max:255' : 'nullable|string|max:255', // Obligatorio si es Aprendiz
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:102400'
         ];
@@ -175,6 +176,8 @@ class AuthController extends Controller
 
             // Actualizar el perfil del usuario
             $usuario->update($request->except('foto'));
+            $usuario->rh = $request->rh; // Actualizar el campo rh
+            $usuario->save();
 
             // Devolver una respuesta con los datos actualizados
             return response()->json([

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('apellidos', 100);
             $table->string('tipo_documento', 50);
             $table->string('numero_documento', 50)->unique();
+            $table->string('rh', 7);
             $table->string('correo_personal', 100)->unique();
             $table->string('correo_institucional', 100)->unique();
             $table->string('telefono', 20);

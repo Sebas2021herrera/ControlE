@@ -17,7 +17,8 @@
         <div class="card">
             <div class="card-content">
                 <h2 class="title is-4">Registro de Usuarios</h2>
- 
+
+                <!-- Mostrar errores de validación -->
                 @if ($errors->any())
                     <div class="notification is-danger">
                         <ul>
@@ -29,8 +30,9 @@
                 @endif
 
                 <form id="registroForm" method="POST" action="{{ route('createpost') }}" enctype="multipart/form-data">
-                    @csrf <!-- Para Laravel CSRF Token -->
+                    @csrf <!-- CSRF Token necesario en Laravel -->
 
+                    <!-- Nombres -->
                     <div class="field">
                         <label class="label" for="nombres">Nombres:</label>
                         <div class="control">
@@ -42,6 +44,7 @@
                         @enderror
                     </div>
 
+                    <!-- Apellidos -->
                     <div class="field">
                         <label class="label" for="apellidos">Apellidos:</label>
                         <div class="control">
@@ -53,6 +56,7 @@
                         @enderror
                     </div>
 
+                    <!-- Tipo de Documento -->
                     <div class="field">
                         <label class="label" for="tipo_documento">Tipo de Documento:</label>
                         <div class="control">
@@ -72,6 +76,7 @@
                         @enderror
                     </div>
 
+                    <!-- Número de Documento -->
                     <div class="field">
                         <label class="label" for="numero_documento">Número de Documento:</label>
                         <div class="control">
@@ -84,6 +89,30 @@
                         @enderror
                     </div>
 
+                    <!-- tipo de sangre -->
+                    <div class="field">
+                        <label class="label" for="rh">Tipo de Sangre (RH):</label>
+                        <div class="control">
+                            <div class="select @error('rh') is-danger @enderror">
+                                <select id="rh" name="rh" required>
+                                    <option value="" disabled selected>Seleccione su tipo de sangre</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                </select>
+                            </div>
+                        </div>
+                        @error('rh')
+                            <p class="help is-danger">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Correo Personal -->
                     <div class="field">
                         <label class="label" for="correo_personal">Correo Personal:</label>
                         <div class="control">
@@ -96,6 +125,7 @@
                         @enderror
                     </div>
 
+                    <!-- Correo Institucional -->
                     <div class="field">
                         <label class="label" for="correo_institucional">Correo Institucional:</label>
                         <div class="control">
@@ -108,6 +138,7 @@
                         @enderror
                     </div>
 
+                    <!-- Contraseña -->
                     <div class="field">
                         <label class="label" for="contraseña">Contraseña:</label>
                         <div class="control">
@@ -120,6 +151,7 @@
                         @enderror
                     </div>
 
+                    <!-- Confirmación de Contraseña -->
                     <div class="field">
                         <label class="label" for="contraseña_confirmation">Confirmar Contraseña:</label>
                         <div class="control">
@@ -132,7 +164,7 @@
                         @enderror
                     </div>
 
-
+                    <!-- Teléfono -->
                     <div class="field">
                         <label class="label" for="telefono">Teléfono:</label>
                         <div class="control">
@@ -144,6 +176,7 @@
                         @enderror
                     </div>
 
+                    <!-- Rol -->
                     <div class="field">
                         <label class="label" for="rol">Rol:</label>
                         <div class="control">
@@ -161,6 +194,7 @@
                         @enderror
                     </div>
 
+                    <!-- Número de Ficha -->
                     <div class="field" id="numeroFichaField">
                         <label class="label" for="numero_ficha">Número de Ficha:</label>
                         <div class="control">
@@ -172,7 +206,7 @@
                         @enderror
                     </div>
 
-
+                    <!-- Foto de Perfil -->
                     <div class="field">
                         <label class="label" for="foto">Foto de Perfil:</label>
                         <div class="control">
@@ -182,11 +216,11 @@
                         @error('foto')
                             <p class="help is-danger">{{ $message }}</p>
                         @enderror
-                        <!-- Elemento para la previsualización -->
                         <img id="preview" src="#" alt="Previsualización de Foto"
                             style="display: none; margin-top: 10px; width: 150px; height: 150px; object-fit: cover;">
                     </div>
 
+                    <!-- Botón de registro -->
                     <div class="field">
                         <div class="control">
                             <button class="button is-success" type="submit">Registrar</button>

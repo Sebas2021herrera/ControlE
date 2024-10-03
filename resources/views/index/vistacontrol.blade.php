@@ -61,7 +61,6 @@
                 </div>
             </div>
 
-
             <div class="contenedor-reportes">
                 <div class="tabla-container">
                     <table class="tabla-reportes" id="tabla-reportes">
@@ -85,7 +84,6 @@
                 </div>
             </div>
         </div>
-
 
         <div class="contenido">
             <div class="elementos">
@@ -220,8 +218,6 @@
             });
         });
     </script>
-
-
 
 </body>
 

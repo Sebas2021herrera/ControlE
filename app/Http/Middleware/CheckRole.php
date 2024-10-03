@@ -3,24 +3,23 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CheckRole
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @param  mixed  ...$roles
-     * @return mixed
-     */
-    public function handle($request, Closure $next, ...$roles)
+    public function handle(Request $request, Closure $next, ...$roles)
     {
         $user = Auth::user();
 
-        if (!$user || !in_array($user->roles_id, $roles)) {
-            return redirect('/')->with('error', 'No tienes permiso para acceder a esta página');
+        // Verifica si el usuario está autenticado
+        if (!$user) {
+            return redirect('login')->withErrors(['error' => 'Debes iniciar sesión para acceder a esta página.']);
+        }
+
+        // Verifica si el rol del usuario está permitido
+        if (!in_array($user->roles_id, $roles)) {
+            return redirect('/')->withErrors(['error' => 'No tienes permisos para acceder a esta página.']);
         }
 
         return $next($request);

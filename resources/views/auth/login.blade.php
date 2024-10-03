@@ -26,7 +26,7 @@
                         {{ session('success') }}
                     </div>
                 @endif
-
+ 
                 @if (session('error'))
                     <div class="alert alert-danger">
                         {{ session('error') }}
@@ -57,9 +57,9 @@
                     <button type="submit" class="btn btn-dark btn-block">Iniciar sesión</button>
                 </form>
                 <div class="text-center mt-3">
-                    <a href="{{ route('create') }}">Registrate !</a>
+                    <a href="{{ route('create') }}">¡Regístrate!</a>
                 </div>
-            </div>
+            </div>  
         </div>
         <p class="text-center footer-text mt-4">
             <img src="{{ asset('imagenes/logo_copyrigth.png') }}" class="bombilla"> Derechos reservados al SENA Regional Casanare, 2024.

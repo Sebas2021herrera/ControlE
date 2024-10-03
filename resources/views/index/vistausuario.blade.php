@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Usuario</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -10,27 +11,6 @@
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/styles_formulario_elementos.css') }}">
     <link rel="stylesheet" href="{{ asset('css/styles_vistausuario.css') }}">
-    <style>
-        /* Aquí puedes agregar estilos personalizados si es necesario */
-        .d-none {
-            display: none;
-        }
-
-        /* En tu archivo de estilos CSS */
-        .fade-out {
-            animation: fadeOut 1s forwards;
-        }
-
-        @keyframes fadeOut {
-            from {
-                opacity: 1;
-            }
-
-            to {
-                opacity: 0;
-            }
-        }
-    </style>
 </head>
 
 <body>
@@ -91,32 +71,35 @@
             <div class="welcome-text" id="welcomeMessage">
                 Bienvenido <br />{{ Auth::user()->nombres }} {{ Auth::user()->apellidos }}
             </div>
-
-            <div class="other-welcome">
-                <br /><strong> Estos son tus elementos:</strong>
+            <!-- Mostrar la foto de perfil -->
+            <div class="image-container" style="margin-top: 15px;">
+                @if (isset($usuario) && $usuario->foto && file_exists(storage_path('app/public/fotos_perfil/' . $usuario->foto)))
+                    <img id="left-panel-img" src="{{ asset('storage/fotos_perfil/' . $usuario->foto) }}"
+                        alt="Foto de perfil" class="foto-perfil"
+                        style="width: 150px; height: 150px; object-fit: cover; border-radius: 20px;">
+                @else
+                    <img id="left-panel-img" src="{{ asset('imagenes/sin_foto_perfil.webp') }}"
+                        alt="Foto de perfil predeterminada" class="foto-perfil"
+                        style="width: 150px; height: 150px; object-fit: cover; border-radius: 20px;">
+                @endif
             </div>
 
+            <div class="other-welcome">
+                <br /><strong>Estos son tus elementos:</strong>
+            </div>
         </div>
+        <!--cards de los elementos-->
         <div class="right-panel">
             @foreach ($elementos as $elemento)
                 <div class="card">
                     <div class="card-body">
-                        <!-- Mostrar el nombre de la categoría -->
                         <h5 class="card-title"><strong>{{ $elemento->categoria->nombre }}</strong></h5>
-
-                        <!-- Mostrar la foto si existe -->
                         @if ($elemento->foto)
                             <img src="{{ asset('storage/' . $elemento->foto) }}" alt="Foto del elemento"
                                 class="img-fluid mt-3">
                         @endif
-
-                        <!-- Mostrar el número de serie -->
                         <p class="card-text"><strong>Serial:</strong> {{ $elemento->serie }}</p>
-
-                        <!-- Mostrar la marca -->
                         <p class="card-text"><strong>Marca:</strong> {{ $elemento->marca }}</p>
-
-                        <!-- Enlace para ver más detalles -->
                         <a href="#" class="btn btn-link" data-bs-toggle="modal"
                             data-bs-target="#modal-{{ $elemento->id }}">
                             Ver más
@@ -199,13 +182,20 @@
                                         </div>
                                         <div class="mb-3">
                                             <label for="foto-{{ $elemento->id }}" class="form-label">Foto</label>
-                                            <input type="file" id="foto-{{ $elemento->id }}" name="foto"
-                                                class="form-control" accept="image/*">
-                                            @if ($elemento->foto)
-                                                <img src="{{ asset('storage/' . $elemento->foto) }}"
+                                            <div class="mb-3">
+                                                <label for="foto-{{ $elemento->id }}" class="form-label">Foto del
+                                                    Elemento</label>
+                                                <input type="file" id="foto-{{ $elemento->id }}" name="foto"
+                                                    class="form-control" accept="image/*"
+                                                    onchange="previewImage(event, 'previewImagen-{{ $elemento->id }}')">
+                                                <img id="previewImagen-{{ $elemento->id }}"
+                                                    src="{{ asset('storage/' . $elemento->foto) }}"
                                                     alt="Foto del elemento" class="img-fluid mt-3">
-                                            @endif
+
+                                            </div>
+
                                         </div>
+
                                     </form>
                                 </div>
                             </div>
@@ -277,10 +267,15 @@
                                 required></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="foto" class="form-label">Foto</label>
-                            <input type="file" id="foto" name="foto" class="form-control"
-                                accept="image/*">
+                            <label for="fotoElemento" class="form-label">Foto</label>
+                            <input type="file" id="fotoElemento" name="foto" class="form-control"
+                                accept="image/*" onchange="previewImage(event, 'previewElemento')">
                         </div>
+                        <div class="mb-3">
+                            <img id="previewElemento" src="#" alt="Previsualización de la imagen"
+                                style="display: none; max-width: 100%; height: auto;">
+                        </div>
+
                         <button type="submit" class="btn btn-primary">Registrar</button>
                     </form>
                 </div>
@@ -298,7 +293,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="editarPerfilForm" method="POST" action="{{ route('updateProfile') }}">
+                    <form id="editarPerfilForm" method="POST" action="{{ route('updateProfile') }}"
+                        enctype="multipart/form-data">
                         @csrf
                         <div class="mb-3">
                             <label for="nombres" class="form-label">Nombres:</label>
@@ -328,92 +324,76 @@
                         <div class="mb-3">
                             <label for="numero_documento" class="form-label">Número de Documento:</label>
                             <input type="text" id="numero_documento" name="numero_documento" class="form-control"
-                                value="{{ Auth::user()->numero_documento }}" required>
+                                value="{{ Auth::user()->numero_documento }}" readonly>
                         </div>
                         <div class="mb-3">
-                            <label for="correo_personal" class="form-label">Correo Personal:</label>
-                            <input type="email" id="correo_personal" name="correo_personal" class="form-control"
-                                value="{{ Auth::user()->correo_personal }}" readonly>
-                        </div>
-                        <div class="mb-3">
-                            <label for="correo_institucional" class="form-label">Correo Institucional:</label>
-                            <input type="email" id="correo_institucional" name="correo_institucional"
-                                class="form-control" value="{{ Auth::user()->correo_institucional }}" readonly>
+                            <label for="rh" class="form-label">Tipo de Sangre (RH):</label>
+                            <input type="text" id="rh" name="rh" class="form-control"
+                                value="{{ Auth::user()->rh }}" readonly>
                         </div>
                         <div class="mb-3">
                             <label for="telefono" class="form-label">Teléfono:</label>
                             <input type="tel" id="telefono" name="telefono" class="form-control"
                                 value="{{ Auth::user()->telefono }}" required>
                         </div>
+
+                        @if (Auth::check() && Auth::user()->roles_id == 3)
+                            <div class="mb-3" id="numeroFichaFieldModal">
+                                <label for="numero_ficha" class="form-label">Número de Ficha:</label>
+                                <input type="text" id="numero_ficha_modal" name="numero_ficha"
+                                    class="form-control" value="{{ Auth::user()->numero_ficha }}">
+                            </div>
+                        @endif
+
                         <div class="mb-3">
-                            <label for="rol" class="form-label">Rol:</label>
-                            <select id="rol" name="rol" class="form-select" required>
-                                <option value="3" {{ Auth::user()->rol == 3 ? 'selected' : '' }}>Aprendiz
-                                </option>
-                                <option value="4" {{ Auth::user()->rol == 4 ? 'selected' : '' }}>Visitante
-                                </option>
-                                <option value="5" {{ Auth::user()->rol == 5 ? 'selected' : '' }}>Funcionario
-                                </option>
-                            </select>
+                            <label for="foto" class="form-label">Foto de Perfil:</label>
+                            <!-- Contenedor para la previsualización de la foto -->
+                            <div class="mb-3">
+                                @if (Auth::user()->foto && file_exists(storage_path('app/public/fotos_perfil/' . Auth::user()->foto)))
+                                    <img id="previewPerfil"
+                                        src="{{ asset('storage/fotos_perfil/' . Auth::user()->foto) }}"
+                                        alt="Foto de perfil actual" style="max-width: 100px; height: auto;">
+                                @else
+                                    <img id="previewPerfil" src="{{ asset('imagenes/sin_foto_perfil.webp') }}"
+                                        alt="Foto de perfil predeterminada" style="max-width: 100px; height: auto;">
+                                @endif
+                            </div>
+                            <input type="file" id="foto" name="foto" class="form-control"
+                                accept="image/*" onchange="previewImage(event, 'previewPerfil')">
                         </div>
-                        <div class="mb-3">
-                            <label for="numero_ficha" class="form-label">Número de Ficha:</label>
-                            <input type="text" id="numero_ficha" name="numero_ficha" class="form-control"
-                                value="{{ Auth::user()->numero_ficha }}" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="contrasena" class="form-label">Contraseña:</label>
-                            <input type="password" id="contrasena" name="contrasena" class="form-control" readonly>
-                        </div>
-                        <div class="mb-3">
-                            <label for="contrasena_confirmation" class="form-label">Confirmar Contraseña:</label>
-                            <input type="password" id="contrasena_confirmation" name="contrasena_confirmation"
-                                class="form-control" readonly>
-                        </div>
+
                         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                     </form>
-
-                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                    <script>
-                        $(document).ready(function() {
-                            $('#editarPerfilForm').on('submit', function(event) {
-                                event.preventDefault(); // Evita que el formulario se envíe de la forma tradicional
-
-                                $.ajax({
-                                    url: '{{ route('updateProfile') }}', // Cambia esta URL si es diferente
-                                    type: 'POST',
-                                    data: $(this).serialize(),
-                                    success: function(response) {
-                                        alert(response.success); // Muestra mensaje de éxito
-                                        $('#editarPerfilModal').modal('hide'); // Cierra el modal
-                                        // Actualiza la vista si es necesario
-                                        updateUserProfile(response.user);
-                                    },
-                                    error: function(xhr) {
-                                        alert(xhr.responseJSON.error); // Muestra mensaje de error
-                                    }
-                                });
-                            });
-
-                            function updateUserProfile(user) {
-                                // Actualiza los elementos en la vista con la información del usuario
-                                // Por ejemplo:
-                                $('#userName').text(user.nombres + ' ' + user.apellidos);
-                                $('#userEmail').text(user.correo_institucional);
-                                // Añade más actualizaciones según sea necesario
-                            }
-                        });
-                    </script>
                 </div>
             </div>
         </div>
     </div>
 
 
+
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+
+    <!-- mostrar ficha solo si es roll aprendiz -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const numeroFichaField = document.getElementById('numeroFichaFieldModal');
+            const numeroFichaInput = document.getElementById('numero_ficha_modal');
+
+            if (numeroFichaField) {
+                numeroFichaField.style.display = 'block';
+                numeroFichaInput.required = true;
+            } else {
+                numeroFichaField.style.display = 'none';
+                numeroFichaInput.required = false;
+            }
+        });
+    </script>
+
     <script>
         function editElement(id) {
             document.getElementById('details-view-' + id).classList.add('d-none');
@@ -452,30 +432,6 @@
         });
     </script>
 
-    <script>
-        $(document).ready(function() {
-            $('#editarPerfilForm').on('submit', function(event) {
-                event.preventDefault();
-
-                $.ajax({
-                    url: $(this).attr('action'),
-                    method: 'POST',
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        $('#editarPerfilModal').modal('hide');
-                        // Mostrar mensaje de éxito
-                        $('#success-message').text(response.success).fadeIn().delay(5000)
-                            .fadeOut();
-                    },
-                    error: function(response) {
-                        // Manejar errores si es necesario
-                        $('#error-message').text('Ocurrió un error al actualizar el perfil.')
-                            .fadeIn().delay(5000).fadeOut();
-                    }
-                });
-            });
-        });
-    </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
@@ -510,6 +466,108 @@
                 $('.navbar-nav .nav-link').text(user.nombres);
             }
         });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#editarPerfilForm').on('submit', function(event) {
+                event.preventDefault(); // Evita que el formulario se envíe de la forma tradicional
+
+                $.ajax({
+                    url: '{{ route('updateProfile') }}', // Cambia esta URL si es diferente
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        alert(response.success); // Muestra mensaje de éxito
+                        $('#editarPerfilModal').modal('hide'); // Cierra el modal
+                        // Actualiza la vista si es necesario
+                        updateUserProfile(response.user);
+                    },
+                    error: function(xhr) {
+                        alert(xhr.responseJSON.error); // Muestra mensaje de error
+                    }
+                });
+            });
+
+            function updateUserProfile(user) {
+                // Actualiza los elementos en la vista con la información del usuario
+                // Por ejemplo:
+                $('#userName').text(user.nombres + ' ' + user.apellidos);
+                $('#userEmail').text(user.correo_institucional);
+                // Añade más actualizaciones según sea necesario
+            }
+        });
+    </script>
+
+    <script>
+        document.getElementById('editarPerfilForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+
+            fetch('{{ route('updateProfile') }}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Forzar recarga de la página
+                        window.location.reload();
+                    } else {
+                        alert('Hubo un error al actualizar el perfil.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al actualizar el perfil:', error);
+                    alert('Hubo un error al actualizar el perfil.');
+                });
+        });
+    </script>
+    <!-- ver imagen en el editar perfil y editar elemento -->
+    <script>
+        function previewImage(event, previewId) {
+            var file = event.target.files[0];
+            var preview = document.getElementById(previewId);
+
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    console.log("Nueva foto de perfil seleccionada: ", e.target.result); // Log para la nueva imagen
+                };
+                reader.readAsDataURL(file);
+            } else {
+                // Reestablecer la imagen a la original si no se selecciona un archivo
+                var originalPhotoUrl =
+                    '{{ Auth::user()->foto ? asset('storage/fotos_perfil/' . Auth::user()->foto) : asset('imagenes/sin_foto_perfil.webp') }}';
+                preview.src = originalPhotoUrl;
+                console.log("Foto de perfil actual o predeterminada: ", originalPhotoUrl); // Log para la foto actual
+            }
+        }
+    </script>
+
+    <!-- previsualziar la foto en registrar un nuevo elemento -->
+    <script>
+        function previewImage(event, previewId) {
+            var file = event.target.files[0];
+            var preview = document.getElementById(previewId);
+
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block'; // Asegúrate de que la imagen sea visible
+                    console.log("Imagen seleccionada: ", e.target.result); // Log para la nueva imagen
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.src = '#'; // Ocultar imagen si no se selecciona archivo
+                preview.style.display = 'none';
+            }
+        }
     </script>
 
 

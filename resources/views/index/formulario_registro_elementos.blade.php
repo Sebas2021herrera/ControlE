@@ -111,7 +111,7 @@
                 const preview = $(this).closest('.elemento-form').find('.image-preview-img');
                 
                 if (file) {
-                    if (file.size > 5242880) { // 5MB en bytes
+                    if (file.size > 104857600) { // 100MB en bytes
                         alert('El tamaño del archivo debe ser menor o igual a 5MB.');
                         $(this).val('');
                         preview.hide();

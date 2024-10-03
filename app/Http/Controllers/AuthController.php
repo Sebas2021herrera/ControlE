@@ -3,47 +3,118 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Usuario;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
+    // Mostrar formulario de inicio de sesión
     public function showLogin()
     {
         return view('auth.login');
     }
 
+    // Mostrar formulario de registro
+    public function create()
+    {
+        return view('auth.create');
+    }
+
+    // Manejar el registro de un nuevo usuario
+    public function createpost(Request $request)
+    {
+        Log::info('Datos del formulario:', $request->all());
+
+        // Validar los datos del formulario
+        $validator = Validator::make($request->all(), [
+            'nombres' => 'required|string|max:255',
+            'apellidos' => 'required|string|max:255',
+            'tipo_documento' => 'required|string|max:255',
+            'numero_documento' => 'required|string|max:255|unique:usuarios',
+            'rh' => 'required|string|max:7', // Validar que el campo rh sea obligatorio
+            'correo_personal' => 'required|email|max:255|unique:usuarios',
+            'correo_institucional' => 'required|email|max:255|unique:usuarios',
+            'telefono' => 'required|string|max:20',
+            'contraseña' => 'required|string|min:6|confirmed',
+            'rol' => 'required|exists:roles,id', // Verificar que el rol exista
+            'numero_ficha' => $request->input('rol') == 3 ? 'required|string|max:255' : 'nullable|string|max:255',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:102400' // Validación de la imagen
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        try {
+            // Crear una nueva instancia del modelo Usuario
+            $usuario = new Usuario();
+            $usuario->nombres = $request->nombres;
+            $usuario->apellidos = $request->apellidos;
+            $usuario->tipo_documento = $request->tipo_documento;
+            $usuario->numero_documento = $request->numero_documento;
+            $usuario->rh = $request->rh; // Asignar el valor del campo rh
+            $usuario->correo_personal = $request->correo_personal;
+            $usuario->correo_institucional = $request->correo_institucional;
+            $usuario->telefono = $request->telefono;
+            $usuario->numero_ficha = $request->input('numero_ficha');
+            $usuario->contraseña = Hash::make($request->contraseña);
+            $usuario->roles_id = $request->rol; // Asigna el rol seleccionado
+
+            // Manejo del archivo de foto si se sube una
+            if ($request->hasFile('foto')) {
+                $file = $request->file('foto');
+                $path = $file->store('public/fotos_perfil'); // Guarda la foto en el almacenamiento público
+                $usuario->foto = basename($path); // Guarda solo el nombre del archivo en la base de datos
+            }
+
+            // Guardar el usuario en la base de datos
+            $usuario->save();
+
+            // Autenticar al usuario recién registrado
+            Auth::login($usuario);
+
+            // Redirigir al panel de usuario con un mensaje de éxito
+            return redirect()->route('user.panel')->with('success', 'Registro exitoso. ¡Bienvenido!');
+        } catch (QueryException $e) {
+            Log::error('Error al registrar el usuario: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Ha ocurrido un error al registrar el usuario.'])->withInput();
+        }
+    }
+
+    // Manejar el inicio de sesión
     public function login(Request $request)
     {
-        // Validar las credenciales de entrada
         $request->validate([
             'correo_institucional' => 'required|email',
             'contraseña' => 'required|string|min:6',
         ]);
 
-        // Las credenciales de autenticación
         $credentials = [
             'correo_institucional' => $request->correo_institucional,
             'password' => $request->contraseña,
         ];
-        Log::info('Intento de inicio de sesión', ['credentials' => $credentials]);
 
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
+        // Verificar credenciales
+        if (Auth::guard('web')->attempt($credentials)) {
+            $usuario = Auth::user();
+            Log::info('Usuario autenticado', ['user' => $usuario]);
 
-            Log::info('Usuario autenticado', ['user' => $user]);
-
-            // Redirigir según el rol del usuario
-            switch ($user->roles_id) {
+            // Redirigir al panel según el rol
+            switch ($usuario->roles_id) {
                 case 1:
                     return redirect()->route('admin.panel');
                 case 2:
                     return redirect()->route('control.panel');
                 case 3:
+                    return redirect()->route('user.panel');
+                case 4:
+                    return redirect()->route('user.panel');
+                case 5:
                     return redirect()->route('user.panel');
                 default:
                     return redirect('/')->with('error', 'Rol no reconocido');
@@ -53,117 +124,69 @@ class AuthController extends Controller
         }
     }
 
+    // Manejar el cierre de sesión
     public function logout(Request $request)
     {
         Auth::logout();
         return redirect('/');
     }
 
-    public function create()
-    {
-        return view('auth.create');
-    }
-
-    public function createpost(Request $request)
-    {
-        // Validar los datos del formulario
-        $validator = Validator::make($request->all(), [
-            'nombres' => 'required|string|max:255',
-            'apellidos' => 'required|string|max:255',
-            'tipo_documento' => 'required|string|max:255',
-            'numero_documento' => 'required|string|max:255|unique:usuarios,numero_documento',
-            'correo_personal' => 'required|email|max:255|unique:usuarios,correo_personal',
-            'correo_institucional' => 'required|email|max:255|unique:usuarios,correo_institucional',
-            'contrasena' => 'required|string|min:6|confirmed',
-            'telefono' => 'required|string|max:20',
-            'rol' => 'required|integer|in:3,4,5',
-            'numero_ficha' => 'required|string|max:255',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()
-                             ->withErrors($validator)
-                             ->withInput();
-        }
-
-        try {
-            // Crear el nuevo usuario
-            $user = new User();
-            $user->nombres = $request->input('nombres');
-            $user->apellidos = $request->input('apellidos');
-            $user->tipo_documento = $request->input('tipo_documento');
-            $user->numero_documento = $request->input('numero_documento');
-            $user->correo_personal = $request->input('correo_personal');
-            $user->correo_institucional = $request->input('correo_institucional');
-            $user->contraseña = Hash::make($request->input('contrasena'));
-            $user->telefono = $request->input('telefono');
-            $user->roles_id = $request->input('rol');
-            $user->numero_ficha = $request->input('numero_ficha');
-            $user->save();
-
-            return redirect()->route('login')->with('success', 'Registro exitoso, por favor inicie sesión.');
-        } catch (QueryException $e) {
-            if ($e->errorInfo[0] == '23505') { // Código de error para violación de unicidad en PostgreSQL
-                return redirect()->back()->with('error', 'Error: El documento o correo ya está registrado.')
-                                         ->withInput();
-            }
-
-            // Otra lógica de manejo de errores
-            return redirect()->back()->with('error', 'Ha ocurrido un error al registrar el usuario.')
-                                     ->withInput();
-        }
-    }
-
-    public function showEditProfile()
-    {
-        // Implementa la lógica para mostrar el formulario de edición de perfil si es necesario
-    }
-
+    // Actualizar el perfil del usuario autenticado
     public function updateProfile(Request $request)
     {
-        $user = Auth::user();
+        $usuario = Auth::user();
+        $esAprendiz = $usuario->roles_id == 3; // Verifica si el usuario es Aprendiz
 
-        // Aquí puedes agregar la lógica para determinar si el usuario tiene permisos de administrador
-        $esAdmin = $user->roles_id == 1; // Este es un ejemplo, ajusta según tu lógica real.
+        // Mantén los valores actuales del usuario para los campos que no deben ser editados
+        $request->merge([
+            'numero_documento' => $usuario->numero_documento, // No se puede editar el número de documento
+            'correo_personal' => $usuario->correo_personal,
+            'correo_institucional' => $usuario->correo_institucional,
+        ]);
 
-        if (!$esAdmin) {  // Si no es administrador, entonces se asegura de no modificar ciertos campos.
-            $request->merge([
-                'correo_personal' => $user->correo_personal,
-                'correo_institucional' => $user->correo_institucional,
-                'contrasena' => $user->contrasena,
-                'tipoDocumento' => $user->tipo_documento,
-                'numeroDocumento' => $user->numero_documento,
-                'numeroFicha' => $user->numero_ficha,
-            ]);
-        }
-
-        // Validar los datos del formulario
-        $validator = Validator::make($request->all(), [
+        // Definir las reglas de validación
+        $rules = [
             'nombres' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
-            'tipoDocumento' => 'required|string|max:255',
-            'numeroDocumento' => 'required|string|max:255',
-            'correo_personal' => 'required|email|max:255',
-            'correo_institucional' => 'required|email|max:255',
+            'tipo_documento' => 'required|string|max:255', // Ahora es editable
             'telefono' => 'required|string|max:20',
-            'numeroFicha' => 'required|string|max:255',
-        ]);
+            'rh' => 'required|string|max:7', // Validación del campo rh en el perfil
+            'numero_ficha' => $esAprendiz ? 'required|string|max:255' : 'nullable|string|max:255', // Obligatorio si es Aprendiz
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:102400'
+        ];
+
+        // Validar los datos del request
+        $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->all()], 400);
         }
 
         try {
-            // Actualizar los campos del usuario
-            $user->update($request->all());
+            // Manejo del archivo de foto
+            if ($request->hasFile('foto')) {
+                if ($usuario->foto) {
+                    Storage::delete('public/fotos_perfil/' . $usuario->foto);
+                }
 
-            // Respuesta JSON con los datos actualizados
+                $file = $request->file('foto');
+                $path = $file->store('public/fotos_perfil');
+                $usuario->foto = basename($path);
+            }
+
+            // Actualizar el perfil del usuario
+            $usuario->update($request->except('foto'));
+            $usuario->rh = $request->rh; // Actualizar el campo rh
+            $usuario->save();
+
+            // Devolver una respuesta con los datos actualizados
             return response()->json([
                 'success' => 'Perfil actualizado con éxito.',
-                'user' => $user
+                'user' => $usuario,
+                'newPhotoUrl' => $usuario->foto ? Storage::url('public/fotos_perfil/' . $usuario->foto) : null
             ]);
         } catch (QueryException $e) {
-            // Manejo de errores
+            Log::error('Error al actualizar el perfil: ' . $e->getMessage());
             return response()->json(['error' => 'Ha ocurrido un error al actualizar el perfil.'], 500);
         }
     }

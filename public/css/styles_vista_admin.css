@@ -1,0 +1,185 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+/* Estilos del header */
+.main-header {
+    background-color: #00304D;
+    color: #ffffff;
+    font-size: 1.25rem;
+    padding: 10px 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+/* Estilo del logo */
+.registrar {
+    font-family: Arial, sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    color: rgb(255, 255, 255);
+    text-decoration: none;
+}
+
+/* Estilos de la navegación */
+.nav {
+    display: flex;
+}
+
+.nav-list {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-list a {
+    color: rgb(255, 255, 255);
+    text-decoration: none;
+    font-size: 18px;
+    transition: color 0.3s;
+}
+
+.nav-list a:hover {
+    color: #00ff2a; /* Cambia a un color dorado al pasar el mouse */
+}
+
+/* Estilos del Modal */
+.modal {
+    font-family: Arial, sans-serif;
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+}
+
+.modal-content {
+    font-family: Arial, sans-serif;
+    background-color: #fefefe;
+    margin: 5% auto;
+    font-size: 20px;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+    max-height: 80vh;
+    overflow-y: auto;
+    border-radius: 8px;
+    /* Código body vista create*/
+    
+}
+
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: #000;
+}
+.close-btn:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modal-content input,
+.modal-content button {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.modal-content button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.modal-content button:hover {
+    background-color: #0056b3;
+}
+
+.ventana-formulario {
+    width: 80%;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px 30px;
+    background-color: #ffffff; /* Fondo blanco similar */
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Espacio entre los elementos */
+}
+
+.ventana-formulario h2 {
+    margin-bottom: 10px;
+    font-size: 24px;
+    color: #333; /* Color de texto para encabezados */
+    text-align: center;
+}
+
+.ventana-formulario input,
+.ventana-formulario select,
+.ventana-formulario textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.ventana-formulario input:focus,
+.ventana-formulario select:focus,
+.ventana-formulario textarea:focus {
+    border-color: #007bff; /* Color de borde al enfocar */
+}
+
+.ventana-formulario button {
+    font-family: Arial, sans-serif;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff; /* Color de botón */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.ventana-formulario button {
+    background-color: #00b330; 
+}
+.ventana-formulario button:hover {
+    background-color: #59db7c; /* Color de botón al pasar el cursor */
+}

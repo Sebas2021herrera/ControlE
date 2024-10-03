@@ -11,11 +11,13 @@
 <body>
     <div class="container">
         <div class="buscador">
-            <form action="{{ route('vigilante.buscar') }}" method="GET">
-                <input type="text" name="documento" placeholder="Buscar por documento...">
-                <button type="submit" class="btn btn-primary">Buscar</button>
+            <form action="{{ route('vigilante.buscar') }}" method="GET" class="form-busqueda">
+                <input type="text" name="documento" class="input-busqueda" placeholder="Buscar por Documento...">
+                <button type="submit" class="lupa-btn">
+                    <img src="{{ asset('imagenes/lupa.png') }}" alt="Buscar" class="lupa-icon">
+                </button>
             </form>
-        </div>
+        </div>        
 
         <div class="contenido-superior">
             <div class="contenedor-intermedio">

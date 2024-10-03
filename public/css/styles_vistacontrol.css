@@ -9,7 +9,7 @@ body {
 }
 
 .container {
-    display: flex; 
+    display: flex;
     flex-direction: column;
     height: 100vh;
     box-sizing: border-box;
@@ -18,53 +18,60 @@ body {
 }
 
 .buscador {
-    width: 100%;
-    height: 110px;
+    width: calc(100% + 20px);
+    height: 100px;
     background-color: #00324d;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    margin-top: -16px;
-    padding: 0 20px;
-    margin-left: -16px;
+    margin-top: -11px;
+    margin-left: -10px;
+    margin-right: -10px;
 }
 
-.buscador input {
-    width: 70%;
-    height: 40px;
-    padding: 0 15px;
-    border: 2px solid #ffffff;
+.form-busqueda {
+    position: relative;
+    width: 300px; /* Ajusta el ancho total del formulario */
+}
+
+.input-busqueda {
+    width: 100%;
+    height: 36px; /* Altura del input ajustada a 36px */
+    padding: 0 70px 0 15px; /* Espacio a la derecha para el área verde y la lupa */
     border-radius: 8px;
-    font-size: 18px;
+    border: none;
+    font-size: 16px;
     outline: none;
     color: #00324d;
     background-color: #ffffff;
-    transition: all 0.3s ease;
-    margin-right: 5px;
-    margin-top: 6px;
     box-sizing: border-box;
+    position: relative;
+    z-index: 1;
 }
 
-.buscador input::placeholder {
-    color: #00324d;
-    opacity: 0.8;
-}
-
-.buscador button {
-    height: 40px;
-    padding: 0 20px;
+.lupa-btn {
+    position: absolute;
+    right: 0; /* Coloca el botón en el borde derecho */
+    top: 0;
+    width: 30px; /* Ancho del área de color */
+    height: 36px; /* Altura ajustada a 36px para que coincida con el input */
+    background-color: #39a900; /* Color de fondo para el área derecha */
+    border-radius: 0 8px 8px 0; /* Borde redondeado solo en la derecha */
     border: none;
-    border-radius: 8px;
-    background-color: #39a900;
-    color: #ffffff;
-    font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-left: 5px;
-    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    z-index: 2; /* Asegúrate de que el botón quede sobre el input */
 }
 
+.lupa-icon {
+    width: auto;
+    height: 20px; /* Ajusta el tamaño de la lupa */
+}
+
+/* Resto del CSS */
 .contenido-superior {
     display: flex;
     gap: 16px;
@@ -131,8 +138,6 @@ body {
     width: 15%; /* O el valor que prefieras */
 }
 
-
-
 .tabla-reportes thead {
     position: sticky;
     top: 0;
@@ -172,7 +177,7 @@ body {
 
 /* Estilos para los botones */
 .boton {
-    padding: 10px 20px; 
+    padding: 10px 20px;
     background-color: #00324d; /* Color de fondo azul oscuro */
     color: white; /* Color del texto blanco */
     border: none; /* Sin bordes */

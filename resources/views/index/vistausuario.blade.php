@@ -31,7 +31,6 @@
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
                                 data-bs-target="#registroModal">Registrar Elementos</a></li>
-
                         <li>
                             <a class="dropdown-item" href="#" data-bs-toggle="modal"
                                 data-bs-target="#editarPerfilModal">Editar Perfil</a>

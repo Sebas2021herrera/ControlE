@@ -7,12 +7,15 @@ use App\Http\Controllers\ElementoController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VigilanteController;
+use App\Http\Controllers\AdminController;
+use App\Models\Categoria;
 
 // Rutas para autenticación y registro
 Route::get('/', [WelcomeController::class, 'index']);
 Route::get('login', [AuthController::class, 'showLogin'])->name('login');
 Route::get('create', [AuthController::class, 'create'])->name('create');
 Route::post('registrado', [AuthController::class, 'createpost'])->name('createpost');
+Route::post('/createpost', [AdminController::class, 'store'])->name('createpost');
 Route::post('login', [AuthController::class, 'login'])->name('login.post');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -32,9 +35,23 @@ Route::middleware('auth')->group(function () {
     // Rutas para los paneles de administración, control y usuario
     Route::middleware(CheckRole::class . ':1')->group(function () {
         Route::get('admin/panel', function () {
-            return view('index.vistaadmin');
+            $categorias = Categoria::all();
+            return view('index.vistaadmin', compact( 'categorias'));
+      
         })->name('admin.panel');
     });
+
+    // Rutas para la vista admin
+    Route::resource('admin', AdminController::class);
+    Route::post('/admin/registrar', [AdminController::class, 'store'])->name('createpost');
+
+    // Primero, la ruta GET para mostrar el formulario de creación
+    Route::get('/admin/elementos/create', [AdminController::class, 'create'])->name('admin.elementos.create');
+
+    // Luego, la ruta POST para manejar el envío del formulario y almacenar el elemento
+    Route::post('/admin/elementos/store', [AdminController::class, 'store'])->name('admin.elementos.store');
+
+    
 
     // Solo rol 2 puede acceder al panel de control
     Route::middleware(CheckRole::class . ':2')->group(function () {

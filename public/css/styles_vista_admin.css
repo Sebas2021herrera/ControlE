@@ -34,6 +34,10 @@ body {
     text-decoration: none;
 }
 
+.registrar:hover {
+    color: #00ff2a;
+}
+
 /* Estilos de la navegación */
 .nav {
     display: flex;

@@ -20,13 +20,14 @@ class Usuario extends Authenticatable
         'apellidos',
         'tipo_documento',
         'numero_documento',
+        'rh',
         'correo_personal',
         'correo_institucional',
         'telefono',
         'roles_id',
         'numero_ficha',
         'contraseña',
-        'foto'
+        'foto',
     ];
 
     // Campos que deben ser ocultos en los arrays de respuesta

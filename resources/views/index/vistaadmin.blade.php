@@ -20,7 +20,7 @@
                     <div class="dropdown-content">
                         <a href="#" class="dropdown-item" id="registerUsers">Registrar usuarios</a>
                         <a href="#" class="dropdown-item" id="registerElements">Registrar elementos</a>
-
+                        <a href="#" class="dropdown-item" id="consultUsers">Consultar usuarios</a>
                     </div>
                 </div>
             </div>
@@ -40,8 +40,8 @@
             <span class="close-btn">&times;</span>
             <div class="ventana-formulario">
                 <h2>Registro de usuarios</h2>
-                <form>
                     <form id="registroForm" method="POST" action="{{ route('createpost') }}" enctype="multipart/form-data">
+                        @csrf
                         <div class="field">
                             <label class="label" for="nombres">Nombres:</label>
                             <div class="control">
@@ -83,6 +83,29 @@
                             @enderror
                         </div>
                         
+                        <!-- tipo de sangre -->
+                    <div class="field">
+                        <label class="label" for="rh">Tipo de Sangre (RH):</label>
+                        <div class="control">
+                            <div class="select @error('rh') is-danger @enderror">
+                                <select id="rh" name="rh" required>
+                                    <option value="" disabled selected>Seleccione su tipo de sangre</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                </select>
+                            </div>
+                        </div>
+                        @error('rh')
+                            <p class="help is-danger">{{ $message }}</p>
+                        @enderror
+                    </div>
+
                         <div class="field">
                             <label class="label" for="numero_documento">Número de Documento:</label>
                             <div class="control">
@@ -125,7 +148,7 @@
                                 <input class="input @error('contraseña') is-danger @enderror" type="password"
                                     id="contraseña" name="contraseña" required>
                             </div>
-                            <p id="contraseaError" class="help is-danger"></p>
+                            <p id="contrasenaError" class="help is-danger"></p>
                             @error('contraseña')
                                 <p class="help is-danger">{{ $message }}</p>
                             @enderror
@@ -159,8 +182,8 @@
                             <div class="control">
                                 <div class="select @error('rol') is-danger @enderror">
                                     <select id="rol" name="rol" required>
-                                        <option value="3" {{ old('rol') == 1 ? 'selected' : '' }}>Administrador</option>
-                                        <option value="3" {{ old('rol') == 2 ? 'selected' : '' }}>Control</option>
+                                        <option value="1" {{ old('rol') == 1 ? 'selected' : '' }}>Administrador</option>
+                                        <option value="2" {{ old('rol') == 2 ? 'selected' : '' }}>Control</option>
                                         <option value="3" {{ old('rol') == 3 ? 'selected' : '' }}>Aprendiz</option>
                                         <option value="4" {{ old('rol') == 4 ? 'selected' : '' }}>Visitante</option>
                                         <option value="5" {{ old('rol') == 5 ? 'selected' : '' }}>Funcionario
@@ -214,61 +237,59 @@
             <span class="close-btn">&times;</span>
             <div class="ventana-formulario">
                 <h2>Registro de elementos</h2>
-                <form>
                     <!-- Aquí puedes agregar los campos para registrar elementos -->
                     <!-- Campo de Número Documento Usuario -->
-                <div class="mb-3">
-                        <label for="numeroDocumentoUsuario" class="form-label">Número documento usuario</label>
-                        <input type="text" class="form-control" id="numeroDocumentoUsuario" name="numeroDocumentoUsuario" placeholder="Ingrese el número de documento del usuario">
-                </div>
-                    <!-- Campo Categoría -->
-                    <div class="mb-3">
-                        <label for="categoria" class="form-label">Categoría</label>
-                        <select class="form-select" id="categoria" name="categoria">
-                        <option selected>Archiveros</option>
-                            <!-- Agregar más opciones si es necesario -->
-                        </select>
-                    <!-- Campo de Descripción -->
-            <div class="mb-3">
-                <label for="descripcion" class="form-label">Descripción</label>
-                <input type="text" class="form-control" id="descripcion" name="descripcion" placeholder="Ingrese la descripción">
-            </div>
-            <!-- Campo de Marca -->
-            <div class="mb-3">
-                <label for="marca" class="form-label">Marca</label>
-                <input type="text" class="form-control" id="marca" name="marca" placeholder="Ingrese la marca">
-            </div>
-             <!-- Campo de Modelo -->
-             <div class="mb-3">
-                <label for="modelo" class="form-label">Modelo</label>
-                <input type="text" class="form-control" id="modelo" name="modelo" placeholder="Ingrese el modelo">
-            </div>
-            <!-- Campo de Número de Serie -->
-            <div class="mb-3">
-                <label for="numeroSerie" class="form-label">Número de Serie</label>
-                <input type="text" class="form-control" id="numeroSerie" name="numeroSerie" placeholder="Ingrese el número de serie">
-            </div>
-            <!-- Campo de Especificaciones Técnicas -->
-            <div class="mb-3">
-                <label for="especificacionesTecnicas" class="form-label">Especificaciones Técnicas</label>
-                <textarea class="form-control" id="especificacionesTecnicas" name="especificacionesTecnicas" rows="3" placeholder="Ingrese las especificaciones técnicas"></textarea>
-            </div>
-            <!-- Campo de Foto -->
-            <div class="mb-3">
-                <label for="foto" class="form-label">Foto</label>
-                <input type="file" class="form-control" id="foto" name="foto">
-            </div>
-                
-                    </div>
-                    <div class="field">
-                        <div class="control">
-                            <button class="button is-success" type="submit">Registrar Elemento</button>
+                   
+                    <form action="{{ route('admin.elementos.store') }}" method="POST" enctype="multipart/form-data">
+                        @csrf             
+                        <div class="mb-3">
+                            <label for="documento_id" class="form-label">Número documento</label>
+                            <input type="text" id="documento" name="documento" class="form-control" required>
+                            <label for="categoria_id" class="form-label">Categoría</label>
+                            <select id="categoria_id" name="categoria_id" class="form-select" required>
+                                @foreach ($categorias as $categoria)
+                                    <option value="{{ $categoria->id }}">{{ $categoria->nombre }}</option>
+                                @endforeach
+                            </select>
                         </div>
-                    </div>
-                </form>
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label">Descripción</label>
+                            <input type="text" id="descripcion" name="descripcion" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="marca" class="form-label">Marca</label>
+                            <input type="text" id="marca" name="marca" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modelo" class="form-label">Modelo</label>
+                            <input type="text" id="modelo" name="modelo" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="serie" class="form-label">Número de Serie</label>
+                            <input type="text" id="serie" name="serie" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="especificaciones_tecnicas" class="form-label">Especificaciones
+                                Técnicas</label>
+                            <textarea id="especificaciones_tecnicas" name="especificaciones_tecnicas" class="form-control" rows="3"
+                                required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fotoElemento" class="form-label">Foto</label>
+                            <input type="file" id="fotoElemento" name="foto" class="form-control"
+                                accept="image/*" onchange="previewImage(event, 'previewElemento')">
+                        </div>
+                        <div class="mb-3">
+                            <img id="previewElemento" src="#" alt="Previsualización de la imagen"
+                                style="display: none; max-width: 100%; height: auto;">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Registrar</button>
+                    </form>
             </div>
         </div>
     </div>
+
 
     <script>
         function previewImage(event) {
@@ -291,11 +312,11 @@
         }
     </script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var rolSelect = document.getElementById('rol');
-        var numeroFichaField = document.getElementById('numero_ficha'); // Actualizado
-        var numeroFichaDiv = numeroFichaField.closest('.field');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var rolSelect = document.getElementById('rol');
+            var numeroFichaField = document.getElementById('numero_ficha'); // Actualizado
+            var numeroFichaDiv = numeroFichaField.closest('.field');
 
         function toggleNumeroFicha() {
             if (rolSelect.value == 3) { // Aprendiz
@@ -312,7 +333,7 @@
         // Llamar a la función para inicializar el estado correcto en caso de que el rol esté preseleccionado
         toggleNumeroFicha();
     });
-</script>
+    </script>
 
     <script>
         // Selección de elementos
@@ -327,6 +348,46 @@
             event.preventDefault();
             registerModal.style.display = 'block';
         });
+
+
+        // Mostrar el campo "Número de ficha" cuando seleccionamos el rol Aprendiz
+        document.getElementById('rol').addEventListener('change', function() {
+        const fichaGroup = document.getElementById('fichaGroup');
+        if (this.value == '3') { // 3 es el valor para el rol de Aprendiz
+            fichaGroup.style.display = 'block';
+        } else {
+            fichaGroup.style.display = 'none';
+        }
+        });
+
+        // Validación de contraseña en Javascript 
+
+        document.getElementById('registroForm').addEventListener('submit', function (e) {
+            var password = document.getElementById('contraseña').value;
+            var confirmPassword = document.getElementById('contraseña_confirmation').value;
+            var errorElement = document.getElementById('confirmarContrasenaError');
+
+            if (password !== confirmPassword) {
+                e.preventDefault(); // Evita que el formulario se envíe
+                errorElement.textContent = 'Las contraseñas no coinciden';
+            } else {
+                errorElement.textContent = ''; // Borra el mensaje de error si coinciden
+            }
+        });
+
+
+        // Función previsualización de la imagen del foto de perfil
+
+        function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function () {
+            var preview = document.getElementById('preview');
+            preview.src = reader.result;
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
 
         // Mostrar el modal de registro de elementos
         registerElementsLink.addEventListener('click', (event) => {

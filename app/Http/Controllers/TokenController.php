@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Token;
 use App\Models\User;
-use App\Models\Usuario;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 

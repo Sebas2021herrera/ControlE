@@ -15,12 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('control_ingresos_id')->constrained('control_ingresos');
             $table->foreignId('elementos_id')->constrained('elementos');
-            $table->string('descripcion');
             $table->timestamps();
         });
     }
 
-    /**
+    /** 
      * Reverse the migrations.
      */
     public function down(): void

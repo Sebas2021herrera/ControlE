@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Vista del Vigilante</title>
     <link rel="stylesheet" href="{{ asset('css/styles_vistacontrol.css') }}">
 </head>
@@ -17,7 +18,7 @@
                     <img src="{{ asset('imagenes/lupa.png') }}" alt="Buscar" class="lupa-icon">
                 </button>
             </form>
-        </div>        
+        </div>
 
         <div class="contenido-superior">
             <div class="contenedor-intermedio">
@@ -28,7 +29,6 @@
                     </div>
 
                     @if (isset($usuario))
-                        <!-- Mostrar la información del usuario si existe -->
                         <div class="info-text">
                             <p class="verde">{{ $usuario->nombres }}</p>
                             <p class="verde">{{ $usuario->apellidos }}</p>
@@ -41,7 +41,6 @@
                                 Fortalecimiento Empresarial del Casanare</p>
                         </div>
 
-                        <!-- Mostrar la foto del usuario si existe -->
                         <div class="foto-usuario">
                             @if ($usuario->foto && file_exists(storage_path('app/public/fotos_perfil/' . $usuario->foto)))
                                 <img src="{{ asset('storage/fotos_perfil/' . $usuario->foto) }}" alt="Foto de perfil"
@@ -52,7 +51,6 @@
                             @endif
                         </div>
                     @else
-                        <!-- Mostrar el mensaje si no se ha encontrado ningún usuario -->
                         <div class="info-text">
                             <p>No se ha seleccionado ningún usuario o el documento ingresado no existe en la base de
                                 datos.</p>
@@ -74,11 +72,33 @@
                             </tr>
                         </thead>
                         <tbody id="tabla-reportes-body">
-
+                            @if (isset($registros) && $registros->isNotEmpty())
+                                @foreach ($registros as $registro)
+                                    <tr>
+                                        <td>{{ $registro->id }}</td>
+                                        <td>{{ $registro->centro->nombre ?? 'Centro no definido' }}</td>
+                                        <td>{{ $registro->fecha_ingreso }}</td>
+                                        <td>{{ $registro->fecha_salida ?? 'N/A' }}</td>
+                                        <td>{{ $registro->estado == 0 ? 'Abierto' : 'Cerrado' }}</td>
+                                        <!-- Mostrar texto en lugar del número -->
+                                    </tr>
+                                @endforeach
+                            @else
+                                <tr>
+                                    <td colspan="5">No hay registros disponibles.</td>
+                                </tr>
+                            @endif
                         </tbody>
                     </table>
                     <div class="contenedor-botones">
-                        <button class="boton" id="agregar-registro">Nuevo Registro</button>
+                        <form action="{{ route('vigilante.registro') }}" method="POST">
+                            @csrf
+                            <input type="hidden" id="documento_vigilante" name="documento_vigilante"
+                                value="{{ $vigilante->numero_documento ?? '' }}">
+                            <input type="hidden" id="usuario-id-oculto" name="usuario_id"
+                                value="{{ $usuario->id ?? '' }}">
+                            <button type="submit" class="boton" id="agregar-registro">Nuevo Registro</button>
+                        </form>
                         <button class="boton">Guardar Registros</button>
                     </div>
                 </div>
@@ -98,20 +118,16 @@
                                 @else
                                     <p>Imagen no encontrada: {{ asset('storage/' . $elemento->foto) }}</p>
                                 @endif
-
                                 <p><strong>Serie:</strong> {{ $elemento->serie }}</p>
                                 <p><strong>Marca:</strong> {{ $elemento->marca }}</p>
                                 <a href="#" class="link-ver-mas" data-bs-toggle="modal"
-                                    data-bs-target="#modal-{{ $elemento->id }}">
-                                    Ver más
-                                </a>
+                                    data-bs-target="#modal-{{ $elemento->id }}">Ver más</a>
 
                                 <div class="btn-container">
                                     <button class="btn-ingresa">Ingresa</button>
                                 </div>
                             </div>
 
-                            <!-- Modal ver más adaptado -->
                             <div class="modal" id="modal-{{ $elemento->id }}">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -121,7 +137,6 @@
                                     </div>
                                     <div class="modal-body">
                                         <div class="modal-body-content text-center">
-                                            <!-- Clase para centrar el contenido -->
                                             @if (file_exists(public_path('storage/' . $elemento->foto)))
                                                 <img src="{{ asset('storage/' . $elemento->foto) }}"
                                                     alt="Foto del elemento" class="img-modal-ver-mas">
@@ -137,7 +152,6 @@
                                             </div>
                                         </div>
                                     </div>
-
                                     <div class="modal-footer">
                                         <button type="button" class="btn-close"
                                             onclick="document.getElementById('modal-{{ $elemento->id }}').style.display='none'">Cerrar</button>
@@ -170,54 +184,64 @@
     <!--script  para mostrar modal-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+
+    
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const tablaReportesBody = document.getElementById('tabla-reportes-body');
-            const agregarRegistroBtn = document.getElementById('agregar-registro');
+        document.getElementById('agregar-registro').addEventListener('click', function(event) {
+            event.preventDefault(); // Evita recargar la página
 
-            // Función para crear una nueva fila
-            function crearNuevaFila() {
-                const tr = document.createElement('tr');
+            const documentoVigilante = "{{ $vigilante->numero_documento ?? '' }}";
+            const usuarioId = "{{ $usuario->id ?? '' }}";
 
-                // Crear celdas para la fila
-                for (let i = 0; i < 5; i++) { // Cambiamos a 5 para agregar la columna de 'Estado'
-                    const td = document.createElement('td');
-
-                    // Añadir contenido específico por columna
-                    switch (i) {
-                        case 0:
-                            td.textContent = 'ID'; // Puedes reemplazar con el ID correspondiente
-                            break;
-                        case 1:
-                            td.textContent = 'Yopal'; // Columna de NOMBRE CENTRO
-                            td.classList.add('centro'); // Añadimos la clase 'centro' si es necesario
-                            break;
-                        case 2:
-                            td.textContent = 'Fecha Ingreso'; // Puedes reemplazar con la fecha
-                            break;
-                        case 3:
-                            td.textContent = 'Fecha Egreso'; // Puedes reemplazar con la fecha
-                            break;
-                        case 4:
-                            td.textContent = 'Activo'; // Columna de ESTADO, puedes cambiarlo
-                            break;
-                    }
-
-                    // Aplicamos el estilo de borde a cada celda
-                    td.style.border = '1px solid white';
-
-                    tr.appendChild(td);
-                }
-
-                tablaReportesBody.appendChild(tr);
+            if (!usuarioId) {
+                alert('No se ha encontrado información del usuario.');
+                return;
             }
 
-            // Evento para el botón de agregar registro
-            agregarRegistroBtn.addEventListener('click', function() {
-                crearNuevaFila();
-            });
+            fetch("{{ route('vigilante.registro') }}", {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content')
+                    },
+                    body: JSON.stringify({
+                        documento_vigilante: documentoVigilante,
+                        usuario_id: usuarioId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        agregarRegistroATabla(data.registro); // Agregar el registro a la tabla
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
         });
+
+        function agregarRegistroATabla(registro) {
+            const tablaBody = document.getElementById('tabla-reportes-body');
+
+            // Crear una nueva fila para el registro
+            const fila = document.createElement('tr');
+            fila.innerHTML = `
+                <td>${registro.id}</td>
+                <td>${registro.centro?.nombre ?? 'Centro no definido'}</td>
+                <td>${registro.fecha_ingreso}</td>
+                <td>${registro.fecha_salida ?? 'N/A'}</td>
+                <td>${registro.estado_texto}</td>
+            `;
+
+            tablaBody.appendChild(fila); // Agregar la fila a la tabla
+        }
     </script>
+
+
 
 </body>
 

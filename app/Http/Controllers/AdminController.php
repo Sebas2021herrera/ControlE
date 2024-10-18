@@ -100,10 +100,11 @@ class AdminController extends Controller
             return redirect()->back()->withErrors(['error' => 'Ha ocurrido un error al registrar el usuario.'])->withInput();
         }
 
-        // Validación de registros de elementos
+        // VALIDACIÓN DE REGISTROS DE ELEMENTOS
 
-        // Validación de los datos del formulario
+        // Validar los datos del formulario
         $validatedData = $request->validate([
+            'documento' => 'required|string|exists:usuarios,numero_documento', // Número de documento del usuario
             'categoria_id' => 'required|integer|exists:categorias,id',
             'descripcion' => 'required|string|max:255',
             'marca' => 'required|string|max:255',
@@ -111,27 +112,37 @@ class AdminController extends Controller
             'serie' => 'nullable|string|max:255',
             'especificaciones_tecnicas' => 'nullable|string',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240', // 10MB por imagen
-        ]);
+            // 'usuario_id' => 'required|integer|exists:usuarios,id', Asegúrate de que se reciba el ID del usuario
+    ]);
 
-        // Crear un nuevo elemento
-        $elemento = new Elemento();
-        $elemento->categoria_id = $validatedData['categoria_id'];
-        $elemento->descripcion = $validatedData['descripcion'];
-        $elemento->marca = $validatedData['marca'];
-        $elemento->modelo = $validatedData['modelo'];
-        $elemento->serie = $validatedData['serie'] ?? null;
-        $elemento->especificaciones_tecnicas = $validatedData['especificaciones_tecnicas'] ?? null;
-        $elemento->usuario_id = Auth::id(); // Asignar el ID del usuario autenticado
+    // Buscar al usuario por su número de documento
+    $usuario = Usuario::where('numero_documento', $validatedData['documento'])->first();
 
-        // Guardar la foto si está presente
-        if ($request->hasFile('foto')) {
-            $elemento->foto = $request->file('foto')->store('fotos', 'public');
-        }
+    // Verificar si el usuario existe
+    if (!$usuario) {
+        return redirect()->back()->with('error', 'El usuario con ese número de documento no existe.');
+    }
 
-        $elemento->save();
+    // Crear un nuevo elemento asociado al usuario encontrado
+    $elemento = new Elemento();
+    $elemento->categoria_id = $validatedData['categoria_id'];
+    $elemento->descripcion = $validatedData['descripcion'];
+    $elemento->marca = $validatedData['marca'];
+    $elemento->modelo = $validatedData['modelo'];
+    $elemento->serie = $validatedData['serie'] ?? null;
+    $elemento->especificaciones_tecnicas = $validatedData['especificaciones_tecnicas'] ?? null;
+    $elemento->usuario_id = $usuario->id; // Asignar el ID del usuario obtenido
 
-        // Redireccionar con un mensaje de éxito
-        return redirect()->route('user.panel')->with('success', '¡Elemento registrado exitosamente!');
+    // Guardar la foto si está presente
+    if ($request->hasFile('foto')) {
+        $elemento->foto = $request->file('foto')->store('fotos', 'public');
+    }
+
+    // Guardar el elemento en la base de datos
+    $elemento->save();
+
+    // Redireccionar con un mensaje de éxito
+    return redirect()->route('admin.panel')->with('success', '¡Elemento registrado exitosamente!');
 
     }
     

@@ -15,6 +15,7 @@
             <div class="dropdown is-hoverable">
                 <div class="dropdown-trigger">
                     <a href="#" id="registerLink" class="registrar">Registro</a>
+                    <a href="#" id="registerLink" class="registrar">Reportes ingresos</a>
                 </div>
                 <div class="dropdown-menu" id="dropdown-menu" role="menu">
                     <div class="dropdown-content">
@@ -26,9 +27,7 @@
             </div>
             <nav class="nav">
                 <ul class="nav-list">
-                    <li><a href="#">Inicio</a></li>
-                    <li><a href="#">Acerca de</a></li>
-                    <li><a href="#">Servicios</a></li>
+                    <li><a href="#">Opciones</a></li>
                 </ul>
             </nav>
         </div>
@@ -210,16 +209,16 @@
                         <div class="field">
                             <label class="label" for="foto">Foto de Perfil:</label>
                             <div class="control">
-                                <input class="input" type="file" id="foto" name="foto" accept="image/*"
-                                    onchange="previewImage(event)">
+                                <input class="input" type="file" id="foto" name="foto" accept="image/*" onchange="previewImage(event, 'previewUsuario')">
                             </div>
                             @error('foto')
                                 <p class="help is-danger">{{ $message }}</p>
                             @enderror
                             <!-- Elemento para la previsualización -->
-                            <img id="preview" src="#" alt="Previsualización de Foto"
-                                style="display: none; margin-top: 10px; width: 150px; height: 150px; object-fit: cover;">
+                            <img id="previewUsuario" src="#" alt="Previsualización de Foto"
+                                 style="display: none; margin-top: 10px; width: 150px; height: 150px; object-fit: cover;">
                         </div>
+                        
             
                         <div class="field">
                             <div class="control">
@@ -243,7 +242,7 @@
                     <form action="{{ route('admin.elementos.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf             
                         <div class="mb-3">
-                            <label for="documento_id" class="form-label">Número documento</label>
+                            <label for="documento" class="form-label">Número documento</label>
                             <input type="text" id="documento" name="documento" class="form-control" required>
                             <label for="categoria_id" class="form-label">Categoría</label>
                             <select id="categoria_id" name="categoria_id" class="form-select" required>
@@ -274,17 +273,22 @@
                             <textarea id="especificaciones_tecnicas" name="especificaciones_tecnicas" class="form-control" rows="3"
                                 required></textarea>
                         </div>
+                        
                         <div class="mb-3">
                             <label for="fotoElemento" class="form-label">Foto</label>
-                            <input type="file" id="fotoElemento" name="foto" class="form-control"
-                                accept="image/*" onchange="previewImage(event, 'previewElemento')">
+                            <input type="file" id="fotoElemento" name="foto" class="form-control" accept="image/*" onchange="previewImage(event, 'previewElemento')">
                         </div>
                         <div class="mb-3">
                             <img id="previewElemento" src="#" alt="Previsualización de la imagen"
-                                style="display: none; max-width: 100%; height: auto;">
+                                 style="display: none; max-width: 100%; height: auto;">
                         </div>
+                        
 
-                        <button type="submit" class="btn btn-primary">Registrar</button>
+                        <div class="field">
+                            <div class="control">
+                                <button class="button is-success" type="submit">Registrar</button>
+                            </div>
+                        </div>
                     </form>
             </div>
         </div>
@@ -292,18 +296,18 @@
 
 
     <script>
-        function previewImage(event) {
-            var input = event.target;
-            var preview = document.getElementById('preview');
-
+        function previewImage(event, previewId) {
+            const input = event.target;
+            const preview = document.getElementById(previewId);
+    
             if (input.files && input.files[0]) {
-                var reader = new FileReader();
-
+                const reader = new FileReader();
+    
                 reader.onload = function(e) {
                     preview.src = e.target.result;
                     preview.style.display = 'block';
                 }
-
+    
                 reader.readAsDataURL(input.files[0]);
             } else {
                 preview.src = '#';

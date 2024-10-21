@@ -12,10 +12,9 @@
 <body>
     <header class="main-header">
         <div class="container">
-            <div class="dropdown is-hoverable">
+            <div class="dropdown is-hoverable" style="margin-right: 20px;">
                 <div class="dropdown-trigger">
                     <a href="#" id="registerLink" class="registrar">Registro</a>
-                    <a href="#" id="registerLink" class="registrar">Reportes ingresos</a>
                 </div>
                 <div class="dropdown-menu" id="dropdown-menu" role="menu">
                     <div class="dropdown-content">
@@ -25,10 +24,31 @@
                     </div>
                 </div>
             </div>
+    
+            <div class="dropdown is-hoverable" style="margin-right: 20px;">
+                <div class="dropdown-trigger">
+                    <a href="#" id="reportsLink" class="registrar">Reportes ingresos</a>
+                </div>
+                <!-- Aquí puedes agregar un dropdown para reportes si es necesario -->
+            </div>
+            
             <nav class="nav">
-                <ul class="nav-list">
-                    <li><a href="#">Opciones</a></li>
-                </ul>
+                <div class="dropdown is-hoverable">
+                    <div class="dropdown-trigger">
+                        <a href="#" class="nav-options">
+                            Opciones
+                            <span class="icon is-small">
+                                <i class="fas fa-angle-down" aria-hidden="true"></i>
+                            </span>
+                        </a>
+                    </div>
+                    <div class="dropdown-menu" id="dropdown-menu4" role="menu">
+                        <div class="dropdown-content">
+                            <a href="#" class="dropdown-item">Editar perfil</a>
+                            <a href="#" class="dropdown-item">Cerrar sesión</a>
+                        </div>
+                    </div>
+                </div>
             </nav>
         </div>
     </header>
@@ -205,11 +225,10 @@
                                 <p class="help is-danger">{{ $message }}</p>
                             @enderror
                         </div>
-            
                         <div class="field">
                             <label class="label" for="foto">Foto de Perfil:</label>
                             <div class="control">
-                                <input class="input" type="file" id="foto" name="foto" accept="image/*" onchange="previewImage(event, 'previewUsuario')">
+                                <input class="input" type="file" id="foto" name="foto" accept="image/*">
                             </div>
                             @error('foto')
                                 <p class="help is-danger">{{ $message }}</p>
@@ -276,14 +295,13 @@
                         
                         <div class="mb-3">
                             <label for="fotoElemento" class="form-label">Foto</label>
-                            <input type="file" id="fotoElemento" name="foto" class="form-control" accept="image/*" onchange="previewImage(event, 'previewElemento')">
+                            <input type="file" id="fotoElemento" name="foto" class="form-control" accept="image/*">
                         </div>
                         <div class="mb-3">
                             <img id="previewElemento" src="#" alt="Previsualización de la imagen"
                                  style="display: none; max-width: 100%; height: auto;">
                         </div>
                         
-
                         <div class="field">
                             <div class="control">
                                 <button class="button is-success" type="submit">Registrar</button>
@@ -296,25 +314,34 @@
 
 
     <script>
-        function previewImage(event, previewId) {
-            const input = event.target;
-            const preview = document.getElementById(previewId);
-    
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-    
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                }
-    
-                reader.readAsDataURL(input.files[0]);
-            } else {
-                preview.src = '#';
-                preview.style.display = 'none';
+        document.addEventListener('DOMContentLoaded', function() {
+            function previewImage(inputId, previewId) {
+                const input = document.getElementById(inputId);
+                const preview = document.getElementById(previewId);
+        
+                input.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            preview.src = e.target.result;
+                            preview.style.display = 'block';
+                        }
+                        reader.readAsDataURL(file);
+                    } else {
+                        preview.src = '#';
+                        preview.style.display = 'none';
+                    }
+                });
             }
-        }
-    </script>
+        
+            // Inicializar la previsualización para ambos formularios
+            previewImage('foto', 'previewUsuario');
+            previewImage('fotoElemento', 'previewElemento');
+        });
+        
+
+        </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

@@ -34,6 +34,18 @@ body {
     text-decoration: none;
 }
 
+.nav-options{
+    color: white;
+}
+
+.nav-options:hover{
+    color: #00ff2a;
+}
+
+.dropdown-content{
+    background-color: #00ff2a;
+}
+
 .registrar:hover {
     color: #00ff2a;
 }

@@ -19,7 +19,7 @@ body {
 
 .buscador {
     width: calc(100% + 20px);
-    height: 100px;
+    height: 52px;
     background-color: #00324d;
     display: flex;
     align-items: center;
@@ -71,7 +71,6 @@ body {
     height: 20px; /* Ajusta el tamaño de la lupa */
 }
 
-/* Resto del CSS */
 .contenido-superior {
     display: flex;
     gap: 16px;
@@ -126,11 +125,15 @@ body {
     margin: 0;
 }
 
+.tabla-reportes td {
+    height: 60px; /* Cambia este valor según sea necesario */
+}
+
 .tabla-reportes th,
 .tabla-reportes td {
     padding: 8px;
     text-align: left;
-    border: 1px solid white; /* Aplica el borde a todas las celdas */
+    border: 2px solid white; /* Aplica el borde a todas las celdas */
 }
 
 .tabla-reportes th:nth-child(5),
@@ -145,11 +148,16 @@ body {
     z-index: 1;
 }
 
+/* Ajustar altura de las filas */
+.tabla-reportes td {
+    height: 1px;
+}
+
 .tabla-reportes th {
     padding: 10px;
     background-color: #00324d;
-    color: white;
-    border-bottom: 1px solid white;
+    color: rgb(255, 255, 255);
+    border-bottom: 1px solid rgb(255, 255, 255);
 }
 
 .tabla-container {
@@ -185,6 +193,7 @@ body {
     cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
     font-size: 14px; /* Tamaño de fuente */
     transition: background-color 0.3s ease; /* Transición suave */
+    margin: 5px;
 }
 
 .boton:first-child {
@@ -194,6 +203,23 @@ body {
 /* Efecto hover para los botones */
 .boton:hover {
     background-color: #39a900; /* Cambia a verde cuando se pasa el cursor */
+}
+
+.icono-ingresa{
+    width: 20px;
+    height: 20px;
+    margin-left: -15px;
+    margin-bottom: -10px;
+    margin-top: -10px;
+}
+
+.iconos{
+    padding: 0px;
+    width: 25px;
+    height: 25px;
+    margin-left: -15px;
+    margin-bottom: -8.5px;
+    margin-top: -10px;
 }
 
 .info-text {
@@ -280,6 +306,7 @@ body {
     scrollbar-width: none;
     -ms-overflow-style: none;
     flex: 1;
+    max-height: 345px;
 }
 
 .contenido .elementos .card {
@@ -498,6 +525,10 @@ body {
     color: white;
 }
 
+.contenido {
+    position: static;
+}
+
 .contenido .elementos .card {
     flex-direction: column;
     max-height: 290px;
@@ -528,4 +559,8 @@ body {
 .card .link-ver-mas:hover {
     text-decoration: underline;
     color: blue;
+}
+
+.elementos {
+    height: px;
 }

@@ -97,9 +97,16 @@
                                 value="{{ $vigilante->numero_documento ?? '' }}">
                             <input type="hidden" id="usuario-id-oculto" name="usuario_id"
                                 value="{{ $usuario->id ?? '' }}">
-                            <button type="submit" class="boton" id="agregar-registro">Nuevo Registro</button>
                         </form>
-                        <button class="boton">Guardar Registros</button>
+                        <button type="button" class="boton" id="agregar-registro">
+                            <img src="{{ asset('imagenes/add.png') }}" alt="Nuevo Registro" class="iconos">
+                            Nuevo Registro
+                        </button>
+
+                        <button type="button" class="boton" id="guardar-registros">
+                            <img src="{{ asset('imagenes/close.png') }}" alt="Guardar"class="iconos">
+                            Guardar Registros
+                        </button>
                     </div>
                 </div>
             </div>
@@ -124,7 +131,9 @@
                                     data-bs-target="#modal-{{ $elemento->id }}">Ver más</a>
 
                                 <div class="btn-container">
-                                    <button class="btn-ingresa">Ingresa</button>
+                                    <button class="btn-ingresa">
+                                        <img src="{{ asset('imagenes/check_box.png') }}"
+                                            alt="Guardar"class="icono-ingresa">Ingresa</button>
                                 </div>
                             </div>
 
@@ -185,7 +194,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 
-    
+
     <script>
         document.getElementById('agregar-registro').addEventListener('click', function(event) {
             event.preventDefault(); // Evita recargar la página
@@ -213,8 +222,9 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert(data.message);
-                        agregarRegistroATabla(data.registro); // Agregar el registro a la tabla
+                        // Actualizar la tabla automáticamente sin alertas
+                        limpiarTabla();
+                        agregarRegistrosATabla(data.registros);
                     } else {
                         alert('Error: ' + data.message);
                     }
@@ -224,20 +234,25 @@
                 });
         });
 
-        function agregarRegistroATabla(registro) {
+        function limpiarTabla() {
+            const tablaBody = document.getElementById('tabla-reportes-body');
+            tablaBody.innerHTML = ''; // Limpia todo el contenido de la tabla
+        }
+
+        function agregarRegistrosATabla(registros) {
             const tablaBody = document.getElementById('tabla-reportes-body');
 
-            // Crear una nueva fila para el registro
-            const fila = document.createElement('tr');
-            fila.innerHTML = `
-                <td>${registro.id}</td>
-                <td>${registro.centro?.nombre ?? 'Centro no definido'}</td>
-                <td>${registro.fecha_ingreso}</td>
-                <td>${registro.fecha_salida ?? 'N/A'}</td>
-                <td>${registro.estado_texto}</td>
-            `;
-
-            tablaBody.appendChild(fila); // Agregar la fila a la tabla
+            registros.forEach(registro => {
+                const fila = document.createElement('tr');
+                fila.innerHTML = `
+            <td>${registro.id}</td>
+            <td>${registro.centro?.nombre ?? 'Centro no definido'}</td>
+            <td>${registro.fecha_ingreso}</td>
+            <td>${registro.fecha_salida ?? 'N/A'}</td>
+            <td>${registro.estado == 0 ? 'Abierto' : 'Cerrado'}</td>
+        `;
+                tablaBody.appendChild(fila); // Agregar cada fila a la tabla
+            });
         }
     </script>
 

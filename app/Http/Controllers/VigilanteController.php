@@ -83,7 +83,7 @@ class VigilanteController extends Controller
         $nuevoRegistro = ControlIngreso::create([
             'usuario_id' => $usuario->id,
             'centros_id' => $centros_id,
-            'fecha_ingreso' => Carbon::now('America/Bogota'), // Forzar la hora correcta
+            'fecha_ingreso' => Carbon::now('America/Bogota'), 
             'estado' => 0, // Guardar como 0 para 'Abierto'
             'id_persona_control' => $vigilante->id, // Guardar el ID del vigilante
         ]);

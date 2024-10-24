@@ -43,13 +43,13 @@ Route::middleware('auth')->group(function () {
 
     // Rutas para la vista admin
     Route::resource('admin', AdminController::class);
-    Route::post('/admin/registrar', [AdminController::class, 'store'])->name('createpost');
+    Route::post('/admin/registrar', [AdminController::class, 'storeUsuario'])->name('admin.usuarios.store');
 
     // Primero, la ruta GET para mostrar el formulario de creación
     Route::get('/admin/elementos/create', [AdminController::class, 'create'])->name('admin.elementos.create');
 
     // Luego, la ruta POST para manejar el envío del formulario y almacenar el elemento
-    Route::post('/admin/elementos/store', [AdminController::class, 'store'])->name('admin.elementos.store');
+    Route::post('/admin/elementos/store', [AdminController::class, 'storeElemento'])->name('admin.elementos.store');
 
     
 

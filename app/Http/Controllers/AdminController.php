@@ -40,7 +40,7 @@ class AdminController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) {
+    public function storeUsuario(Request $request) {
         // Log inicial
         Log::info('Método store llamado.');
     
@@ -100,6 +100,12 @@ class AdminController extends Controller
             return redirect()->back()->withErrors(['error' => 'Ha ocurrido un error al registrar el usuario.'])->withInput();
         }
 
+        
+
+    }
+
+    
+    public function storeElemento(Request $request) {
         // VALIDACIÓN DE REGISTROS DE ELEMENTOS
 
         // Validar los datos del formulario
@@ -143,7 +149,6 @@ class AdminController extends Controller
 
     // Redireccionar con un mensaje de éxito
     return redirect()->route('admin.panel')->with('success', '¡Elemento registrado exitosamente!');
-
     }
     
     /**

@@ -45,6 +45,8 @@
                     <div class="dropdown-menu" id="dropdown-menu4" role="menu">
                         <div class="dropdown-content">
                             <a href="#" class="dropdown-item">Editar perfil</a>
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
                             <a href="#" class="dropdown-item">Cerrar sesión</a>
                         </div>
                     </div>
@@ -59,7 +61,7 @@
             <span class="close-btn">&times;</span>
             <div class="ventana-formulario">
                 <h2>Registro de usuarios</h2>
-                    <form id="registroForm" method="POST" action="{{ route('createpost') }}" enctype="multipart/form-data">
+                    <form id="registroForm" method="POST" action="{{ route('admin.usuarios.store') }}" enctype="multipart/form-data">
                         @csrf
                         <div class="field">
                             <label class="label" for="nombres">Nombres:</label>

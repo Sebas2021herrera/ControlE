@@ -18,7 +18,7 @@ class Usuario extends Authenticatable
         'nombres',
         'apellidos',
         'tipo_documento',
-        'numero_documento',
+        'numero_documento', 
         'rh',
         'correo_personal',
         'correo_institucional',

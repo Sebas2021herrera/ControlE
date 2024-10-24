@@ -21,7 +21,7 @@ class CreateControlIngresosTable extends Migration
             $table->timestamp('fecha_ingreso')->nullable();
             $table->timestamp('fecha_salida')->nullable();
             $table->string('estado'); // Estado del ingreso (activo, inactivo, etc.)
-            $table->timestamps(); // created_at, updated_at
+            $table->timestamps(); // created_at, updated_a
         });
     }
 

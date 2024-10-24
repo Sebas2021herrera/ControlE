@@ -38,7 +38,7 @@ class ControlIngreso extends Model
     {
         return [
             'usuario' => $this->usuario, // Devuelve el usuario relacionado
-            'centro' => $this->centro,     // Devuelve el centro relacionado
+            'centro' => $this->centro,    
             'fecha_ingreso' => $this->fecha_ingreso,
             'estado' => $this->estado,
             'id_persona_control' => $this->id_persona_control,

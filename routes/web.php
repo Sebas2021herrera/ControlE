@@ -44,6 +44,8 @@ Route::middleware('auth')->group(function () {
             ->name('vigilante.buscar');
 
         Route::post('/vigilante/registro', [VigilanteController::class, 'nuevoRegistro'])->name('vigilante.registro');
+        Route::post('/sub_control_ingreso', [VigilanteController::class, 'registrarElementoEnSubControl'])->name('sub_control_ingreso.store');
+        
     });
 
 

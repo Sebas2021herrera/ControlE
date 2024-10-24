@@ -131,9 +131,10 @@
                                     data-bs-target="#modal-{{ $elemento->id }}">Ver más</a>
 
                                 <div class="btn-container">
-                                    <button class="btn-ingresa">
-                                        <img src="{{ asset('imagenes/check_box.png') }}"
-                                            alt="Guardar"class="icono-ingresa">Ingresa</button>
+                                    <button class="btn-ingresa" data-elemento-id="{{ $elemento->id }}">
+                                        <img src="{{ asset('imagenes/check_box.png') }}" alt="Guardar"
+                                            class="icono-ingresa">Ingresa
+                                    </button>
                                 </div>
                             </div>
 
@@ -175,6 +176,15 @@
             </div>
         </div>
     </div>
+
+    @if (isset($controlIngresoId))
+        <script>
+            console.log("Control Ingreso ID: {{ $controlIngresoId }}");
+        </script>
+    @else
+        <p>No se ha encontrado un registro de control de ingreso.</p>
+    @endif
+
     <!--sccript para  mostrar modal-->
     <script>
         document.addEventListener('click', function(e) {
@@ -190,11 +200,11 @@
             }
         });
     </script>
+
     <!--script  para mostrar modal-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-
-
+    <!-- este script es para registrar el ingreso del vigilante-->
     <script>
         document.getElementById('agregar-registro').addEventListener('click', function(event) {
             event.preventDefault(); // Evita recargar la página
@@ -256,6 +266,49 @@
         }
     </script>
 
+    <!-- este script es para registrar y asociar los elementos al control de ingreso-->
+    <script>
+        document.querySelectorAll('.btn-ingresa').forEach(button => {
+            button.addEventListener('click', function() {
+                const elementoId = this.getAttribute('data-elemento-id');
+                const controlIngresoId = "{{ $controlIngresoId ?? '' }}";
+
+                if (!controlIngresoId) {
+                    alert('No se ha encontrado un registro de control de ingreso.');
+                    return;
+                }
+
+                fetch("{{ route('sub_control_ingreso.store') }}", {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            control_ingreso_id: controlIngresoId,
+                            elemento_id: elementoId
+                        })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            alert('Elemento registrado exitosamente.');
+                        } else {
+                            alert('Error: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+        });
+    </script>
 
 
 </body>

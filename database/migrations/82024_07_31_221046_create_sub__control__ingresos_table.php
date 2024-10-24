@@ -15,9 +15,9 @@ class CreateSubControlIngresosTable extends Migration
     {
         Schema::create('sub_control_ingresos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('control_ingreso_id')->constrained()->onDelete('cascade'); 
-            $table->foreignId('usuario_id')->constrained()->onDelete('cascade'); 
-            $table->timestamps(); 
+            $table->foreignId('control_ingreso_id')->constrained('control_ingresos')->onDelete('cascade');
+            $table->foreignId('elemento_id')->constrained('elementos')->onDelete('cascade');
+            $table->timestamps();
         });
     }
 

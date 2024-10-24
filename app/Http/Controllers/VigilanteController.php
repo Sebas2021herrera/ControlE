@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Usuario;
 use App\Models\ControlIngreso;
+use App\Models\Elemento;
+use App\Models\Sub_Control_Ingreso;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
@@ -36,8 +38,12 @@ class VigilanteController extends Controller
         $elementos = $usuario->elementos;
         $registros = ControlIngreso::where('usuario_id', $usuario->id)->get();
 
+        // Obtener el último registro de control de ingreso del usuario
+        $ultimoRegistro = ControlIngreso::where('usuario_id', $usuario->id)->latest()->first();
+        $controlIngresoId = $ultimoRegistro ? $ultimoRegistro->id : null;
+
         // Retornar la vista con los datos
-        return view('index.vistacontrol', compact('usuario', 'elementos', 'registros', 'vigilante'));
+        return view('index.vistacontrol', compact('usuario', 'elementos', 'registros', 'vigilante', 'controlIngresoId'));
     }
 
 
@@ -114,4 +120,55 @@ class VigilanteController extends Controller
         // Cargar la vista con los datos del vigilante
         return view('index.vistacontrol', compact('vigilante'));
     }
+
+
+
+
+    
+    public function registrarElementoEnSubControl(Request $request)
+    {
+        $request->validate([
+            'control_ingreso_id' => 'required|integer',
+            'elemento_id' => 'required|integer',
+        ]);
+
+        // Verificar si el registro de control de ingreso existe
+        $controlIngreso = ControlIngreso::find($request->input('control_ingreso_id'));
+        if (!$controlIngreso) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Registro de control de ingreso no encontrado.',
+            ], 404);
+        }
+
+        // Verificar si el elemento existe
+        $elemento = Elemento::find($request->input('elemento_id'));
+        if (!$elemento) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Elemento no encontrado.',
+            ], 404);
+        }
+
+        // Crear el registro en sub_control_ingresos
+        try {
+            Sub_Control_Ingreso::create([
+                'control_ingreso_id' => $controlIngreso->id,
+                'elemento_id' => $elemento->id,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Elemento registrado exitosamente en sub_control_ingresos.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al registrar el elemento: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+    
 }
+ 
+

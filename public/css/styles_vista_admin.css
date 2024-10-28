@@ -42,8 +42,29 @@ body {
     color: #00ff2a;
 }
 
-.dropdown-content{
-    background-color: #39A900 !important;
+/* Estilos para los items del dropdown */
+.dropdown-content .dropdown-item {
+    color: white !important;
+}
+
+.dropdown-content {
+    background-color: #39a900 !important;
+}
+
+/* Estilos para el hover de los items */
+.dropdown-content .dropdown-item:hover {
+    background-color: #429419 !important;
+    color: white !important;
+}
+
+/* Específicamente para el botón de cerrar sesión */
+.dropdown-item[type="submit"] {
+    color: white !important;
+}
+
+.dropdown-item[type="submit"]:hover {
+    background-color: #429419 !important;
+    color: white !important;
 }
 
 .registrar:hover {
@@ -202,57 +223,49 @@ body {
 }
 
 /* Estilos para el formulario de búsqueda */
+/* Estilos para el formulario de búsqueda */
 .search-form {
-    position: relative;
     width: 300px;
+    margin: 0 auto;
 }
 
-.search-form .control.is-expanded {
+.search-wrapper {
     position: relative;
     width: 100%;
 }
 
-.search-form .control.is-expanded input {
+.search-input {
     width: 100%;
     height: 36px;
     padding: 0 40px 0 15px;
     border-radius: 8px;
-    border: 1px solid #dbdbdb;
+    border: 1px solid #686868 !important;
     font-size: 16px;
     outline: none;
     color: #00324d;
-    background-color: #ffffff;
-    box-sizing: border-box;
 }
 
-/* Actualiza solo estos estilos para el botón y la lupa */
-.lupa-btn {
+.search-button {
     position: absolute;
     right: 0;
     top: 0;
-    width: 36px;
+    width: 36px !important;
     height: 36px;
-    background-color: #39a900;
+    background-color: #39a900 !important;
     border-radius: 0 8px 8px 0;
-    border: 1px solid #39a900;
-    border-left: none;
+    border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 5px; /* Agregamos padding para la imagen */
 }
 
-.lupa-btn img {  /* Específicamente apuntamos a la imagen dentro del botón */
-    width: 20px;
-    height: 20px;
-    filter: brightness(0) invert(1);
-    display: block;
-    margin: auto;
+.search-button i {
+    color: white;
+    font-size: 16px;
 }
 
-/* .lupa-icon {
-    width: 20px;
-    height: 20px;
-    filter: brightness(0) invert(1);
-} */
+/* Estilos para el botón de cerrar sesión */
+.dropdown-item[type="submit"]:hover {
+    background-color: #429419 !important;
+    color: white !important; }

@@ -11,6 +11,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <!-- En el head, después de tus otros links -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <header class="main-header">
@@ -335,16 +337,16 @@
         <div class="ventana-formulario">
             <h2>Consultar usuarios</h2>
             <form action="{{ route('admin.usuarios.consultar') }}" method="GET" class="search-form">
-                <div class="control is-expanded">
+                <div class="search-wrapper">
                     <input type="text" 
                            name="documento" 
-                           class="input" 
+                           class="search-input" 
                            placeholder="Buscar por Documento..."
                            required>
+                    <button type="submit" class="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
                 </div>
-                <button type="submit" class="lupa-btn">
-                    <img src="{{ asset('public/imagenes/lupa.png') }}" alt="Buscar" class="lupa-icon">
-                </button>
             </form>
         </div>
     </div>

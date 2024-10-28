@@ -44,4 +44,9 @@ class ControlIngreso extends Model
             'id_persona_control' => $this->id_persona_control,
         ];
     }
+
+    public function elementos()
+    {
+        return $this->hasMany(Sub_Control_Ingreso::class, 'control_ingreso_id');
+    }
 }

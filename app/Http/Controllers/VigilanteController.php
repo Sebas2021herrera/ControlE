@@ -132,7 +132,6 @@ class VigilanteController extends Controller
             'elemento_id' => 'required|integer',
         ]);
 
-        // Verificar si el registro de control de ingreso existe
         $controlIngreso = ControlIngreso::find($request->input('control_ingreso_id'));
         if (!$controlIngreso) {
             return response()->json([
@@ -141,8 +140,7 @@ class VigilanteController extends Controller
             ], 404);
         }
 
-        // Verificar si el elemento existe
-        $elemento = Elemento::find($request->input('elemento_id'));
+        $elemento = Elemento::with('categoria')->find($request->input('elemento_id'));
         if (!$elemento) {
             return response()->json([
                 'success' => false,
@@ -150,7 +148,6 @@ class VigilanteController extends Controller
             ], 404);
         }
 
-        // Crear el registro en sub_control_ingresos
         try {
             Sub_Control_Ingreso::create([
                 'control_ingreso_id' => $controlIngreso->id,
@@ -160,6 +157,7 @@ class VigilanteController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Elemento registrado exitosamente en sub_control_ingresos.',
+                'elemento' => $elemento, // Incluir el objeto elemento en la respuesta
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -167,6 +165,28 @@ class VigilanteController extends Controller
                 'message' => 'Error al registrar el elemento: ' . $e->getMessage(),
             ], 500);
         }
+    }
+
+
+
+
+    public function obtenerElementosPorRegistro($registroId)
+    {
+        $controlIngreso = ControlIngreso::find($registroId);
+
+        if (!$controlIngreso) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Registro de control de ingreso no encontrado.',
+            ], 404);
+        }
+
+        $elementos = $controlIngreso->elementos()->with('categoria')->get();
+
+        return response()->json([
+            'success' => true,
+            'elementos' => $elementos,
+        ]);
     }
     
 }

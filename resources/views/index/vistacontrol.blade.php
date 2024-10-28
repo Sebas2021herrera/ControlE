@@ -74,13 +74,12 @@
                         <tbody id="tabla-reportes-body">
                             @if (isset($registros) && $registros->isNotEmpty())
                                 @foreach ($registros as $registro)
-                                    <tr>
+                                    <tr class="registro-fila" data-registro-id="{{ $registro->id }}">
                                         <td>{{ $registro->id }}</td>
                                         <td>{{ $registro->centro->nombre ?? 'Centro no definido' }}</td>
                                         <td>{{ $registro->fecha_ingreso }}</td>
                                         <td>{{ $registro->fecha_salida ?? 'N/A' }}</td>
                                         <td>{{ $registro->estado == 0 ? 'Abierto' : 'Cerrado' }}</td>
-                                        <!-- Mostrar texto en lugar del número -->
                                     </tr>
                                 @endforeach
                             @else
@@ -120,75 +119,39 @@
                 </button>
                 <!-- Modal para mostrar los elementos del usuario -->
                 <div class="modal" id="modal-elementos-usuario" style="display: none;">
-                    <div class="contenido-modal" style="padding: 20px;">
-                        <div class="encabezado-modal">
-                            <h5 class="titulo-modal">Elementos del Usuario</h5>
-                            <button type="button" class="btn-cerrar" onclick="cerrarModal()">&times;</button>
-                        </div>
-                        <div class="cuerpo-modal">
-                            @if (isset($elementos) && $elementos->isNotEmpty())
-                                <div class="card-container">
-                                    @foreach ($elementos as $elemento)
-                                        <div class="card">
-                                            <h3 class="cabeza">{{ $elemento->categoria->nombre }}</h3>
-                                            @if (file_exists(public_path('storage/' . $elemento->foto)))
-                                                <img src="{{ asset('storage/' . $elemento->foto) }}"
-                                                    alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
-                                            @else
-                                                <p>Imagen no encontrada: {{ asset('storage/' . $elemento->foto) }}</p>
-                                            @endif
-                                            <p><strong>Serie:</strong> {{ $elemento->serie }}</p>
-                                            <p><strong>Marca:</strong> {{ $elemento->marca }}</p>
-                                            <a href="#" class="link-ver-mas" data-bs-toggle="modal"
-                                                data-bs-target="#modal-{{ $elemento->id }}">Ver más</a>
-
-                                            <div class="btn-container">
-                                                <button class="btn-ingresa" data-elemento-id="{{ $elemento->id }}">
-                                                    <img src="{{ asset('imagenes/check_box.png') }}" alt="Guardar"
-                                                        class="icono-ingresa">Ingresa
+                    <div class="modal-content"> <!-- Asegúrate de que esta clase esté presente -->
+                        <div class="contenido-modal" style="padding: 20px;">
+                            <div class="encabezado-modal">
+                                <h5 class="titulo-modal">Elementos del Usuario</h5>
+                                <button type="button" class="btn-cerrar" onclick="cerrarModal()">&times;</button>
+                            </div>
+                            <div class="cuerpo-modal">
+                                <div class="card-container tres-columnas">
+                                    @if (isset($elementos) && $elementos->isNotEmpty())
+                                        @foreach ($elementos as $elemento)
+                                            <div class="card">
+                                                <h3 class="cabeza">{{ $elemento->categoria->nombre }}</h3>
+                                                <img src="{{ asset('storage/' . $elemento->foto) }}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
+                                                <p><strong>Serie:</strong> {{ $elemento->serie }}</p>
+                                                <p><strong>Marca:</strong> {{ $elemento->marca }}</p>
+                                                <a href="#" class="link-ver-mas" onclick="mostrarModal({{ $elemento->id }})">Ver más</a>
+                                                <button class="btn-ingresa" data-elemento-id="{{ $elemento->id }}"
+                                                    data-categoria="{{ $elemento->categoria->nombre }}"
+                                                    data-foto="{{ asset('storage/' . $elemento->foto) }}"
+                                                    data-serie="{{ $elemento->serie }}"
+                                                    data-marca="{{ $elemento->marca }}">
+                                                    <img src="{{ asset('imagenes/check_box.png') }}" alt="Guardar" class="icono-ingresa">Ingresa
                                                 </button>
                                             </div>
-                                        </div>
-
-                                        <div class="modal" id="modal-{{ $elemento->id }}">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title">{{ $elemento->categoria->nombre }}</h5>
-                                                    <button type="button" class="btn-close"
-                                                        onclick="document.getElementById('modal-{{ $elemento->id }}').style.display='none'">&times;</button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="modal-body-content text-center">
-                                                        @if (file_exists(public_path('storage/' . $elemento->foto)))
-                                                            <img src="{{ asset('storage/' . $elemento->foto) }}"
-                                                                alt="Foto del elemento" class="img-modal-ver-mas">
-                                                        @else
-                                                            <p>Imagen no encontrada:
-                                                                {{ asset('storage/' . $elemento->foto) }}</p>
-                                                        @endif
-                                                        <div class="info mt-3">
-                                                            <p><strong>Marca:</strong> {{ $elemento->marca }}</p>
-                                                            <p><strong>Modelo:</strong> {{ $elemento->modelo }}</p>
-                                                            <p><strong>Serie:</strong> {{ $elemento->serie }}</p>
-                                                            <p><strong>Especificaciones:</strong>
-                                                                {{ $elemento->especificaciones_tecnicas }}</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn-close"
-                                                        onclick="document.getElementById('modal-{{ $elemento->id }}').style.display='none'">Cerrar</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endforeach
+                                        @endforeach
+                                    @else
+                                        <p>No hay elementos disponibles.</p>
+                                    @endif
                                 </div>
-                            @else
-                                <p>No hay elementos disponibles.</p>
-                            @endif
-                        </div>
-                        <div class="pie-modal">
-                            <button type="button" class="btn-cerrar" onclick="cerrarModal()">Cerrar</button>
+                            </div>
+                            <div class="pie-modal">
+                                <button type="button" class="btn-cerrar-modal" onclick="cerrarModal()">Cerrar</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -218,6 +181,10 @@
                 e.target.style.display = 'none';
             }
         });
+
+        function cerrarModal() {
+            document.getElementById('modal-elementos-usuario').style.display = 'none';
+        }
     </script>
 
     <!-- abrir modal de los elementos del usuario -->
@@ -234,7 +201,7 @@
     <!--script  para mostrar modal-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- este script es para registrar el contrl_ingreso -->
+    <!-- este script es para registrar el control_ingreso -->
     <script>
         document.getElementById('agregar-registro').addEventListener('click', function(event) {
             event.preventDefault(); // Evita recargar la página
@@ -301,43 +268,103 @@
         document.querySelectorAll('.btn-ingresa').forEach(button => {
             button.addEventListener('click', function() {
                 const elementoId = this.getAttribute('data-elemento-id');
-                const controlIngresoId = "{{ $controlIngresoId ?? '' }}";
+                const categoria = this.getAttribute('data-categoria');
+                const foto = this.getAttribute('data-foto');
+                const serie = this.getAttribute('data-serie');
+                const marca = this.getAttribute('data-marca');
 
-                if (!controlIngresoId) {
-                    alert('No se ha encontrado un registro de control de ingreso.');
-                    return;
-                }
+                // Crear el card
+                const contenedorElementos = document.querySelector('.elementos');
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.innerHTML = `
+                    <h3 class="cabeza">${categoria}</h3>
+                    <img src="${foto}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
+                    <p><strong>Serie:</strong> ${serie}</p>
+                    <p><strong>Marca:</strong> ${marca}</p>
+                `;
+                contenedorElementos.appendChild(card);
 
-                fetch("{{ route('sub_control_ingreso.store') }}", {
-                        method: "POST",
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                .getAttribute('content')
-                        },
-                        body: JSON.stringify({
-                            control_ingreso_id: controlIngresoId,
-                            elemento_id: elementoId
-                        })
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            alert('Elemento registrado exitosamente.');
-                        } else {
-                            alert('Error: ' + data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
+                // Cerrar el modal
+                document.getElementById('modal-elementos-usuario').style.display = 'none';
             });
         });
+    </script>
+
+    <!-- script para que al seleccionar los elementos se impriman los cards en el contenedor de los elementos del usuario -->
+    <script>
+        function agregarElementoAlContenedor(elemento) {
+            if (!elemento || !elemento.categoria) {
+                console.error('Elemento o categoría no definido');
+                return;
+            }
+            console.log('Agregando elemento al contenedor:', elemento);
+            const contenedorElementos = document.querySelector('.elementos');
+            if (!contenedorElementos) {
+                console.error('Contenedor de elementos no encontrado');
+                return;
+            }
+            const card = document.createElement('div');
+            card.classList.add('card');
+            card.innerHTML = `
+                <h3 class="cabeza">${elemento.categoria.nombre}</h3>
+                <img src="${elemento.foto ? '{{ asset('storage/') }}' + elemento.foto : '{{ asset('imagenes/sin_foto_perfil.webp') }}'}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
+                <p><strong>Serie:</strong> ${elemento.serie}</p>
+                <p><strong>Marca:</strong> ${elemento.marca}</p>
+            `;
+            contenedorElementos.appendChild(card);
+        }
+    </script>
+
+    <script>
+        function mostrarModal(id) {
+            document.getElementById('modal-' + id).style.display = 'block';
+        }
+
+        function cerrarModal(id) {
+            document.getElementById('modal-' + id).style.display = 'none';
+        }
+    </script>
+
+    <script>
+        document.querySelectorAll('.registro-fila').forEach(fila => {
+            fila.addEventListener('click', function() {
+                const registroId = this.getAttribute('data-registro-id');
+                obtenerElementosAsociados(registroId);
+            });
+        });
+
+        function obtenerElementosAsociados(registroId) {
+            fetch(`/vigilante/elementos/${registroId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        mostrarElementos(data.elementos);
+                    } else {
+                        alert('No se encontraron elementos asociados.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        function mostrarElementos(elementos) {
+            const contenedorElementos = document.querySelector('.elementos');
+            contenedorElementos.innerHTML = ''; // Limpiar el contenedor
+
+            elementos.forEach(elemento => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.innerHTML = `
+                    <h3 class="cabeza">${elemento.categoria.nombre}</h3>
+                    <img src="${elemento.foto ? '{{ asset('storage/') }}' + elemento.foto : '{{ asset('imagenes/sin_foto_perfil.webp') }}'}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
+                    <p><strong>Serie:</strong> ${elemento.serie}</p>
+                    <p><strong>Marca:</strong> ${elemento.marca}</p>
+                `;
+                contenedorElementos.appendChild(card);
+            });
+        }
     </script>
 
 </body>

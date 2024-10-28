@@ -182,7 +182,7 @@ body {
     justify-content: center; 
 }
 
-.boton {
+.boton, .btn-modal {
     padding: 10px 20px;
     background-color: #00324d; 
     color: white; 
@@ -198,7 +198,7 @@ body {
     margin-right: 10px; 
 }
 
-.boton:hover {
+.boton:hover, .btn-modal:hover {
     background-color: #39a900; 
 }
 
@@ -328,8 +328,8 @@ body {
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    width: 240px;
-    height: 380px;
+    width: 220px; /* Ajusta el ancho del card */
+    height: 350px;
     padding: 15px;
     text-align: center;
     box-sizing: border-box;
@@ -382,8 +382,9 @@ body {
 }
 
 .modal {
-    display: none;
+    display: flex;
     position: fixed;
+    flex-direction: column;
     z-index: 9999;
     left: 0;
     top: 0;
@@ -391,15 +392,18 @@ body {
     height: 100%;
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .modal-content {
-    background-color: #fff;
+    background-color: #f0f0f0; /* Fondo del contenedor del modal */
     margin: 5% auto;
     padding: 20px;
     border-radius: 8px;
-    width: 80%;
-    max-width: 400px;
+    width: 55% !important;
+    max-width: 1000px !important;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -428,8 +432,8 @@ body {
     padding-top: 15px;
     border-bottom: 2px solid #ddd;
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
 }
 
 .modal-body-content {
@@ -561,3 +565,114 @@ body {
 .elementos {
     height: px;
 }
+
+.modal-content {
+    background-color: #fff;
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 600px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.cuerpo-modal {
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.card {
+    flex: 0 0 calc(50% - 10px);
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #f9f9f9;
+}
+
+.card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+.card h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.card p {
+    margin: 5px 0;
+}
+
+/* CSS: Añade este estilo para organizar los cards en tres columnas */
+.tres-columnas {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    width: 100%;
+}
+
+/* Añadimos estos estilos para centrar cards únicos */
+.tres-columnas:has(.card:only-child) {
+    grid-template-columns: minmax(0, 300px); /* Ancho máximo para un card único */
+    justify-content: center;
+}
+
+/* Para dos cards */
+.tres-columnas:has(.card:nth-child(2):last-child) {
+    grid-template-columns: repeat(2, minmax(0, 300px));
+    justify-content: center;
+}
+
+/* Aseguramos que los cards tengan el tamaño correcto */
+.card {
+    width: 100%; /* El card ocupará todo el espacio de su columna */
+    max-width: 280px;
+    margin: 0 auto; 
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    text-align: center;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    max-height: 400px;
+    overflow: auto;
+    position: relative;
+}
+
+/* Aseguramos que el contenedor de elementos tenga el espacio adecuado */
+.contenido .elementos {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.titulo-modal {
+    font-size: 28px; /* Aumenta el tamaño del texto */
+    text-align: center; /* Centra el texto */
+    margin-bottom: 20px;
+}
+
+.btn-cerrar, .btn-cerrar-modal {
+    background-color: #ccc; /* Color gris */
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-cerrar:hover, .btn-cerrar-modal:hover {
+    background-color: #aaa; /* Color gris más oscuro al pasar el mouse */
+}
+

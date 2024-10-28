@@ -115,7 +115,6 @@
             <div class="elementos">
                 <button type="button" class="btn-modal" id="abrir-modal-elementos">
                     <img src="{{ asset('imagenes/shopping.png') }}" alt="Nuevo Registro" class="iconos">
-                    Ver Elementos del Usuario
                 </button>
                 <!-- Modal para mostrar los elementos del usuario -->
                 <div class="modal" id="modal-elementos-usuario" style="display: none;">
@@ -123,7 +122,6 @@
                         <div class="contenido-modal" style="padding: 20px;">
                             <div class="encabezado-modal">
                                 <h5 class="titulo-modal">Elementos del Usuario</h5>
-                                <button type="button" class="btn-cerrar" onclick="cerrarModal()">&times;</button>
                             </div>
                             <div class="cuerpo-modal">
                                 <div class="card-container tres-columnas">

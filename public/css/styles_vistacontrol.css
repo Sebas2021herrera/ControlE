@@ -15,6 +15,7 @@ body {
     box-sizing: border-box;
     padding: 10px;
     gap: 10px;
+    margin-top: 0; /* Quitar el margen superior del container */
 }
 
 .buscador {
@@ -291,19 +292,31 @@ body {
     gap: 16px;
     flex: 1 1 auto;
     overflow-y: auto;
+    width: 100%;       /* Asegura que ocupe todo el ancho disponible */
 }
 
 .contenido .elementos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    align-items: start;
+    overflow-y: auto;
+    max-height: 345px;
+    width: 100%;      /* Ancho fijo al 100% del contenedor padre */
+    flex: 1;          /* Toma el espacio disponible */
     background-color: #e0e0e0;
     border-radius: 8px;
-    padding: 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
-    overflow-y: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    flex: 1;
-    max-height: 345px;
+    justify-content: center;
+    justify-items: center;
+}
+
+.contenido .elementos .card {
+    flex: 0 0 auto; /* Evita que los cards se estiren */
+    width: 220px; /* Ancho fijo para cada card */
+    margin: 0 10px; /* Espacio horizontal entre cards */
 }
 
 .contenido .elementos .card {
@@ -317,10 +330,12 @@ body {
 }
 
 .card-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 21px;
-    justify-content: center;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    padding: 0;
+    justify-items: center;
 }
 
 .card {
@@ -328,7 +343,7 @@ body {
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    width: 220px; /* Ajusta el ancho del card */
+    width: 220px;  /* ancho fijo para mantener consistencia */
     height: 350px;
     padding: 15px;
     text-align: center;
@@ -339,6 +354,7 @@ body {
     max-height: 400px;
     overflow: auto;
     position: relative;
+    margin: 0;
 }
 
 .cabeza {
@@ -398,18 +414,23 @@ body {
 }
 
 .modal-content {
-    background-color: #f0f0f0; /* Fondo del contenedor del modal */
-    margin: 5% auto;
-    padding: 20px;
+    position: relative; /* Necesario para posicionar elementos hijos absolutamente */
+    background-color: #f0f0f0;
+    margin: auto;
+    padding: 10px;
     border-radius: 8px;
-    width: 55% !important;
+    width: 60% !important;
     max-width: 1000px !important;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centra el contenido horizontalmente */
 }
 
 .modal-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end; /* Alinea el contenido al final (derecha) */
     align-items: center;
     border-bottom: 2px solid #ddd;
     padding-bottom: 15px;
@@ -429,11 +450,14 @@ body {
 }
 
 .modal-body {
-    padding-top: 15px;
-    border-bottom: 2px solid #ddd;
-    display: flex;
-    flex-wrap: wrap;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 20px;
+    justify-content: center; /* Centra las columnas del grid */
+    align-items: start;
 }
 
 .modal-body-content {
@@ -453,9 +477,10 @@ body {
 
 .modal-footer {
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-end; /* Alinea el contenido al final (derecha) */
     border-top: 1px solid #ddd;
     padding-top: 10px;
+    width: 100%;
 }
 
 .modal-footer .btn-close {
@@ -470,18 +495,6 @@ body {
 
 .modal-footer .btn-close:hover {
     background-color: #0056b3;
-}
-
-.close {
-    font-size: 24px;
-    cursor: pointer;
-    background: none;
-    border: none;
-    color: #333;
-}
-
-.close:hover {
-    color: #000;
 }
 
 .elemento-foto {
@@ -563,6 +576,7 @@ body {
 }
 
 .elementos {
+    position: relative; /* Añadir posición relativa */
     height: px;
 }
 
@@ -611,51 +625,20 @@ body {
 /* CSS: Añade este estilo para organizar los cards en tres columnas */
 .tres-columnas {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
+    padding: 0;
     width: 100%;
+    justify-items: center;
 }
 
-/* Añadimos estos estilos para centrar cards únicos */
-.tres-columnas:has(.card:only-child) {
-    grid-template-columns: minmax(0, 300px); /* Ancho máximo para un card único */
-    justify-content: center;
-}
-
-/* Para dos cards */
-.tres-columnas:has(.card:nth-child(2):last-child) {
-    grid-template-columns: repeat(2, minmax(0, 300px));
-    justify-content: center;
-}
-
-/* Aseguramos que los cards tengan el tamaño correcto */
-.card {
-    width: 100%; /* El card ocupará todo el espacio de su columna */
-    max-width: 280px;
-    margin: 0 auto; 
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    padding: 15px;
-    text-align: center;
+.tres-columnas .card {
+    width: 100%;
+    margin: 0;
     box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    max-height: 400px;
-    overflow: auto;
-    position: relative;
 }
 
-/* Aseguramos que el contenedor de elementos tenga el espacio adecuado */
-.contenido .elementos {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-}
+/* Eliminar cualquier media query anterior que pueda estar afectando */
 
 .titulo-modal {
     font-size: 28px; /* Aumenta el tamaño del texto */
@@ -664,6 +647,9 @@ body {
 }
 
 .btn-cerrar, .btn-cerrar-modal {
+    position: absolute;
+    bottom: 20px; /* Ajusta según sea necesario */
+    right: 20px;  /* Ajusta según sea necesario */
     background-color: #ccc; /* Color gris */
     border: none;
     padding: 10px;
@@ -673,6 +659,79 @@ body {
 }
 
 .btn-cerrar:hover, .btn-cerrar-modal:hover {
-    background-color: #aaa; /* Color gris más oscuro al pasar el mouse */
+    background-color: #aaa; 
+}
+
+.btn-modal {
+    position: absolute;
+    top: 0px;  
+    left: 0px; 
+    z-index: 10;
+    background-color: #00324d;
+    color: white;
+    border: none;
+    padding: 5px;
+    width: 50px;
+    height: 33px;
+    border-radius: 7px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.contenido .elementos {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+    align-items: flex-start;
+    overflow-y: auto;
+    max-height: 345px;
+}
+
+#abrir-modal-elementos {
+    margin-bottom: 0;
+    width: auto;
+}
+
+.alert {
+    transition: opacity 0.5s ease-out;
+    background-color: #d4edda;
+    color: #155724;
+    border: none;
+    padding: 15px;
+    margin: -5px;
+    margin-right: -15px;
+    width: 110%;
+    text-align: center;
+    position: relative;
+    z-index: 100;
+}
+
+.alert-success {
+    opacity: 1;
+}
+
+#mensaje-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: -5px;
+    padding: 0;
+}
+
+.btn-modal .iconos {
+    margin: 0;
+    width: 25px;
+    height: 25px;
+}
+
+/* Si existe alguna clase específica para los cards dentro del modal, asegúrate de que tenga estos estilos */
+.modal .card {
+    width: 220px;
+    margin: 0;
+    justify-self: center; /* Asegura el centrado en el grid */
 }
 

@@ -39,6 +39,10 @@ Route::middleware('auth')->group(function () {
             return view('index.vistaadmin', compact( 'categorias'));
       
         })->name('admin.panel');
+
+        // Ruta para consultar usuarios
+        Route::get('/admin/usuarios/consultar', [AdminController::class, 'consultarUsuario'])
+        ->name('admin.usuarios.consultar');
     });
 
     // Rutas para la vista admin

@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="{{ asset('css/styles_vista_admin.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     <!-- Enlaza el archivo CSS de Bulma -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
     <header class="main-header">
@@ -30,6 +33,13 @@
                     <a href="#" id="reportsLink" class="registrar">Reportes ingresos</a>
                 </div>
                 <!-- Aquí puedes agregar un dropdown para reportes si es necesario -->
+                <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                    <div class="dropdown-content">
+                        <a href="#" class="dropdown-item" id="reportUsers">Reportes ingresos</a>
+                        <a href="#" class="dropdown-item" id="reportUsers">Reportes usuarios</a>
+                        <a href="#" class="dropdown-item" id="reportElements">Reportes elementos</a>
+                    </div>
+                </div>
             </div>
             
             <nav class="nav">
@@ -45,9 +55,12 @@
                     <div class="dropdown-menu" id="dropdown-menu4" role="menu">
                         <div class="dropdown-content">
                             <a href="#" class="dropdown-item">Editar perfil</a>
-                            <form action="{{ route('logout') }}" method="POST">
+                            <form action="{{ route('logout') }}" method="POST" style="display: inline;">
                                 @csrf
-                            <a href="#" class="dropdown-item">Cerrar sesión</a>
+                                <button type="submit" class="dropdown-item" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">
+                                    Cerrar sesión
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -315,6 +328,56 @@
     </div>
 
 
+<!-- Modal de Consulta de Usuarios -->
+<div id="consultUsersModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <div class="ventana-formulario">
+            <h2>Consultar usuarios</h2>
+            <form action="{{ route('admin.usuarios.consultar') }}" method="GET" class="search-form">
+                <div class="control is-expanded">
+                    <input type="text" 
+                           name="documento" 
+                           class="input" 
+                           placeholder="Buscar por Documento..."
+                           required>
+                </div>
+                <button type="submit" class="lupa-btn">
+                    <img src="{{ asset('public/imagenes/lupa.png') }}" alt="Buscar" class="lupa-icon">
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+            @if(isset($usuarioConsultado))
+                <div class="usuario-info mt-4">
+                    <h3>Información del Usuario</h3>
+                    <div class="info-container">
+                        <p><strong>Nombres:</strong> {{ $usuarioConsultado->nombres }}</p>
+                        <p><strong>Apellidos:</strong> {{ $usuarioConsultado->apellidos }}</p>
+                        <p><strong>Documento:</strong> {{ $usuarioConsultado->numero_documento }}</p>
+                        <p><strong>Correo Personal:</strong> {{ $usuarioConsultado->correo_personal }}</p>
+                        <p><strong>Correo Institucional:</strong> {{ $usuarioConsultado->correo_institucional }}</p>
+                        <p><strong>Teléfono:</strong> {{ $usuarioConsultado->telefono }}</p>
+                        <p><strong>Rol:</strong> {{ $usuarioConsultado->role->nombre }}</p>
+                        @if($usuarioConsultado->numero_ficha)
+                            <p><strong>Número de Ficha:</strong> {{ $usuarioConsultado->numero_ficha }}</p>
+                        @endif
+                    </div>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="notification is-danger mt-3">
+                    {{ session('error') }}
+                </div>
+            @endif
+        </div>
+    </div>
+</div>
+
+<!-- Código Javascripts -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             function previewImage(inputId, previewId) {
@@ -343,7 +406,7 @@
         });
         
 
-        </script>
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -368,79 +431,111 @@
     });
     </script>
 
-    <script>
-        // Selección de elementos
-        const registerUsersLink = document.getElementById('registerUsers');
-        const registerElementsLink = document.getElementById('registerElements');
-        const registerModal = document.getElementById('registerModal');
-        const elementsModal = document.getElementById('elementsModal');
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Selección de elementos
+            const registerUsersLink = document.getElementById('registerUsers');
+            const registerElementsLink = document.getElementById('registerElements');
+            const registerModal = document.getElementById('registerModal');
+            const elementsModal = document.getElementById('elementsModal');
+            const closeBtns = document.querySelectorAll('.close-btn');
+
+            // Función para abrir modal
+            function openModal(modal) {
+                if (modal) {
+                    modal.style.display = 'block';
+                }
+            }
+
+            // Función para cerrar modal
+            function closeModal(modal) {
+                if (modal) {
+                    modal.style.display = 'none';
+                }
+            }
+
+            // Event listener para abrir modal de usuarios
+            if (registerUsersLink) {
+                registerUsersLink.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    openModal(registerModal);
+                });
+            }
+
+            // Event listener para abrir modal de elementos
+            if (registerElementsLink) {
+                registerElementsLink.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    openModal(elementsModal);
+                });
+            }
+
+            // Event listeners para cerrar modales con el botón X
+            closeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const modal = btn.closest('.modal');
+                    closeModal(modal);
+                });
+            });
+
+            // Event listener para cerrar modales al hacer clic fuera
+            window.addEventListener('click', (event) => {
+                if (event.target.classList.contains('modal')) {
+                    closeModal(event.target);
+                }
+            });
+
+            // Mantener el resto de la funcionalidad de validación de contraseña
+            document.getElementById('registroForm').addEventListener('submit', function (e) {
+                var password = document.getElementById('contraseña').value;
+                var confirmPassword = document.getElementById('contraseña_confirmation').value;
+                var errorElement = document.getElementById('confirmarContrasenaError');
+
+                if (password !== confirmPassword) {
+                    e.preventDefault();
+                    errorElement.textContent = 'Las contraseñas no coinciden';
+                } else {
+                    errorElement.textContent = '';
+                }
+            });
+        });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Selección de elementos para el modal de consulta
+        const consultUsersLink = document.getElementById('consultUsers');
+        const consultUsersModal = document.getElementById('consultUsersModal');
         const closeBtns = document.querySelectorAll('.close-btn');
 
-        // Mostrar el modal de registro de usuarios
-        registerUsersLink.addEventListener('click', (event) => {
-            event.preventDefault();
-            registerModal.style.display = 'block';
-        });
-
-
-        // Mostrar el campo "Número de ficha" cuando seleccionamos el rol Aprendiz
-        document.getElementById('rol').addEventListener('change', function() {
-        const fichaGroup = document.getElementById('fichaGroup');
-        if (this.value == '3') { // 3 es el valor para el rol de Aprendiz
-            fichaGroup.style.display = 'block';
-        } else {
-            fichaGroup.style.display = 'none';
+        // Event listener para abrir modal de consulta de usuarios
+        if (consultUsersLink) {
+            consultUsersLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                if (consultUsersModal) {
+                    consultUsersModal.style.display = 'block';
+                }
+            });
         }
-        });
 
-        // Validación de contraseña en Javascript 
-
-        document.getElementById('registroForm').addEventListener('submit', function (e) {
-            var password = document.getElementById('contraseña').value;
-            var confirmPassword = document.getElementById('contraseña_confirmation').value;
-            var errorElement = document.getElementById('confirmarContrasenaError');
-
-            if (password !== confirmPassword) {
-                e.preventDefault(); // Evita que el formulario se envíe
-                errorElement.textContent = 'Las contraseñas no coinciden';
-            } else {
-                errorElement.textContent = ''; // Borra el mensaje de error si coinciden
-            }
-        });
-
-
-        // Función previsualización de la imagen del foto de perfil
-
-        function previewImage(event) {
-        var reader = new FileReader();
-        reader.onload = function () {
-            var preview = document.getElementById('preview');
-            preview.src = reader.result;
-            preview.style.display = 'block';
-        };
-        reader.readAsDataURL(event.target.files[0]);
-    }
-
-
-        // Mostrar el modal de registro de elementos
-        registerElementsLink.addEventListener('click', (event) => {
-            event.preventDefault();
-            elementsModal.style.display = 'block';
-        });
-
-        // Cerrar los modales al hacer clic en la "X"
+        // Event listeners para cerrar modales
         closeBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                btn.closest('.modal').style.display = 'none';
+            btn.addEventListener('click', function() {
+                const modal = btn.closest('.modal');
+                if (modal) {
+                    modal.style.display = 'none';
+                }
             });
         });
 
-        // Cerrar los modales al hacer clic fuera del contenido del modal
-        window.addEventListener('click', (event) => {
+        // Cerrar modal al hacer clic fuera
+        window.addEventListener('click', function(event) {
             if (event.target.classList.contains('modal')) {
                 event.target.style.display = 'none';
             }
         });
-    </script>
+    });
+</script>
+
 </body>
 </html>

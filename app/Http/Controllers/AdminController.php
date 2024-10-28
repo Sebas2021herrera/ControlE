@@ -151,6 +151,23 @@ class AdminController extends Controller
     return redirect()->route('admin.panel')->with('success', '¡Elemento registrado exitosamente!');
     }
     
+    public function consultarUsuario(Request $request)
+    {
+        $documento = $request->input('documento');
+        
+        $usuario = User::where('numero_documento', $documento)->first();
+    
+        if (!$usuario) {
+            return back()->with('error', 'Usuario no encontrado');
+        }
+    
+        // Retornamos la vista con los datos del usuario
+        return view('index.vistaadmin', [
+            'usuarioConsultado' => $usuario,
+            'categorias' => Categoria::all() // Mantenemos las categorías para el modal de elementos
+        ]);
+    }
+
     /**
      * Display the specified resource.
      */

@@ -734,3 +734,16 @@ body {
     justify-self: center; /* Asegura el centrado en el grid */
 }
 
+.registro-fila {
+    cursor: pointer;
+    transition: border 0.3s ease;
+}
+
+.registro-fila:hover {
+    border: 2px solid lightgray;
+}
+
+.fila-seleccionada {
+    border: 2px solid gray; /* Cambia a negro si prefieres */
+}
+

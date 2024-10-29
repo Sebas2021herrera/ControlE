@@ -47,6 +47,11 @@ class ControlIngreso extends Model
 
     public function elementos()
     {
-        return $this->hasMany(Sub_Control_Ingreso::class, 'control_ingreso_id');
+        return $this->hasMany(Elemento::class);
+    }
+
+    public function subControlIngresos()
+    {
+        return $this->hasMany(Sub_Control_Ingreso::class);
     }
 }

@@ -181,7 +181,7 @@ class VigilanteController extends Controller
             ], 404);
         }
 
-        $elementos = $controlIngreso->elementos()->with('categoria')->get();
+        $elementos = $controlIngreso->subControlIngresos()->with('elemento.categoria')->get()->pluck('elemento');
 
         return response()->json([
             'success' => true,

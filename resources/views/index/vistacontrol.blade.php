@@ -250,6 +250,8 @@
 
             registros.forEach(registro => {
                 const fila = document.createElement('tr');
+                fila.classList.add('registro-fila');
+                fila.setAttribute('data-registro-id', registro.id);
                 fila.innerHTML = `
             <td>${registro.id}</td>
             <td>${registro.centro?.nombre ?? 'Centro no definido'}</td>
@@ -257,8 +259,10 @@
             <td>${registro.fecha_salida ?? 'N/A'}</td>
             <td>${registro.estado == 0 ? 'Abierto' : 'Cerrado'}</td>
         `;
-                tablaBody.appendChild(fila); // Agregar cada fila a la tabla
+                tablaBody.appendChild(fila);
             });
+
+            aplicarEventListeners();
         }
     </script>
 
@@ -383,11 +387,17 @@
     </script>
 
     <script>
-        document.querySelectorAll('.registro-fila').forEach(fila => {
-            fila.addEventListener('click', function() {
-                const registroId = this.getAttribute('data-registro-id');
+        document.querySelector('table').addEventListener('click', function(event) {
+            if (event.target && event.target.matches('tr.registro-fila')) {
+                // Remover el resaltado de todas las filas
+                document.querySelectorAll('.registro-fila').forEach(f => f.classList.remove('fila-seleccionada'));
+
+                // Añadir la clase de resaltado a la fila seleccionada
+                event.target.classList.add('fila-seleccionada');
+
+                const registroId = event.target.getAttribute('data-registro-id');
                 obtenerElementosAsociados(registroId);
-            });
+            }
         });
 
         function obtenerElementosAsociados(registroId) {
@@ -407,14 +417,14 @@
 
         function mostrarElementos(elementos) {
             const contenedorElementos = document.querySelector('.elementos');
-            contenedorElementos.innerHTML = ''; // Limpiar el contenedor
+            contenedorElementos.innerHTML = ''; // Limpiar solo los elementos, no el botón
 
             elementos.forEach(elemento => {
                 const card = document.createElement('div');
                 card.classList.add('card');
                 card.innerHTML = `
                     <h3 class="cabeza">${elemento.categoria.nombre}</h3>
-                    <img src="{{ asset('storage/') }}${elemento.foto}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
+                    <img src="${elemento.foto}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
                     <p><strong>Serie:</strong> ${elemento.serie}</p>
                     <p><strong>Marca:</strong> ${elemento.marca}</p>
                     <a href="#" class="link-ver-mas" onclick="mostrarModal(${elemento.id})">Ver más</a>
@@ -422,6 +432,45 @@
                 contenedorElementos.appendChild(card);
             });
         }
+
+        function mostrarTodosLosElementos() {
+            // Lógica para mostrar todos los elementos
+        }
+    </script>
+
+    <script>
+        function agregarFila(nuevaFilaHtml) {
+            const tabla = document.querySelector('table');
+            tabla.insertAdjacentHTML('beforeend', nuevaFilaHtml);
+            aplicarEventListeners();
+        }
+
+        function aplicarEventListeners() {
+            document.querySelectorAll('.registro-fila').forEach(fila => {
+                fila.removeEventListener('click', handleFilaClick); // Eliminar el listener anterior si existe
+                fila.addEventListener('click', handleFilaClick);
+            });
+        }
+
+        function handleFilaClick() {
+            // Remover el resaltado de todas las filas
+            document.querySelectorAll('.registro-fila').forEach(f => f.classList.remove('fila-seleccionada'));
+
+            // Añadir la clase de resaltado a la fila seleccionada
+            this.classList.add('fila-seleccionada');
+
+            const registroId = this.getAttribute('data-registro-id');
+            obtenerElementosAsociados(registroId);
+        }
+
+        // Llama a aplicarEventListeners() después de cargar la página y cada vez que agregues una nueva fila
+        aplicarEventListeners();
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            aplicarEventListeners();
+        });
     </script>
 
 </body>

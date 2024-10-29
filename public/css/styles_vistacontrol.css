@@ -663,9 +663,9 @@ body {
 }
 
 .btn-modal {
-    position: absolute;
-    top: 0px;  
-    left: 0px; 
+    position: absolute; /* Cambiar a posición absoluta */
+    top: 0px; /* Ajustar la distancia desde la parte superior */
+    left: 0px; /* Ajustar la distancia desde la izquierda */
     z-index: 10;
     background-color: #00324d;
     color: white;
@@ -701,10 +701,9 @@ body {
     background-color: #d4edda;
     color: #155724;
     border: none;
-    padding: 15px;
-    margin: -5px;
-    margin-right: -15px;
-    width: 110%;
+    padding: 10px;
+    margin:0;
+    width: 100%;
     text-align: center;
     position: relative;
     z-index: 100;

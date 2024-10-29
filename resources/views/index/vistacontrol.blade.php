@@ -115,10 +115,11 @@
             <div class="elementos">
                 <button type="button" class="btn-modal" id="abrir-modal-elementos">
                     <img src="{{ asset('imagenes/shopping.png') }}" alt="Nuevo Registro" class="iconos">
+                    Ver Elementos
                 </button>
                 <!-- Modal para mostrar los elementos del usuario -->
                 <div class="modal" id="modal-elementos-usuario" style="display: none;">
-                    <div class="modal-content"> <!-- Asegúrate de que esta clase esté presente -->
+                    <div class="modal-content"> 
                         <div class="contenido-modal" style="padding: 20px;">
                             <div class="encabezado-modal">
                                 <h5 class="titulo-modal">Elementos del Usuario</h5>
@@ -266,27 +267,93 @@
         document.querySelectorAll('.btn-ingresa').forEach(button => {
             button.addEventListener('click', function() {
                 const elementoId = this.getAttribute('data-elemento-id');
-                const categoria = this.getAttribute('data-categoria');
-                const foto = this.getAttribute('data-foto');
-                const serie = this.getAttribute('data-serie');
-                const marca = this.getAttribute('data-marca');
+                const controlIngresoId = "{{ $controlIngresoId ?? '' }}";
 
-                // Crear el card
-                const contenedorElementos = document.querySelector('.elementos');
-                const card = document.createElement('div');
-                card.classList.add('card');
-                card.innerHTML = `
-                    <h3 class="cabeza">${categoria}</h3>
-                    <img src="${foto}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
-                    <p><strong>Serie:</strong> ${serie}</p>
-                    <p><strong>Marca:</strong> ${marca}</p>
-                `;
-                contenedorElementos.appendChild(card);
+                if (!controlIngresoId) {
+                    alert('No se ha encontrado un registro de control de ingreso.');
+                    return;
+                }
 
-                // Cerrar el modal
-                document.getElementById('modal-elementos-usuario').style.display = 'none';
+                fetch("{{ route('sub_control_ingreso.store') }}", {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        control_ingreso_id: controlIngresoId,
+                        elemento_id: elementoId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        mostrarMensajeExito('Elemento registrado exitosamente.');
+                        agregarElementoAlContenedor(data.elemento);
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
             });
         });
+
+        function mostrarMensajeExito(mensaje) {
+            const mensajeContainer = document.createElement('div');
+            mensajeContainer.className = 'alert alert-success';
+            mensajeContainer.textContent = mensaje;
+
+            // Asegúrate de que el mensaje se inserte después del contenedor del buscador
+            const buscador = document.querySelector('.buscador');
+            buscador.insertAdjacentElement('afterend', mensajeContainer);
+
+            setTimeout(() => {
+                mensajeContainer.style.opacity = '0';
+                setTimeout(() => mensajeContainer.remove(), 500);
+            }, 5000);
+        }
+
+        function agregarElementoAlContenedor(elemento) {
+            if (!elemento || !elemento.categoria) {
+                console.error('Elemento o categoría no definido');
+                return;
+            }
+            const contenedorElementos = document.querySelector('.elementos');
+            if (!contenedorElementos) {
+                console.error('Contenedor de elementos no encontrado');
+                return;
+            }
+            const card = document.createElement('div');
+            card.classList.add('card');
+            card.innerHTML = `
+                <h3 class="cabeza">${elemento.categoria.nombre}</h3>
+                <img src="{{ asset('storage') }}/${elemento.foto}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
+                <p><strong>Serie:</strong> ${elemento.serie}</p>
+                <p><strong>Marca:</strong> ${elemento.marca}</p>
+                <a href="#" class="link-ver-mas" onclick="mostrarModal(${elemento.id})">Ver más</a>
+            `;
+            contenedorElementos.appendChild(card);
+        }
+
+        function mostrarModal(id) {
+            const modal = document.getElementById('modal-' + id);
+            if (modal) {
+                modal.style.display = 'block';
+            } else {
+                console.error('Modal no encontrado para el ID:', id);
+            }
+        }
+
+        function cerrarModal(id) {
+            const modal = document.getElementById('modal-' + id);
+            if (modal) {
+                modal.style.display = 'none';
+            } else {
+                console.error('Modal no encontrado para el ID:', id);
+            }
+        }
     </script>
 
     <!-- script para que al seleccionar los elementos se impriman los cards en el contenedor de los elementos del usuario -->
@@ -305,22 +372,13 @@
             const card = document.createElement('div');
             card.classList.add('card');
             card.innerHTML = `
-                <h3 class="cabeza">${elemento.categoria.nombre}</h3>
-                <img src="${elemento.foto ? '{{ asset('storage/') }}' + elemento.foto : '{{ asset('imagenes/sin_foto_perfil.webp') }}'}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
+                <h3 style="margin-top:10px;" class="cabeza">${elemento.categoria.nombre}</h3>
+                <img src="{{ asset('storage') }}/${elemento.foto}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
                 <p><strong>Serie:</strong> ${elemento.serie}</p>
-                <p><strong>Marca:</strong> ${elemento.marca}</p>
+                <p style="margin-top: -20px;"><strong>Marca:</strong> ${elemento.marca}</p>
+                <a style="margin-bottom: 15px;" href="#" class="link-ver-mas" onclick="mostrarModal(${elemento.id})">Ver más</a>
             `;
             contenedorElementos.appendChild(card);
-        }
-    </script>
-
-    <script>
-        function mostrarModal(id) {
-            document.getElementById('modal-' + id).style.display = 'block';
-        }
-
-        function cerrarModal(id) {
-            document.getElementById('modal-' + id).style.display = 'none';
         }
     </script>
 
@@ -356,9 +414,10 @@
                 card.classList.add('card');
                 card.innerHTML = `
                     <h3 class="cabeza">${elemento.categoria.nombre}</h3>
-                    <img src="${elemento.foto ? '{{ asset('storage/') }}' + elemento.foto : '{{ asset('imagenes/sin_foto_perfil.webp') }}'}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
+                    <img src="{{ asset('storage/') }}${elemento.foto}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
                     <p><strong>Serie:</strong> ${elemento.serie}</p>
                     <p><strong>Marca:</strong> ${elemento.marca}</p>
+                    <a href="#" class="link-ver-mas" onclick="mostrarModal(${elemento.id})">Ver más</a>
                 `;
                 contenedorElementos.appendChild(card);
             });
@@ -368,3 +427,4 @@
 </body>
 
 </html>
+

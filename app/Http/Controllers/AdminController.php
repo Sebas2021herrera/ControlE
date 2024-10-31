@@ -152,21 +152,40 @@ class AdminController extends Controller
     }
     
     public function consultarUsuario(Request $request)
-    {
-        $documento = $request->input('documento');
-        
-        $usuario = User::where('numero_documento', $documento)->first();
-    
+{
+    // Validar la solicitud
+    $request->validate([
+        'documento' => 'required|string|max:255',
+    ]);
+
+    try {
+        // Buscar el usuario por su número de documento
+        $usuario = Usuario::with(['role', 'elementos.categoria'])
+            ->where('numero_documento', $request->documento)
+            ->first();
+
+        // Si no se encuentra el usuario, retornar error en JSON
         if (!$usuario) {
-            return back()->with('error', 'Usuario no encontrado');
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'Usuario no encontrado'
+            ], 404);
         }
-    
-        // Retornamos la vista con los datos del usuario
-        return view('index.vistaadmin', [
-            'usuarioConsultado' => $usuario,
-            'categorias' => Categoria::all() // Mantenemos las categorías para el modal de elementos
+
+        // Retornar usuario y elementos en formato JSON
+        return response()->json([
+            'success' => true,
+            'usuario' => $usuario,
+            'elementos' => $usuario->elementos
         ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'mensaje' => 'Error al buscar el usuario'
+        ], 500);
     }
+}
 
     /**
      * Display the specified resource.

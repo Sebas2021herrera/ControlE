@@ -37,9 +37,7 @@
                 <!-- Aquí puedes agregar un dropdown para reportes si es necesario -->
                 <div class="dropdown-menu" id="dropdown-menu" role="menu">
                     <div class="dropdown-content">
-                        <a href="#" class="dropdown-item" id="reportUsers">Reportes ingresos</a>
-                        <a href="#" class="dropdown-item" id="reportUsers">Reportes usuarios</a>
-                        <a href="#" class="dropdown-item" id="reportElements">Reportes elementos</a>
+                        <a href="#" class="dropdown-item" id="reportUsers">Reportes ingresos usuarios</a>
                     </div>
                 </div>
             </div>
@@ -69,6 +67,39 @@
             </nav>
         </div>
     </header>
+
+<!-- Después del header y antes de los modales -->
+<div class="resultado-busqueda" style="display: none;">
+    <div class="contenido-superior">
+        <div class="contenedor-intermedio">
+            <div class="usuario-info">
+                <div class="foto-logo">
+                    <img src="{{ asset('imagenes/logo-del-sena-01.png') }}" alt="Logo del SENA" class="logo-sena">
+                    <div class="barra-separadora"></div>
+                </div>
+                <div class="info-text">
+                    <p class="verde usuario-nombre"></p>
+                    <p class="verde usuario-apellidos"></p>
+                    <p><strong>Doc: </strong><span class="usuario-documento"></span></p>
+                    <p><strong>Cel: </strong><span class="usuario-telefono"></span></p>
+                    <p><strong>RH: </strong><span class="usuario-rh"></span></p>
+                    <p><strong>Rol: </strong><span class="usuario-rol"></span></p>
+                    <p><strong>Ficha: </strong><span class="usuario-ficha"></span></p>
+                    <p class="verde" id="semifooter">Regional Casanare | Centro Agroindustrial y Fortalecimiento Empresarial del Casanare</p>
+                </div>
+                <div class="foto-usuario">
+                    <img src="" alt="Foto de perfil" class="foto-perfil-usuario">
+                </div>
+            </div>
+        </div>
+
+        <div class="contenido elementos">
+            <div class="card-container">
+                <!-- Aquí se cargarán dinámicamente las cards de elementos -->
+            </div>
+        </div>
+    </div>
+</div>
 
     <!-- Modal de Registro de Usuarios -->
     <div id="registerModal" class="modal">
@@ -351,34 +382,7 @@
         </div>
     </div>
 </div>
-
-            @if(isset($usuarioConsultado))
-                <div class="usuario-info mt-4">
-                    <h3>Información del Usuario</h3>
-                    <div class="info-container">
-                        <p><strong>Nombres:</strong> {{ $usuarioConsultado->nombres }}</p>
-                        <p><strong>Apellidos:</strong> {{ $usuarioConsultado->apellidos }}</p>
-                        <p><strong>Documento:</strong> {{ $usuarioConsultado->numero_documento }}</p>
-                        <p><strong>Correo Personal:</strong> {{ $usuarioConsultado->correo_personal }}</p>
-                        <p><strong>Correo Institucional:</strong> {{ $usuarioConsultado->correo_institucional }}</p>
-                        <p><strong>Teléfono:</strong> {{ $usuarioConsultado->telefono }}</p>
-                        <p><strong>Rol:</strong> {{ $usuarioConsultado->role->nombre }}</p>
-                        @if($usuarioConsultado->numero_ficha)
-                            <p><strong>Número de Ficha:</strong> {{ $usuarioConsultado->numero_ficha }}</p>
-                        @endif
-                    </div>
-                </div>
-            @endif
-
-            @if(session('error'))
-                <div class="notification is-danger mt-3">
-                    {{ session('error') }}
-                </div>
-            @endif
-        </div>
-    </div>
-</div>
-
+           
 <!-- Código Javascripts -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -536,6 +540,109 @@
                 event.target.style.display = 'none';
             }
         });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Obtener referencias a los elementos del DOM
+        const searchForm = document.querySelector('form[action="{{ route("admin.usuarios.consultar") }}"]');
+        const consultUsersModal = document.getElementById('consultUsersModal');
+        const resultadoBusqueda = document.querySelector('.resultado-busqueda');
+    
+        if (searchForm) {
+            searchForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                try {
+                    const formData = new FormData(this);
+                    const documento = formData.get('documento');
+                    
+                    const response = await fetch(`/admin/usuarios/consultar?documento=${documento}`, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+    
+                    if (response.ok) {
+                        const data = await response.json();
+                        
+                        // Cerrar el modal
+                        if (consultUsersModal) {
+                            consultUsersModal.style.display = 'none';
+                        }
+    
+                        // Mostrar los resultados
+                        if (data.usuario) {
+                            mostrarInformacionUsuario(data.usuario);
+                            mostrarElementosUsuario(data.elementos || []);
+                            resultadoBusqueda.style.display = 'block';
+                        } else {
+                            alert('Usuario no encontrado');
+                        }
+                    } else {
+                        throw new Error('Error en la búsqueda');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error al realizar la búsqueda');
+                }
+            });
+        }
+    
+        function mostrarInformacionUsuario(usuario) {
+            // Actualizar la información del usuario
+            document.querySelector('.usuario-nombre').textContent = usuario.nombres;
+            document.querySelector('.usuario-apellidos').textContent = usuario.apellidos;
+            document.querySelector('.usuario-documento').textContent = usuario.numero_documento;
+            document.querySelector('.usuario-telefono').textContent = usuario.telefono;
+            document.querySelector('.usuario-rh').textContent = usuario.rh;
+            document.querySelector('.usuario-rol').textContent = usuario.role.nombre;
+            document.querySelector('.usuario-ficha').textContent = usuario.numero_ficha;
+            
+            // Actualizar foto de perfil
+            const fotoPerfil = document.querySelector('.foto-perfil-usuario');
+            if (fotoPerfil) {
+                fotoPerfil.src = usuario.foto 
+                    ? `/storage/fotos_perfil/${usuario.foto}` 
+                    : '/imagenes/sin_foto_perfil.webp';
+            }
+        }
+    
+        function mostrarElementosUsuario(elementos) {
+            const container = document.querySelector('.card-container');
+            if (!container) return;
+    
+            container.innerHTML = ''; // Limpiar contenedor
+    
+            if (elementos.length === 0) {
+                container.innerHTML = '<p>No hay elementos asociados a este usuario.</p>';
+                return;
+            }
+    
+            elementos.forEach(elemento => {
+                const card = `
+                    <div class="card">
+                        <h3 class="cabeza">${elemento.categoria.nombre}</h3>
+                        <img src="/storage/${elemento.foto}" 
+                             alt="Foto del elemento" 
+                             class="elemento-foto"
+                             onerror="this.src='/imagenes/sin_foto_elemento.webp'">
+                        <p><strong>Serie:</strong> ${elemento.serie}</p>
+                        <p><strong>Marca:</strong> ${elemento.marca}</p>
+                        <a href="#" class="link-ver-mas" data-elemento-id="${elemento.id}">
+                            Ver más
+                        </a>
+                        <div class="btn-container">
+                            <button class="btn-ingresa">Ingresa</button>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', card);
+            });
+        }
     });
 </script>
 

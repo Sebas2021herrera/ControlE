@@ -41,6 +41,7 @@
                     </div>
                 </div>
             </div>
+
             
             <nav class="nav">
                 <div class="dropdown is-hoverable">
@@ -382,7 +383,30 @@
         </div>
     </div>
 </div>
-           
+  
+<!-- Modal de Detalles del Elemento -->
+<div id="detailsModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h2>Detalles del Elemento</h2>
+        <hr style="border: 1px solid #ddd; margin: 10px 0;"> <!-- Línea separadora -->
+        <div class="ventana-formulario">
+            <img id="elementImage" src="#" alt="Imagen del elemento" style="max-width: 100%; height: auto; margin-bottom: 10px;">
+            <p><strong>Categoría:</strong> <span id="elementCategory"></span></p>
+            <p><strong>Descripción:</strong> <span id="elementDescription"></span></p>
+            <p><strong>Marca:</strong> <span id="elementBrand"></span></p>
+            <p><strong>Modelo:</strong> <span id="elementModel"></span></p>
+            <p><strong>Serial:</strong> <span id="elementSerial"></span></p>
+            <p><strong>Especificaciones Técnicas:</strong> <span id="elementSpecifications"></span></p>
+            <div class="button-container">
+                <button class="button is-danger" id="deleteButton">Eliminar</button>
+                <button class="button is-warning" id="editButton">Editar</button>
+                <button class="button is-light close-btn">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Código Javascripts -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -544,53 +568,103 @@
 </script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Obtener referencias a los elementos del DOM
-        const searchForm = document.querySelector('form[action="{{ route("admin.usuarios.consultar") }}"]');
-        const consultUsersModal = document.getElementById('consultUsersModal');
-        const resultadoBusqueda = document.querySelector('.resultado-busqueda');
-    
-        if (searchForm) {
-            searchForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Selección de elementos
+    const searchForm = document.querySelector('form[action="{{ route("admin.usuarios.consultar") }}"]');
+    const consultUsersModal = document.getElementById('consultUsersModal');
+    const resultadoBusqueda = document.querySelector('.resultado-busqueda');
+
+    if (searchForm) {
+        searchForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            try {
+                const formData = new FormData(this);
+                const documento = formData.get('documento');
                 
-                try {
-                    const formData = new FormData(this);
-                    const documento = formData.get('documento');
-                    
-                    const response = await fetch(`/admin/usuarios/consultar?documento=${documento}`, {
-                        method: 'GET',
-                        headers: {
-                            'Accept': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    });
-    
-                    if (response.ok) {
-                        const data = await response.json();
-                        
-                        // Cerrar el modal
-                        if (consultUsersModal) {
-                            consultUsersModal.style.display = 'none';
-                        }
-    
-                        // Mostrar los resultados
-                        if (data.usuario) {
-                            mostrarInformacionUsuario(data.usuario);
-                            mostrarElementosUsuario(data.elementos || []);
-                            resultadoBusqueda.style.display = 'block';
-                        } else {
-                            alert('Usuario no encontrado');
-                        }
-                    } else {
-                        throw new Error('Error en la búsqueda');
+                const response = await fetch(`/admin/usuarios/consultar?documento=${documento}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
                     }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Error al realizar la búsqueda');
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Cerrar el modal
+                    if (consultUsersModal) {
+                        consultUsersModal.style.display = 'none';
+                    }
+
+                    // Mostrar los resultados
+                    if (data.usuario) {
+                        mostrarInformacionUsuario(data.usuario);
+                        mostrarElementosUsuario(data.elementos || []);
+                        resultadoBusqueda.style.display = 'block'; // Asegúrate de que el contenedor sea visible
+                    } else {
+                        alert('Usuario no encontrado');
+                    }
+                } else {
+                    throw new Error('Error en la búsqueda');
                 }
-            });
-        }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al realizar la búsqueda');
+            }
+        });
+    }
+});
+
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     // Obtener referencias a los elementos del DOM
+    //     const searchForm = document.querySelector('form[action="{{ route("admin.usuarios.consultar") }}"]');
+    //     const consultUsersModal = document.getElementById('consultUsersModal');
+    //     const resultadoBusqueda = document.querySelector('.resultado-busqueda');
+    
+    //     if (searchForm) {
+    //         searchForm.addEventListener('submit', async function(e) {
+    //             e.preventDefault();
+                
+    //             try {
+    //                 const formData = new FormData(this);
+    //                 const documento = formData.get('documento');
+                    
+    //                 const response = await fetch(`/admin/usuarios/consultar?documento=${documento}`, {
+    //                     method: 'GET',
+    //                     headers: {
+    //                         'Accept': 'application/json',
+    //                         'X-Requested-With': 'XMLHttpRequest'
+    //                     }
+    //                 });
+    
+    //                 if (response.ok) {
+    //                     const data = await response.json();
+                        
+    //                     // Cerrar el modal
+    //                     if (consultUsersModal) {
+    //                         consultUsersModal.style.display = 'none';
+    //                     }
+    
+    //                     // Mostrar los resultados
+    //                     if (data.usuario) {
+    //                         mostrarInformacionUsuario(data.usuario);
+    //                         mostrarElementosUsuario(data.elementos || []);
+    //                         resultadoBusqueda.style.display = 'block';
+    //                     } else {
+    //                         alert('Usuario no encontrado');
+    //                     }
+    //                 } else {
+    //                     throw new Error('Error en la búsqueda');
+    //                 }
+    //             } catch (error) {
+    //                 console.error('Error:', error);
+    //                 alert('Error al realizar la búsqueda');
+    //             }
+    //         });
+    //     }
     
         function mostrarInformacionUsuario(usuario) {
             // Actualizar la información del usuario
@@ -610,40 +684,72 @@
                     : '/imagenes/sin_foto_perfil.webp';
             }
         }
-    
-        function mostrarElementosUsuario(elementos) {
-            const container = document.querySelector('.card-container');
-            if (!container) return;
-    
-            container.innerHTML = ''; // Limpiar contenedor
-    
-            if (elementos.length === 0) {
-                container.innerHTML = '<p>No hay elementos asociados a este usuario.</p>';
-                return;
-            }
-    
-            elementos.forEach(elemento => {
-                const card = `
-                    <div class="card">
-                        <h3 class="cabeza">${elemento.categoria.nombre}</h3>
-                        <img src="/storage/${elemento.foto}" 
-                             alt="Foto del elemento" 
-                             class="elemento-foto"
-                             onerror="this.src='/imagenes/sin_foto_elemento.webp'">
-                        <p><strong>Serie:</strong> ${elemento.serie}</p>
-                        <p><strong>Marca:</strong> ${elemento.marca}</p>
-                        <a href="#" class="link-ver-mas" data-elemento-id="${elemento.id}">
-                            Ver más
-                        </a>
-                        <div class="btn-container">
-                            <button class="btn-ingresa">Ingresa</button>
-                        </div>
-                    </div>
-                `;
-                container.insertAdjacentHTML('beforeend', card);
-            });
-        }
+
+
+function mostrarElementosUsuario(elementos) {
+    const container = document.querySelector('.card-container');
+    if (!container) return;
+
+    container.innerHTML = ''; // Limpiar contenedor
+
+    if (elementos.length === 0) {
+        container.innerHTML = '<p>No hay elementos asociados a este usuario.</p>';
+        return;
+    }
+
+    elementos.forEach(elemento => {
+        const card = `
+            <div class="card">
+                <h3 class="cabeza">${elemento.categoria.nombre}</h3>
+                <img src="/storage/${elemento.foto}" 
+                     alt="Foto del elemento" 
+                     class="elemento-foto"
+                     onerror="this.src='/imagenes/sin_foto_elemento.webp'">
+                <p><strong>Serie:</strong> ${elemento.serie}</p>
+                <p><strong>Marca:</strong> ${elemento.marca}</p>
+                <a href="#" class="link-ver-mas" data-elemento-id="${elemento.id}">
+                    Ver más
+                </a>
+                <!-- Botón "Ingresar" eliminado -->
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', card);
     });
+}
+
+    //     function mostrarElementosUsuario(elementos) {
+    //         const container = document.querySelector('.card-container');
+    //         if (!container) return;
+    
+    //         container.innerHTML = ''; // Limpiar contenedor
+    
+    //         if (elementos.length === 0) {
+    //             container.innerHTML = '<p>No hay elementos asociados a este usuario.</p>';
+    //             return;
+    //         }
+    
+    //         elementos.forEach(elemento => {
+    //             const card = `
+    //                 <div class="card">
+    //                     <h3 class="cabeza">${elemento.categoria.nombre}</h3>
+    //                     <img src="/storage/${elemento.foto}" 
+    //                          alt="Foto del elemento" 
+    //                          class="elemento-foto"
+    //                          onerror="this.src='/imagenes/sin_foto_elemento.webp'">
+    //                     <p><strong>Serie:</strong> ${elemento.serie}</p>
+    //                     <p><strong>Marca:</strong> ${elemento.marca}</p>
+    //                     <a href="#" class="link-ver-mas" data-elemento-id="${elemento.id}">
+    //                         Ver más
+    //                     </a>
+    //                     <div class="btn-container">
+    //                         <button class="btn-ingresa">Ingresa</button>
+    //                     </div>
+    //                 </div>
+    //             `;
+    //             container.insertAdjacentHTML('beforeend', card);
+    //         });
+    //     }
+    // });
 </script>
 
 </body>

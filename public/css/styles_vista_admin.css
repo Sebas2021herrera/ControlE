@@ -390,3 +390,42 @@ body {
     gap: 21px;
     justify-content: center;
 }
+
+/* ... código existente ... */
+
+/* Estilos para los cards */
+.card {
+    display: flex;
+    flex-direction: column;
+    height: 350px; /* Ajustar altura si es necesario */
+    width: 270px; /* Ajustar ancho si es necesario */
+    margin-bottom: 20px;
+    border-radius: 8px; /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra suave */
+    transition: box-shadow 0.3s; /* Transición para la sombra */
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #ddd; /* Borde del card */
+    text-align: center; /* Centrar texto en el card */
+}
+
+.card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); /* Sombra al pasar el cursor */
+}
+
+/* Estilo para el título de la categoría */
+.card .cabeza {
+    font-size: 24px; /* Tamaño de fuente */
+    font-weight: bold; /* Negrita */
+    margin: 10px 0; /* Espaciado superior e inferior */
+}
+
+.card img {
+    width: 100%; /* Asegura que la imagen ocupe todo el ancho del card */
+    height: auto; /* Mantiene la proporción de la imagen */
+    max-height: 150px; /* Limita la altura máxima de la imagen */
+    object-fit: contain; /* Cubre el área del contenedor sin deformar la imagen */
+    margin-bottom: 10px;
+}
+
+/* ... código existente ... */

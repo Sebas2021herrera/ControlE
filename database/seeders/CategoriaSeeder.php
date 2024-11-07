@@ -24,7 +24,7 @@ class CategoriaSeeder extends Seeder
             'Equipos de Refrigeración', 'Equipos de Telecomunicaciones', 'Equipos de Video Conferencia',
             'Escritorios', 'Escáneres', 'Estanterías', 'Estación de Carga', 'Estufas y Hornos',
             'Extintores', 'Fax', 'Fotocopiadoras', 'Generadores', 'Herramientas Eléctricas',
-            'Herramientas Manuales', 'Impresoras', 'Inversores', 'Lavavajillas', 'Maquinas de Escribir',
+            'Herramientas Manuales', 'Impresoras','Intrumentos Musicales', 'Inversores', 'Lavavajillas', 'Maquinas de Escribir',
             'Mesas de Preparación', 'Microscopios', 'Montacargas', 'Motocicletas', 'Paneles Solares',
             'Patinetas Eléctricas', 'Proyectores', 'Servidores', 'Shedderes(Destructoras de Papel)',
             'Sillas', 'Sistemas de Alarma', 'Sistemas de Audio', 'Sistemas de Radio',

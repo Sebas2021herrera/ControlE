@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Vista del Vigilante</title>
     <link rel="stylesheet" href="{{ asset('css/styles_vistacontrol.css') }}">
 </head>
@@ -17,7 +18,7 @@
                     <img src="{{ asset('imagenes/lupa.png') }}" alt="Buscar" class="lupa-icon">
                 </button>
             </form>
-        </div>        
+        </div>
 
         <div class="contenido-superior">
             <div class="contenedor-intermedio">
@@ -28,7 +29,6 @@
                     </div>
 
                     @if (isset($usuario))
-                        <!-- Mostrar la información del usuario si existe -->
                         <div class="info-text">
                             <p class="verde">{{ $usuario->nombres }}</p>
                             <p class="verde">{{ $usuario->apellidos }}</p>
@@ -41,7 +41,6 @@
                                 Fortalecimiento Empresarial del Casanare</p>
                         </div>
 
-                        <!-- Mostrar la foto del usuario si existe -->
                         <div class="foto-usuario">
                             @if ($usuario->foto && file_exists(storage_path('app/public/fotos_perfil/' . $usuario->foto)))
                                 <img src="{{ asset('storage/fotos_perfil/' . $usuario->foto) }}" alt="Foto de perfil"
@@ -52,7 +51,6 @@
                             @endif
                         </div>
                     @else
-                        <!-- Mostrar el mensaje si no se ha encontrado ningún usuario -->
                         <div class="info-text">
                             <p>No se ha seleccionado ningún usuario o el documento ingresado no existe en la base de
                                 datos.</p>
@@ -74,12 +72,40 @@
                             </tr>
                         </thead>
                         <tbody id="tabla-reportes-body">
-
+                            @if (isset($registros) && $registros->isNotEmpty())
+                                @foreach ($registros as $registro)
+                                    <tr class="registro-fila" data-registro-id="{{ $registro->id }}">
+                                        <td>{{ $registro->id }}</td>
+                                        <td>{{ $registro->centro->nombre ?? 'Centro no definido' }}</td>
+                                        <td>{{ $registro->fecha_ingreso }}</td>
+                                        <td>{{ $registro->fecha_salida ?? 'N/A' }}</td>
+                                        <td>{{ $registro->estado == 0 ? 'Abierto' : 'Cerrado' }}</td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                <tr>
+                                    <td colspan="5">No hay registros disponibles.</td>
+                                </tr>
+                            @endif
                         </tbody>
                     </table>
                     <div class="contenedor-botones">
-                        <button class="boton" id="agregar-registro">Nuevo Registro</button>
-                        <button class="boton">Guardar Registros</button>
+                        <form action="{{ route('vigilante.registro') }}" method="POST">
+                            @csrf
+                            <input type="hidden" id="documento_vigilante" name="documento_vigilante"
+                                value="{{ $vigilante->numero_documento ?? '' }}">
+                            <input type="hidden" id="usuario-id-oculto" name="usuario_id"
+                                value="{{ $usuario->id ?? '' }}">
+                        </form>
+                        <button type="button" class="boton" id="agregar-registro">
+                            <img src="{{ asset('imagenes/add.png') }}" alt="Nuevo Registro" class="iconos">
+                            Nuevo Registro
+                        </button>
+
+                        <button type="button" class="boton" id="guardar-registros">
+                            <img src="{{ asset('imagenes/close.png') }}" alt="Guardar"class="iconos">
+                            Guardar Registros
+                        </button>
                     </div>
                 </div>
             </div>
@@ -87,71 +113,59 @@
 
         <div class="contenido">
             <div class="elementos">
-                @if (isset($elementos) && $elementos->isNotEmpty())
-                    <div class="card-container">
-                        @foreach ($elementos as $elemento)
-                            <div class="card">
-                                <h3 class="cabeza">{{ $elemento->categoria->nombre }}</h3>
-                                @if (file_exists(public_path('storage/' . $elemento->foto)))
-                                    <img src="{{ asset('storage/' . $elemento->foto) }}" alt="Foto del elemento"
-                                        class="img-fluid mt-3 elemento-foto">
-                                @else
-                                    <p>Imagen no encontrada: {{ asset('storage/' . $elemento->foto) }}</p>
-                                @endif
-
-                                <p><strong>Serie:</strong> {{ $elemento->serie }}</p>
-                                <p><strong>Marca:</strong> {{ $elemento->marca }}</p>
-                                <a href="#" class="link-ver-mas" data-bs-toggle="modal"
-                                    data-bs-target="#modal-{{ $elemento->id }}">
-                                    Ver más
-                                </a>
-
-                                <div class="btn-container">
-                                    <button class="btn-ingresa">Ingresa</button>
-                                </div>
+                <button type="button" class="btn-modal" id="abrir-modal-elementos">
+                    <img src="{{ asset('imagenes/shopping.png') }}" alt="Nuevo Registro" class="iconos">
+                    Ver Elementos
+                </button>
+                <!-- Modal para mostrar los elementos del usuario -->
+                <div class="modal" id="modal-elementos-usuario" style="display: none;">
+                    <div class="modal-content"> 
+                        <div class="contenido-modal" style="padding: 20px;">
+                            <div class="encabezado-modal">
+                                <h5 class="titulo-modal">Elementos del Usuario</h5>
                             </div>
-
-                            <!-- Modal ver más adaptado -->
-                            <div class="modal" id="modal-{{ $elemento->id }}">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">{{ $elemento->categoria->nombre }}</h5>
-                                        <button type="button" class="btn-close"
-                                            onclick="document.getElementById('modal-{{ $elemento->id }}').style.display='none'">&times;</button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="modal-body-content text-center">
-                                            <!-- Clase para centrar el contenido -->
-                                            @if (file_exists(public_path('storage/' . $elemento->foto)))
-                                                <img src="{{ asset('storage/' . $elemento->foto) }}"
-                                                    alt="Foto del elemento" class="img-modal-ver-mas">
-                                            @else
-                                                <p>Imagen no encontrada: {{ asset('storage/' . $elemento->foto) }}</p>
-                                            @endif
-                                            <div class="info mt-3">
-                                                <p><strong>Marca:</strong> {{ $elemento->marca }}</p>
-                                                <p><strong>Modelo:</strong> {{ $elemento->modelo }}</p>
+                            <div class="cuerpo-modal">
+                                <div class="card-container tres-columnas">
+                                    @if (isset($elementos) && $elementos->isNotEmpty())
+                                        @foreach ($elementos as $elemento)
+                                            <div class="card">
+                                                <h3 class="cabeza">{{ $elemento->categoria->nombre }}</h3>
+                                                <img src="{{ asset('storage/' . $elemento->foto) }}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
                                                 <p><strong>Serie:</strong> {{ $elemento->serie }}</p>
-                                                <p><strong>Especificaciones:</strong>
-                                                    {{ $elemento->especificaciones_tecnicas }}</p>
+                                                <p><strong>Marca:</strong> {{ $elemento->marca }}</p>
+                                                <a href="#" class="link-ver-mas" onclick="mostrarModal({{ $elemento->id }})">Ver más</a>
+                                                <button class="btn-ingresa" data-elemento-id="{{ $elemento->id }}"
+                                                    data-categoria="{{ $elemento->categoria->nombre }}"
+                                                    data-foto="{{ asset('storage/' . $elemento->foto) }}"
+                                                    data-serie="{{ $elemento->serie }}"
+                                                    data-marca="{{ $elemento->marca }}">
+                                                    <img src="{{ asset('imagenes/check_box.png') }}" alt="Guardar" class="icono-ingresa">Ingresa
+                                                </button>
                                             </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn-close"
-                                            onclick="document.getElementById('modal-{{ $elemento->id }}').style.display='none'">Cerrar</button>
-                                    </div>
+                                        @endforeach
+                                    @else
+                                        <p>No hay elementos disponibles.</p>
+                                    @endif
                                 </div>
                             </div>
-                        @endforeach
+                            <div class="pie-modal">
+                                <button type="button" class="btn-cerrar-modal" onclick="cerrarModal()">Cerrar</button>
+                            </div>
+                        </div>
                     </div>
-                @else
-                    <p>No hay elementos disponibles.</p>
-                @endif
+                </div>
             </div>
         </div>
     </div>
+
+    @if (isset($controlIngresoId))
+        <script>
+            console.log("Control Ingreso ID: {{ $controlIngresoId }}");
+        </script>
+    @else
+        <p>No se ha encontrado un registro de control de ingreso.</p>
+    @endif
+
     <!--sccript para  mostrar modal-->
     <script>
         document.addEventListener('click', function(e) {
@@ -166,59 +180,300 @@
                 e.target.style.display = 'none';
             }
         });
+
+        function cerrarModal() {
+            document.getElementById('modal-elementos-usuario').style.display = 'none';
+        }
     </script>
+
+    <!-- abrir modal de los elementos del usuario -->
+    <script>
+        document.getElementById('abrir-modal-elementos').addEventListener('click', function() {
+            document.getElementById('modal-elementos-usuario').style.display = 'block';
+        });
+
+        function cerrarModal() {
+            document.getElementById('modal-elementos-usuario').style.display = 'none';
+        }
+    </script>
+
     <!--script  para mostrar modal-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- este script es para registrar el control_ingreso -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const tablaReportesBody = document.getElementById('tabla-reportes-body');
-            const agregarRegistroBtn = document.getElementById('agregar-registro');
+        document.getElementById('agregar-registro').addEventListener('click', function(event) {
+            event.preventDefault(); // Evita recargar la página
 
-            // Función para crear una nueva fila
-            function crearNuevaFila() {
-                const tr = document.createElement('tr');
+            const documentoVigilante = "{{ $vigilante->numero_documento ?? '' }}";
+            const usuarioId = "{{ $usuario->id ?? '' }}";
 
-                // Crear celdas para la fila
-                for (let i = 0; i < 5; i++) { // Cambiamos a 5 para agregar la columna de 'Estado'
-                    const td = document.createElement('td');
-
-                    // Añadir contenido específico por columna
-                    switch (i) {
-                        case 0:
-                            td.textContent = 'ID'; // Puedes reemplazar con el ID correspondiente
-                            break;
-                        case 1:
-                            td.textContent = 'Yopal'; // Columna de NOMBRE CENTRO
-                            td.classList.add('centro'); // Añadimos la clase 'centro' si es necesario
-                            break;
-                        case 2:
-                            td.textContent = 'Fecha Ingreso'; // Puedes reemplazar con la fecha
-                            break;
-                        case 3:
-                            td.textContent = 'Fecha Egreso'; // Puedes reemplazar con la fecha
-                            break;
-                        case 4:
-                            td.textContent = 'Activo'; // Columna de ESTADO, puedes cambiarlo
-                            break;
-                    }
-
-                    // Aplicamos el estilo de borde a cada celda
-                    td.style.border = '1px solid white';
-
-                    tr.appendChild(td);
-                }
-
-                tablaReportesBody.appendChild(tr);
+            if (!usuarioId) {
+                alert('No se ha encontrado información del usuario.');
+                return;
             }
 
-            // Evento para el botón de agregar registro
-            agregarRegistroBtn.addEventListener('click', function() {
-                crearNuevaFila();
+            fetch("{{ route('vigilante.registro') }}", {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content')
+                    },
+                    body: JSON.stringify({
+                        documento_vigilante: documentoVigilante,
+                        usuario_id: usuarioId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Actualizar la tabla automáticamente sin alertas
+                        limpiarTabla();
+                        agregarRegistrosATabla(data.registros);
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+
+        function limpiarTabla() {
+            const tablaBody = document.getElementById('tabla-reportes-body');
+            tablaBody.innerHTML = ''; // Limpia todo el contenido de la tabla
+        }
+
+        function agregarRegistrosATabla(registros) {
+            const tablaBody = document.getElementById('tabla-reportes-body');
+
+            registros.forEach(registro => {
+                const fila = document.createElement('tr');
+                fila.classList.add('registro-fila');
+                fila.setAttribute('data-registro-id', registro.id);
+                fila.innerHTML = `
+            <td>${registro.id}</td>
+            <td>${registro.centro?.nombre ?? 'Centro no definido'}</td>
+            <td>${registro.fecha_ingreso}</td>
+            <td>${registro.fecha_salida ?? 'N/A'}</td>
+            <td>${registro.estado == 0 ? 'Abierto' : 'Cerrado'}</td>
+        `;
+                tablaBody.appendChild(fila);
             });
+
+            aplicarEventListeners();
+        }
+    </script>
+
+    <!-- este script es para registrar y asociar los elementos al control de ingreso-->
+    <script>
+        document.querySelectorAll('.btn-ingresa').forEach(button => {
+            button.addEventListener('click', function() {
+                const elementoId = this.getAttribute('data-elemento-id');
+                const controlIngresoId = "{{ $controlIngresoId ?? '' }}";
+
+                if (!controlIngresoId) {
+                    alert('No se ha encontrado un registro de control de ingreso.');
+                    return;
+                }
+
+                fetch("{{ route('sub_control_ingreso.store') }}", {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        control_ingreso_id: controlIngresoId,
+                        elemento_id: elementoId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        mostrarMensajeExito('Elemento registrado exitosamente.');
+                        agregarElementoAlContenedor(data.elemento);
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        });
+
+        function mostrarMensajeExito(mensaje) {
+            const mensajeContainer = document.createElement('div');
+            mensajeContainer.className = 'alert alert-success';
+            mensajeContainer.textContent = mensaje;
+
+            // Asegúrate de que el mensaje se inserte después del contenedor del buscador
+            const buscador = document.querySelector('.buscador');
+            buscador.insertAdjacentElement('afterend', mensajeContainer);
+
+            setTimeout(() => {
+                mensajeContainer.style.opacity = '0';
+                setTimeout(() => mensajeContainer.remove(), 500);
+            }, 5000);
+        }
+
+        function agregarElementoAlContenedor(elemento) {
+            if (!elemento || !elemento.categoria) {
+                console.error('Elemento o categoría no definido');
+                return;
+            }
+            const contenedorElementos = document.querySelector('.elementos');
+            if (!contenedorElementos) {
+                console.error('Contenedor de elementos no encontrado');
+                return;
+            }
+            const card = document.createElement('div');
+            card.classList.add('card');
+            card.innerHTML = `
+                <h3 class="cabeza">${elemento.categoria.nombre}</h3>
+                <img src="{{ asset('storage') }}/${elemento.foto}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
+                <p><strong>Serie:</strong> ${elemento.serie}</p>
+                <p><strong>Marca:</strong> ${elemento.marca}</p>
+                <a href="#" class="link-ver-mas" onclick="mostrarModal(${elemento.id})">Ver más</a>
+            `;
+            contenedorElementos.appendChild(card);
+        }
+
+        function mostrarModal(id) {
+            const modal = document.getElementById('modal-' + id);
+            if (modal) {
+                modal.style.display = 'block';
+            } else {
+                console.error('Modal no encontrado para el ID:', id);
+            }
+        }
+
+        function cerrarModal(id) {
+            const modal = document.getElementById('modal-' + id);
+            if (modal) {
+                modal.style.display = 'none';
+            } else {
+                console.error('Modal no encontrado para el ID:', id);
+            }
+        }
+    </script>
+
+    <!-- script para que al seleccionar los elementos se impriman los cards en el contenedor de los elementos del usuario -->
+    <script>
+        function agregarElementoAlContenedor(elemento) {
+            if (!elemento || !elemento.categoria) {
+                console.error('Elemento o categoría no definido');
+                return;
+            }
+            console.log('Agregando elemento al contenedor:', elemento);
+            const contenedorElementos = document.querySelector('.elementos');
+            if (!contenedorElementos) {
+                console.error('Contenedor de elementos no encontrado');
+                return;
+            }
+            const card = document.createElement('div');
+            card.classList.add('card');
+            card.innerHTML = `
+                <h3 style="margin-top:10px;" class="cabeza">${elemento.categoria.nombre}</h3>
+                <img src="{{ asset('storage') }}/${elemento.foto}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
+                <p><strong>Serie:</strong> ${elemento.serie}</p>
+                <p style="margin-top: -20px;"><strong>Marca:</strong> ${elemento.marca}</p>
+                <a style="margin-bottom: 15px;" href="#" class="link-ver-mas" onclick="mostrarModal(${elemento.id})">Ver más</a>
+            `;
+            contenedorElementos.appendChild(card);
+        }
+    </script>
+
+    <script>
+        document.querySelector('table').addEventListener('click', function(event) {
+            if (event.target && event.target.matches('tr.registro-fila')) {
+                // Remover el resaltado de todas las filas
+                document.querySelectorAll('.registro-fila').forEach(f => f.classList.remove('fila-seleccionada'));
+
+                // Añadir la clase de resaltado a la fila seleccionada
+                event.target.classList.add('fila-seleccionada');
+
+                const registroId = event.target.getAttribute('data-registro-id');
+                obtenerElementosAsociados(registroId);
+            }
+        });
+
+        function obtenerElementosAsociados(registroId) {
+            fetch(`/vigilante/elementos/${registroId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        mostrarElementos(data.elementos);
+                    } else {
+                        alert('No se encontraron elementos asociados.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        function mostrarElementos(elementos) {
+            const contenedorElementos = document.querySelector('.elementos');
+            contenedorElementos.innerHTML = ''; // Limpiar solo los elementos, no el botón
+
+            elementos.forEach(elemento => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.innerHTML = `
+                    <h3 class="cabeza">${elemento.categoria.nombre}</h3>
+                    <img src="${elemento.foto}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
+                    <p><strong>Serie:</strong> ${elemento.serie}</p>
+                    <p><strong>Marca:</strong> ${elemento.marca}</p>
+                    <a href="#" class="link-ver-mas" onclick="mostrarModal(${elemento.id})">Ver más</a>
+                `;
+                contenedorElementos.appendChild(card);
+            });
+        }
+
+        function mostrarTodosLosElementos() {
+            // Lógica para mostrar todos los elementos
+        }
+    </script>
+
+    <script>
+        function agregarFila(nuevaFilaHtml) {
+            const tabla = document.querySelector('table');
+            tabla.insertAdjacentHTML('beforeend', nuevaFilaHtml);
+            aplicarEventListeners();
+        }
+
+        function aplicarEventListeners() {
+            document.querySelectorAll('.registro-fila').forEach(fila => {
+                fila.removeEventListener('click', handleFilaClick); // Eliminar el listener anterior si existe
+                fila.addEventListener('click', handleFilaClick);
+            });
+        }
+
+        function handleFilaClick() {
+            // Remover el resaltado de todas las filas
+            document.querySelectorAll('.registro-fila').forEach(f => f.classList.remove('fila-seleccionada'));
+
+            // Añadir la clase de resaltado a la fila seleccionada
+            this.classList.add('fila-seleccionada');
+
+            const registroId = this.getAttribute('data-registro-id');
+            obtenerElementosAsociados(registroId);
+        }
+
+        // Llama a aplicarEventListeners() después de cargar la página y cada vez que agregues una nueva fila
+        aplicarEventListeners();
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            aplicarEventListeners();
         });
     </script>
 
 </body>
 
 </html>
+

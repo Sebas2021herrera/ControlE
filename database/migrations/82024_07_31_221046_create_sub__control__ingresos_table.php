@@ -4,27 +4,30 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateSubControlIngresosTable extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * @return void
      */
-    public function up(): void
+    public function up()
     {
-        Schema::create('sub__control__ingresos', function (Blueprint $table) {
+        Schema::create('sub_control_ingresos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('control_ingresos_id')->constrained('control_ingresos');
-            $table->foreignId('elementos_id')->constrained('elementos');
-            $table->string('descripcion');
+            $table->foreignId('control_ingreso_id')->constrained('control_ingresos')->onDelete('cascade');
+            $table->foreignId('elemento_id')->constrained('elementos')->onDelete('cascade');
             $table->timestamps();
         });
     }
 
     /**
      * Reverse the migrations.
+     *
+     * @return void
      */
-    public function down(): void
+    public function down()
     {
-        Schema::dropIfExists('sub__control__ingresos');
+        Schema::dropIfExists('sub_control_ingresos');
     }
-};
+}

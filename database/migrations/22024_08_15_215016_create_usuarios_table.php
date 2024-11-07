@@ -24,7 +24,7 @@ return new class extends Migration
             $table->foreignId('roles_id')->constrained('roles');
             $table->string('numero_ficha', 50)->nullable();
             $table->string('contraseña', 255);
-            $table->string('foto')->nullable(); // Columna para la foto de perfil
+            $table->string('foto')->nullable(); 
             $table->timestamps();
         });
 

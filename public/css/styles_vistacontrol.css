@@ -15,11 +15,12 @@ body {
     box-sizing: border-box;
     padding: 10px;
     gap: 10px;
+    margin-top: 0; /* Quitar el margen superior del container */
 }
 
 .buscador {
     width: calc(100% + 20px);
-    height: 100px;
+    height: 52px;
     background-color: #00324d;
     display: flex;
     align-items: center;
@@ -31,13 +32,13 @@ body {
 
 .form-busqueda {
     position: relative;
-    width: 300px; /* Ajusta el ancho total del formulario */
+    width: 300px; 
 }
 
 .input-busqueda {
     width: 100%;
-    height: 36px; /* Altura del input ajustada a 36px */
-    padding: 0 70px 0 15px; /* Espacio a la derecha para el área verde y la lupa */
+    height: 36px; 
+    padding: 0 70px 0 15px; 
     border-radius: 8px;
     border: none;
     font-size: 16px;
@@ -51,27 +52,26 @@ body {
 
 .lupa-btn {
     position: absolute;
-    right: 0; /* Coloca el botón en el borde derecho */
+    right: 0;
     top: 0;
-    width: 30px; /* Ancho del área de color */
-    height: 36px; /* Altura ajustada a 36px para que coincida con el input */
-    background-color: #39a900; /* Color de fondo para el área derecha */
-    border-radius: 0 8px 8px 0; /* Borde redondeado solo en la derecha */
+    width: 30px; 
+    height: 36px; 
+    background-color: #39a900; 
+    border-radius: 0 8px 8px 0; 
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0;
-    z-index: 2; /* Asegúrate de que el botón quede sobre el input */
+    z-index: 2; 
 }
 
 .lupa-icon {
     width: auto;
-    height: 20px; /* Ajusta el tamaño de la lupa */
+    height: 20px;
 }
 
-/* Resto del CSS */
 .contenido-superior {
     display: flex;
     gap: 16px;
@@ -97,7 +97,7 @@ body {
     height: 216px;
     background-color: #e0e0e0;
     border-radius: 8px;
-    padding: 0; /* Eliminamos el padding para que no haya espacio interno */
+    padding: 0; 
     display: flex;
     flex-direction: column;
     position: relative;
@@ -111,7 +111,7 @@ body {
     overflow-y: scroll;
     scrollbar-width: none;
     -ms-overflow-style: none;
-    padding: 0; /* Sin padding en el contenedor */
+    padding: 0; 
 }
 
 .tabla-container::-webkit-scrollbar {
@@ -119,23 +119,27 @@ body {
 }
 
 .tabla-reportes {
-    table-layout: fixed; /* Mantén la distribución fija */
+    table-layout: fixed;
     width: 100%;
     border-collapse: collapse;
     border-spacing: 0;
     margin: 0;
 }
 
+.tabla-reportes td {
+    height: 60px; 
+}
+
 .tabla-reportes th,
 .tabla-reportes td {
     padding: 8px;
     text-align: left;
-    border: 1px solid white; /* Aplica el borde a todas las celdas */
+    border: 2px solid white; 
 }
 
 .tabla-reportes th:nth-child(5),
 .tabla-reportes td:nth-child(5) {
-    width: 15%; /* O el valor que prefieras */
+    width: 15%; 
 }
 
 .tabla-reportes thead {
@@ -145,11 +149,15 @@ body {
     z-index: 1;
 }
 
+.tabla-reportes td {
+    height: 1px;
+}
+
 .tabla-reportes th {
     padding: 10px;
     background-color: #00324d;
-    color: white;
-    border-bottom: 1px solid white;
+    color: rgb(255, 255, 255);
+    border-bottom: 1px solid rgb(255, 255, 255);
 }
 
 .tabla-container {
@@ -169,31 +177,47 @@ body {
     bottom: 0;
     left: 0;
     width: 100%;
-    background-color: #e0e0e0; /* Fondo del contenedor */
-    border-top: 1px solid #ddd; /* Línea superior */
+    background-color: #e0e0e0; 
+    border-top: 1px solid #ddd; 
     display: flex;
-    justify-content: center; /* Alineación de los botones a la izquierda */
+    justify-content: center; 
 }
 
-/* Estilos para los botones */
-.boton {
+.boton, .btn-modal {
     padding: 10px 20px;
-    background-color: #00324d; /* Color de fondo azul oscuro */
-    color: white; /* Color del texto blanco */
-    border: none; /* Sin bordes */
-    border-radius: 8px; /* Bordes redondeados */
-    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
-    font-size: 14px; /* Tamaño de fuente */
-    transition: background-color 0.3s ease; /* Transición suave */
+    background-color: #00324d; 
+    color: white; 
+    border: none; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    font-size: 14px; 
+    transition: background-color 0.3s ease; 
+    margin: 5px;
 }
 
 .boton:first-child {
-    margin-right: 10px; /* Espacio entre los botones */
+    margin-right: 10px; 
 }
 
-/* Efecto hover para los botones */
-.boton:hover {
-    background-color: #39a900; /* Cambia a verde cuando se pasa el cursor */
+.boton:hover, .btn-modal:hover {
+    background-color: #39a900; 
+}
+
+.icono-ingresa{
+    width: 20px;
+    height: 20px;
+    margin-left: -15px;
+    margin-bottom: -10px;
+    margin-top: -10px;
+}
+
+.iconos{
+    padding: 0px;
+    width: 25px;
+    height: 25px;
+    margin-left: -15px;
+    margin-bottom: -8.5px;
+    margin-top: -10px;
 }
 
 .info-text {
@@ -268,18 +292,31 @@ body {
     gap: 16px;
     flex: 1 1 auto;
     overflow-y: auto;
+    width: 100%;       /* Asegura que ocupe todo el ancho disponible */
 }
 
 .contenido .elementos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    align-items: start;
+    overflow-y: auto;
+    max-height: 345px;
+    width: 100%;      /* Ancho fijo al 100% del contenedor padre */
+    flex: 1;          /* Toma el espacio disponible */
     background-color: #e0e0e0;
     border-radius: 8px;
-    padding: 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
-    overflow-y: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    flex: 1;
+    justify-content: center;
+    justify-items: center;
+}
+
+.contenido .elementos .card {
+    flex: 0 0 auto; /* Evita que los cards se estiren */
+    width: 220px; /* Ancho fijo para cada card */
+    margin: 0 10px; /* Espacio horizontal entre cards */
 }
 
 .contenido .elementos .card {
@@ -293,10 +330,12 @@ body {
 }
 
 .card-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 21px;
-    justify-content: center;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    padding: 0;
+    justify-items: center;
 }
 
 .card {
@@ -304,8 +343,8 @@ body {
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    width: 240px;
-    height: 380px;
+    width: 220px;  /* ancho fijo para mantener consistencia */
+    height: 350px;
     padding: 15px;
     text-align: center;
     box-sizing: border-box;
@@ -315,6 +354,7 @@ body {
     max-height: 400px;
     overflow: auto;
     position: relative;
+    margin: 0;
 }
 
 .cabeza {
@@ -358,8 +398,9 @@ body {
 }
 
 .modal {
-    display: none;
+    display: flex;
     position: fixed;
+    flex-direction: column;
     z-index: 9999;
     left: 0;
     top: 0;
@@ -367,21 +408,29 @@ body {
     height: 100%;
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .modal-content {
-    background-color: #fff;
-    margin: 5% auto;
-    padding: 20px;
+    position: relative; /* Necesario para posicionar elementos hijos absolutamente */
+    background-color: #f0f0f0;
+    margin: auto;
+    padding: 10px;
     border-radius: 8px;
-    width: 80%;
-    max-width: 400px;
+    width: 60% !important;
+    max-width: 1000px !important;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centra el contenido horizontalmente */
 }
 
 .modal-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end; /* Alinea el contenido al final (derecha) */
     align-items: center;
     border-bottom: 2px solid #ddd;
     padding-bottom: 15px;
@@ -401,11 +450,14 @@ body {
 }
 
 .modal-body {
-    padding-top: 15px;
-    border-bottom: 2px solid #ddd;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    justify-content: center; /* Centra las columnas del grid */
+    align-items: start;
 }
 
 .modal-body-content {
@@ -425,9 +477,10 @@ body {
 
 .modal-footer {
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-end; /* Alinea el contenido al final (derecha) */
     border-top: 1px solid #ddd;
     padding-top: 10px;
+    width: 100%;
 }
 
 .modal-footer .btn-close {
@@ -442,18 +495,6 @@ body {
 
 .modal-footer .btn-close:hover {
     background-color: #0056b3;
-}
-
-.close {
-    font-size: 24px;
-    cursor: pointer;
-    background: none;
-    border: none;
-    color: #333;
-}
-
-.close:hover {
-    color: #000;
 }
 
 .elemento-foto {
@@ -498,6 +539,10 @@ body {
     color: white;
 }
 
+.contenido {
+    position: static;
+}
+
 .contenido .elementos .card {
     flex-direction: column;
     max-height: 290px;
@@ -529,3 +574,176 @@ body {
     text-decoration: underline;
     color: blue;
 }
+
+.elementos {
+    position: relative; /* Añadir posición relativa */
+    height: px;
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 600px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.cuerpo-modal {
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.card {
+    flex: 0 0 calc(50% - 10px);
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #f9f9f9;
+}
+
+.card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+.card h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.card p {
+    margin: 5px 0;
+}
+
+/* CSS: Añade este estilo para organizar los cards en tres columnas */
+.tres-columnas {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 0;
+    width: 100%;
+    justify-items: center;
+}
+
+.tres-columnas .card {
+    width: 100%;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+/* Eliminar cualquier media query anterior que pueda estar afectando */
+
+.titulo-modal {
+    font-size: 28px; /* Aumenta el tamaño del texto */
+    text-align: center; /* Centra el texto */
+    margin-bottom: 20px;
+}
+
+.btn-cerrar, .btn-cerrar-modal {
+    position: absolute;
+    bottom: 20px; /* Ajusta según sea necesario */
+    right: 20px;  /* Ajusta según sea necesario */
+    background-color: #ccc; /* Color gris */
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-cerrar:hover, .btn-cerrar-modal:hover {
+    background-color: #aaa; 
+}
+
+.btn-modal {
+    position: absolute; /* Cambiar a posición absoluta */
+    top: 0px; /* Ajustar la distancia desde la parte superior */
+    left: 0px; /* Ajustar la distancia desde la izquierda */
+    z-index: 10;
+    background-color: #00324d;
+    color: white;
+    border: none;
+    padding: 5px;
+    width: 50px;
+    height: 33px;
+    border-radius: 7px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.contenido .elementos {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+    align-items: flex-start;
+    overflow-y: auto;
+    max-height: 345px;
+}
+
+#abrir-modal-elementos {
+    margin-bottom: 0;
+    width: auto;
+}
+
+.alert {
+    transition: opacity 0.5s ease-out;
+    background-color: #d4edda;
+    color: #155724;
+    border: none;
+    padding: 10px;
+    margin:0;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    z-index: 100;
+}
+
+.alert-success {
+    opacity: 1;
+}
+
+#mensaje-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: -5px;
+    padding: 0;
+}
+
+.btn-modal .iconos {
+    margin: 0;
+    width: 25px;
+    height: 25px;
+}
+
+/* Si existe alguna clase específica para los cards dentro del modal, asegúrate de que tenga estos estilos */
+.modal .card {
+    width: 220px;
+    margin: 0;
+    justify-self: center; /* Asegura el centrado en el grid */
+}
+
+.registro-fila {
+    cursor: pointer;
+    transition: border 0.3s ease;
+}
+
+.registro-fila:hover {
+    border: 2px solid lightgray;
+}
+
+.fila-seleccionada {
+    border: 2px solid gray; /* Cambia a negro si prefieres */
+}
+

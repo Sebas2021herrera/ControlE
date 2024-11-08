@@ -166,7 +166,7 @@
         <p>No se ha encontrado un registro de control de ingreso.</p>
     @endif
 
-    <!--sccript para  mostrar modal-->
+    <!-- Script para mostrar modal -->
     <script>
         document.addEventListener('click', function(e) {
             if (e.target.matches('[data-bs-toggle="modal"]')) {
@@ -186,21 +186,14 @@
         }
     </script>
 
-    <!-- abrir modal de los elementos del usuario -->
+    <!-- Script para abrir modal de los elementos del usuario -->
     <script>
         document.getElementById('abrir-modal-elementos').addEventListener('click', function() {
             document.getElementById('modal-elementos-usuario').style.display = 'block';
         });
-
-        function cerrarModal() {
-            document.getElementById('modal-elementos-usuario').style.display = 'none';
-        }
     </script>
 
-    <!--script  para mostrar modal-->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- este script es para registrar el control_ingreso -->
+    <!-- Script para registrar el control_ingreso -->
     <script>
         document.getElementById('agregar-registro').addEventListener('click', function(event) {
             event.preventDefault(); // Evita recargar la página
@@ -253,12 +246,12 @@
                 fila.classList.add('registro-fila');
                 fila.setAttribute('data-registro-id', registro.id);
                 fila.innerHTML = `
-            <td>${registro.id}</td>
-            <td>${registro.centro?.nombre ?? 'Centro no definido'}</td>
-            <td>${registro.fecha_ingreso}</td>
-            <td>${registro.fecha_salida ?? 'N/A'}</td>
-            <td>${registro.estado == 0 ? 'Abierto' : 'Cerrado'}</td>
-        `;
+                    <td>${registro.id}</td>
+                    <td>${registro.centro?.nombre ?? 'Centro no definido'}</td>
+                    <td>${registro.fecha_ingreso}</td>
+                    <td>${registro.fecha_salida ?? 'N/A'}</td>
+                    <td>${registro.estado == 0 ? 'Abierto' : 'Cerrado'}</td>
+                `;
                 tablaBody.appendChild(fila);
             });
 
@@ -266,7 +259,7 @@
         }
     </script>
 
-    <!-- este script es para registrar y asociar los elementos al control de ingreso-->
+    <!-- Script para registrar y asociar los elementos al control de ingreso -->
     <script>
         document.querySelectorAll('.btn-ingresa').forEach(button => {
             button.addEventListener('click', function() {
@@ -333,7 +326,7 @@
             card.classList.add('card');
             card.innerHTML = `
                 <h3 class="cabeza">${elemento.categoria.nombre}</h3>
-                <img src="{{ asset('storage') }}/${elemento.foto}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
+                <img src="{{ asset('storage/') }}/${elemento.foto}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
                 <p><strong>Serie:</strong> ${elemento.serie}</p>
                 <p><strong>Marca:</strong> ${elemento.marca}</p>
                 <a href="#" class="link-ver-mas" onclick="mostrarModal(${elemento.id})">Ver más</a>
@@ -360,7 +353,7 @@
         }
     </script>
 
-    <!-- script para que al seleccionar los elementos se impriman los cards en el contenedor de los elementos del usuario -->
+    <!-- Script para que al seleccionar los elementos se impriman los cards en el contenedor de los elementos del usuario -->
     <script>
         function agregarElementoAlContenedor(elemento) {
             if (!elemento || !elemento.categoria) {
@@ -377,7 +370,7 @@
             card.classList.add('card');
             card.innerHTML = `
                 <h3 style="margin-top:10px;" class="cabeza">${elemento.categoria.nombre}</h3>
-                <img src="{{ asset('storage') }}/${elemento.foto}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
+                <img src="{{ asset('storage/') }}/${elemento.foto}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
                 <p><strong>Serie:</strong> ${elemento.serie}</p>
                 <p style="margin-top: -20px;"><strong>Marca:</strong> ${elemento.marca}</p>
                 <a style="margin-bottom: 15px;" href="#" class="link-ver-mas" onclick="mostrarModal(${elemento.id})">Ver más</a>
@@ -417,6 +410,7 @@
 
         function mostrarElementos(elementos) {
             const contenedorElementos = document.querySelector('.elementos');
+            const botonVerElementos = document.getElementById('abrir-modal-elementos'); // Guardar referencia al botón
             contenedorElementos.innerHTML = ''; // Limpiar solo los elementos, no el botón
 
             elementos.forEach(elemento => {
@@ -424,13 +418,16 @@
                 card.classList.add('card');
                 card.innerHTML = `
                     <h3 class="cabeza">${elemento.categoria.nombre}</h3>
-                    <img src="${elemento.foto}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
+                    <img src="{{ asset('storage/') }}/${elemento.foto}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
                     <p><strong>Serie:</strong> ${elemento.serie}</p>
                     <p><strong>Marca:</strong> ${elemento.marca}</p>
                     <a href="#" class="link-ver-mas" onclick="mostrarModal(${elemento.id})">Ver más</a>
                 `;
                 contenedorElementos.appendChild(card);
             });
+
+            // Reinsertar el botón después de limpiar el contenedor
+            contenedorElementos.appendChild(botonVerElementos);
         }
 
         function mostrarTodosLosElementos() {

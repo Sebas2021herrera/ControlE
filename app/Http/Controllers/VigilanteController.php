@@ -63,7 +63,7 @@ class VigilanteController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Vigilante no encontrado.',
-            ]);
+            ], 404);
         }
 
         // Buscar al usuario por ID
@@ -73,7 +73,7 @@ class VigilanteController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Usuario no encontrado para el registro.',
-            ]);
+            ], 404);
         }
 
         // Definir el ID del centro (puedes ajustarlo según corresponda)
@@ -156,8 +156,8 @@ class VigilanteController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Elemento registrado exitosamente en sub_control_ingresos.',
-                'elemento' => $elemento, // Incluir el objeto elemento en la respuesta
+                'message' => 'Elemento registrado exitosamente.',
+                'elemento' => $elemento,
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -190,5 +190,3 @@ class VigilanteController extends Controller
     }
     
 }
- 
-

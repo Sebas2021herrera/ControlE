@@ -12,7 +12,6 @@
         const registroUrl = "{{ route('vigilante.registro') }}";
         const subControlIngresoUrl = "{{ route('sub_control_ingreso.store') }}";
     </script>
-    <script src="{{ asset('js/vista_control.js') }}"></script>
 
 </head>
 

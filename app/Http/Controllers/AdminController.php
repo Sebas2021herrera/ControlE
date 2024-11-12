@@ -12,6 +12,7 @@ use App\Models\Categoria;
 use App\Models\Elemento;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AdminController extends Controller
 {
@@ -20,13 +21,14 @@ class AdminController extends Controller
      */
     public function index()
     {
-        
         // Obtener todas las categorías
         $categorias = Categoria::all();
-
-        // Retornar la vista con las categorías
-        return view('index.vistaadmin', compact('categorias'));
-        
+ 
+        // Obtener todos los elementos
+        $elementos = Elemento::all(); // o filtrar por usuario si es necesario
+ 
+        // Retornar la vista con categorías y elementos
+        return view('index.vistaadmin', compact('categorias', 'elementos'));
     }
 
     /**
@@ -198,24 +200,92 @@ class AdminController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        //
+        $elemento = Elemento::findOrFail($id);
+        $categorias = Categoria::all();
+
+        return view('admin.edit', compact('elemento', 'categorias')); // Solo si requieres una vista independiente
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+    // Método para actualizar un elemento en AdminController
+public function update(Request $request, $id)
+{
+        // Validación de los datos del formulario
+        $validatedData = $request->validate([
+            'categoria_id' => 'required|integer|exists:categorias,id',
+            'descripcion' => 'required|string|max:255',
+            'marca' => 'required|string|max:255',
+            'modelo' => 'required|string|max:255',
+            'serie' => 'nullable|string|max:255',
+            'especificaciones_tecnicas' => 'nullable|string',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240', // 10MB por imagen
+        ]);
+
+        // Buscar el elemento por su ID
+        $elemento = Elemento::findOrFail($id);
+
+        // Actualizar los campos del elemento
+        $elemento->categoria_id = $validatedData['categoria_id'];
+        $elemento->descripcion = $validatedData['descripcion'];
+        $elemento->marca = $validatedData['marca'];
+        $elemento->modelo = $validatedData['modelo'];
+        $elemento->serie = $validatedData['serie'] ?? null;
+        $elemento->especificaciones_tecnicas = $validatedData['especificaciones_tecnicas'] ?? null;
+
+        // Manejar la foto, si se sube una nueva
+        if ($request->hasFile('foto')) {
+            // Eliminar la foto anterior si existe
+            if ($elemento->foto) {
+                Storage::delete('public/' . $elemento->foto);
+            }
+            // Guardar la nueva foto
+            $elemento->foto = $request->file('foto')->store('fotos', 'public');
+        }
+
+        // Guardar los cambios en la base de datos
+        $elemento->save();
+
+        // Redirigir con mensaje de éxito
+        return redirect()->route('admin.panel')->with('success', '¡Elemento actualizado exitosamente!');
+}
+
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
         //
+        $elemento = Elemento::findOrFail($id);
+
+        // Elimina el archivo de la foto si existe
+        if ($elemento->foto) {
+            Storage::delete('public/' . $elemento->foto);
+        }
+
+        $elemento->delete();
+
+        return redirect()->route('admin.panel')->with('success', '¡Elemento eliminado exitosamente!');
     }
+
+    public function generarReporteIngresosUsuario(Request $request)
+    {
+    $numeroDocumento = $request->input('documento');
+
+    // Buscar al usuario con sus elementos asociados
+    $usuario = Usuario::with('elementos.categoria')
+                ->where('numero_documento', $numeroDocumento)
+                ->firstOrFail(); // Retorna 404 si no se encuentra el usuario
+
+    // Generar el PDF usando la vista `reports.blade.php`
+    $pdf = Pdf::loadView('pdf.reports', compact('usuario'));
+
+    // Retornar el PDF para descarga o visualizar en el navegador
+    return $pdf->download('reports_' . $numeroDocumento . '.pdf');
+    }
+
 }

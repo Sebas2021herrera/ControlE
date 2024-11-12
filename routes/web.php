@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VigilanteController;
 use App\Http\Controllers\AdminController;
 use App\Models\Categoria;
+use App\Models\Elemento;
 
 // Rutas para autenticación y registro
 Route::get('/', [WelcomeController::class, 'index']);
@@ -36,13 +37,15 @@ Route::middleware('auth')->group(function () {
     Route::middleware(CheckRole::class . ':1')->group(function () {
         Route::get('admin/panel', function () {
             $categorias = Categoria::all();
-            return view('index.vistaadmin', compact( 'categorias'));
-      
+            $elementos = Elemento::all();
+            return view('index.vistaadmin', compact( 'categorias', 'elementos'));
         })->name('admin.panel');
 
         // Ruta para consultar usuarios
         Route::get('/admin/usuarios/consultar', [AdminController::class, 'consultarUsuario'])
         ->name('admin.usuarios.consultar');
+        // Ruta para generar PDF de usuario
+        Route::post('/admin/usuarios/pdf', [AdminController::class, 'generarReporteIngresosUsuario'])->name('admin.usuarios.pdf');
     });
 
     // Rutas para la vista admin
@@ -55,7 +58,11 @@ Route::middleware('auth')->group(function () {
     // Luego, la ruta POST para manejar el envío del formulario y almacenar el elemento
     Route::post('/admin/elementos/store', [AdminController::class, 'storeElemento'])->name('admin.elementos.store');
 
-    
+    // Route::get('/admin/panel', [AdminController::class, 'panel'])->name('admin.panel');
+    Route::put('/admin/elementos/{id}', [AdminController::class, 'updateElemento'])->name('admin.elementos.update');
+    Route::get('admin/elementos/{id}/edit', [AdminController::class, 'edit'])->name('admin.elementos.edit');
+    Route::delete('/admin/elementos/{id}', [AdminController::class, 'destroyElemento'])->name('admin.elementos.destroy');
+
 
     // Solo rol 2 puede acceder al panel de control
     Route::middleware(CheckRole::class . ':2')->group(function () {

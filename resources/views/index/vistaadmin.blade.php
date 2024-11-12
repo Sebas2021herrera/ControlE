@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Administrador</title>
@@ -37,7 +38,7 @@
                 <!-- Aquí puedes agregar un dropdown para reportes si es necesario -->
                 <div class="dropdown-menu" id="dropdown-menu" role="menu">
                     <div class="dropdown-content">
-                        <a href="#" class="dropdown-item" id="reportUsers">Reportes ingresos usuarios</a>
+                        <a href="#" class="open-report-ingresos-modal">Reportes ingresos usuarios</a>
                     </div>
                 </div>
             </div>
@@ -99,6 +100,12 @@
                 <!-- Aquí se cargarán dinámicamente las cards de elementos -->
             </div>
         </div>
+    </div>
+    <!-- Botón para limpiar la consulta -->
+    <div class="field" style="margin-top: 10px;">
+        <button id="clearSearch" class="button is-danger">
+            <i class="fas fa-redo"></i> Limpiar Consulta
+        </button>
     </div>
 </div>
 
@@ -384,28 +391,97 @@
     </div>
 </div>
   
-<!-- Modal de Detalles del Elemento -->
-<div id="detailsModal" class="modal">
-    <div class="modal-content">
-        <span class="close-btn">&times;</span>
-        <h2>Detalles del Elemento</h2>
-        <hr style="border: 1px solid #ddd; margin: 10px 0;"> <!-- Línea separadora -->
-        <div class="ventana-formulario">
-            <img id="elementImage" src="#" alt="Imagen del elemento" style="max-width: 100%; height: auto; margin-bottom: 10px;">
-            <p><strong>Categoría:</strong> <span id="elementCategory"></span></p>
-            <p><strong>Descripción:</strong> <span id="elementDescription"></span></p>
-            <p><strong>Marca:</strong> <span id="elementBrand"></span></p>
-            <p><strong>Modelo:</strong> <span id="elementModel"></span></p>
-            <p><strong>Serial:</strong> <span id="elementSerial"></span></p>
-            <p><strong>Especificaciones Técnicas:</strong> <span id="elementSpecifications"></span></p>
-            <div class="button-container">
-                <button class="button is-danger" id="deleteButton">Eliminar</button>
-                <button class="button is-warning" id="editButton">Editar</button>
-                <button class="button is-light close-btn">Cerrar</button>
+@foreach ($elementos as $elemento)
+<!-- Modal para ver más detalles y editar en vista admin -->
+<div class="modal fade" id="modal-detalles-{{ $elemento->id }}" tabindex="-1" aria-labelledby="modalDetallesLabel-{{ $elemento->id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalDetallesLabel-{{ $elemento->id }}">Detalles del Elemento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Vista de detalles -->
+                <div id="details-view-admin-{{ $elemento->id }}" class="details-view">
+                    @if ($elemento->foto)
+                        <img src="{{ asset('storage/' . $elemento->foto) }}" alt="Foto del elemento" class="img-fluid mb-3">
+                    @endif
+                    <p><strong>Categoría:</strong> {{ $elemento->categoria->nombre }}</p>
+                    <p><strong>Descripción:</strong> {{ $elemento->descripcion }}</p>
+                    <p><strong>Marca:</strong> {{ $elemento->marca }}</p>
+                    <p><strong>Modelo:</strong> {{ $elemento->modelo }}</p>
+                    <p><strong>Serial:</strong> {{ $elemento->serie }}</p>
+                    <p><strong>Especificaciones Técnicas:</strong> {{ $elemento->especificaciones_tecnicas }}</p>
+                </div>
+
+                <!-- Vista de edición (oculta por defecto) -->
+                <div id="edit-view-admin-{{ $elemento->id }}" class="edit-view d-none">
+                    <form action="{{ route('admin.elementos.update', $elemento->id) }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
+                        <!-- Campos de edición similares al modal anterior -->
+                        <div class="mb-3">
+                            <label for="categoria_id-{{ $elemento->id }}" class="form-label">Categoría</label>
+                            <select id="categoria_id-{{ $elemento->id }}" name="categoria_id" class="form-select" required>
+                                @foreach ($categorias as $categoria)
+                                    <option value="{{ $categoria->id }}" {{ $categoria->id == $elemento->categoria_id ? 'selected' : '' }}>
+                                        {{ $categoria->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="descripcion-{{ $elemento->id }}" class="form-label">Descripción</label>
+                            <input type="text" id="descripcion-{{ $elemento->id }}" name="descripcion" class="form-control" value="{{ $elemento->descripcion }}" required>
+                        </div>
+                        <!-- Similar para los demás campos... -->
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <!-- Botón para eliminar elemento -->
+                <form action="{{ route('admin.elementos.destroy', $elemento->id) }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
+                <!-- Botón para guardar cambios (oculto por defecto) -->
+                <button type="button" class="btn btn-primary d-none" id="save-changes-btn-admin-{{ $elemento->id }}" onclick="saveChanges({{ $elemento->id }})">Guardar Cambios</button>
+                <!-- Botón para editar elementos -->
+                <button type="button" class="btn btn-warning" onclick="editElementAdmin({{ $elemento->id }})">Editar</button>
+                <!-- Botón para cerrar el modal -->
+                <button type="button" class="btn btn-secondary" onclick="closeModalAdmin({{ $elemento->id }})">Cerrar</button>
             </div>
         </div>
     </div>
 </div>
+@endforeach
+
+<!-- Modal de Reportes de Ingresos -->
+<div id="reportIngresosModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <div class="ventana-formulario">
+            <h2>Reportes de Ingresos de Usuarios</h2>
+            <form action="{{ route('admin.usuarios.pdf') }}" method="POST" class="search-form">
+                @csrf
+                <div class="search-wrapper">
+                    <input type="text" 
+                           name="documento" 
+                           class="search-input" 
+                           placeholder="Ingresar Documento del Usuario..." 
+                           required>
+                    <button type="submit" class="search-button">
+                        <i class="fas fa-file-pdf"></i> Generar PDF
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
 
 <!-- Código Javascripts -->
     <script>
@@ -618,54 +694,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-    // document.addEventListener('DOMContentLoaded', function() {
-    //     // Obtener referencias a los elementos del DOM
-    //     const searchForm = document.querySelector('form[action="{{ route("admin.usuarios.consultar") }}"]');
-    //     const consultUsersModal = document.getElementById('consultUsersModal');
-    //     const resultadoBusqueda = document.querySelector('.resultado-busqueda');
-    
-    //     if (searchForm) {
-    //         searchForm.addEventListener('submit', async function(e) {
-    //             e.preventDefault();
-                
-    //             try {
-    //                 const formData = new FormData(this);
-    //                 const documento = formData.get('documento');
-                    
-    //                 const response = await fetch(`/admin/usuarios/consultar?documento=${documento}`, {
-    //                     method: 'GET',
-    //                     headers: {
-    //                         'Accept': 'application/json',
-    //                         'X-Requested-With': 'XMLHttpRequest'
-    //                     }
-    //                 });
-    
-    //                 if (response.ok) {
-    //                     const data = await response.json();
-                        
-    //                     // Cerrar el modal
-    //                     if (consultUsersModal) {
-    //                         consultUsersModal.style.display = 'none';
-    //                     }
-    
-    //                     // Mostrar los resultados
-    //                     if (data.usuario) {
-    //                         mostrarInformacionUsuario(data.usuario);
-    //                         mostrarElementosUsuario(data.elementos || []);
-    //                         resultadoBusqueda.style.display = 'block';
-    //                     } else {
-    //                         alert('Usuario no encontrado');
-    //                     }
-    //                 } else {
-    //                     throw new Error('Error en la búsqueda');
-    //                 }
-    //             } catch (error) {
-    //                 console.error('Error:', error);
-    //                 alert('Error al realizar la búsqueda');
-    //             }
-    //         });
-    //     }
-    
         function mostrarInformacionUsuario(usuario) {
             // Actualizar la información del usuario
             document.querySelector('.usuario-nombre').textContent = usuario.nombres;
@@ -700,57 +728,110 @@ function mostrarElementosUsuario(elementos) {
     elementos.forEach(elemento => {
         const card = `
             <div class="card">
-                <h3 class="cabeza">${elemento.categoria.nombre}</h3>
+                <h5 class="cabeza">${elemento.categoria.nombre}</h5>
                 <img src="/storage/${elemento.foto}" 
                      alt="Foto del elemento" 
                      class="elemento-foto"
                      onerror="this.src='/imagenes/sin_foto_elemento.webp'">
-                <p><strong>Serie:</strong> ${elemento.serie}</p>
+                <p><strong>Serial:</strong> ${elemento.serie}</p>
                 <p><strong>Marca:</strong> ${elemento.marca}</p>
                 <a href="#" class="link-ver-mas" data-elemento-id="${elemento.id}">
                     Ver más
                 </a>
-                <!-- Botón "Ingresar" eliminado -->
             </div>
         `;
         container.insertAdjacentHTML('beforeend', card);
     });
 }
 
-    //     function mostrarElementosUsuario(elementos) {
-    //         const container = document.querySelector('.card-container');
-    //         if (!container) return;
-    
-    //         container.innerHTML = ''; // Limpiar contenedor
-    
-    //         if (elementos.length === 0) {
-    //             container.innerHTML = '<p>No hay elementos asociados a este usuario.</p>';
-    //             return;
-    //         }
-    
-    //         elementos.forEach(elemento => {
-    //             const card = `
-    //                 <div class="card">
-    //                     <h3 class="cabeza">${elemento.categoria.nombre}</h3>
-    //                     <img src="/storage/${elemento.foto}" 
-    //                          alt="Foto del elemento" 
-    //                          class="elemento-foto"
-    //                          onerror="this.src='/imagenes/sin_foto_elemento.webp'">
-    //                     <p><strong>Serie:</strong> ${elemento.serie}</p>
-    //                     <p><strong>Marca:</strong> ${elemento.marca}</p>
-    //                     <a href="#" class="link-ver-mas" data-elemento-id="${elemento.id}">
-    //                         Ver más
-    //                     </a>
-    //                     <div class="btn-container">
-    //                         <button class="btn-ingresa">Ingresa</button>
-    //                     </div>
-    //                 </div>
-    //             `;
-    //             container.insertAdjacentHTML('beforeend', card);
-    //         });
-    //     }
-    // });
+// Código JavaScript para el modal de "Detalles del Elemento".
+// Función para alternar entre modos de vista y edición
+function toggleEditView(elementId) {
+    const viewMode = document.getElementById(`view-${elementId}`);
+    const editMode = document.getElementById(`edit-${elementId}`);
+    const editButton = document.getElementById(`edit-button-${elementId}`);
+    const cancelButton = document.getElementById(`cancel-button-${elementId}`);
+
+    // Alternar las clases para ocultar o mostrar las secciones de vista y edición
+    viewMode.classList.toggle('hidden');
+    editMode.classList.toggle('hidden');
+
+    // Alternar la visibilidad de los botones de edición y cancelación
+    if (!viewMode.classList.contains('hidden')) {
+        editButton.style.display = 'inline';
+        cancelButton.style.display = 'none';
+    } else {
+        editButton.style.display = 'none';
+        cancelButton.style.display = 'inline';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const detailLinks = document.querySelectorAll('.link-ver-mas');
+    detailLinks.forEach(link => {
+        link.addEventListener('click', (event) => {
+            event.preventDefault();
+            const elementoId = link.getAttribute('data-elemento-id');
+            const modalId = `modal-detalles-${elementoId}`; // Asegúrate de que el ID coincida
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'block'; // Abre el modal
+                modal.classList.add('show'); // Asegúrate de que se muestre correctamente
+            }
+        });
+    });
+});
+
 </script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // ... código existente ...
+
+        // Evento para limpiar la consulta
+        document.getElementById('clearSearch').addEventListener('click', function() {
+            // Ocultar el contenedor de resultados
+            document.querySelector('.resultado-busqueda').style.display = 'none';
+            // Limpiar la información del usuario
+            document.querySelector('.usuario-nombre').textContent = '';
+            document.querySelector('.usuario-apellidos').textContent = '';
+            document.querySelector('.usuario-documento').textContent = '';
+            document.querySelector('.usuario-telefono').textContent = '';
+            document.querySelector('.usuario-rh').textContent = '';
+            document.querySelector('.usuario-rol').textContent = '';
+            document.querySelector('.usuario-ficha').textContent = '';
+            // Limpiar los elementos
+            document.querySelector('.card-container').innerHTML = '';
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Selecciona el modal y los botones
+        const reportIngresosModal = document.getElementById("reportIngresosModal");
+        const openModalBtn = document.querySelector(".open-report-ingresos-modal"); // Asegúrate que el botón tenga esta clase
+        const closeModalBtn = reportIngresosModal.querySelector(".close-btn");
+ 
+        // Función para abrir el modal
+        openModalBtn.addEventListener("click", function(event) {
+            event.preventDefault(); // Evita redireccionamientos
+            reportIngresosModal.style.display = "block";
+        });
+ 
+        // Función para cerrar el modal al hacer clic en el botón de cerrar
+        closeModalBtn.addEventListener("click", function() {
+            reportIngresosModal.style.display = "none";
+        });
+ 
+        // Cierra el modal si el usuario hace clic fuera del contenido del modal
+        window.addEventListener("click", function(event) {
+            if (event.target === reportIngresosModal) {
+                reportIngresosModal.style.display = "none";
+            }
+        });
+    });
+ </script>
+ 
 </body>
 </html>

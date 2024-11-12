@@ -6,13 +6,14 @@ use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\ElementoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VigilanteController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
 
 // Rutas para autenticación y registro
 Route::get('/', [WelcomeController::class, 'index']);
 Route::get('login', [AuthController::class, 'showLogin'])->name('login');
 Route::get('create', [AuthController::class, 'create'])->name('create');
 Route::post('registrado', [AuthController::class, 'createpost'])->name('createpost');
+Route::post('/createpost', [AdminController::class, 'store'])->name('createpost');
 Route::post('login', [AuthController::class, 'login'])->name('login.post');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -33,8 +34,16 @@ Route::middleware('auth')->group(function () {
     // Rutas para los paneles de administración y control
     Route::middleware(CheckRole::class . ':1')->group(function () {
         Route::get('admin/panel', function () {
-            return view('index.vistaadmin');
+            $categorias = Categoria::all();
+            $elementos = Elemento::all();
+            return view('index.vistaadmin', compact( 'categorias', 'elementos'));
         })->name('admin.panel');
+
+        // Ruta para consultar usuarios
+        Route::get('/admin/usuarios/consultar', [AdminController::class, 'consultarUsuario'])
+        ->name('admin.usuarios.consultar');
+        // Ruta para generar PDF de usuario
+        Route::post('/admin/usuarios/pdf', [AdminController::class, 'generarReporteIngresosUsuario'])->name('admin.usuarios.pdf');
     });
 
     // Rutas del vigilante para roles específicos
@@ -46,7 +55,7 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/vigilante/registro', [VigilanteController::class, 'nuevoRegistro'])->name('vigilante.registro');
         Route::post('/sub_control_ingreso', [VigilanteController::class, 'registrarElementoEnSubControl'])->name('sub_control_ingreso.store');
-        
+
         Route::get('/vigilante/elementos/{registroId}', [VigilanteController::class, 'obtenerElementosPorRegistro'])
             ->name('vigilante.elementos');
     });

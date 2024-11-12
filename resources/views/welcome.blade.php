@@ -33,7 +33,8 @@
     <header class="hero d-flex align-items-center justify-content-center text-center text-white">
         <div class="hero-content">
             <h1 class="display-4 animated fadeIn">Bienvenido a Control E</h1>
-            <p class="lead animated fadeIn">Control de elementos para la Regional Casanare, SENA.</p>
+            {{-- <img src="{{ asset('imagenes/Logo-Control-E.png') }}" alt="Control E Logo" class="img-fluid logo-sena"> --}}
+            <p class="lead animated fadeIn">Control de elementos para la Regional Casanare - SENA.</p>
             <div class="buttons mt-4">
                 <a class="btn btn-light btn-lg animated bounceIn" href="{{ route('login') }}" role="button">Iniciar sesión</a>
                 <a class="btn btn-secondary btn-lg ml-3 animated bounceIn" href="{{ route('create') }}" role="button">Registrarse</a>

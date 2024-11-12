@@ -7,6 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Vista del Vigilante</title>
     <link rel="stylesheet" href="{{ asset('css/styles_vistacontrol.css') }}">
+
 </head>
 
 <body>
@@ -111,16 +112,13 @@
             </div>
         </div>
 
-
-
-
-
         <!-- Modal para mostrar los elementos del usuario -->
         <div class="modal" id="modal-elementos-usuario" style="display: none;">
             <div class="modal-content">
                 <div class="contenido-modal" style="padding: 20px;">
                     <div class="encabezado-modal">
                         <h5 class="titulo-modal">Elementos del Usuario</h5>
+                        <span class="close" id="closeModalElementos" onclick="cerrarModalElementos()">&times;</span>
                     </div>
                     <div class="cuerpo-modal">
                         <div class="card-container tres-columnas">
@@ -132,8 +130,9 @@
                                             class="img-fluid mt-3 elemento-foto">
                                         <p><strong>Serie:</strong> {{ $elemento->serie }}</p>
                                         <p><strong>Marca:</strong> {{ $elemento->marca }}</p>
-                                        <a href="#" class="link-ver-mas"
-                                            onclick="mostrarModal({{ $elemento->id }})">Ver más</a>
+                                        <a href="javascript:void(0)" class="link-ver-mas"
+                                            data-element-id="{{ $elemento->id }}"
+                                            onclick="mostrarDetallesElemento({{ $elemento->id }})">Ver más</a>
                                         <button class="btn-ingresa" data-elemento-id="{{ $elemento->id }}"
                                             data-categoria="{{ $elemento->categoria->nombre }}"
                                             data-foto="{{ asset('storage/' . $elemento->foto) }}"
@@ -149,9 +148,31 @@
                         </div>
                     </div>
                     <div class="pie-modal">
-                        <button type="button" class="btn-cerrar-modal" onclick="cerrarModal()">Cerrar</button>
+                        <button type="button" class="btn-cerrar-modal"
+                            onclick="cerrarModalElementos()">Cerrar</button>
                     </div>
                 </div>
+            </div>
+        </div>
+
+
+        <!-- Modal para mostrar detalles del elemento -->
+        <div id="modalElemento" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span class="close" id="closeModal" onclick="cerrarModal()">&times;</span>
+                <h2>Detalles del Elemento</h2>
+                <div id="contenidoElemento">
+                    <p><strong>Categoría:</strong> <span id="categoriaElemento"></span></p>
+                    <p><strong>Descripción:</strong> <span id="descripcionElemento"></span></p>
+                    <p><strong>Marca:</strong> <span id="marcaElemento"></span></p>
+                    <p><strong>Modelo:</strong> <span id="modeloElemento"></span></p>
+                    <p><strong>Serie:</strong> <span id="serieElemento"></span></p>
+                    <p><strong>Especificaciones Técnicas:</strong> <span id="especificacionesElemento"></span></p>
+                    <p><strong>Foto:</strong>
+                        <img id="fotoElemento" src="" alt="Foto" style="max-width: 100%;">
+                    </p>
+                </div>
+                <button type="button" class="btn-cerrar-modal" onclick="cerrarModal()">Cerrar</button>
             </div>
         </div>
 
@@ -160,15 +181,10 @@
         <div class="contenido">
             <div class="elementos">
                 <button type="button" class="btn-modal" id="abrir-modal-elementos"
-                    onclick="mostrarModal('modal-elementos-usuario')">
+                    onclick="mostrarModalElementos()">
                     <img src="{{ asset('imagenes/shopping.png') }}" alt="Nuevo Registro" class="iconos">
                     Ver Elementos
                 </button>
-
-
-
-
-
                 @if (isset($controlIngresoId))
                     <script>
                         console.log("Control Ingreso ID: {{ $controlIngresoId }}");
@@ -176,6 +192,7 @@
                 @else
                     <p>No se ha encontrado un registro de control de ingreso.</p>
                 @endif
+
 
                 <!-- Scripts al final del body para asegurar que el DOM esté cargado -->
                 <script>
@@ -265,32 +282,78 @@
                                 const card = document.createElement('div');
                                 card.classList.add('card');
                                 card.innerHTML = `
-                        <h3 class="cabeza">${elemento.categoria.nombre}</h3>
-                        <img src="{{ asset('storage/') }}/${elemento.foto}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
-                        <p><strong>Serie:</strong> ${elemento.serie}</p>
-                        <p><strong>Marca:</strong> ${elemento.marca}</p>
-                        <a href="#" class="link-ver-mas" onclick="mostrarDetallesElemento('${elemento.id}')">Ver más</a>
-                    `;
+                    <h3 class="cabeza">${elemento.categoria.nombre}</h3>
+                    <img src="{{ asset('storage/') }}/${elemento.foto}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
+                    <p><strong>Serie:</strong> ${elemento.serie}</p>
+                    <p><strong>Marca:</strong> ${elemento.marca}</p>
+                    <a href="#" class="link-ver-mas" onclick="mostrarDetallesElemento('${elemento.id}')">Ver más</a>
+                `;
                                 contenedorElementos.appendChild(card);
                             });
 
                             contenedorElementos.appendChild(botonVerElementos); // Reinsertar el botón
                         }
 
-                        // Función para mostrar detalles de un elemento específico en el modal
+                        // Función para mostrar detalles del elemento
                         window.mostrarDetallesElemento = function(elementoId) {
-                            console.log(`Intentando abrir el modal con ID: modal-elementos-usuario`);
-                            const modal = document.getElementById('modal-elementos-usuario');
+                            const modal = document.getElementById('modalElemento');
+                            const descripcion = document.getElementById('descripcionElemento');
+                            const marca = document.getElementById('marcaElemento');
+                            const modelo = document.getElementById('modeloElemento');
+                            const serie = document.getElementById('serieElemento');
+                            const especificaciones = document.getElementById('especificacionesElemento');
+                            const foto = document.getElementById('fotoElemento');
+                            const categoria = document.getElementById('categoriaElemento');
 
-                            if (modal) {
-                                // Aquí puedes cargar los detalles del elemento en el modal
-                                // Por simplicidad, solo se abrirá el modal
-                                modal.style.display = 'block';
-                                console.log(`Modal con ID modal-elementos-usuario abierto correctamente.`);
-                            } else {
-                                console.error(`Modal con ID modal-elementos-usuario no encontrado en el DOM.`);
+                            // Mostrar el modal
+                            modal.style.display = 'block';
+
+                            // Hacer la petición para obtener los detalles del elemento
+                            fetch(`/elementos/detalles/${elementoId}`)
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Error en la respuesta de la red');
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    if (data.success) {
+                                        // Actualizar los elementos del modal con los datos del elemento
+                                        descripcion.textContent = data.elemento.descripcion || 'No disponible';
+                                        marca.textContent = data.elemento.marca || 'No disponible';
+                                        modelo.textContent = data.elemento.modelo || 'No disponible';
+                                        serie.textContent = data.elemento.serie || 'No disponible';
+                                        especificaciones.textContent = data.elemento.especificaciones ||
+                                            'No disponible';
+                                        categoria.textContent = data.elemento.categoria || 'No disponible';
+                                        foto.src = data.elemento.foto ?
+                                            `{{ asset('storage/') }}/${data.elemento.foto}` :
+                                            '/path/to/default-image.jpg';
+                                    } else {
+                                        alert('No se encontraron detalles para este elemento.');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error al obtener detalles:', error);
+                                    alert('Ocurrió un error al cargar los detalles del elemento.');
+                                });
+                        };
+
+                        // Función para cerrar el modal
+                        document.getElementById('closeModal').addEventListener('click', function() {
+                            const modal = document.getElementById('modalElemento');
+                            modal.style.display = 'none';
+                        });
+
+                        // Cerrar el modal si el usuario hace clic fuera de la ventana
+                        window.onclick = function(event) {
+                            const modal = document.getElementById('modal-elementos-usuario');
+                            if (modal && event.target === modal) {
+                                cerrarModalElementos();
                             }
                         };
+
+
 
                         // Manejo de clics fuera del modal para cerrarlo
                         window.addEventListener('click', function(event) {
@@ -354,12 +417,12 @@
                                 fila.classList.add('registro-fila');
                                 fila.setAttribute('data-registro-id', registro.id);
                                 fila.innerHTML = `
-                        <td>${registro.id}</td>
-                        <td>${registro.centro?.nombre ?? 'Centro no definido'}</td>
-                        <td>${registro.fecha_ingreso}</td>
-                        <td>${registro.fecha_salida ?? 'N/A'}</td>
-                        <td>${registro.estado == 0 ? 'Abierto' : 'Cerrado'}</td>
-                    `;
+                    <td>${registro.id}</td>
+                    <td>${registro.centro?.nombre ?? 'Centro no definido'}</td>
+                    <td>${registro.fecha_ingreso}</td>
+                    <td>${registro.fecha_salida ?? 'N/A'}</td>
+                    <td>${registro.estado == 0 ? 'Abierto' : 'Cerrado'}</td>
+                `;
                                 tablaBody.appendChild(fila);
                             });
 
@@ -420,47 +483,60 @@
                             }, 5000);
                         }
 
-                        // Función para agregar un elemento al contenedor de elementos
-                        window.agregarElementoAlContenedor = function(elemento) {
-                            if (!elemento || !elemento.categoria) {
-                                console.error('Elemento o categoría no definido');
-                                return;
-                            }
-                            console.log('Agregando elemento al contenedor:', elemento);
+                        // Función para agregar un elemento al contenedor
+                        function agregarElementoAlContenedor(elemento) {
                             const contenedorElementos = document.querySelector('.elementos');
-                            if (!contenedorElementos) {
-                                console.error('Contenedor de elementos no encontrado');
-                                return;
-                            }
                             const card = document.createElement('div');
                             card.classList.add('card');
                             card.innerHTML = `
-                    <h3 style="margin-top:10px;" class="cabeza">${elemento.categoria.nombre}</h3>
-                    <img src="{{ asset('storage/') }}/${elemento.foto}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
-                    <p><strong>Serie:</strong> ${elemento.serie}</p>
-                    <p style="margin-top: -20px;"><strong>Marca:</strong> ${elemento.marca}</p>
-                    <a href="#" class="link-ver-mas" onclick="mostrarDetallesElemento('${elemento.id}')">Ver más</a>
-                `;
+                <h3 class="cabeza">${elemento.categoria.nombre}</h3>
+                <img src="{{ asset('storage/') }}/${elemento.foto}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
+                <p><strong>Serie:</strong> ${elemento.serie}</p>
+                <p><strong>Marca:</strong> ${elemento.marca}</p>
+            `;
                             contenedorElementos.appendChild(card);
+                        }
+
+                        // Función para mostrar el modal de elementos del usuario
+                        window.mostrarModalElementos = function() {
+                            const modal = document.getElementById('modal-elementos-usuario');
+                            if (modal) {
+                                modal.style.display = 'block'; // Muestra el modal
+                            } else {
+                                console.error('Modal no encontrado');
+                            }
                         };
 
-                        // Función para manejar 'Ver más' (puede ser personalizada para cargar detalles)
-                        window.mostrarDetallesElemento = function(elementoId) {
-                            console.log(`Intentando abrir el modal con ID: modal-elementos-usuario`);
-                            const modal = document.getElementById('modal-elementos-usuario');
-
+                        // Función para cerrar el modal
+                        window.cerrarModal = function() {
+                            const modal = document.getElementById('modalElemento');
                             if (modal) {
-                                // Aquí puedes agregar lógica para cargar detalles específicos del elemento
-                                // Por ahora, simplemente se abrirá el mismo modal
-                                modal.style.display = 'block';
-                                console.log(`Modal con ID modal-elementos-usuario abierto correctamente.`);
-                            } else {
-                                console.error(`Modal con ID modal-elementos-usuario no encontrado en el DOM.`);
+                                modal.style.display = 'none'; // Oculta el modal
+                            }
+                        };
+
+                        // Función para cerrar el modal de elementos
+                        function cerrarModalElementos() {
+                            const modal = document.getElementById('modal-elementos-usuario');
+                            if (modal) {
+                                modal.style.display = 'none'; // Oculta el modal
+                            }
+                        }
+                    });
+                </script>
+
+
+                <script>
+                    document.addEventListener("DOMContentLoaded", function() {
+                        // Aquí van tus funciones JavaScript
+                        window.cerrarModalElementos = function() {
+                            const modal = document.getElementById('modal-elementos-usuario');
+                            if (modal) {
+                                modal.style.display = 'none'; // Oculta el modal
                             }
                         };
                     });
                 </script>
-
 
 </body>
 

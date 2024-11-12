@@ -53,7 +53,7 @@ class ElementoController extends Controller
 
     public function showUserElements()
     {
-        $user = auth()->user();
+        $user = Auth::user();
         $elementos = $user->elementos; // Asumiendo que tienes una relación definida en el modelo User
 
         return view('index.vistausuario', compact('elementos'));
@@ -138,5 +138,27 @@ class ElementoController extends Controller
 
         // Redirigir con mensaje de éxito
         return redirect()->route('user.panel')->with('success', '¡Elemento actualizado exitosamente!');
+    }
+
+    public function detalles($id)
+    {
+        $elemento = Elemento::with('categoria')->find($id); // Cargar la categoría
+
+        if (!$elemento) {
+            return response()->json(['success' => false, 'message' => 'Elemento no encontrado'], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'elemento' => [
+                'descripcion' => $elemento->descripcion,
+                'marca' => $elemento->marca,
+                'modelo' => $elemento->modelo,
+                'serie' => $elemento->serie,
+                'especificaciones' => $elemento->especificaciones_tecnicas,
+                'foto' => $elemento->foto,
+                'categoria' => $elemento->categoria->nombre // Solo el nombre de la categoría
+            ]
+        ]);
     }
 }

@@ -28,6 +28,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/elementos/{id}', [ElementoController::class, 'destroy'])->name('elementos.destroy');
     Route::get('/elementos/{id}/edit', [ElementoController::class, 'edit'])->name('elementos.edit');
     Route::put('/elementos/{id}', [ElementoController::class, 'update'])->name('elementos.update');
+    Route::get('/elementos/detalles/{id}', [ElementoController::class, 'detalles'])->name('elementos.detalles');
 
     // Rutas para los paneles de administración y control
     Route::middleware(CheckRole::class . ':1')->group(function () {

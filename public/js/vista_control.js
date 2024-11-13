@@ -184,47 +184,55 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Función para registrar el control de ingreso
-    document.getElementById("agregar-registro").addEventListener("click", function (event) {
-        event.preventDefault(); // Evita recargar la página
+    document
+        .getElementById("agregar-registro")
+        .addEventListener("click", function (event) {
+            event.preventDefault(); // Evita recargar la página
 
-        const documentoVigilante = document.getElementById("documento_vigilante").value; // Asegúrate de obtener el valor correcto
-        const usuarioId = document.getElementById("usuario-id-oculto").value; // Asegúrate de obtener el valor correcto
+            const documentoVigilante = document.getElementById(
+                "documento_vigilante"
+            ).value; // Asegúrate de obtener el valor correcto
+            const usuarioId =
+                document.getElementById("usuario-id-oculto").value; // Asegúrate de obtener el valor correcto
 
-        if (!usuarioId) {
-            alert("No se ha encontrado información del usuario.");
-            return;
-        }
-
-        fetch(registroUrl, { // Asegúrate de que registroUrl esté definido correctamente
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
-            },
-            body: JSON.stringify({
-                documento_vigilante: documentoVigilante,
-                usuario_id: usuarioId,
-            }),
-        })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("Error en la respuesta de la red");
+            if (!usuarioId) {
+                alert("No se ha encontrado información del usuario.");
+                return;
             }
-            return response.json();
-        })
-        .then((data) => {
-            if (data.success) {
-                // Actualizar la tabla automáticamente sin alertas
-                limpiarTabla();
-                agregarRegistrosATabla(data.registros);
-            } else {
-                alert("Error: " + data.message);
-            }
-        })
-        .catch((error) => {
-            console.error("Error:", error);
+
+            fetch(registroUrl, {
+                // Asegúrate de que registroUrl esté definido correctamente
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document
+                        .querySelector('meta[name="csrf-token"]')
+                        .getAttribute("content"),
+                },
+                body: JSON.stringify({
+                    documento_vigilante: documentoVigilante,
+                    usuario_id: usuarioId,
+                }),
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("Error en la respuesta de la red");
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    if (data.success) {
+                        // Actualizar la tabla automáticamente sin alertas
+                        limpiarTabla();
+                        agregarRegistrosATabla(data.registros);
+                    } else {
+                        alert("Error: " + data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
         });
-    });
 
     // Función para limpiar la tabla
     function limpiarTabla() {
@@ -241,23 +249,26 @@ document.addEventListener("DOMContentLoaded", function () {
             fila.classList.add("registro-fila");
             fila.setAttribute("data-registro-id", registro.id);
             fila.innerHTML = `
-<td>${registro.id}</td>
-<td>${registro.centro?.nombre ?? "Centro no definido"}</td>
-<td>${registro.fecha_ingreso}</td>
-<td>${registro.fecha_salida ?? "N/A"}</td>
-<td>${registro.estado == 0 ? "Abierto" : "Cerrado"}</td>
-`;
-            tablaBody.appendChild(fila);
+            <td>${registro.id}</td>
+            <td>${registro.centro?.nombre ?? "Centro no definido"}</td>
+            <td>${registro.fecha_ingreso}</td>
+            <td>${registro.fecha_salida ?? "N/A"}</td>
+            <td>${registro.estado == 0 ? "Abierto" : "Cerrado"}</td>
+        `;
+
+            // Insertar la nueva fila al inicio de la tabla
+            tablaBody.insertBefore(fila, tablaBody.firstChild);
         });
 
-        aplicarEventListeners();
+        aplicarEventListeners(); // Asegúrate de que las nuevas filas tengan los eventos de clic
     }
 
     // Función sub_control_ingresos para registrar y asociar los elementos al control de ingreso
     document.querySelectorAll(".btn-ingresa").forEach((button) => {
         button.addEventListener("click", function () {
             const elementoId = this.getAttribute("data-elemento-id");
-            const controlIngresoId = document.getElementById('control_ingreso_id').value; // Captura el ID
+            const controlIngresoId =
+                document.getElementById("control_ingreso_id").value; // Captura el ID
 
             if (!controlIngresoId) {
                 alert("No se ha encontrado un registro de control de ingreso.");
@@ -268,30 +279,34 @@ document.addEventListener("DOMContentLoaded", function () {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
+                    "X-CSRF-TOKEN": document
+                        .querySelector('meta[name="csrf-token"]')
+                        .getAttribute("content"),
                 },
                 body: JSON.stringify({
                     control_ingreso_id: controlIngresoId,
                     elemento_id: elementoId,
                 }),
             })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Error en la respuesta de la red");
-                }
-                return response.json();
-            })
-            .then((data) => {
-                if (data.success) {
-                    mostrarMensajeExito("Elemento registrado exitosamente.");
-                    agregarElementoAlContenedor(data.elemento);
-                } else {
-                    alert("Error: " + data.message);
-                }
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-            });
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("Error en la respuesta de la red");
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    if (data.success) {
+                        mostrarMensajeExito(
+                            "Elemento registrado exitosamente."
+                        );
+                        agregarElementoAlContenedor(data.elemento);
+                    } else {
+                        alert("Error: " + data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
         });
     });
 

@@ -12,6 +12,7 @@
         const registroUrl = "{{ route('vigilante.registro') }}";
         const subControlIngresoUrl = "{{ route('sub_control_ingreso.store') }}";
     </script>
+    <script src="{{ asset('js/vista_control.js') }}"></script>
 
 </head>
 
@@ -79,7 +80,7 @@
                         </thead>
                         <tbody id="tabla-reportes-body">
                             @if (isset($registros) && $registros->isNotEmpty())
-                                @foreach ($registros as $registro)
+                                @foreach ($registros->reverse() as $registro)
                                     <tr class="registro-fila" data-registro-id="{{ $registro->id }}">
                                         <td>{{ $registro->id }}</td>
                                         <td>{{ $registro->centro->nombre ?? 'Centro no definido' }}</td>
@@ -106,12 +107,12 @@
                         </form>
                         <button type="button" class="boton" id="agregar-registro">
                             <img src="{{ asset('imagenes/add.png') }}" alt="Nuevo Registro" class="iconos">
-                            Nuevo Registro
+                            Ingresa
                         </button>
 
                         <button type="button" class="boton" id="guardar-registros">
                             <img src="{{ asset('imagenes/close.png') }}" alt="Guardar"class="iconos">
-                            Guardar Registros
+                            Egresa
                         </button>
                     </div>
                 </div>

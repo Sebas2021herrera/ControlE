@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckRole;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\WelcomeController;
@@ -7,6 +8,9 @@ use App\Http\Controllers\ElementoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VigilanteController;
 use App\Http\Controllers\AdminController;
+use App\Models\Elemento;
+use App\Models\Categoria;
+
 
 // Rutas para autenticación y registro
 Route::get('/', [WelcomeController::class, 'index']);
@@ -36,15 +40,23 @@ Route::middleware('auth')->group(function () {
         Route::get('admin/panel', function () {
             $categorias = Categoria::all();
             $elementos = Elemento::all();
-            return view('index.vistaadmin', compact( 'categorias', 'elementos'));
+            return view('index.vistaadmin', compact('categorias', 'elementos'));
         })->name('admin.panel');
 
         // Ruta para consultar usuarios
         Route::get('/admin/usuarios/consultar', [AdminController::class, 'consultarUsuario'])
-        ->name('admin.usuarios.consultar');
+            ->name('admin.usuarios.consultar');
         // Ruta para generar PDF de usuario
         Route::post('/admin/usuarios/pdf', [AdminController::class, 'generarReporteIngresosUsuario'])->name('admin.usuarios.pdf');
     });
+
+    // Luego, la ruta POST para manejar el envío del formulario y almacenar el elemento
+    Route::post('/admin/elementos/store', [AdminController::class, 'storeElemento'])->name('admin.elementos.store');
+
+    // Route::get('/admin/panel', [AdminController::class, 'panel'])->name('admin.panel');
+    Route::put('/admin/elementos/{id}', [AdminController::class, 'updateElemento'])->name('admin.elementos.update');
+    Route::get('admin/elementos/{id}/edit', [AdminController::class, 'edit'])->name('admin.elementos.edit');
+    Route::delete('/admin/elementos/{id}', [AdminController::class, 'destroyElemento'])->name('admin.elementos.destroy');
 
     // Rutas del vigilante para roles específicos
     Route::middleware(CheckRole::class . ':2')->group(function () {
@@ -59,7 +71,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/vigilante/elementos/{registroId}', [VigilanteController::class, 'obtenerElementosPorRegistro'])
             ->name('vigilante.elementos');
     });
-
 
     // Panel de usuario para roles 3, 4 y 5
     Route::middleware(CheckRole::class . ':3,4,5')->group(function () {

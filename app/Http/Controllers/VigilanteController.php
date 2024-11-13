@@ -34,9 +34,13 @@ class VigilanteController extends Controller
             return view('index.vistacontrol')->with('error', 'Usuario no encontrado.');
         }
 
-        // Obtener los elementos relacionados y los registros del usuario
+        // Obtener los elementos relacionados
         $elementos = $usuario->elementos;
-        $registros = ControlIngreso::where('usuario_id', $usuario->id)->get();
+
+        // Obtener los registros de ingreso del usuario en orden descendente de fecha
+        $registros = ControlIngreso::where('usuario_id', $usuario->id)
+            ->orderBy('fecha_ingreso', 'asc')
+            ->get();
 
         // Obtener el último registro de control de ingreso del usuario
         $ultimoRegistro = ControlIngreso::where('usuario_id', $usuario->id)->latest()->first();
@@ -83,7 +87,7 @@ class VigilanteController extends Controller
         $nuevoRegistro = ControlIngreso::create([
             'usuario_id' => $usuario->id,
             'centros_id' => $centros_id,
-            'fecha_ingreso' => Carbon::now('America/Bogota'), 
+            'fecha_ingreso' => Carbon::now('America/Bogota'),
             'estado' => 0, // Guardar como 0 para 'Abierto'
             'id_persona_control' => $vigilante->id, // Guardar el ID del vigilante
         ]);
@@ -124,7 +128,7 @@ class VigilanteController extends Controller
 
 
 
-    
+
     public function registrarElementoEnSubControl(Request $request)
     {
         $request->validate([
@@ -188,5 +192,4 @@ class VigilanteController extends Controller
             'elementos' => $elementos,
         ]);
     }
-    
 }

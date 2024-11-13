@@ -337,6 +337,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <p><strong>Serie:</strong> ${elemento.serie}</p>
 <p><strong>Marca:</strong> ${elemento.marca}</p>
 <a href="#" class="link-ver-mas" style="margin-top:-10px" onclick="mostrarDetallesElemento('${elemento.id}')">Ver más</a>
+<button type="button" class="btn-destroy" onclick="eliminarElemento('${elemento.id}')">Eliminar</button>
 `;
         contenedorElementos.appendChild(card);
     }

@@ -782,3 +782,21 @@ body {
     margin-right: -10px;
     margin-bottom: -10px;
 }
+
+.btn-destroy{
+    display: inline-block;
+    margin: 0;
+    margin-left: 24px;
+    max-width: 150px;
+    font-size: 15px;
+    border: none;
+    background-color: #39a900;
+    color:white;
+    border-radius: 6px;
+    padding: 8px;
+    transition: background-color 0.4s ease;
+}
+
+.btn-destroy:hover{
+    background-color: #00324d;
+}

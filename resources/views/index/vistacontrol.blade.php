@@ -195,6 +195,10 @@
                 @else
                     <p>No se ha encontrado un registro de control de ingreso.</p>
                 @endif
+
+            </div>
+        </div>               
+        <script src="{{ asset('js/vista_control.js') }}"></script>
 </body>
 
 </html>

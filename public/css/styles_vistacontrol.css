@@ -32,13 +32,13 @@ body {
 
 .form-busqueda {
     position: relative;
-    width: 300px; 
+    width: 300px;
 }
 
 .input-busqueda {
     width: 100%;
-    height: 36px; 
-    padding: 0 70px 0 15px; 
+    height: 36px;
+    padding: 0 70px 0 15px;
     border-radius: 8px;
     border: none;
     font-size: 16px;
@@ -54,17 +54,17 @@ body {
     position: absolute;
     right: 0;
     top: 0;
-    width: 30px; 
-    height: 36px; 
-    background-color: #39a900; 
-    border-radius: 0 8px 8px 0; 
+    width: 30px;
+    height: 36px;
+    background-color: #39a900;
+    border-radius: 0 8px 8px 0;
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0;
-    z-index: 2; 
+    z-index: 2;
 }
 
 .lupa-icon {
@@ -97,7 +97,7 @@ body {
     height: 216px;
     background-color: #e0e0e0;
     border-radius: 8px;
-    padding: 0; 
+    padding: 0;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -111,7 +111,7 @@ body {
     overflow-y: scroll;
     scrollbar-width: none;
     -ms-overflow-style: none;
-    padding: 0; 
+    padding: 0;
 }
 
 .tabla-container::-webkit-scrollbar {
@@ -127,19 +127,19 @@ body {
 }
 
 .tabla-reportes td {
-    height: 60px; 
+    height: 60px;
 }
 
 .tabla-reportes th,
 .tabla-reportes td {
     padding: 8px;
     text-align: left;
-    border: 2px solid white; 
+    border: 2px solid white;
 }
 
 .tabla-reportes th:nth-child(5),
 .tabla-reportes td:nth-child(5) {
-    width: 15%; 
+    width: 15%;
 }
 
 .tabla-reportes thead {
@@ -177,33 +177,35 @@ body {
     bottom: 0;
     left: 0;
     width: 100%;
-    background-color: #e0e0e0; 
-    border-top: 1px solid #ddd; 
+    background-color: #e0e0e0;
+    border-top: 1px solid #ddd;
     display: flex;
-    justify-content: center; 
+    justify-content: center;
 }
 
-.boton, .btn-modal {
+.boton,
+.btn-modal {
     padding: 10px 20px;
-    background-color: #00324d; 
-    color: white; 
-    border: none; 
-    border-radius: 8px; 
-    cursor: pointer; 
-    font-size: 14px; 
-    transition: background-color 0.3s ease; 
+    background-color: #00324d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
     margin: 5px;
 }
 
 .boton:first-child {
-    margin-right: 10px; 
+    margin-right: 10px;
 }
 
-.boton:hover, .btn-modal:hover {
-    background-color: #39a900; 
+.boton:hover,
+.btn-modal:hover {
+    background-color: #39a900;
 }
 
-.icono-ingresa{
+.icono-ingresa {
     width: 20px;
     height: 20px;
     margin-left: -15px;
@@ -211,7 +213,7 @@ body {
     margin-top: -10px;
 }
 
-.iconos{
+.iconos {
     padding: 0px;
     width: 25px;
     height: 25px;
@@ -292,7 +294,7 @@ body {
     gap: 16px;
     flex: 1 1 auto;
     overflow-y: auto;
-    width: 100%;       /* Asegura que ocupe todo el ancho disponible */
+    width: 100%; /* Asegura que ocupe todo el ancho disponible */
 }
 
 .contenido .elementos {
@@ -303,8 +305,8 @@ body {
     align-items: start;
     overflow-y: auto;
     max-height: 345px;
-    width: 100%;      /* Ancho fijo al 100% del contenedor padre */
-    flex: 1;          /* Toma el espacio disponible */
+    width: 100%; /* Ancho fijo al 100% del contenedor padre */
+    flex: 1; /* Toma el espacio disponible */
     background-color: #e0e0e0;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -343,7 +345,7 @@ body {
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    width: 220px;  /* ancho fijo para mantener consistencia */
+    width: 220px; /* ancho fijo para mantener consistencia */
     height: 350px;
     padding: 15px;
     text-align: center;
@@ -646,10 +648,11 @@ body {
     margin-bottom: 20px;
 }
 
-.btn-cerrar, .btn-cerrar-modal {
+.btn-cerrar,
+.btn-cerrar-modal {
     position: absolute;
     bottom: 20px; /* Ajusta según sea necesario */
-    right: 20px;  /* Ajusta según sea necesario */
+    right: 20px; /* Ajusta según sea necesario */
     background-color: #ccc; /* Color gris */
     border: none;
     padding: 10px;
@@ -658,8 +661,9 @@ body {
     transition: background-color 0.3s ease;
 }
 
-.btn-cerrar:hover, .btn-cerrar-modal:hover {
-    background-color: #aaa; 
+.btn-cerrar:hover,
+.btn-cerrar-modal:hover {
+    background-color: #aaa;
 }
 
 .btn-modal {
@@ -702,7 +706,7 @@ body {
     color: #155724;
     border: none;
     padding: 10px;
-    margin:0;
+    margin: 0;
     width: 100%;
     text-align: center;
     position: relative;
@@ -740,10 +744,59 @@ body {
 }
 
 .registro-fila:hover {
-    border: 2px solid lightgray;
+    border: 2px solid rgb(125, 125, 125);
 }
 
 .fila-seleccionada {
-    border: 2px solid gray; /* Cambia a negro si prefieres */
+    border: 2px solid rgb(67, 189, 33); /* Cambia a negro si prefieres */
 }
 
+#modalElemento .modal-content {
+    margin: auto; /* Centra el modal horizontalmente */
+    margin-top: 4%; /* Añadir margen superior para centrar verticalmente */
+    width: 600px !important; /* Ancho fijo */
+    height: auto; /* Mantener la altura automática */
+    max-height: 800px; /* Aumentar la altura máxima */
+    overflow: hidden; /* Ocultar el desbordamiento */
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#modalElemento .modal-title {
+    text-align: center;
+}
+
+#modalElemento #contenidoElemento {
+    text-align: center;
+}
+
+#modalElemento #fotoElemento {
+    max-width: 40%; /* Asegura que la imagen no exceda el ancho del modal */
+    height: auto; /* Mantiene la proporción de la imagen */
+    margin-top: 20px;
+    border-radius: 8px;
+}
+
+#modalElemento .btn-cerrar-modal{
+    margin-right: -10px;
+    margin-bottom: -10px;
+}
+
+.btn-destroy{
+    display: inline-block;
+    margin: 0;
+    margin-left: 24px;
+    max-width: 150px;
+    font-size: 15px;
+    border: none;
+    background-color: #39a900;
+    color:white;
+    border-radius: 6px;
+    padding: 8px;
+    transition: background-color 0.4s ease;
+}
+
+.btn-destroy:hover{
+    background-color: #00324d;
+}

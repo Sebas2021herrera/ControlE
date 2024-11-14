@@ -1,18 +1,23 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckRole;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\ElementoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VigilanteController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
+use App\Models\Elemento;
+use App\Models\Categoria;
+
 
 // Rutas para autenticación y registro
 Route::get('/', [WelcomeController::class, 'index']);
 Route::get('login', [AuthController::class, 'showLogin'])->name('login');
 Route::get('create', [AuthController::class, 'create'])->name('create');
 Route::post('registrado', [AuthController::class, 'createpost'])->name('createpost');
+Route::post('/createpost', [AdminController::class, 'store'])->name('createpost');
 Route::post('login', [AuthController::class, 'login'])->name('login.post');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -28,13 +33,30 @@ Route::middleware('auth')->group(function () {
     Route::delete('/elementos/{id}', [ElementoController::class, 'destroy'])->name('elementos.destroy');
     Route::get('/elementos/{id}/edit', [ElementoController::class, 'edit'])->name('elementos.edit');
     Route::put('/elementos/{id}', [ElementoController::class, 'update'])->name('elementos.update');
+    Route::get('/elementos/detalles/{id}', [ElementoController::class, 'detalles'])->name('elementos.detalles');
 
     // Rutas para los paneles de administración y control
     Route::middleware(CheckRole::class . ':1')->group(function () {
         Route::get('admin/panel', function () {
-            return view('index.vistaadmin');
+            $categorias = Categoria::all();
+            $elementos = Elemento::all();
+            return view('index.vistaadmin', compact('categorias', 'elementos'));
         })->name('admin.panel');
+
+        // Ruta para consultar usuarios
+        Route::get('/admin/usuarios/consultar', [AdminController::class, 'consultarUsuario'])
+            ->name('admin.usuarios.consultar');
+        // Ruta para generar PDF de usuario
+        Route::post('/admin/usuarios/pdf', [AdminController::class, 'generarReporteIngresosUsuario'])->name('admin.usuarios.pdf');
     });
+
+    // Luego, la ruta POST para manejar el envío del formulario y almacenar el elemento
+    Route::post('/admin/elementos/store', [AdminController::class, 'storeElemento'])->name('admin.elementos.store');
+
+    // Route::get('/admin/panel', [AdminController::class, 'panel'])->name('admin.panel');
+    Route::put('/admin/elementos/{id}', [AdminController::class, 'updateElemento'])->name('admin.elementos.update');
+    Route::get('admin/elementos/{id}/edit', [AdminController::class, 'edit'])->name('admin.elementos.edit');
+    Route::delete('/admin/elementos/{id}', [AdminController::class, 'destroyElemento'])->name('admin.elementos.destroy');
 
     // Rutas del vigilante para roles específicos
     Route::middleware(CheckRole::class . ':2')->group(function () {
@@ -45,11 +67,10 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/vigilante/registro', [VigilanteController::class, 'nuevoRegistro'])->name('vigilante.registro');
         Route::post('/sub_control_ingreso', [VigilanteController::class, 'registrarElementoEnSubControl'])->name('sub_control_ingreso.store');
-        
+
         Route::get('/vigilante/elementos/{registroId}', [VigilanteController::class, 'obtenerElementosPorRegistro'])
             ->name('vigilante.elementos');
     });
-
 
     // Panel de usuario para roles 3, 4 y 5
     Route::middleware(CheckRole::class . ':3,4,5')->group(function () {

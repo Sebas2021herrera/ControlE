@@ -8,7 +8,6 @@
     <title>Panel de Usuario</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/styles_formulario_elementos.css') }}">
     <link rel="stylesheet" href="{{ asset('css/styles_vistausuario.css') }}">
 </head>
@@ -31,7 +30,6 @@
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
                                 data-bs-target="#registroModal">Registrar Elementos</a></li>
-
                         <li>
                             <a class="dropdown-item" href="#" data-bs-toggle="modal"
                                 data-bs-target="#editarPerfilModal">Editar Perfil</a>
@@ -369,208 +367,11 @@
         </div>
     </div>
 
-
-
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ asset('js/vista_usuario.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-
-
-    <!-- mostrar ficha solo si es roll aprendiz -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const numeroFichaField = document.getElementById('numeroFichaFieldModal');
-            const numeroFichaInput = document.getElementById('numero_ficha_modal');
-
-            if (numeroFichaField) {
-                numeroFichaField.style.display = 'block';
-                numeroFichaInput.required = true;
-            } else {
-                numeroFichaField.style.display = 'none';
-                numeroFichaInput.required = false;
-            }
-        });
-    </script>
-
-    <script>
-        function editElement(id) {
-            document.getElementById('details-view-' + id).classList.add('d-none');
-            document.getElementById('edit-view-' + id).classList.remove('d-none');
-            document.getElementById('save-changes-btn-' + id).classList.remove('d-none');
-        }
-
-        function saveChanges(id) {
-            document.getElementById('edit-view-' + id).querySelector('form').submit();
-        }
-
-        function closeModal(id) {
-            const editView = document.getElementById('edit-view-' + id);
-            const detailsView = document.getElementById('details-view-' + id);
-            const saveChangesBtn = document.getElementById('save-changes-btn-' + id);
-
-            if (!editView.classList.contains('d-none')) {
-                // Cambia a la vista de detalles si se está en la vista de edición
-                editView.classList.add('d-none');
-                detailsView.classList.remove('d-none');
-                saveChangesBtn.classList.add('d-none');
-            } else {
-                // Cierra el modal si ya está en la vista de detalles
-                document.querySelector(`#modal-${id} .btn-close`).click();
-            }
-        }
-    </script>
-    <script>
-        $(document).ready(function() {
-            const successMessage = $('.alert-success');
-            if (successMessage.length) {
-                setTimeout(() => {
-                    successMessage.fadeOut(500); // Desvanecer el mensaje en 0.5 segundos
-                }, 5000); // Mostrar el mensaje por 5 segundos antes de desvanecerlo
-            }
-        });
-    </script>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#editarPerfilForm').on('submit', function(event) {
-                event.preventDefault(); // Evita el envío tradicional del formulario
-
-                $.ajax({
-                    url: $(this).attr('action'),
-                    method: 'POST',
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        // Actualiza la vista con la nueva información del usuario
-                        updateUserProfile(response.user);
-
-                        // Cierra el modal
-                        $('#editarPerfilModal').modal('hide');
-
-                        // Muestra un mensaje de éxito si es necesario
-                        $('#success-message').text(response.success).fadeIn().delay(5000)
-                            .fadeOut();
-                    },
-                    error: function(response) {
-                        // Muestra un mensaje de error si es necesario
-                        $('#error-message').text('Ocurrió un error al actualizar el perfil.')
-                            .fadeIn().delay(5000).fadeOut();
-                    }
-                });
-            });
-
-            function updateUserProfile(user) {
-                $('#welcomeMessage').html(`Bienvenido <br />${user.nombres} ${user.apellidos}`);
-                $('.navbar-nav .nav-link').text(user.nombres);
-            }
-        });
-    </script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#editarPerfilForm').on('submit', function(event) {
-                event.preventDefault(); // Evita que el formulario se envíe de la forma tradicional
-
-                $.ajax({
-                    url: '{{ route('updateProfile') }}', // Cambia esta URL si es diferente
-                    type: 'POST',
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        alert(response.success); // Muestra mensaje de éxito
-                        $('#editarPerfilModal').modal('hide'); // Cierra el modal
-                        // Actualiza la vista si es necesario
-                        updateUserProfile(response.user);
-                    },
-                    error: function(xhr) {
-                        alert(xhr.responseJSON.error); // Muestra mensaje de error
-                    }
-                });
-            });
-
-            function updateUserProfile(user) {
-                // Actualiza los elementos en la vista con la información del usuario
-                // Por ejemplo:
-                $('#userName').text(user.nombres + ' ' + user.apellidos);
-                $('#userEmail').text(user.correo_institucional);
-                // Añade más actualizaciones según sea necesario
-            }
-        });
-    </script>
-
-    <script>
-        document.getElementById('editarPerfilForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const formData = new FormData(this);
-
-            fetch('{{ route('updateProfile') }}', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    },
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Forzar recarga de la página
-                        window.location.reload();
-                    } else {
-                        alert('Hubo un error al actualizar el perfil.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error al actualizar el perfil:', error);
-                    alert('Hubo un error al actualizar el perfil.');
-                });
-        });
-    </script>
-    <!-- ver imagen en el editar perfil y editar elemento -->
-    <script>
-        function previewImage(event, previewId) {
-            var file = event.target.files[0];
-            var preview = document.getElementById(previewId);
-
-            if (file) {
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    console.log("Nueva foto de perfil seleccionada: ", e.target.result); // Log para la nueva imagen
-                };
-                reader.readAsDataURL(file);
-            } else {
-                // Reestablecer la imagen a la original si no se selecciona un archivo
-                var originalPhotoUrl =
-                    '{{ Auth::user()->foto ? asset('storage/fotos_perfil/' . Auth::user()->foto) : asset('imagenes/sin_foto_perfil.webp') }}';
-                preview.src = originalPhotoUrl;
-                console.log("Foto de perfil actual o predeterminada: ", originalPhotoUrl); // Log para la foto actual
-            }
-        }
-    </script>
-
-    <!-- previsualziar la foto en registrar un nuevo elemento -->
-    <script>
-        function previewImage(event, previewId) {
-            var file = event.target.files[0];
-            var preview = document.getElementById(previewId);
-
-            if (file) {
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.style.display = 'block'; // Asegúrate de que la imagen sea visible
-                    console.log("Imagen seleccionada: ", e.target.result); // Log para la nueva imagen
-                };
-                reader.readAsDataURL(file);
-            } else {
-                preview.src = '#'; // Ocultar imagen si no se selecciona archivo
-                preview.style.display = 'none';
-            }
-        }
-    </script>
-
-
+    
 </body>
 
 </html>

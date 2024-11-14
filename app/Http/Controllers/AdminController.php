@@ -282,10 +282,10 @@ public function update(Request $request, $id)
                 ->firstOrFail(); // Retorna 404 si no se encuentra el usuario
 
     // Generar el PDF usando la vista `reports.blade.php`
-    $pdf = Pdf::loadView('pdf.reports', compact('usuario'));
+    $pdf = Pdf::loadView('pdf.vistareportes', compact('usuario'));
 
     // Retornar el PDF para descarga o visualizar en el navegador
-    return $pdf->download('reports_' . $numeroDocumento . '.pdf');
+    return $pdf->download('reportes_' . $numeroDocumento . '.pdf');
     }
 
 }

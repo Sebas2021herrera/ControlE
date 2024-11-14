@@ -7,6 +7,9 @@ use App\Http\Controllers\ElementoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VigilanteController;
 use App\Http\Controllers\AdminController;
+use Illuminate\Support\Facades\Route;
+use App\Models\Categoria;
+use App\Models\Elemento;
 
 // Rutas para autenticación y registro
 Route::get('/', [WelcomeController::class, 'index']);
@@ -31,20 +34,31 @@ Route::middleware('auth')->group(function () {
     Route::put('/elementos/{id}', [ElementoController::class, 'update'])->name('elementos.update');
     Route::get('/elementos/detalles/{id}', [ElementoController::class, 'detalles'])->name('elementos.detalles');
 
-    // Rutas para los paneles de administración y control
+        // Rutas para los paneles de administración y control
     Route::middleware(CheckRole::class . ':1')->group(function () {
         Route::get('admin/panel', function () {
             $categorias = Categoria::all();
             $elementos = Elemento::all();
-            return view('index.vistaadmin', compact( 'categorias', 'elementos'));
+            return view('index.vistaadmin', compact('categorias', 'elementos'));
         })->name('admin.panel');
 
         // Ruta para consultar usuarios
         Route::get('/admin/usuarios/consultar', [AdminController::class, 'consultarUsuario'])
-        ->name('admin.usuarios.consultar');
+            ->name('admin.usuarios.consultar');
+
+        // Ruta para almacenar un nuevo usuario (storeUsuario)
+        Route::post('/admin/usuarios', [AdminController::class, 'storeUsuario'])->name('admin.usuarios.store');
+
         // Ruta para generar PDF de usuario
         Route::post('/admin/usuarios/pdf', [AdminController::class, 'generarReporteIngresosUsuario'])->name('admin.usuarios.pdf');
     });
+
+    // Rutas para elementos en la vista admin
+    Route::post('/admin/elementos/store', [AdminController::class, 'storeElemento'])->name('admin.elementos.store');
+    Route::put('/admin/elementos/{id}', [AdminController::class, 'updateElemento'])->name('admin.elementos.update');
+    Route::get('admin/elementos/{id}/edit', [AdminController::class, 'edit'])->name('admin.elementos.edit');
+    Route::delete('/admin/elementos/{id}', [AdminController::class, 'destroyElemento'])->name('admin.elementos.destroy');
+
 
     // Rutas del vigilante para roles específicos
     Route::middleware(CheckRole::class . ':2')->group(function () {

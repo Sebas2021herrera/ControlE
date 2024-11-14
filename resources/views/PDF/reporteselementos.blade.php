@@ -7,10 +7,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/styles_vistapdf.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/styles_vista_reportes.css') }}">
     <title>Reportes</title>
 </head>
 <body>
-    
+    <h1>Reportes de Ingresos</h1>
 </body>
 </html>

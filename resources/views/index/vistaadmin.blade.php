@@ -33,12 +33,14 @@
     
             <div class="dropdown is-hoverable" style="margin-right: 20px;">
                 <div class="dropdown-trigger">
-                    <a href="#" id="reportsLink" class="registrar">Reportes ingresos</a>
+                    <a href="#" id="reportsLink" class="registrar">Reportes</a>
                 </div>
                 <!-- Aquí puedes agregar un dropdown para reportes si es necesario -->
                 <div class="dropdown-menu" id="dropdown-menu" role="menu">
                     <div class="dropdown-content">
-                        <a href="#" class="open-report-ingresos-modal">Reportes ingresos usuarios</a>
+                        <a href="#" class="open-report-ingresos-modal">Reportes ingresos</a>
+                        <a href="#" class="open-report-ingresos-modal">Reportes usuarios</a>
+                        <a href="#" class="open-report-ingresos-modal">Reportes elementos</a>
                     </div>
                 </div>
             </div>
@@ -469,9 +471,9 @@
                     <input type="text" 
                            name="documento" 
                            class="search-input" 
-                           placeholder="Ingresar Documento del Usuario..." 
+                           placeholder="Ingresa Documento Usuario..." 
                            required>
-                    <button type="submit" class="search-button">
+                    <button type="submit" class="search-button-reports">
                         <i class="fas fa-file-pdf"></i> Generar PDF
                     </button>
                 </div>

@@ -45,6 +45,15 @@ body {
 /* Estilos para los items del dropdown */
 .dropdown-content .dropdown-item {
     color: white !important;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 18px; /* Asegura que el tamaño de fuente sea consistente */
+    padding: 10px 20px;
+}
+
+.dropdown-menu {
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 5px 0;
 }
 
 .dropdown-content {
@@ -66,6 +75,21 @@ body {
     background-color: #429419 !important;
     color: white !important;
 }
+
+.open-report-ingresos-modal {
+    color: #ffff; /* Color del texto */
+    padding: 0.5em 1em;
+    text-decoration: none;
+    display: block;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 18px; /* Asegura que el tamaño de fuente sea consistente */
+}
+
+.open-report-ingresos-modal:hover {
+    background-color: #429419 !important;
+    color: white !important;
+}
+
 
 .registrar:hover {
     color: #39A900 !important;
@@ -91,6 +115,19 @@ body {
 
 .nav-list a:hover {
     color: #00ff2a; /* Cambia a un color dorado al pasar el mouse */
+}
+
+/* Asegura que los links en el dropdown de "Registro" tengan estilo consistente */
+.nav-list .nav-options {
+    font-family: 'Work Sans', sans-serif;
+    color: white !important;
+    font-size: 18px;
+}
+
+.nav-list .nav-options:hover {
+    color: white !important; /* El texto permanece blanco en hover */
+    background-color: #39a900; /* Fondo verde oscuro en hover */
+    transition: background-color 0.3s; /* Suaviza el cambio de color de fondo */
 }
 
 /* Estilos del Modal */
@@ -265,6 +302,21 @@ body {
     font-size: 16px;
 }
 
+.search-button-reports {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 78px !important;
+    height: 36px;
+    background-color: #39a900 !important;
+    border-radius: 0 8px 8px 0;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 /* Estilos para el botón de cerrar sesión */
 .dropdown-item[type="submit"]:hover {
     background-color: #429419 !important;
@@ -391,8 +443,6 @@ body {
     justify-content: center;
 }
 
-/* ... código existente ... */
-
 /* Estilos para los cards */
 .card {
     display: flex;
@@ -427,5 +477,3 @@ body {
     object-fit: contain; /* Cubre el área del contenedor sin deformar la imagen */
     margin-bottom: 10px;
 }
-
-/* ... código existente ... */

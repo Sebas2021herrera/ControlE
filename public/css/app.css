@@ -5,7 +5,7 @@ body {
     height: 100vh;
     display: flex;
     flex-direction: column;
-    
+    font-family: 'Work Sans', sans-serif;
 }
 
 .hero {
@@ -21,15 +21,40 @@ body {
 .hero-content {
     position: relative;
     z-index: 2;
-    max-width: 600px;
-    padding: 20px;
+    max-width: 800px; /* Ancho máximo del contenedor */
+    padding: 40px;
     background-color: rgba(66, 69, 66, 0.5); /* Fondo oscuro semitransparente */
     border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Asegura que todos los elementos estén centrados */
+    overflow: hidden; /* Evita que el contenido desborde */
+    box-sizing: border-box;
 }
 
 .hero-content h1,
 .hero-content p {
     animation: fadeIn 2s ease-in-out;
+    margin-bottom: 20px; /* Asegura que haya un espaciado constante */
+}
+
+.logo-container {
+    max-width: 350px; /* Límite máximo para el contenedor del logo */
+    margin-bottom: 20px; /* Espacio debajo del logo */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.img-fluid-logo-sena {
+    width: 103%; /* Ajusta automáticamente al tamaño del contenedor */
+    height: auto; /* Mantiene las proporciones del logo */
+    
+    transition: transform 0.3s ease; /* Animación suave al pasar el ratón */
+}
+
+.img-fluid-logo-sena:hover {
+    transform: scale(1.6); /* Efecto de zoom */
 }
 
 .buttons .btn {
@@ -64,6 +89,3 @@ body {
 .footer {
     background-color: #202020;
 }
-
-
-

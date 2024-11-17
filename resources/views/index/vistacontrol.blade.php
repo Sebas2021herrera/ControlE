@@ -197,8 +197,8 @@
                 @endif
 
             </div>
-        </div>               
-        <script src="{{ asset('js/vista_control.js') }}"></script>
+        </div>   
+            <script src="{{ asset('js/vista_control.js') }}"></script>         
 </body>
 
 </html>

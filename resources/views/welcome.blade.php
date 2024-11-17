@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control e - Bienvenida</title>
+    <title>Control E - Bienvenida</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Navbar 
@@ -32,8 +35,10 @@
     <!-- Hero Section -->
     <header class="hero d-flex align-items-center justify-content-center text-center text-white">
         <div class="hero-content">
-            <h1 class="display-4 animated fadeIn">Bienvenido a Control E</h1>
-            {{-- <img src="{{ asset('imagenes/Logo-Control-E.png') }}" alt="Control E Logo" class="img-fluid logo-sena"> --}}
+            {{-- <h1 class="display-4 animated fadeIn">Bienvenido a Control E</h1> --}}
+            <div class="logo-container">
+                <img src="{{ asset('imagenes/Logo-Control-E-sin-palabras.png') }}" alt="Control E Logo" class="img-fluid-logo-sena">
+            </div>
             <p class="lead animated fadeIn">Control de elementos para la Regional Casanare - SENA.</p>
             <div class="buttons mt-4">
                 <a class="btn btn-light btn-lg animated bounceIn" href="{{ route('login') }}" role="button">Iniciar sesión</a>
@@ -41,6 +46,7 @@
             </div>
         </div>
     </header>
+    
 
     <!-- Footer -->
     <footer class="footer bg-dark text-center text-white py-4">

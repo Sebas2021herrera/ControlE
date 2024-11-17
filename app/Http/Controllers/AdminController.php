@@ -170,7 +170,7 @@ class AdminController extends Controller
         if (!$usuario) {
             return response()->json([
                 'success' => false,
-                'mensaje' => 'Usuario no encontrado'
+                'mensaje' => 'Usuario no encontrado',
             ], 404);
         }
 
@@ -178,16 +178,19 @@ class AdminController extends Controller
         return response()->json([
             'success' => true,
             'usuario' => $usuario,
-            'elementos' => $usuario->elementos
+            'elementos' => $usuario->elementos,
         ]);
 
     } catch (\Exception $e) {
+        \Log::error('Error al buscar usuario: ' . $e->getMessage());
+
         return response()->json([
             'success' => false,
-            'mensaje' => 'Error al buscar el usuario'
+            'mensaje' => 'Error al buscar el usuario',
         ], 500);
     }
 }
+
 
     /**
      * Display the specified resource.

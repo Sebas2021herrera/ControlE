@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
     aplicarEventListeners();
 
     // Función para obtener elementos asociados
-    function obtenerElementosAsociados(registroId) {
+    function actualizarElementosAsociados(registroId) {
         fetch(`/vigilante/elementos/${registroId}`)
             .then((response) => response.json())
             .then((data) => {
@@ -73,9 +73,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     alert("No se encontraron elementos asociados.");
                 }
             })
-            .catch((error) => {
-                console.error("Error:", error);
-            });
+            .catch((error) => console.error("Error:", error));
     }
 
     // Función para mostrar elementos en el modal
@@ -270,11 +268,18 @@ document.addEventListener("DOMContentLoaded", function () {
             const controlIngresoId =
                 document.getElementById("control_ingreso_id").value; // Captura el ID
 
+            // Verificar que ambos valores estén presentes
             if (!controlIngresoId) {
                 alert("No se ha encontrado un registro de control de ingreso.");
                 return;
             }
 
+            if (!elementoId) {
+                alert("No se ha seleccionado un elemento para ingresar.");
+                return;
+            }
+
+            // Hacer la solicitud al servidor
             fetch(subControlIngresoUrl, {
                 method: "POST",
                 headers: {
@@ -290,15 +295,23 @@ document.addEventListener("DOMContentLoaded", function () {
             })
                 .then((response) => {
                     if (!response.ok) {
-                        throw new Error("Error en la respuesta de la red");
+                        throw new Error(
+                            `Error en la respuesta de la red: ${response.statusText}`
+                        );
                     }
                     return response.json();
                 })
                 .then((data) => {
                     if (data.success) {
+                        // Mostrar mensaje de éxito
                         mostrarMensajeExito(
                             "Elemento registrado exitosamente."
                         );
+
+                        // Actualizar los elementos asociados al control de ingreso
+                        actualizarElementosAsociados(controlIngresoId);
+
+                        // Agregar el nuevo elemento al contenedor de elementos
                         agregarElementoAlContenedor(data.elemento);
                     } else {
                         alert("Error: " + data.message);
@@ -306,9 +319,203 @@ document.addEventListener("DOMContentLoaded", function () {
                 })
                 .catch((error) => {
                     console.error("Error:", error);
+                    alert(
+                        "Se produjo un error al registrar el elemento: " +
+                            error.message
+                    );
                 });
         });
     });
+
+    // Función para mostrar un mensaje de éxito
+    function mostrarMensajeExito(mensaje) {
+        const mensajeElemento = document.createElement("div");
+        mensajeElemento.classList.add("mensaje-exito");
+        mensajeElemento.textContent = mensaje;
+        document.body.appendChild(mensajeElemento);
+        setTimeout(() => mensajeElemento.remove(), 3000); // Eliminar el mensaje después de 3 segundos
+    }
+
+    // Función para actualizar los elementos asociados
+    function actualizarElementosAsociados(controlIngresoId) {
+        fetch(`/vigilante/elementos_asociados/${controlIngresoId}`)
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    // Actualiza la vista de los elementos asociados
+                    mostrarElementosAsociados(data.elementos);
+                } else {
+                    console.log(
+                        "No se pudieron obtener los elementos asociados."
+                    );
+                }
+            })
+            .catch((error) => {
+                console.error(
+                    "Error al obtener los elementos asociados:",
+                    error
+                );
+            });
+    }
+
+    // Función para mostrar los elementos asociados a la vista
+    function mostrarElementosAsociados(elementos) {
+        const contenedor = document.getElementById("contenedor-elementos");
+        contenedor.innerHTML = ""; // Limpiar el contenedor
+
+        // Crear una lista o una tabla con los elementos asociados
+        elementos.forEach((elemento) => {
+            const elementoDiv = document.createElement("div");
+            elementoDiv.classList.add("elemento");
+            elementoDiv.textContent = `Elemento ID: ${elemento.id}, Nombre: ${elemento.nombre}`;
+            contenedor.appendChild(elementoDiv);
+        });
+    }
+
+    // Función para agregar un elemento al contenedor de elementos
+    function agregarElementoAlContenedor(elemento) {
+        const contenedor = document.getElementById("contenedor-elementos");
+        const elementoDiv = document.createElement("div");
+        elementoDiv.classList.add("elemento");
+        elementoDiv.textContent = `Elemento ID: ${elemento.id}, Nombre: ${elemento.nombre}`;
+        contenedor.appendChild(elementoDiv);
+    }
+
+    // Función para mostrar un mensaje de éxito
+    function mostrarMensajeExito(mensaje) {
+        const mensajeElemento = document.createElement("div");
+        mensajeElemento.classList.add("mensaje-exito");
+        mensajeElemento.textContent = mensaje;
+        document.body.appendChild(mensajeElemento);
+        setTimeout(() => mensajeElemento.remove(), 3000); // Eliminar el mensaje después de 3 segundos
+    }
+
+    // Función para actualizar los elementos asociados
+    function actualizarElementosAsociados(controlIngresoId) {
+        fetch(`/vigilante/elementos_asociados/${controlIngresoId}`)
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    // Actualiza la vista de los elementos asociados
+                    mostrarElementosAsociados(data.elementos);
+                } else {
+                    console.log(
+                        "No se pudieron obtener los elementos asociados."
+                    );
+                }
+            })
+            .catch((error) => {
+                console.error(
+                    "Error al obtener los elementos asociados:",
+                    error
+                );
+            });
+    }
+
+    // Función para mostrar los elementos asociados a la vista
+    function mostrarElementosAsociados(elementos) {
+        const contenedor = document.getElementById("contenedor-elementos");
+        contenedor.innerHTML = ""; // Limpiar el contenedor
+
+        // Crear una lista o una tabla con los elementos asociados
+        elementos.forEach((elemento) => {
+            const elementoDiv = document.createElement("div");
+            elementoDiv.classList.add("elemento");
+            elementoDiv.textContent = `Elemento ID: ${elemento.id}, Nombre: ${elemento.nombre}`;
+            contenedor.appendChild(elementoDiv);
+        });
+    }
+
+    // Función para agregar un elemento al contenedor de elementos
+    function agregarElementoAlContenedor(elemento) {
+        const contenedor = document.getElementById("contenedor-elementos");
+        const elementoDiv = document.createElement("div");
+        elementoDiv.classList.add("elemento");
+        elementoDiv.textContent = `Elemento ID: ${elemento.id}, Nombre: ${elemento.nombre}`;
+        contenedor.appendChild(elementoDiv);
+    }
+
+    // Función para limpiar los campos del formulario (si es necesario)
+    function resetFormulario() {
+        document.getElementById("control_ingreso_id").value = ""; // Limpiar el ID del control de ingreso
+        // Limpiar otros campos si los hay, por ejemplo:
+        // document.getElementById("otro-campo").value = '';
+    }
+
+    // Función para mostrar un mensaje de éxito
+    function mostrarMensajeExito(mensaje) {
+        const mensajeElemento = document.createElement("div");
+        mensajeElemento.classList.add("mensaje-exito");
+        mensajeElemento.textContent = mensaje;
+        document.body.appendChild(mensajeElemento);
+        setTimeout(() => mensajeElemento.remove(), 3000); // Eliminar el mensaje después de 3 segundos
+    }
+
+    // Función para actualizar los elementos asociados
+    function actualizarElementosAsociados(controlIngresoId) {
+        // Asegúrate de que controlIngresoId sea válido
+        if (!controlIngresoId) {
+            console.error("El ID de control de ingreso no es válido.");
+            return;
+        }
+
+        fetch(`/vigilante/elementos/${controlIngresoId}`)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(
+                        "No se pudieron obtener los elementos asociados."
+                    );
+                }
+                return response.json();
+            })
+            .then((data) => {
+                if (data.success) {
+                    mostrarElementosAsociados(data.elementos); // Llama a la función para mostrar los elementos
+                } else {
+                    console.log("No se encontraron elementos asociados.");
+                }
+            })
+            .catch((error) => {
+                console.error(
+                    "Error al obtener los elementos asociados:",
+                    error
+                );
+            });
+    }
+
+    // Función para mostrar los elementos asociados a la vista
+    function mostrarElementosAsociados(elementos) {
+        // Asegúrate de que el contenedor donde se mostrarán los elementos exista
+        const contenedorElementos = document.getElementById(
+            "contenedor-elementos"
+        ); // O usa el selector correcto para tu contenedor
+
+        // Verifica que el contenedor esté disponible
+        if (contenedorElementos) {
+            // Limpia el contenedor antes de agregar nuevos elementos
+            contenedorElementos.innerHTML = "";
+
+            // Si existen elementos, agregar al contenedor
+            if (elementos.length > 0) {
+                elementos.forEach(function (elemento) {
+                    const divElemento = document.createElement("div");
+                    divElemento.textContent = elemento.nombre; // Asegúrate de que el nombre del elemento sea correcto
+                    contenedorElementos.appendChild(divElemento);
+                });
+            } else {
+                contenedorElementos.innerHTML = "No se encontraron elementos.";
+            }
+        }
+    }
+
+    // Función para agregar un elemento al contenedor de elementos
+    function agregarElementoAlContenedor(elemento) {
+        const contenedor = document.getElementById("contenedor-elementos");
+        const elementoDiv = document.createElement("div");
+        elementoDiv.classList.add("elemento");
+        elementoDiv.textContent = `Elemento ID: ${elemento.id}, Nombre: ${elemento.nombre}`;
+        contenedor.appendChild(elementoDiv);
+    }
 
     // Función para mostrar mensajes de éxito
     function mostrarMensajeExito(mensaje) {
@@ -378,3 +585,109 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 });
+
+//esta es la funcion para eliminar elementos del contenedor de elementos
+document.addEventListener("click", function (event) {
+    if (event.target.classList.contains("btn-destroy")) {
+        const elementRow = event.target.closest("tr"); // Encuentra la fila del elemento
+        const elementId = elementRow.getAttribute("data-element-id"); // Obtén el ID del elemento si existe
+
+        if (elementId) {
+            // Realiza una solicitud AJAX para eliminar el elemento de la base de datos
+            fetch(`/elementos/${elementId}`, {
+                method: "DELETE",
+                headers: {
+                    "X-CSRF-TOKEN": document
+                        .querySelector('meta[name="csrf-token"]')
+                        .getAttribute("content"),
+                },
+            })
+                .then((response) => {
+                    if (response.ok) {
+                        elementRow.remove(); // Elimina la fila de la tabla en la vista
+                        alert("Elemento eliminado correctamente.");
+                    } else {
+                        alert(
+                            "No se pudo eliminar el elemento. Inténtalo nuevamente."
+                        );
+                    }
+                })
+                .catch((error) => console.error("Error:", error));
+        } else {
+            // Elimina la fila localmente si no tiene ID asociado en la base de datos
+            elementRow.remove();
+            alert("Elemento eliminado localmente.");
+        }
+    }
+});
+
+// Esta es la función para guardar los registros
+document.addEventListener("DOMContentLoaded", function () {
+    const guardarRegistrosButton = document.getElementById("guardar-registros");
+
+    if (guardarRegistrosButton) {
+        guardarRegistrosButton.addEventListener("click", function () {
+            // Obtener el id del registro desde el atributo data-id del botón
+            const activeRecordId =
+                guardarRegistrosButton.getAttribute("data-id");
+
+            console.log("ID del registro:", activeRecordId); // DEPURACIÓN
+
+            if (activeRecordId) {
+                // Fecha actual para pruebas (no es usada en el backend)
+                const fechaEgreso = new Date().toISOString();
+
+                console.log(
+                    "Intentando cerrar el registro con fecha:",
+                    fechaEgreso
+                ); // DEPURACIÓN
+
+                // Realizar la solicitud PUT
+                fetch(`/vigilante/control_ingreso/${activeRecordId}/cerrar`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": document
+                            .querySelector('meta[name="csrf-token"]')
+                            .getAttribute("content"),
+                    },
+                    body: JSON.stringify({ registro_id: activeRecordId }),
+                })
+                    .then((response) => {
+                        console.log("Respuesta del servidor:", response); // DEPURACIÓN
+
+                        if (response.ok) {
+                            alert("Registro cerrado correctamente.");
+                            location.reload();
+                        } else {
+                            return response.json().then((data) => {
+                                alert(
+                                    `No se pudo cerrar el registro: ${
+                                        data.message || "Error desconocido"
+                                    }`
+                                );
+                            });
+                        }
+                    })
+                    .catch((error) =>
+                        console.error("Error en la solicitud:", error)
+                    ); // DEPURACIÓN
+            } else {
+                alert("No se encontró un ID de registro válido.");
+            }
+        });
+    }
+});
+
+//Funciones para resetear el formulario
+function resetFormulario() {
+    // Limpiar los campos del formulario
+    document.getElementById("documento_vigilante").value = "";
+    document.getElementById("usuario-id-oculto").value = "";
+    // Limpiar cualquier otro campo que sea necesario
+}
+function cerrarRegistro() {
+    // Resetear el formulario
+    resetFormulario();
+    // Otros pasos para cerrar el registro
+}

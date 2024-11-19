@@ -6,11 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /** 
+    /**
      * Run the migrations.
      */
     public function up()
-    {
+    { 
         Schema::create('usuarios', function (Blueprint $table) {
             $table->id();
             $table->string('nombres', 100);
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->foreignId('roles_id')->constrained('roles');
             $table->string('numero_ficha', 50)->nullable();
             $table->string('contraseña', 255);
-            $table->string('foto')->nullable(); 
+            $table->string('foto')->nullable();
             $table->timestamps();
         });
 

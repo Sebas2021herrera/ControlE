@@ -101,9 +101,6 @@ class AdminController extends Controller
             Log::error('Error al registrar el usuario: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Ha ocurrido un error al registrar el usuario.'])->withInput();
         }
-
-        
-
     }
 
     

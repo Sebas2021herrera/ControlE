@@ -40,16 +40,104 @@ document.addEventListener("DOMContentLoaded", function () {
             cerrarModal(); // Cierra el modal por defecto
         });
     }
-
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    // Función para manejar el clic en una fila de la tabla
     // Función para manejar el clic en una fila de la tabla
     function handleFilaClick() {
         document
             .querySelectorAll(".registro-fila")
             .forEach((f) => f.classList.remove("fila-seleccionada"));
         this.classList.add("fila-seleccionada");
+
         const registroId = this.getAttribute("data-registro-id");
-        obtenerElementosAsociados(registroId);
+        actualizarElementosAsociados(registroId); // Llama a la función para obtener y mostrar elementos
     }
+
+    // Función para actualizar y mostrar los elementos asociados
+    function actualizarElementosAsociados(registroId) {
+        if (!registroId) {
+            console.error("El ID del registro no es válido.");
+            return;
+        }
+
+        fetch(`/vigilante/elementos/${registroId}`)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(
+                        "Error al obtener los elementos asociados desde el servidor."
+                    );
+                }
+                return response.json();
+            })
+            .then((data) => {
+                console.log("Datos recibidos del servidor:", data); // Revisa la estructura aquí
+                if (data.success && data.elementos.length > 0) {
+                    mostrarElementos(data.elementos);
+                } else {
+                    console.log("No se encontraron elementos asociados.");
+                    mostrarElementos([]); // Limpia la vista si no hay elementos
+                }
+            })
+            .catch((error) => {
+                console.error(
+                    "Error al obtener los elementos asociados:",
+                    error
+                );
+            });
+    }
+
+    // Función para mostrar los elementos asociados en la vista
+    function mostrarElementos(elementos) {
+        const contenedorElementos = document.querySelector(".elementos");
+        const botonVerElementos = document.getElementById(
+            "abrir-modal-elementos"
+        );
+        contenedorElementos.innerHTML = ""; // Limpiar los elementos actuales
+
+        elementos.forEach((elemento) => {
+            // Asegúrate de que las propiedades existen antes de usarlas
+            const categoria = elemento.categoria
+                ? elemento.categoria.nombre
+                : "Sin categoría";
+            const foto = elemento.foto
+                ? `${baseStorageUrl}/${elemento.foto}`
+                : "{{ asset('imagenes/sin_imagen.png') }}";
+            const serie = elemento.serie || "N/A";
+            const marca = elemento.marca || "N/A";
+
+            const card = document.createElement("div");
+            card.classList.add("card");
+            card.innerHTML = `
+                <h3 class="cabeza">${categoria}</h3>
+                <img src="${foto}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
+                <p><strong>Serie:</strong> ${serie}</p>
+                <p ><strong>Marca:</strong> ${marca}</p>
+                <a style="margin-top: -10px" href="#" class="link-ver-mas" onclick="mostrarDetallesElemento('${elemento.id}')">Ver más</a>
+            `;
+            contenedorElementos.appendChild(card);
+        });
+
+        contenedorElementos.appendChild(botonVerElementos); // Reinsertar el botón
+    }
+
+    // Asignar el evento a las filas de la tabla después de cargar la página
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll(".registro-fila").forEach((fila) => {
+            fila.addEventListener("click", handleFilaClick);
+        });
+    });
 
     // Asignar eventos a las filas de la tabla
     function aplicarEventListeners() {
@@ -61,21 +149,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Ejecutar la asignación de eventos al cargar el DOM
     aplicarEventListeners();
-
-    // Función para obtener elementos asociados
-    function actualizarElementosAsociados(registroId) {
-        fetch(`/vigilante/elementos/${registroId}`)
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.success) {
-                    mostrarElementos(data.elementos);
-                } else {
-                    alert("No se encontraron elementos asociados.");
-                }
-            })
-            .catch((error) => console.error("Error:", error));
-    }
-
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
     // Función para mostrar elementos en el modal
     function mostrarElementos(elementos) {
         const contenedorElementos = document.querySelector(".elementos");
@@ -336,42 +420,6 @@ document.addEventListener("DOMContentLoaded", function () {
         setTimeout(() => mensajeElemento.remove(), 3000); // Eliminar el mensaje después de 3 segundos
     }
 
-    // Función para actualizar los elementos asociados
-    function actualizarElementosAsociados(controlIngresoId) {
-        fetch(`/vigilante/elementos_asociados/${controlIngresoId}`)
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.success) {
-                    // Actualiza la vista de los elementos asociados
-                    mostrarElementosAsociados(data.elementos);
-                } else {
-                    console.log(
-                        "No se pudieron obtener los elementos asociados."
-                    );
-                }
-            })
-            .catch((error) => {
-                console.error(
-                    "Error al obtener los elementos asociados:",
-                    error
-                );
-            });
-    }
-
-    // Función para mostrar los elementos asociados a la vista
-    function mostrarElementosAsociados(elementos) {
-        const contenedor = document.getElementById("contenedor-elementos");
-        contenedor.innerHTML = ""; // Limpiar el contenedor
-
-        // Crear una lista o una tabla con los elementos asociados
-        elementos.forEach((elemento) => {
-            const elementoDiv = document.createElement("div");
-            elementoDiv.classList.add("elemento");
-            elementoDiv.textContent = `Elemento ID: ${elemento.id}, Nombre: ${elemento.nombre}`;
-            contenedor.appendChild(elementoDiv);
-        });
-    }
-
     // Función para agregar un elemento al contenedor de elementos
     function agregarElementoAlContenedor(elemento) {
         const contenedor = document.getElementById("contenedor-elementos");
@@ -388,42 +436,6 @@ document.addEventListener("DOMContentLoaded", function () {
         mensajeElemento.textContent = mensaje;
         document.body.appendChild(mensajeElemento);
         setTimeout(() => mensajeElemento.remove(), 3000); // Eliminar el mensaje después de 3 segundos
-    }
-
-    // Función para actualizar los elementos asociados
-    function actualizarElementosAsociados(controlIngresoId) {
-        fetch(`/vigilante/elementos_asociados/${controlIngresoId}`)
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.success) {
-                    // Actualiza la vista de los elementos asociados
-                    mostrarElementosAsociados(data.elementos);
-                } else {
-                    console.log(
-                        "No se pudieron obtener los elementos asociados."
-                    );
-                }
-            })
-            .catch((error) => {
-                console.error(
-                    "Error al obtener los elementos asociados:",
-                    error
-                );
-            });
-    }
-
-    // Función para mostrar los elementos asociados a la vista
-    function mostrarElementosAsociados(elementos) {
-        const contenedor = document.getElementById("contenedor-elementos");
-        contenedor.innerHTML = ""; // Limpiar el contenedor
-
-        // Crear una lista o una tabla con los elementos asociados
-        elementos.forEach((elemento) => {
-            const elementoDiv = document.createElement("div");
-            elementoDiv.classList.add("elemento");
-            elementoDiv.textContent = `Elemento ID: ${elemento.id}, Nombre: ${elemento.nombre}`;
-            contenedor.appendChild(elementoDiv);
-        });
     }
 
     // Función para agregar un elemento al contenedor de elementos
@@ -449,63 +461,6 @@ document.addEventListener("DOMContentLoaded", function () {
         mensajeElemento.textContent = mensaje;
         document.body.appendChild(mensajeElemento);
         setTimeout(() => mensajeElemento.remove(), 3000); // Eliminar el mensaje después de 3 segundos
-    }
-
-    // Función para actualizar los elementos asociados
-    function actualizarElementosAsociados(controlIngresoId) {
-        // Asegúrate de que controlIngresoId sea válido
-        if (!controlIngresoId) {
-            console.error("El ID de control de ingreso no es válido.");
-            return;
-        }
-
-        fetch(`/vigilante/elementos/${controlIngresoId}`)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(
-                        "No se pudieron obtener los elementos asociados."
-                    );
-                }
-                return response.json();
-            })
-            .then((data) => {
-                if (data.success) {
-                    mostrarElementosAsociados(data.elementos); // Llama a la función para mostrar los elementos
-                } else {
-                    console.log("No se encontraron elementos asociados.");
-                }
-            })
-            .catch((error) => {
-                console.error(
-                    "Error al obtener los elementos asociados:",
-                    error
-                );
-            });
-    }
-
-    // Función para mostrar los elementos asociados a la vista
-    function mostrarElementosAsociados(elementos) {
-        // Asegúrate de que el contenedor donde se mostrarán los elementos exista
-        const contenedorElementos = document.getElementById(
-            "contenedor-elementos"
-        ); // O usa el selector correcto para tu contenedor
-
-        // Verifica que el contenedor esté disponible
-        if (contenedorElementos) {
-            // Limpia el contenedor antes de agregar nuevos elementos
-            contenedorElementos.innerHTML = "";
-
-            // Si existen elementos, agregar al contenedor
-            if (elementos.length > 0) {
-                elementos.forEach(function (elemento) {
-                    const divElemento = document.createElement("div");
-                    divElemento.textContent = elemento.nombre; // Asegúrate de que el nombre del elemento sea correcto
-                    contenedorElementos.appendChild(divElemento);
-                });
-            } else {
-                contenedorElementos.innerHTML = "No se encontraron elementos.";
-            }
-        }
     }
 
     // Función para agregar un elemento al contenedor de elementos
@@ -576,6 +531,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
+//cerrar modal de elementos
 document.addEventListener("DOMContentLoaded", function () {
     // Aquí van tus funciones JavaScript
     window.cerrarModalElementos = function () {

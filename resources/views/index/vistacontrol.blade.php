@@ -100,6 +100,9 @@
                         <form action="{{ route('vigilante.registro') }}" method="POST">
                             @csrf
                             {{-- inputs ocultos que guardan unas variables --}}
+                            <span id="estado-registro"></span>
+                            <input type="hidden" id="control_ingreso_id" value="">
+
                             <input type="hidden" id="documento_vigilante" name="documento_vigilante"
                                 value="{{ $vigilante->numero_documento ?? '' }}">
                             <input type="hidden" id="usuario-id-oculto" name="usuario_id"
@@ -191,7 +194,7 @@
         </div>
 
         <div class="contenido">
-            <div class="elementos">
+            <div class="elementos" id="contenedor-elementos">
                 <button type="button" class="btn-modal" id="abrir-modal-elementos"
                     onclick="mostrarModalElementos()">
                     <img src="{{ asset('imagenes/shopping.png') }}" alt="Nuevo Registro" class="iconos">

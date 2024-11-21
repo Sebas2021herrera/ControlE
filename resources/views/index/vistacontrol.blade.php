@@ -99,21 +99,32 @@
                     <div class="contenedor-botones">
                         <form action="{{ route('vigilante.registro') }}" method="POST">
                             @csrf
+                            {{-- inputs ocultos que guardan unas variables --}}
+                            <span id="estado-registro"></span>
+                            <input type="hidden" id="control_ingreso_id" value="">
+
                             <input type="hidden" id="documento_vigilante" name="documento_vigilante"
                                 value="{{ $vigilante->numero_documento ?? '' }}">
                             <input type="hidden" id="usuario-id-oculto" name="usuario_id"
                                 value="{{ $usuario->id ?? '' }}">
                             <input type="hidden" id="control_ingreso_id" value="{{ $controlIngresoId ?? '' }}">
+                            <!-- Este input está oculto, pero se usa para almacenar el ID del registro activo -->
+                            <input type="hidden" id="active-record-id" value="123">
+
                         </form>
-                        <button type="button" class="boton" id="agregar-registro">
+                        <button type="button" class="boton" id="agregar-registro"
+                            data-id="{{ $controlIngresoId ?? '' }}">
                             <img src="{{ asset('imagenes/add.png') }}" alt="Nuevo Registro" class="iconos">
                             Ingresa
                         </button>
 
-                        <button type="button" class="boton" id="guardar-registros">
-                            <img src="{{ asset('imagenes/close.png') }}" alt="Guardar"class="iconos">
+
+                        <button type="button" class="boton" id="guardar-registros"
+                            data-id="{{ $controlIngresoId ?? '' }}">
+                            <img src="{{ asset('imagenes/close.png') }}" alt="Guardar" class="iconos">
                             Egresa
                         </button>
+
                     </div>
                 </div>
             </div>
@@ -183,7 +194,7 @@
         </div>
 
         <div class="contenido">
-            <div class="elementos">
+            <div class="elementos" id="contenedor-elementos">
                 <button type="button" class="btn-modal" id="abrir-modal-elementos"
                     onclick="mostrarModalElementos()">
                     <img src="{{ asset('imagenes/shopping.png') }}" alt="Nuevo Registro" class="iconos">
@@ -196,6 +207,9 @@
                 @else
                     <p>No se ha encontrado un registro de control de ingreso.</p>
                 @endif
+            </div>
+        </div>
+
 </body>
 
 </html>

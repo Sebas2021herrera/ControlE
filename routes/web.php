@@ -58,12 +58,19 @@ Route::middleware('auth')->group(function () {
     Route::get('admin/elementos/{id}/edit', [AdminController::class, 'edit'])->name('admin.elementos.edit');
     Route::delete('/admin/elementos/{id}', [AdminController::class, 'destroyElemento'])->name('admin.elementos.destroy');
 
-    // Rutas del vigilante para roles específicos
+    // Rutas del vigilante para funciones  específicos
     Route::middleware(CheckRole::class . ':2')->group(function () {
         Route::get('control/panel', [VigilanteController::class, 'mostrarVistaControl'])->name('control.panel');
 
         Route::get('/vigilante/buscar', [VigilanteController::class, 'buscarPorDocumento'])
             ->name('vigilante.buscar');
+        // Rutas para eliminar elementos del contenedor en sub_control_ingresos
+        Route::delete('/vigilante/sub_control_ingreso/{id}', [VigilanteController::class, 'eliminarElemento'])
+            ->name('sub_control_ingreso.destroy');
+
+        // Ruta para actualizar el estado de un registro a "Cerrado"
+        Route::put('/vigilante/control_ingreso/{id}/cerrar', [VigilanteController::class, 'cerrarRegistro'])
+            ->name('control_ingreso.cerrar');
 
         Route::post('/vigilante/registro', [VigilanteController::class, 'nuevoRegistro'])->name('vigilante.registro');
         Route::post('/sub_control_ingreso', [VigilanteController::class, 'registrarElementoEnSubControl'])->name('sub_control_ingreso.store');

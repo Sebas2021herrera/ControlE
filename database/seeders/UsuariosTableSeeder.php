@@ -38,7 +38,7 @@ class UsuariosTableSeeder extends Seeder
                 'numero_documento' => '87654321',
                 'rh' => 'A-',
                 'correo_personal' => 'ana.gomez@example.com',
-                'correo_institucional' => 'agomez@instituto.edu',
+                'correo_institucional' => ' ',
                 'telefono' => '3107654321',
                 'roles_id' => 2, // Control role, assuming role with ID 2 is 'Control'
                 'numero_ficha' => 'B67890',
@@ -51,7 +51,7 @@ class UsuariosTableSeeder extends Seeder
                 'nombres' => 'Juan',
                 'apellidos' => 'Perez',
                 'tipo_documento' => 'CC',
-                'numero_documento' => '87654321',
+                'numero_documento' => '987654321',
                 'rh' => 'A-',
                 'correo_personal' => 'juanperez@gmail.com',
                 'correo_institucional' => 'juan.perez@soy.sena.edu.co',

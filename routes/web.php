@@ -17,7 +17,6 @@ Route::get('/', [WelcomeController::class, 'index']);
 Route::get('login', [AuthController::class, 'showLogin'])->name('login');
 Route::get('create', [AuthController::class, 'create'])->name('create');
 Route::post('registrado', [AuthController::class, 'createpost'])->name('createpost');
-Route::post('/createpost', [AdminController::class, 'store'])->name('createpost');
 Route::post('login', [AuthController::class, 'login'])->name('login.post');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -48,6 +47,58 @@ Route::middleware('auth')->group(function () {
             ->name('admin.usuarios.consultar');
         // Ruta para generar PDF de usuario
         Route::post('/admin/usuarios/pdf', [AdminController::class, 'generarReporteIngresosUsuario'])->name('admin.usuarios.pdf');
+    });
+
+    // Rutas para los paneles de administración y control
+    Route::middleware(CheckRole::class . ':1')->group(function () {
+        // Ruta para cargar el panel de administración
+        Route::get('admin/panel', function () {
+            $categorias = Categoria::all();
+            $elementos = Elemento::all();
+            return view('index.vistaadmin', compact('categorias', 'elementos'));
+        })->name('admin.panel');
+
+        // Ruta para consultar usuarios
+        Route::get('/admin/usuarios/consultar', [AdminController::class, 'consultarUsuario'])
+            ->name('admin.usuarios.consultar');
+
+        // Ruta para almacenar un nuevo usuario
+        Route::post('/admin/usuarios', [AdminController::class, 'storeUsuario'])->name('admin.usuarios.store');
+
+        // Ruta para generar PDF de usuario
+        Route::post('/admin/usuarios/pdf', [AdminController::class, 'generarReporteIngresosUsuario'])
+            ->name('admin.usuarios.pdf');
+
+        // Rutas para gestionar elementos
+        Route::post('/admin/elementos/store', [AdminController::class, 'storeElemento'])->name('admin.elementos.store');
+        Route::put('/admin/elementos/{id}', [AdminController::class, 'updateElemento'])->name('admin.elementos.update');
+        Route::get('admin/elementos/{id}/edit', [AdminController::class, 'edit'])->name('admin.elementos.edit');
+        Route::delete('/admin/elementos/{id}', [AdminController::class, 'destroyElemento'])->name('admin.elementos.destroy');
+    });// Rutas para los paneles de administración y control
+    Route::middleware(CheckRole::class . ':1')->group(function () {
+        // Ruta para cargar el panel de administración
+        Route::get('admin/panel', function () {
+            $categorias = Categoria::all();
+            $elementos = Elemento::all();
+            return view('index.vistaadmin', compact('categorias', 'elementos'));
+        })->name('admin.panel');
+
+        // Ruta para consultar usuarios
+        Route::get('/admin/usuarios/consultar', [AdminController::class, 'consultarUsuario'])
+            ->name('admin.usuarios.consultar');
+
+        // Ruta para almacenar un nuevo usuario
+        Route::post('/admin/usuarios', [AdminController::class, 'storeUsuario'])->name('admin.usuarios.store');
+
+        // Ruta para generar PDF de usuario
+        Route::post('/admin/usuarios/pdf', [AdminController::class, 'generarReporteIngresosUsuario'])
+            ->name('admin.usuarios.pdf');
+
+        // Rutas para gestionar elementos
+        Route::post('/admin/elementos/store', [AdminController::class, 'storeElemento'])->name('admin.elementos.store');
+        Route::put('/admin/elementos/{id}', [AdminController::class, 'updateElemento'])->name('admin.elementos.update');
+        Route::get('admin/elementos/{id}/edit', [AdminController::class, 'edit'])->name('admin.elementos.edit');
+        Route::delete('/admin/elementos/{id}', [AdminController::class, 'destroyElemento'])->name('admin.elementos.destroy');
     });
 
     // Luego, la ruta POST para manejar el envío del formulario y almacenar el elemento

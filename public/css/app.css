@@ -48,7 +48,7 @@ body {
 
 .img-fluid-logo-sena {
     width: 130%; 
-    height: 130%; /* Mantiene las proporciones del logo */
+    height: 130%;
     transition: transform 0.3s ease; /* Animación suave al pasar el ratón */
 }
 

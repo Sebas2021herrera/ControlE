@@ -3,6 +3,7 @@ html {
     height: 100%;
     margin: 0;
     padding: 0;
+    font-family: 'Work Sans', sans-serif;
 }
 
 .container-fluid {
@@ -101,6 +102,11 @@ html {
     height: 150px;
     object-fit: contain;
     margin-bottom: 15px;
+    transition: transform 0.3s ease; 
+}
+
+.card img:hover {
+    transform: scale(1.2); /* Efecto de zoom */
 }
 
 .card-title {

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -12,7 +12,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <!-- En el head, después de tus otros links -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
@@ -33,12 +32,14 @@
     
             <div class="dropdown is-hoverable" style="margin-right: 20px;">
                 <div class="dropdown-trigger">
-                    <a href="#" id="reportsLink" class="registrar">Reportes ingresos</a>
+                    <a href="#" id="reportsLink" class="registrar">Reportes</a>
                 </div>
                 <!-- Aquí puedes agregar un dropdown para reportes si es necesario -->
                 <div class="dropdown-menu" id="dropdown-menu" role="menu">
                     <div class="dropdown-content">
-                        <a href="#" class="open-report-ingresos-modal">Reportes ingresos usuarios</a>
+                        <a href="#" class="open-report-ingresos-modal">Reportes ingresos</a>
+                        <a href="#" class="open-report-ingresos-modal">Reportes usuarios</a>
+                        <a href="#" class="open-report-ingresos-modal">Reportes elementos</a>
                     </div>
                 </div>
             </div>
@@ -56,7 +57,7 @@
                     </div>
                     <div class="dropdown-menu" id="dropdown-menu4" role="menu">
                         <div class="dropdown-content">
-                            <a href="#" class="dropdown-item">Editar perfil</a>
+                            {{-- <a href="#" class="dropdown-item">Editar perfil</a> --}}
                             <form action="{{ route('logout') }}" method="POST" style="display: inline;">
                                 @csrf
                                 <button type="submit" class="dropdown-item" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">
@@ -469,9 +470,9 @@
                     <input type="text" 
                            name="documento" 
                            class="search-input" 
-                           placeholder="Ingresar Documento del Usuario..." 
+                           placeholder="Ingresa Documento Usuario..." 
                            required>
-                    <button type="submit" class="search-button">
+                    <button type="submit" class="search-button-reports">
                         <i class="fas fa-file-pdf"></i> Generar PDF
                     </button>
                 </div>
@@ -481,9 +482,7 @@
 </div>
 
 
-
-
-<!-- Código Javascripts -->
+    <!-- Código Javascripts -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             function previewImage(inputId, previewId) {
@@ -713,7 +712,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-
 function mostrarElementosUsuario(elementos) {
     const container = document.querySelector('.card-container');
     if (!container) return;
@@ -832,6 +830,5 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
  </script>
- 
 </body>
 </html>

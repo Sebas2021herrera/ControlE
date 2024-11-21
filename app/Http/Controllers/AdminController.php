@@ -101,9 +101,6 @@ class AdminController extends Controller
             Log::error('Error al registrar el usuario: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Ha ocurrido un error al registrar el usuario.'])->withInput();
         }
-
-        
-
     }
 
     
@@ -170,7 +167,7 @@ class AdminController extends Controller
         if (!$usuario) {
             return response()->json([
                 'success' => false,
-                'mensaje' => 'Usuario no encontrado'
+                'mensaje' => 'Usuario no encontrado',
             ], 404);
         }
 
@@ -178,16 +175,19 @@ class AdminController extends Controller
         return response()->json([
             'success' => true,
             'usuario' => $usuario,
-            'elementos' => $usuario->elementos
+            'elementos' => $usuario->elementos,
         ]);
 
     } catch (\Exception $e) {
+        \Log::error('Error al buscar usuario: ' . $e->getMessage());
+
         return response()->json([
             'success' => false,
-            'mensaje' => 'Error al buscar el usuario'
+            'mensaje' => 'Error al buscar el usuario',
         ], 500);
     }
 }
+
 
     /**
      * Display the specified resource.
@@ -281,11 +281,11 @@ public function update(Request $request, $id)
                 ->where('numero_documento', $numeroDocumento)
                 ->firstOrFail(); // Retorna 404 si no se encuentra el usuario
 
-    // Generar el PDF usando la vista `reports.blade.php`
-    $pdf = Pdf::loadView('pdf.reports', compact('usuario'));
+    // Generar el PDF usando la vista reports.blade.php
+    $pdf = Pdf::loadView('pdf.vistareportes', compact('usuario'));
 
     // Retornar el PDF para descarga o visualizar en el navegador
-    return $pdf->download('reports_' . $numeroDocumento . '.pdf');
+    return $pdf->download('reportes_' . $numeroDocumento . '.pdf');
     }
 
 }

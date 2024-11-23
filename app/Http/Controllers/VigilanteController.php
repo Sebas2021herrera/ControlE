@@ -36,19 +36,15 @@ class VigilanteController extends Controller
             return view('index.vistacontrol')->with('error', 'Usuario no encontrado.');
         }
 
-        // Obtener los elementos relacionados
         $elementos = $usuario->elementos;
 
-        // Obtener los registros de ingreso del usuario en orden descendente de fecha
         $registros = ControlIngreso::where('usuario_id', $usuario->id)
             ->orderBy('fecha_ingreso', 'asc')
             ->get();
 
-        // Obtener el último registro de control de ingreso del usuario
         $ultimoRegistro = ControlIngreso::where('usuario_id', $usuario->id)->latest()->first();
         $controlIngresoId = $ultimoRegistro ? $ultimoRegistro->id : null;
 
-        // Retornar la vista con los datos
         return view('index.vistacontrol', compact('usuario', 'elementos', 'registros', 'vigilante', 'controlIngresoId'));
     }
 
@@ -57,7 +53,6 @@ class VigilanteController extends Controller
 
     public function nuevoRegistro(Request $request)
     {
-        // Validar la estructura de los datos recibidos
         if (!$request->has(['documento_vigilante', 'usuario_id'])) {
             return response()->json([
                 'success' => false,
@@ -65,13 +60,11 @@ class VigilanteController extends Controller
             ], 400);
         }
 
-        // Validar los datos del Request
         $request->validate([
             'documento_vigilante' => 'required|string|max:255',
             'usuario_id' => 'required|integer',
         ]);
 
-        // Buscar al vigilante
         $vigilante = Usuario::where('numero_documento', $request->input('documento_vigilante'))->first();
 
         if (!$vigilante) {
@@ -81,7 +74,6 @@ class VigilanteController extends Controller
             ], 404);
         }
 
-        // Buscar al usuario
         $usuario = Usuario::find($request->input('usuario_id'));
 
         if (!$usuario) {
@@ -91,17 +83,16 @@ class VigilanteController extends Controller
             ], 404);
         }
 
-        // Verificar si existe un registro activo para este usuario
         $registroAbierto = ControlIngreso::where('usuario_id', $usuario->id)
-            ->where('estado', 0) // Estado 0 significa "Abierto"
-            ->latest('fecha_ingreso') // Ordenar por fecha de ingreso más reciente
+            ->where('estado', 0)
+            ->latest('fecha_ingreso')
             ->first();
 
         if ($registroAbierto) {
             return response()->json([
                 'success' => false,
                 'message' => 'No se puede crear un nuevo registro porque el último registro del usuario no está cerrado.',
-                'registro_abierto' => $registroAbierto, // Incluir detalles del registro abierto
+                'registro_abierto' => $registroAbierto, 
             ], 400);
         }
 

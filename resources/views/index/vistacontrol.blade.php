@@ -5,14 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="base-storage-url" content="{{ asset('storage') }}">
     <title>Vista del Vigilante</title>
     <link rel="stylesheet" href="{{ asset('css/styles_vistacontrol.css') }}">
-    <script>
-        const baseStorageUrl = "{{ asset('storage') }}";
-        const registroUrl = "{{ route('vigilante.registro') }}";
-        const subControlIngresoUrl = "{{ route('sub_control_ingreso.store') }}";
-    </script>
-    <script src="{{ asset('js/vista_control.js') }}"></script>
 
 </head>
 
@@ -196,7 +191,7 @@
         <div class="contenido">
             <div class="elementos" id="contenedor-elementos">
                 <button type="button" class="btn-modal" id="abrir-modal-elementos"
-                    onclick="mostrarModalElementos()">
+                    onclick="abrirModal('modal-elementos-usuario')">
                     <img src="{{ asset('imagenes/shopping.png') }}" alt="Nuevo Registro" class="iconos">
                     Ver Elementos
                 </button>
@@ -209,7 +204,13 @@
                 @endif
             </div>
         </div>
-
 </body>
+<script>
+    const baseStorageUrl = "{{ asset('storage') }}";
+    const registroUrl = "{{ route('vigilante.registro') }}";
+    const subControlIngresoUrl = "{{ route('sub_control_ingreso.store') }}";
+    const elementos = @json($elementos);
+</script>
+<script src="{{ asset('js/vista_control.js') }}" defer></script>
 
 </html>

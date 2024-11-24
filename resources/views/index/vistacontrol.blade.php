@@ -96,15 +96,11 @@
                             @csrf
                             {{-- inputs ocultos que guardan unas variables --}}
                             <span id="estado-registro"></span>
-                            <input type="hidden" id="control_ingreso_id" value="">
-
                             <input type="hidden" id="documento_vigilante" name="documento_vigilante"
                                 value="{{ $vigilante->numero_documento ?? '' }}">
                             <input type="hidden" id="usuario-id-oculto" name="usuario_id"
                                 value="{{ $usuario->id ?? '' }}">
-                            <input type="hidden" id="control_ingreso_id" value="{{ $controlIngresoId ?? '' }}">
-                            <!-- Este input está oculto, pero se usa para almacenar el ID del registro activo -->
-                            <input type="hidden" id="active-record-id" value="123">
+                            <input type="hidden" id="control_ingreso_id">
 
                         </form>
                         <button type="button" class="boton" id="agregar-registro"
@@ -145,12 +141,10 @@
                                         <a href="javascript:void(0)" class="link-ver-mas"
                                             data-element-id="{{ $elemento->id }}"
                                             onclick="mostrarDetallesElemento({{ $elemento->id }})">Ver más</a>
-                                        <button class="btn-ingresa" data-elemento-id="{{ $elemento->id }}"
-                                            data-categoria="{{ $elemento->categoria->nombre }}"
-                                            data-foto="{{ asset('storage/' . $elemento->foto) }}"
-                                            data-serie="{{ $elemento->serie }}" data-marca="{{ $elemento->marca }}">
+                                        <button class="btn-ingresa" data-id="{{ $elemento->id }}"
+                                            onclick="actualizarElementos({{ $elemento->id }})">
                                             <img src="{{ asset('imagenes/check_box.png') }}" alt="Guardar"
-                                                class="icono-ingresa">Ingresa
+                                                class="icono-ingresa"> Ingresa
                                         </button>
                                     </div>
                                 @endforeach
@@ -210,7 +204,17 @@
     const registroUrl = "{{ route('vigilante.registro') }}";
     const subControlIngresoUrl = "{{ route('sub_control_ingreso.store') }}";
     const elementos = @json($elementos);
+
+    console.log("Elementos cargados:", elementos);
+
+    // Si necesitas establecer un valor inicial para control_ingreso_id
+    const initialControlIngresoId = @json($controlIngresoId);
+    if (initialControlIngresoId) {
+        document.getElementById("control_ingreso_id").value = initialControlIngresoId;
+        console.log("ID inicial del control de ingreso:", initialControlIngresoId);
+    }
 </script>
+
 <script src="{{ asset('js/vista_control.js') }}" defer></script>
 
 </html>

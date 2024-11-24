@@ -92,7 +92,7 @@ class VigilanteController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'No se puede crear un nuevo registro porque el último registro del usuario no está cerrado.',
-                'registro_abierto' => $registroAbierto, 
+                'registro_abierto' => $registroAbierto,
             ], 400);
         }
 
@@ -119,8 +119,10 @@ class VigilanteController extends Controller
             'success' => true,
             'message' => 'Ingreso registrado exitosamente.',
             'registros' => $registros,
+            'nuevoRegistroId' => $nuevoRegistro->id,  // Agregar el ID del nuevo registro
         ]);
     }
+
 
 
 
@@ -199,14 +201,16 @@ class VigilanteController extends Controller
         }
 
         // Obtener el último registro de control de ingreso, si existe
-        $control_ingresos = ControlIngreso::latest()->first();  // Obtiene el registro más reciente
-
-        // Si no hay registros, asignar un valor nulo o un ID por defecto
+        $control_ingresos = ControlIngreso::latest()->first(); // Obtiene el registro más reciente
         $controlIngresoId = $control_ingresos ? $control_ingresos->id : null;
 
-        // Cargar la vista con los datos del vigilante y el último registro de control_ingresos
-        return view('index.vistacontrol', compact('vigilante', 'controlIngresoId'));
+        // Si es necesario, obtén los elementos (puede variar según tu lógica)
+        $elementos = Elemento::all(); // O ajusta según tu necesidad, por ejemplo, obtener elementos filtrados por usuario.
+
+        // Cargar la vista con los datos
+        return view('index.vistacontrol', compact('vigilante', 'controlIngresoId', 'elementos'));
     }
+
 
 
 
@@ -220,9 +224,7 @@ class VigilanteController extends Controller
             'elemento_id' => 'required|integer',
         ]);
 
-        // Buscar el registro de control de ingreso
         $controlIngreso = ControlIngreso::find($request->input('control_ingreso_id'));
-
         if (!$controlIngreso) {
             return response()->json([
                 'success' => false,
@@ -230,7 +232,6 @@ class VigilanteController extends Controller
             ], 404);
         }
 
-        // Verificar si el registro de control está cerrado
         if ($controlIngreso->estado == 1) {
             return response()->json([
                 'success' => false,
@@ -238,8 +239,7 @@ class VigilanteController extends Controller
             ], 400);
         }
 
-        // Buscar el elemento
-        $elemento = Elemento::with('categoria')->find($request->input('elemento_id'));
+        $elemento = Elemento::find($request->input('elemento_id'));
         if (!$elemento) {
             return response()->json([
                 'success' => false,
@@ -247,7 +247,18 @@ class VigilanteController extends Controller
             ], 404);
         }
 
-        // Intentar registrar el elemento en el sub-control
+        // Verificar si el elemento ya está registrado
+        $existe = Sub_Control_Ingreso::where('control_ingreso_id', $controlIngreso->id)
+            ->where('elemento_id', $elemento->id)
+            ->exists();
+
+        if ($existe) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Este elemento ya ha sido registrado en este control de ingreso.',
+            ], 400);
+        }
+
         try {
             Sub_Control_Ingreso::create([
                 'control_ingreso_id' => $controlIngreso->id,
@@ -266,6 +277,10 @@ class VigilanteController extends Controller
             ], 500);
         }
     }
+
+
+
+
 
 
 

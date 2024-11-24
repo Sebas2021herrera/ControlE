@@ -778,12 +778,12 @@ body {
     border-radius: 8px;
 }
 
-#modalElemento .btn-cerrar-modal{
+#modalElemento .btn-cerrar-modal {
     margin-right: -10px;
     margin-bottom: -10px;
 }
 
-.btn-destroy{
+.btn-destroy {
     display: inline-block;
     margin: 0;
     margin-left: 24px;
@@ -791,12 +791,25 @@ body {
     font-size: 15px;
     border: none;
     background-color: #39a900;
-    color:white;
+    color: white;
     border-radius: 6px;
     padding: 8px;
     transition: background-color 0.4s ease;
 }
 
-.btn-destroy:hover{
+.btn-destroy:hover {
     background-color: #00324d;
+}
+
+.registro-row {
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.registro-row:hover {
+    background-color: #f0f0f0; /* Color de hover */
+}
+
+.registro-row.seleccionado {
+    background-color: #d0d0d0; /* Color cuando está seleccionada */
 }

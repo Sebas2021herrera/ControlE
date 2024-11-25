@@ -11,8 +11,10 @@ document.addEventListener("DOMContentLoaded", function () {
         );
         return;
     }
+    const csrfToken = document
+        .querySelector('meta[name="csrf-token"]')
+        .getAttribute("content");
 
-    const csrfToken = csrfTokenMeta.getAttribute("content");
     const baseStorageUrl = baseStorageUrlMeta.getAttribute("content");
     const contenedorElementos = document.getElementById("contenedorElementos");
     const modalVerMas = document.getElementById("modalVerMas");
@@ -131,39 +133,76 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Mostrar elementos al hacer clic en una fila (registro)
+    /**
+     * Función para mostrar los elementos asociados a un registro.
+     * Realiza una solicitud al servidor y muestra los datos en el contenedor correspondiente.
+     * @param {number} registroId - ID del registro a consultar.
+     */
     function mostrarElementosPorRegistro(registroId) {
-        console.log(`Buscando elementos para el registro ID: ${registroId}`);
-        fetch(`/vigilante/obtenerElementosPorRegistro/${registroId}`)
+        console.log("Obteniendo elementos para registro ID:", registroId);
+
+        // Realiza la solicitud al servidor
+        fetch(`/vigilante/elementos/${registroId}`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error(
-                        `Error en la solicitud: ${response.status}`
+                        `Error en la solicitud: ${response.statusText}`
                     );
                 }
                 return response.json();
             })
             .then((data) => {
                 if (data.success) {
-                    console.log("Elementos obtenidos:", data.elementos);
-                    mostrarElementosYCrearCards(data.elementos); // Mostrar los elementos en el contenedor
+                    const contenedorId = "contenedor-elementos";
+                    crearYMostrarCards(data.elementos, contenedorId, false); // No permitir eliminar
+                    alert("Lista de elementos actualizada exitosamente.");
                 } else {
                     alert(data.message || "No se encontraron elementos.");
                 }
             })
             .catch((error) => {
-                console.error("Error:", error);
+                console.error("Error al actualizar lista:", error);
+                alert("Ocurrió un error al actualizar la lista de elementos.");
             });
     }
 
     //destacar fila seleccionada en la tabla de registros
     function destacarFilaSeleccionada(filaSeleccionada) {
-        // Eliminar la clase "seleccionado" de todas las filas
-        const filas = document.querySelectorAll(".registro-row");
-        filas.forEach((fila) => fila.classList.remove("seleccionado"));
+        const filas = document.querySelectorAll(".registro-fila");
+        filas.forEach((fila) => fila.classList.remove("fila-seleccionada"));
 
-        // Agregar la clase "seleccionado" a la fila clicada
-        filaSeleccionada.classList.add("seleccionado");
-        console.log("Fila destacada:", filaSeleccionada);
+        filaSeleccionada.classList.add("fila-seleccionada");
+    }
+
+    //para la escucha de la tabla
+    const tablaBody = document.getElementById("tabla-reportes-body");
+
+    if (tablaBody) {
+        tablaBody.addEventListener("click", (e) => {
+            const fila = e.target.closest(".registro-fila");
+            if (!fila) return;
+
+            const registroId = fila.getAttribute("data-registro-id");
+            console.log(`Fila clicada, ID Registro: ${registroId}`);
+            destacarFilaSeleccionada(fila);
+            mostrarElementosPorRegistro(registroId);
+        });
+    } else {
+        console.error("No se encontró el contenedor de la tabla.");
+    }
+
+    //le da diseño a los cards que salen cuando se selecciona un registro (osea una fila)
+    function mostrarElementos(elementos) {
+        const contenedorElementos = document.getElementById(
+            "contenedor-elementos"
+        ); // Contenedor de las tarjetas
+        contenedorElementos.innerHTML = ""; // Limpiar el contenedor antes de agregar nuevos elementos
+
+        elementos.forEach((elemento) => {
+            // Aquí usamos la función crearCardElemento para cada elemento
+            const cardElemento = crearCardElemento(elemento);
+            contenedorElementos.innerHTML += cardElemento; // Agregar la card al contenedor
+        });
     }
 
     // Función para mostrar los detalles de un elemento en el modal
@@ -204,11 +243,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("modalElemento").style.display = "none";
     };
 
-    //
-    //
-    //
     //de aqui hasta la linea 375 es para el registro de sub_control osea el de los elementos
-
     window.actualizarElementos = function (
         elementoId = null,
         registroId = null
@@ -222,7 +257,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (elementoId) {
-            // Registrar un elemento específico en el sub-control
+            // Registrar un nuevo elemento
             fetch("/sub_control_ingreso", {
                 method: "POST",
                 headers: {
@@ -234,20 +269,26 @@ document.addEventListener("DOMContentLoaded", function () {
                     elemento_id: elementoId,
                 }),
             })
-                .then((response) => response.json())
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(
+                            `Error ${response.status}: ${response.statusText}`
+                        );
+                    }
+                    return response.json();
+                })
                 .then((data) => {
                     if (data.success && data.elemento) {
-                        alert("Elemento registrado exitosamente.");
-                        const contenedor = document.getElementById(
-                            "contenedor-elementos"
-                        );
-                        if (!contenedor) return;
+                        alert("¡Elemento registrado exitosamente!");
 
-                        contenedor.insertAdjacentHTML(
-                            "beforeend",
-                            crearCardElemento(data.elemento) // Usa el elemento devuelto por el servidor
+                        // Agregar el nuevo elemento al contenedor
+                        crearYMostrarCards(
+                            [data.elemento],
+                            "contenedor-elementos",
+                            true
                         );
 
+                        // Deshabilitar el botón del elemento registrado
                         const boton = document.querySelector(
                             `.btn-ingresar[data-id="${elementoId}"]`
                         );
@@ -263,36 +304,108 @@ document.addEventListener("DOMContentLoaded", function () {
                     alert("Ocurrió un error al registrar el elemento.");
                 });
         } else {
+            // Actualizar la lista de elementos
             fetch(`/vigilante/obtenerElementosPorRegistro/${registroId}`)
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.success) {
-                        mostrarElementosYCrearCards(data.elementos);
+                        crearYMostrarCards(
+                            data.elementos,
+                            "contenedor-elementos",
+                            true
+                        );
+                        alert("Lista de elementos actualizada exitosamente.");
                     } else {
                         alert(data.message || "No se encontraron elementos.");
                     }
                 })
-                .catch((error) =>
-                    console.error("Error al actualizar lista:", error)
-                );
+                .catch((error) => {
+                    console.error("Error al actualizar lista:", error);
+                    alert(
+                        "Ocurrió un error al actualizar la lista de elementos."
+                    );
+                });
         }
     };
 
-    function crearCardElemento({ categoria = {}, foto, serie, marca, id }) {
-        const nombreCategoria = categoria.nombre || "Sin categoría";
-        return `
-            <div class="card">
-                <h3 class="cabeza">${nombreCategoria}</h3>
-                <img src="${baseStorageUrl}/${foto}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
-                <p><strong>Serie:</strong> ${serie || "Sin serie"}</p>
-                <p><strong>Marca:</strong> ${marca || "Sin marca"}</p>
-                <a href="javascript:void(0)" class="link-ver-mas" data-element-id="${id}"
-                    onclick="mostrarDetallesElemento(${id})">Ver más</a>
-                <button class="btn-destroy" data-id="${id}" onclick="eliminarElemento(${id})">
-                    <img style="width:30px;" src="/imagenes/close.png" alt="Eliminar" class="icono-ingresa"> Eliminar
-                </button>
-            </div>
-        `;
+    //Esta función recibirá los elementos y el contenedor donde se deben mostrar, y tendrá una opción para decidir si incluye el botón de eliminar.
+
+    /**
+     * Función para crear y mostrar cards en el contenedor especificado.
+     * @param {Array} elementos - Lista de elementos para crear los cards.
+     * @param {string} contenedorId - ID del contenedor donde se mostrarán los cards.
+     * @param {boolean} permitirEliminar - Indica si los cards deben incluir el botón de eliminar.
+     */
+    function crearYMostrarCards(elementos, contenedorId, soloLectura = false) {
+        const contenedor = document.getElementById(contenedorId);
+
+        if (!contenedor) {
+            console.error("No se encontró el contenedor con ID:", contenedorId);
+            return;
+        }
+
+        // Mostrar el contenedor por si está oculto
+        contenedor.style.display = "flex";
+
+        // Verificar los IDs ya presentes en el contenedor para evitar duplicados
+        const idsExistentes = new Set(
+            Array.from(contenedor.querySelectorAll(".card")).map(
+                (card) => card.dataset.elementId
+            )
+        );
+
+        elementos.forEach((elemento) => {
+            if (idsExistentes.has(String(elemento.id))) {
+                console.log(
+                    `Elemento con ID ${elemento.id} ya existe en el contenedor.`
+                );
+                return; // Evita duplicar elementos existentes
+            }
+
+            // Crear el contenedor principal del card
+            const card = document.createElement("div");
+            card.classList.add("card");
+            card.dataset.elementId = elemento.id; // Asignar el ID del elemento para identificar duplicados
+
+            // Crear y añadir el título
+            const cabeza = document.createElement("h3");
+            cabeza.classList.add("cabeza");
+            cabeza.textContent = elemento.categoria.nombre;
+            card.appendChild(cabeza);
+
+            // Crear y añadir la imagen
+            const img = document.createElement("img");
+            img.classList.add("img-fluid", "mt-3", "elemento-foto");
+            img.src = `/storage/${elemento.foto}`;
+            img.alt = "Foto del elemento";
+            card.appendChild(img);
+
+            // Crear y añadir el párrafo para la serie
+            const serie = document.createElement("p");
+            serie.innerHTML = `<strong>Serie:</strong> ${elemento.serie}`;
+            card.appendChild(serie);
+
+            // Crear y añadir el párrafo para la marca
+            const marca = document.createElement("p");
+            marca.innerHTML = `<strong>Marca:</strong> ${elemento.marca}`;
+            card.appendChild(marca);
+
+            // Crear y añadir el enlace "Ver más"
+            const linkVerMas = document.createElement("a");
+            linkVerMas.href = "javascript:void(0)";
+            linkVerMas.classList.add("link-ver-mas");
+            linkVerMas.dataset.elementId = elemento.id;
+            linkVerMas.textContent = "Ver más";
+            linkVerMas.onclick = function () {
+                mostrarDetallesElemento(elemento.id);
+            };
+            card.appendChild(linkVerMas);
+
+            // Añadir el card al contenedor
+            contenedor.appendChild(card);
+        });
+
+        console.log("Cards generados y añadidos al contenedor:", contenedorId);
     }
 
     // Función global para manejar "ver más" (definir si no existe)
@@ -319,31 +432,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Eliminar eventos y mensajes innecesarios
     });
-
-    // Mostrar los elementos registrados en el sub-control
-    function mostrarElementosYCrearCards(elementos) {
-        const contenedorElementos = document.getElementById(
-            "contenedor-elementos"
-        );
-        if (!contenedorElementos) {
-            console.error("El contenedor de elementos no existe.");
-            return;
-        }
-
-        contenedorElementos.innerHTML = ""; // Limpiar contenedor antes de actualizar
-
-        elementos.forEach(({ categoria, foto, serie, marca, id }) => {
-            const cardHTML = crearCardElemento({
-                categoria,
-                foto,
-                serie,
-                marca,
-                id,
-            });
-            contenedorElementos.insertAdjacentHTML("beforeend", cardHTML);
-        });
-        console.log("Elementos mostrados en el contenedor.");
-    }
 
     // Escucha de eventos global para botones
     document.addEventListener("DOMContentLoaded", function () {
@@ -418,4 +506,53 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     });
+
+    // Función para eliminar un registro de sub_control_ingreso
+    function asignarEventosEliminar() {
+        document.querySelectorAll(".btn-destroy").forEach((button) => {
+            button.replaceWith(button.cloneNode(true)); // Limpia eventos previos
+        });
+
+        document.querySelectorAll(".btn-destroy").forEach((button) => {
+            button.addEventListener("click", function (event) {
+                event.preventDefault();
+                const subControlId = this.getAttribute("data-subcontrol-id");
+
+                if (subControlId) {
+                    eliminarSubControl(subControlId);
+                } else {
+                    console.error("No se encontró un sub_control_id válido.");
+                }
+            });
+        });
+    }
+
+    function eliminarSubControl(subControlId) {
+        if (!confirm("¿Estás seguro de que deseas eliminar este elemento?"))
+            return;
+
+        fetch(`/vigilante/sub_control_ingreso/${subControlId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": csrfToken,
+            },
+        })
+            .then((response) => {
+                if (response.ok) return response.json();
+                throw new Error("Error en la solicitud de eliminación");
+            })
+            .then((data) => {
+                if (data.success) {
+                    document.getElementById(`card-${subControlId}`)?.remove();
+                    alert("Elemento eliminado exitosamente.");
+                } else {
+                    alert(data.message || "No se pudo eliminar el elemento.");
+                }
+            })
+            .catch((error) => {
+                console.error("Error en la solicitud de eliminación:", error);
+                alert("Ocurrió un error al eliminar el elemento.");
+            });
+    }
 });

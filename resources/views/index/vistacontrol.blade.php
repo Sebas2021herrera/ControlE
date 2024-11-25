@@ -8,7 +8,7 @@
     <meta name="base-storage-url" content="{{ asset('storage') }}">
     <title>Vista del Vigilante</title>
     <link rel="stylesheet" href="{{ asset('css/styles_vistacontrol.css') }}">
-
+    <script src="{{ asset('js/vista_control.js') }}" defer></script>
 </head>
 
 <body>
@@ -214,7 +214,5 @@
         console.log("ID inicial del control de ingreso:", initialControlIngresoId);
     }
 </script>
-
-<script src="{{ asset('js/vista_control.js') }}" defer></script>
 
 </html>

@@ -65,8 +65,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/vigilante/buscar', [VigilanteController::class, 'buscarPorDocumento'])
             ->name('vigilante.buscar');
         // Rutas para eliminar elementos del contenedor en sub_control_ingresos
-        Route::delete('/vigilante/sub_control_ingreso/{id}', [VigilanteController::class, 'eliminarElemento'])
-            ->name('sub_control_ingreso.destroy');
+        Route::delete('/vigilante/sub_control_ingreso/{id}', [VigilanteController::class, 'destroy']);
 
         // Ruta para actualizar el estado de un registro a "Cerrado"
         Route::put('/vigilante/control_ingreso/{id}/cerrar', [VigilanteController::class, 'cerrarRegistro'])

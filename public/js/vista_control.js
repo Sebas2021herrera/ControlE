@@ -790,8 +790,8 @@ async function cerrarRegistro(id) {
             console.log("Registro cerrado exitosamente:", data);
             alert(data.message || "Registro cerrado exitosamente.");
 
-            // Actualizar la tabla
-            actualizarTabla(id);
+            // Recargar toda la página después de cerrar el registro
+            window.location.reload();
         } else {
             console.error("Error desde el servidor:", data);
             alert(data.message || "Hubo un problema al cerrar el registro.");

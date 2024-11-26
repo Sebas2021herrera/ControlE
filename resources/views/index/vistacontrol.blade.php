@@ -107,13 +107,13 @@
                             Ingresa
                         </button>
 
-
-
                         <button type="button" class="boton" id="guardar-registros"
                             data-id="{{ $controlIngresoId ?? '' }}">
                             <img src="{{ asset('imagenes/close.png') }}" alt="Guardar" class="iconos">
                             Egresa
                         </button>
+
+
 
                     </div>
                 </div>

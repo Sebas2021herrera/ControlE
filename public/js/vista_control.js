@@ -760,3 +760,98 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error("No se encontró el botón con ID 'agregar-registro'.");
     }
 });
+
+//funcion para cerrar el registro osea la salida
+document.addEventListener("DOMContentLoaded", function () {
+    const btnCerrarRegistro = document.getElementById("guardar-registros");
+
+    if (btnCerrarRegistro) {
+        btnCerrarRegistro.addEventListener("click", function () {
+            const registroId = btnCerrarRegistro.dataset.id;
+
+            if (!registroId) {
+                alert("El ID del registro no está definido.");
+                return;
+            }
+
+            cerrarRegistro(registroId);
+        });
+    }
+});
+
+// Función para cerrar el registro
+async function cerrarRegistro(id) {
+    try {
+        const response = await fetch(
+            `/vigilante/control_ingreso/${id}/cerrar`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document
+                        .querySelector('meta[name="csrf-token"]')
+                        .getAttribute("content"),
+                },
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                `Error al cerrar el registro: ${response.statusText}`
+            );
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert(data.message || "Registro cerrado exitosamente.");
+
+            // Actualizar el botón
+            const btnCerrarRegistro =
+                document.getElementById("guardar-registros");
+            if (
+                btnCerrarRegistro &&
+                btnCerrarRegistro.dataset.id === String(id)
+            ) {
+                btnCerrarRegistro.textContent = "Registro cerrado";
+                btnCerrarRegistro.disabled = true;
+            }
+
+            // Llamar a la función para actualizar la tabla
+            actualizarTabla(id);
+        } else {
+            console.error("Error desde el servidor:", data);
+            alert(data.message || "Hubo un problema al cerrar el registro.");
+        }
+    } catch (error) {
+        console.error("Error al cerrar el registro:", error);
+        alert("Ocurrió un error inesperado. Intente nuevamente.");
+    }
+}
+
+function actualizarTabla(idRegistro) {
+    const tabla = document.getElementById("tabla-reportes");
+
+    if (!tabla) {
+        console.error("No se encontró la tabla con ID: tabla-reportes.");
+        return;
+    }
+
+    console.log("Tabla encontrada:", tabla);
+
+    const fila = tabla.querySelector(`tr[data-registro-id="${idRegistro}"]`);
+    if (!fila) {
+        console.warn(
+            `No se encontró la fila para el registro con ID: ${idRegistro}`
+        );
+        return;
+    }
+
+    console.log("Fila encontrada:", fila);
+
+    // Actualizar el estado de la fila
+    const celdaEstado = fila.querySelector("td:last-child");
+    if (celdaEstado) {
+        celdaEstado.textContent = "Cerrado";
+    }
+}

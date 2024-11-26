@@ -312,16 +312,23 @@ class VigilanteController extends Controller
 
     public function destroy($id)
     {
-        $subControl = Sub_Control_Ingreso::find($id);
+        try {
+            $subControlIngreso = Sub_Control_Ingreso::findOrFail($id);
+            $subControlIngreso->delete();
 
-        if (!$subControl) {
-            return response()->json(['success' => false, 'message' => 'Elemento no encontrado.'], 404);
+            return response()->json(['success' => true, 'message' => 'Elemento eliminado correctamente.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error al eliminar el elemento.'], 500);
         }
-
-        $subControl->delete();
-
-        return response()->json(['success' => true, 'message' => 'Elemento eliminado correctamente.']);
     }
+
+
+
+
+
+
+
+
 
 
 

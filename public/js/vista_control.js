@@ -346,9 +346,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 btnEliminar.dataset.elementId = elemento.id;
                 btnEliminar.textContent = "Eliminar";
 
-                // Agregar el evento de eliminar
-                btnEliminar.addEventListener("click", function () {
-                    eliminarElemento(elemento.id);
+                // **Agregamos el evento para medir el tiempo y eliminar**
+                btnEliminar.addEventListener("click", async function () {
+                    const startTime = performance.now(); // Inicia el contador de tiempo
+                    await eliminarElemento(elemento.id); // Llama a la función de eliminación
+                    const endTime = performance.now(); // Finaliza el contador de tiempo
+                    console.log(
+                        `Tiempo total para eliminar elemento: ${
+                            endTime - startTime
+                        } ms`
+                    );
                 });
 
                 card.appendChild(btnEliminar);
@@ -361,24 +368,40 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("Cards generados y añadidos al contenedor:", contenedorId);
     }
 
-    /**
-     * Función para eliminar un elemento (por ejemplo, un card)
-     * @param {number} elementId - El ID del elemento a eliminar.
-     */
-    function eliminarElemento(elementId) {
-        if (!confirm("¿Estás seguro de que deseas eliminar este elemento?"))
-            return;
+    async function eliminarElemento(id) {
+        try {
+            console.log(`Intentando eliminar elemento con ID: ${id}`);
 
-        const element = document.querySelector(
-            `[data-element-id="${elementId}"]`
-        );
-        if (element) {
-            element.remove();
-            console.log(`Elemento con ID ${elementId} eliminado.`);
-            alert("Elemento eliminado exitosamente.");
-        } else {
-            console.error(`Elemento con ID ${elementId} no encontrado.`);
-            alert("No se pudo encontrar el elemento para eliminar.");
+            const response = await fetch(
+                `/vigilante/sub_control_ingreso/${id}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": csrfToken,
+                    },
+                }
+            );
+
+            console.log("Respuesta del servidor:", response);
+
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log("Datos recibidos:", data);
+
+            if (data.success) {
+                console.log(`Elemento con ID ${id} eliminado.`);
+                document.querySelector(`[data-element-id='${id}']`)?.remove();
+            } else {
+                console.warn(
+                    data.message || "No se pudo eliminar el elemento."
+                );
+            }
+        } catch (error) {
+            console.error("Error al eliminar el elemento:", error);
         }
     }
 
@@ -428,12 +451,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const csrfToken = csrfTokenMeta.getAttribute("content");
         const baseStorageUrl = baseStorageUrlMeta.getAttribute("content");
 
-        // Detectar el clic en los botones "Ingresa"
-        document.addEventListener("click", function (event) {
-            const boton = event.target.closest(".btn-ingresar");
+        // Añadir eventos a botones de forma específica
+        const botonesIngresar = document.querySelectorAll(".btn-ingresar");
 
-            if (boton) {
-                const elementoId = boton.getAttribute("data-id");
+        botonesIngresar.forEach((boton) => {
+            boton.addEventListener("click", function () {
+                const elementoId = this.getAttribute("data-id");
                 if (!elementoId) return;
 
                 const registroId =
@@ -446,7 +469,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 actualizarElementoPorAPI(elementoId, registroId);
-            }
+            });
         });
 
         async function actualizarElementoPorAPI(elementoId, registroId) {
@@ -471,6 +494,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 if (data.success) {
                     alert("Elemento registrado exitosamente.");
+                    cargarElementos(); // Sincronizar DOM tras la actualización
                 } else {
                     alert(data.message || "Error desconocido.");
                 }
@@ -479,31 +503,56 @@ document.addEventListener("DOMContentLoaded", function () {
                 alert("Ocurrió un error al intentar registrar el elemento.");
             }
         }
+
+        function cargarElementos() {
+            const registroId =
+                document.getElementById("control_ingreso_id")?.value;
+
+            if (!registroId) {
+                console.error("No se encontró el ID del registro.");
+                return;
+            }
+
+            fetch(`/vigilante/elementos/${registroId}`)
+                .then((response) => {
+                    if (!response.ok)
+                        throw new Error("Error al obtener elementos");
+                    return response.text();
+                })
+                .then((html) => {
+                    const contenedor = document.getElementById(
+                        "contenedor-elementos"
+                    );
+                    contenedor.innerHTML = ""; // Limpia los elementos existentes
+                    contenedor.innerHTML = html;
+                })
+                .catch((error) =>
+                    console.error("Error al cargar elementos:", error)
+                );
+        }
     });
 
     // Función para eliminar un registro de sub_control_ingreso
-    function asignarEventosEliminar() {
-        document.querySelectorAll(".btn-destroy").forEach((button) => {
-            button.replaceWith(button.cloneNode(true)); // Limpia eventos previos
-        });
+    document.querySelectorAll(".btn-destroy").forEach((button) => {
+        button.addEventListener("click", function (event) {
+            event.preventDefault();
+            const subControlId = this.getAttribute("data-subcontrol-id");
 
-        document.querySelectorAll(".btn-destroy").forEach((button) => {
-            button.addEventListener("click", function (event) {
-                event.preventDefault();
-                const subControlId = this.getAttribute("data-subcontrol-id");
+            console.log("SubControl ID encontrado:", subControlId); // Depuración
 
-                if (subControlId) {
-                    eliminarSubControl(subControlId);
-                } else {
-                    console.error("No se encontró un sub_control_id válido.");
-                }
-            });
+            if (subControlId) {
+                eliminarSubControl(subControlId);
+            } else {
+                console.error("No se encontró un sub_control_id válido.");
+            }
         });
-    }
+    });
 
     function eliminarSubControl(subControlId) {
         if (!confirm("¿Estás seguro de que deseas eliminar este elemento?"))
             return;
+
+        console.log("Enviando solicitud DELETE para el ID:", subControlId); // Log adicional
 
         fetch(`/vigilante/sub_control_ingreso/${subControlId}`, {
             method: "DELETE",
@@ -513,13 +562,17 @@ document.addEventListener("DOMContentLoaded", function () {
             },
         })
             .then((response) => {
-                if (response.ok) return response.json();
-                throw new Error("Error en la solicitud de eliminación");
+                console.log("Respuesta del servidor:", response); // Log adicional
+                if (!response.ok)
+                    throw new Error("Error en la solicitud de eliminación.");
+                return response.json();
             })
             .then((data) => {
+                console.log("Datos recibidos del servidor:", data); // Log adicional
                 if (data.success) {
                     document.getElementById(`card-${subControlId}`)?.remove();
                     alert("Elemento eliminado exitosamente.");
+                    cargarElementos(); // Recargar los elementos
                 } else {
                     alert(data.message || "No se pudo eliminar el elemento.");
                 }
@@ -529,24 +582,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 alert("Ocurrió un error al eliminar el elemento.");
             });
     }
-
-    // // Función para actualizar el listado de registros en la interfaz (opcional)
-    // function actualizarListaRegistros(registros) {
-    //     const contenedorRegistros = document.getElementById(
-    //         "contenedor-registros"
-    //     );
-    //     if (!contenedorRegistros) return;
-
-    //     // Limpia el contenedor
-    //     contenedorRegistros.innerHTML = "";
-
-    //     // Generar los registros
-    //     registros.forEach((registro) => {
-    //         const divRegistro = document.createElement("div");
-    //         divRegistro.textContent = `Registro ID: ${registro.id} - Fecha Ingreso: ${registro.fecha_ingreso}`;
-    //         contenedorRegistros.appendChild(divRegistro);
-    //     });
-    // }
 
     // Cerrar un registro
     if (btnCerrarRegistro) {

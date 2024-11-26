@@ -51,6 +51,9 @@ class VigilanteController extends Controller
 
     public function nuevoRegistro(Request $request)
     {
+        Log::info('Solicitud recibida en nuevoRegistro', $request->all());
+
+        // Validar la entrada
         if (!$request->has(['documento_vigilante', 'usuario_id'])) {
             return response()->json([
                 'success' => false,
@@ -58,13 +61,15 @@ class VigilanteController extends Controller
             ], 400);
         }
 
-        $request->validate([
+        $validated = $request->validate([
             'documento_vigilante' => 'required|string|max:255',
             'usuario_id' => 'required|integer',
         ]);
 
-        $vigilante = Usuario::where('numero_documento', $request->input('documento_vigilante'))->first();
+        Log::info('Datos validados correctamente', $validated);
 
+        // Verificar el vigilante
+        $vigilante = Usuario::where('numero_documento', $request->input('documento_vigilante'))->first();
         if (!$vigilante) {
             return response()->json([
                 'success' => false,
@@ -72,8 +77,8 @@ class VigilanteController extends Controller
             ], 404);
         }
 
+        // Verificar el usuario
         $usuario = Usuario::find($request->input('usuario_id'));
-
         if (!$usuario) {
             return response()->json([
                 'success' => false,
@@ -81,6 +86,7 @@ class VigilanteController extends Controller
             ], 404);
         }
 
+        // Verificar si hay un registro abierto
         $registroAbierto = ControlIngreso::where('usuario_id', $usuario->id)
             ->where('estado', 0)
             ->latest('fecha_ingreso')
@@ -110,16 +116,17 @@ class VigilanteController extends Controller
             ], 500);
         }
 
-        // Obtener los registros actualizados para este usuario
-        $registros = ControlIngreso::with('centro')->where('usuario_id', $usuario->id)->get();
+        // Cargar las relaciones necesarias del registro recién creado
+        $nuevoRegistro->load('centro');
 
         return response()->json([
             'success' => true,
             'message' => 'Ingreso registrado exitosamente.',
-            'registros' => $registros,
-            'nuevoRegistroId' => $nuevoRegistro->id,  // Agregar el ID del nuevo registro
+            'registro' => $nuevoRegistro,  // Solo el nuevo registro
+            'nuevoRegistroId' => $nuevoRegistro->id,
         ]);
     }
+
 
 
     public function cerrarRegistro(Request $request, $id)

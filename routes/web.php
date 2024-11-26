@@ -17,7 +17,7 @@ Route::get('/', [WelcomeController::class, 'index']);
 Route::get('login', [AuthController::class, 'showLogin'])->name('login');
 Route::get('create', [AuthController::class, 'create'])->name('create');
 Route::post('registrado', [AuthController::class, 'createpost'])->name('createpost');
-Route::post('/createpost', [AdminController::class, 'store'])->name('createpost');
+Route::post('/createpost', [AdminController::class, 'store'])->name('createpost.admin');
 Route::post('login', [AuthController::class, 'login'])->name('login.post');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -71,7 +71,8 @@ Route::middleware('auth')->group(function () {
         Route::put('/vigilante/control_ingreso/{id}/cerrar', [VigilanteController::class, 'cerrarRegistro'])
             ->name('control_ingreso.cerrar');
 
-        Route::post('/vigilante/registro', [VigilanteController::class, 'nuevoRegistro'])->name('vigilante.registro');
+        Route::post('/nuevoRegistro', [VigilanteController::class, 'nuevoRegistro'])->name('vigilante.registro');
+
         Route::post('/sub_control_ingreso', [VigilanteController::class, 'registrarElementoEnSubControl'])->name('sub_control_ingreso.store');
 
         Route::get('/vigilante/elementos/{registroId}', [VigilanteController::class, 'obtenerElementosPorRegistro'])

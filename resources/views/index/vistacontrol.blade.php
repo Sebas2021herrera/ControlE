@@ -8,7 +8,6 @@
     <meta name="base-storage-url" content="{{ asset('storage') }}">
     <title>Vista del Vigilante</title>
     <link rel="stylesheet" href="{{ asset('css/styles_vistacontrol.css') }}">
-    <script src="{{ asset('js/vista_control.js') }}" defer></script>
 </head>
 
 <body>
@@ -103,11 +102,11 @@
                             <input type="hidden" id="control_ingreso_id">
 
                         </form>
-                        <button type="button" class="boton" id="agregar-registro"
-                            data-id="{{ $controlIngresoId ?? '' }}">
+                        <button type="button" class="boton" id="agregar-registro">
                             <img src="{{ asset('imagenes/add.png') }}" alt="Nuevo Registro" class="iconos">
                             Ingresa
                         </button>
+
 
 
                         <button type="button" class="boton" id="guardar-registros"
@@ -204,8 +203,7 @@
     const registroUrl = "{{ route('vigilante.registro') }}";
     const subControlIngresoUrl = "{{ route('sub_control_ingreso.store') }}";
     const elementos = @json($elementos);
-
-    console.log("Elementos cargados:", elementos);
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
 
     // Si necesitas establecer un valor inicial para control_ingreso_id
     const initialControlIngresoId = @json($controlIngresoId);
@@ -214,5 +212,6 @@
         console.log("ID inicial del control de ingreso:", initialControlIngresoId);
     }
 </script>
+<script src="{{ asset('js/vista_control.js') }}" defer></script>
 
 </html>

@@ -42,70 +42,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    // Función para crear un nuevo registro
-    function crearRegistro() {
-        // Recibir datos del formulario
-        const documentoVigilante = document.getElementById(
-            "documento_vigilante"
-        ).value;
-        const usuarioId = document.getElementById("usuario_id").value;
-
-        // Enviar la solicitud AJAX
-        fetch("/ruta/del/nuevo/registro", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": csrfToken,
-            },
-            body: JSON.stringify({
-                documento_vigilante: documentoVigilante,
-                usuario_id: usuarioId,
-            }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.success) {
-                    // Actualizar el campo active-record-id con el nuevo ID
-                    document.getElementById("active-record-id").value =
-                        data.nuevoRegistroId;
-                } else {
-                    // Mostrar mensaje de error
-                    console.error("Error:", data.message);
-                }
-            })
-            .catch((error) => {
-                console.error("Error en la solicitud:", error);
-            });
-    }
-
-    // Cerrar un registro
-    if (btnCerrarRegistro) {
-        btnCerrarRegistro.addEventListener("click", function () {
-            const registroId = document.getElementById("registro-id").value;
-            if (!registroId) {
-                alert("No se ha seleccionado un registro.");
-                return;
-            }
-            fetch(`/vigilante/cerrarRegistro/${registroId}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": csrfToken,
-                },
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.success) {
-                        alert("Registro cerrado.");
-                        location.reload();
-                    } else {
-                        alert(data.message);
-                    }
-                })
-                .catch((error) => console.error("Error:", error));
-        });
-    }
-
     // Mostrar los registros existentes
     function mostrarRegistros(registros) {
         contenedorRegistros.innerHTML = ""; // Limpiar contenedor de registros
@@ -328,15 +264,17 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    //Esta función recibirá los elementos y el contenedor donde se deben mostrar, y tendrá una opción para decidir si incluye el botón de eliminar.
-
     /**
      * Función para crear y mostrar cards en el contenedor especificado.
      * @param {Array} elementos - Lista de elementos para crear los cards.
      * @param {string} contenedorId - ID del contenedor donde se mostrarán los cards.
      * @param {boolean} permitirEliminar - Indica si los cards deben incluir el botón de eliminar.
      */
-    function crearYMostrarCards(elementos, contenedorId, soloLectura = false) {
+    function crearYMostrarCards(
+        elementos,
+        contenedorId,
+        permitirEliminar = false
+    ) {
         const contenedor = document.getElementById(contenedorId);
 
         if (!contenedor) {
@@ -401,11 +339,47 @@ document.addEventListener("DOMContentLoaded", function () {
             };
             card.appendChild(linkVerMas);
 
+            // Si permitirEliminar es verdadero, agregar el botón de eliminar
+            if (permitirEliminar) {
+                const btnEliminar = document.createElement("button");
+                btnEliminar.classList.add("btn", "btn-danger", "btn-destroy");
+                btnEliminar.dataset.elementId = elemento.id;
+                btnEliminar.textContent = "Eliminar";
+
+                // Agregar el evento de eliminar
+                btnEliminar.addEventListener("click", function () {
+                    eliminarElemento(elemento.id);
+                });
+
+                card.appendChild(btnEliminar);
+            }
+
             // Añadir el card al contenedor
             contenedor.appendChild(card);
         });
 
         console.log("Cards generados y añadidos al contenedor:", contenedorId);
+    }
+
+    /**
+     * Función para eliminar un elemento (por ejemplo, un card)
+     * @param {number} elementId - El ID del elemento a eliminar.
+     */
+    function eliminarElemento(elementId) {
+        if (!confirm("¿Estás seguro de que deseas eliminar este elemento?"))
+            return;
+
+        const element = document.querySelector(
+            `[data-element-id="${elementId}"]`
+        );
+        if (element) {
+            element.remove();
+            console.log(`Elemento con ID ${elementId} eliminado.`);
+            alert("Elemento eliminado exitosamente.");
+        } else {
+            console.error(`Elemento con ID ${elementId} no encontrado.`);
+            alert("No se pudo encontrar el elemento para eliminar.");
+        }
     }
 
     // Función global para manejar "ver más" (definir si no existe)
@@ -554,5 +528,173 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error("Error en la solicitud de eliminación:", error);
                 alert("Ocurrió un error al eliminar el elemento.");
             });
+    }
+
+    // // Función para actualizar el listado de registros en la interfaz (opcional)
+    // function actualizarListaRegistros(registros) {
+    //     const contenedorRegistros = document.getElementById(
+    //         "contenedor-registros"
+    //     );
+    //     if (!contenedorRegistros) return;
+
+    //     // Limpia el contenedor
+    //     contenedorRegistros.innerHTML = "";
+
+    //     // Generar los registros
+    //     registros.forEach((registro) => {
+    //         const divRegistro = document.createElement("div");
+    //         divRegistro.textContent = `Registro ID: ${registro.id} - Fecha Ingreso: ${registro.fecha_ingreso}`;
+    //         contenedorRegistros.appendChild(divRegistro);
+    //     });
+    // }
+
+    // Cerrar un registro
+    if (btnCerrarRegistro) {
+        btnCerrarRegistro.addEventListener("click", function () {
+            const registroId = document.getElementById("registro-id").value;
+            if (!registroId) {
+                alert("No se ha seleccionado un registro.");
+                return;
+            }
+            fetch(`/vigilante/cerrarRegistro/${registroId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": csrfToken,
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        alert("Registro cerrado.");
+                        location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch((error) => console.error("Error:", error));
+        });
+    }
+});
+
+// Función global para crear un nuevo registro control_ingresos
+async function crearRegistro() {
+    console.log("creando registro");
+
+    // Obtener los valores de los inputs ocultos
+    const documentoVigilante = document.getElementById(
+        "documento_vigilante"
+    ).value;
+    const usuarioId = document.getElementById("usuario-id-oculto").value;
+
+    try {
+        const response = await fetch("/nuevoRegistro", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document
+                    .querySelector('meta[name="csrf-token"]')
+                    .getAttribute("content"),
+            },
+            body: JSON.stringify({
+                documento_vigilante: documentoVigilante,
+                usuario_id: usuarioId,
+            }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert("Registro creado exitosamente.");
+            console.log("Nuevo registro:", data.nuevoRegistroId);
+
+            // Aquí hacemos el reload de la página completa
+            location.reload();
+        } else {
+            alert(data.message || "Error al crear el registro.");
+        }
+    } catch (error) {
+        console.error("Error al crear el registro:", error);
+    }
+}
+
+// Función para agregar una nueva fila a la tabla
+function agregarFilaATabla(registro) {
+    if (!registro || !registro.id) {
+        console.error("El registro es inválido o no tiene ID:", registro);
+        return;
+    }
+
+    const tablaBody = document.getElementById("tabla-reportes-body");
+    if (!tablaBody) {
+        console.error(
+            "No se encontró el cuerpo de la tabla (tbody) con ID 'tabla-reportes-body'."
+        );
+        return;
+    }
+
+    // Eliminar la fila de mensaje "No se ha encontrado un registro"
+    const filaNoRegistros = tablaBody.querySelector("tr");
+    if (
+        filaNoRegistros &&
+        filaNoRegistros.children.length === 1 &&
+        filaNoRegistros.textContent.trim() ===
+            "No se ha encontrado un registro de control de ingreso."
+    ) {
+        filaNoRegistros.remove();
+        console.log(
+            "Fila 'No se ha encontrado un registro de control de ingreso' eliminada."
+        );
+    }
+
+    // Crear una nueva fila
+    const fila = document.createElement("tr");
+    fila.classList.add("registro-fila");
+    fila.setAttribute("data-registro-id", registro.id);
+
+    // Llenar la fila con los datos
+    fila.innerHTML = `
+        <td>${registro.id}</td>
+        <td>${registro.centro?.nombre || "Centro no definido"}</td>
+        <td>${registro.fecha_ingreso}</td>
+        <td>${registro.fecha_salida || "N/A"}</td>
+        <td>${registro.estado === 0 ? "Abierto" : "Cerrado"}</td>
+    `;
+
+    // Agregar la fila al inicio del tbody
+    tablaBody.prepend(fila);
+    console.log("Nueva fila agregada:", fila);
+
+    // Verificar si no hay registros y mostrar el mensaje
+    verificarYMostrarMensajeNoRegistros();
+}
+
+// Verificar si la tabla está vacía y mostrar el mensaje adecuado
+function verificarYMostrarMensajeNoRegistros() {
+    const tablaBody = document.getElementById("tabla-reportes-body");
+    const filas = tablaBody.querySelectorAll("tr");
+
+    // Si no hay filas (exceptuando el mensaje de "No hay registros disponibles")
+    if (filas.length === 0) {
+        const mensajeNoRegistros = document.createElement("tr");
+        mensajeNoRegistros.innerHTML = `<td colspan="5">No se ha encontrado un registro de control de ingreso.</td>`;
+        tablaBody.appendChild(mensajeNoRegistros);
+    }
+}
+
+// Ejecutar todo cuando el DOM se haya cargado
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("DOM fully loaded and parsed");
+
+    // Verificar si la tabla está vacía al cargar la página
+    verificarYMostrarMensajeNoRegistros();
+
+    // Asociar el evento al botón
+    const botonAgregarRegistro = document.getElementById("agregar-registro");
+    if (botonAgregarRegistro) {
+        botonAgregarRegistro.addEventListener("click", crearRegistro);
+        console.log("Evento de clic asociado al botón agregar-registro.");
+    } else {
+        console.error("No se encontró el botón con ID 'agregar-registro'.");
     }
 });

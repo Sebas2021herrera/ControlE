@@ -17,7 +17,7 @@ Route::get('/', [WelcomeController::class, 'index']);
 Route::get('login', [AuthController::class, 'showLogin'])->name('login');
 Route::get('create', [AuthController::class, 'create'])->name('create');
 Route::post('registrado', [AuthController::class, 'createpost'])->name('createpost');
-Route::post('/createpost', [AdminController::class, 'store'])->name('createpost');
+Route::post('/createpost', [AdminController::class, 'store'])->name('createpost.admin');
 Route::post('login', [AuthController::class, 'login'])->name('login.post');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -65,14 +65,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/vigilante/buscar', [VigilanteController::class, 'buscarPorDocumento'])
             ->name('vigilante.buscar');
         // Rutas para eliminar elementos del contenedor en sub_control_ingresos
-        Route::delete('/vigilante/sub_control_ingreso/{id}', [VigilanteController::class, 'eliminarElemento'])
-            ->name('sub_control_ingreso.destroy');
+        Route::delete('/vigilante/sub_control_ingreso/{id}', [VigilanteController::class, 'destroy']);
 
         // Ruta para actualizar el estado de un registro a "Cerrado"
         Route::put('/vigilante/control_ingreso/{id}/cerrar', [VigilanteController::class, 'cerrarRegistro'])
             ->name('control_ingreso.cerrar');
 
-        Route::post('/vigilante/registro', [VigilanteController::class, 'nuevoRegistro'])->name('vigilante.registro');
+        Route::post('/nuevoRegistro', [VigilanteController::class, 'nuevoRegistro'])->name('vigilante.registro');
+
         Route::post('/sub_control_ingreso', [VigilanteController::class, 'registrarElementoEnSubControl'])->name('sub_control_ingreso.store');
 
         Route::get('/vigilante/elementos/{registroId}', [VigilanteController::class, 'obtenerElementosPorRegistro'])

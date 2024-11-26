@@ -1,649 +1,735 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Definir las funciones en el ámbito global
-    window.mostrarModal = function (modalId = "modal-elementos-usuario") {
-        console.log(`Intentando abrir el modal con ID: ${modalId}`);
-        const modal = document.getElementById(modalId);
+    // Verificar si las meta etiquetas existen antes de acceder a ellas
+    const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+    const baseStorageUrlMeta = document.querySelector(
+        'meta[name="base-storage-url"]'
+    );
 
+    if (!csrfTokenMeta || !baseStorageUrlMeta) {
+        console.error(
+            "Las meta etiquetas 'csrf-token' o 'base-storage-url' no se encontraron."
+        );
+        return;
+    }
+    const csrfToken = document
+        .querySelector('meta[name="csrf-token"]')
+        .getAttribute("content");
+
+    const baseStorageUrl = baseStorageUrlMeta.getAttribute("content");
+    const contenedorElementos = document.getElementById("contenedorElementos");
+    const modalVerMas = document.getElementById("modalVerMas");
+    const modalElementosUsuario = document.getElementById(
+        "modal-elementos-usuario"
+    );
+    const btnNuevoRegistro = document.getElementById("btnNuevoRegistro");
+    const btnCerrarRegistro = document.getElementById("btnCerrarRegistro");
+    const modalBody = document.getElementById("modalBody");
+    const inputUsuarioId = document.getElementById("usuario-id-oculto");
+    const contenedorRegistros = document.getElementById("contenedorRegistros");
+
+    // Abrir el modal de elementos
+    window.abrirModal = function (modalId) {
+        const modal = document.getElementById(modalId);
         if (modal) {
-            modal.style.display = "block";
-            console.log(`Modal con ID ${modalId} abierto correctamente.`);
-        } else {
-            console.error(`Modal con ID ${modalId} no encontrado en el DOM.`);
+            modal.style.display = "block"; // Mostrar el modal
         }
     };
 
-    window.cerrarModal = function (modalId = "modal-elementos-usuario") {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.style.display = "none";
-            console.log(`Modal con ID ${modalId} cerrado.`);
-        } else {
-            console.error(
-                `Modal con ID ${modalId} no encontrado en el DOM para cerrarlo.`
-            );
+    // Cerrar el modal de elementos
+    window.cerrarModalElementos = function () {
+        if (modalElementosUsuario) {
+            modalElementosUsuario.style.display = "none"; // Ocultar el modal
         }
     };
 
-    // Asignar el evento al botón para abrir el modal
-    const botonAbrirModal = document.getElementById("abrir-modal-elementos");
-    if (botonAbrirModal) {
-        botonAbrirModal.addEventListener("click", function (event) {
-            event.stopPropagation(); // Evita que el clic se propague a otros elementos
-            mostrarModal(); // Abre el modal por defecto
+    // Mostrar los registros existentes
+    function mostrarRegistros(registros) {
+        contenedorRegistros.innerHTML = ""; // Limpiar contenedor de registros
+
+        registros.forEach((registro) => {
+            // Crear una nueva fila para cada registro
+            const row = document.createElement("div");
+            row.classList.add("registro-row"); // Clase para la fila
+            row.innerHTML = `
+                <div class="registro-info" data-registro-id="${registro.id}">
+                    <p><strong>ID Registro:</strong> ${registro.id}</p>
+                    <p><strong>Fecha Ingreso:</strong> ${registro.fecha_ingreso}</p>
+                </div>
+            `;
+
+            // Evento de clic para destacar fila y mostrar elementos
+            row.addEventListener("click", () => {
+                console.log(`Fila clicada: ID Registro = ${registro.id}`);
+                destacarFilaSeleccionada(row); // Pasar `row` correctamente a la función
+                mostrarElementosPorRegistro(registro.id); // Mostrar los elementos relacionados
+            });
+
+            contenedorRegistros.appendChild(row); // Agregar la fila al contenedor
         });
     }
 
-    // Asignar el evento al botón de cerrar dentro del modal
-    const botonCerrarModal = document.querySelector(".btn-cerrar-modal");
-    if (botonCerrarModal) {
-        botonCerrarModal.addEventListener("click", function () {
-            cerrarModal(); // Cierra el modal por defecto
-        });
-    }
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    // Función para manejar el clic en una fila de la tabla
-    // Función para manejar el clic en una fila de la tabla
-    function handleFilaClick() {
-        document
-            .querySelectorAll(".registro-fila")
-            .forEach((f) => f.classList.remove("fila-seleccionada"));
-        this.classList.add("fila-seleccionada");
+    // Mostrar elementos al hacer clic en una fila (registro)
+    /**
+     * Función para mostrar los elementos asociados a un registro.
+     * Realiza una solicitud al servidor y muestra los datos en el contenedor correspondiente.
+     * @param {number} registroId - ID del registro a consultar.
+     */
+    function mostrarElementosPorRegistro(registroId) {
+        console.log("Obteniendo elementos para registro ID:", registroId);
 
-        const registroId = this.getAttribute("data-registro-id");
-        actualizarElementosAsociados(registroId); // Llama a la función para obtener y mostrar elementos
-    }
-
-    // Función para actualizar y mostrar los elementos asociados
-    function actualizarElementosAsociados(registroId) {
-        if (!registroId) {
-            console.error("El ID del registro no es válido.");
-            return;
-        }
-
+        // Realiza la solicitud al servidor
         fetch(`/vigilante/elementos/${registroId}`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error(
-                        "Error al obtener los elementos asociados desde el servidor."
+                        `Error en la solicitud: ${response.statusText}`
                     );
                 }
                 return response.json();
             })
             .then((data) => {
-                console.log("Datos recibidos del servidor:", data); // Revisa la estructura aquí
-                if (data.success && data.elementos.length > 0) {
-                    mostrarElementos(data.elementos);
-                } else {
-                    console.log("No se encontraron elementos asociados.");
-                    mostrarElementos([]); // Limpia la vista si no hay elementos
-                }
-            })
-            .catch((error) => {
-                console.error(
-                    "Error al obtener los elementos asociados:",
-                    error
-                );
-            });
-    }
-
-    // Función para mostrar los elementos asociados en la vista
-    function mostrarElementos(elementos) {
-        const contenedorElementos = document.querySelector(".elementos");
-        const botonVerElementos = document.getElementById(
-            "abrir-modal-elementos"
-        );
-        contenedorElementos.innerHTML = ""; // Limpiar los elementos actuales
-
-        elementos.forEach((elemento) => {
-            // Asegúrate de que las propiedades existen antes de usarlas
-            const categoria = elemento.categoria
-                ? elemento.categoria.nombre
-                : "Sin categoría";
-            const foto = elemento.foto
-                ? `${baseStorageUrl}/${elemento.foto}`
-                : "{{ asset('imagenes/sin_imagen.png') }}";
-            const serie = elemento.serie || "N/A";
-            const marca = elemento.marca || "N/A";
-
-            const card = document.createElement("div");
-            card.classList.add("card");
-            card.innerHTML = `
-                <h3 class="cabeza">${categoria}</h3>
-                <img src="${foto}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
-                <p><strong>Serie:</strong> ${serie}</p>
-                <p ><strong>Marca:</strong> ${marca}</p>
-                <a style="margin-top: -10px" href="#" class="link-ver-mas" onclick="mostrarDetallesElemento('${elemento.id}')">Ver más</a>
-            `;
-            contenedorElementos.appendChild(card);
-        });
-
-        contenedorElementos.appendChild(botonVerElementos); // Reinsertar el botón
-    }
-
-    // Asignar el evento a las filas de la tabla después de cargar la página
-    document.addEventListener("DOMContentLoaded", () => {
-        document.querySelectorAll(".registro-fila").forEach((fila) => {
-            fila.addEventListener("click", handleFilaClick);
-        });
-    });
-
-    // Asignar eventos a las filas de la tabla
-    function aplicarEventListeners() {
-        document.querySelectorAll(".registro-fila").forEach((fila) => {
-            fila.removeEventListener("click", handleFilaClick);
-            fila.addEventListener("click", handleFilaClick);
-        });
-    }
-
-    // Ejecutar la asignación de eventos al cargar el DOM
-    aplicarEventListeners();
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    // Función para mostrar elementos en el modal
-    function mostrarElementos(elementos) {
-        const contenedorElementos = document.querySelector(".elementos");
-        const botonVerElementos = document.getElementById(
-            "abrir-modal-elementos"
-        );
-        contenedorElementos.innerHTML = ""; // Limpiar los elementos actuales
-
-        elementos.forEach((elemento) => {
-            const card = document.createElement("div");
-            card.classList.add("card");
-            card.innerHTML = `
-<h3 class="cabeza">${elemento.categoria.nombre}</h3>
-<img src="${baseStorageUrl}/${elemento.foto}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
-<p><strong>Serie:</strong> ${elemento.serie}</p>
-<p><strong>Marca:</strong> ${elemento.marca}</p>
-<a href="#" class="link-ver-mas" onclick="mostrarDetallesElemento('${elemento.id}')">Ver más</a>
-`;
-            contenedorElementos.appendChild(card);
-        });
-
-        contenedorElementos.appendChild(botonVerElementos); // Reinsertar el botón
-    }
-
-    // Función para mostrar detalles del elemento
-    window.mostrarDetallesElemento = function (elementoId) {
-        const modal = document.getElementById("modalElemento");
-        const descripcion = document.getElementById("descripcionElemento");
-        const marca = document.getElementById("marcaElemento");
-        const modelo = document.getElementById("modeloElemento");
-        const serie = document.getElementById("serieElemento");
-        const especificaciones = document.getElementById(
-            "especificacionesElemento"
-        );
-        const foto = document.getElementById("fotoElemento");
-        const categoria = document.getElementById("categoriaElemento");
-
-        // Mostrar el modal
-        modal.style.display = "block";
-
-        // Hacer la petición para obtener los detalles del elemento
-        fetch(`/elementos/detalles/${elementoId}`)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Error en la respuesta de la red");
-                }
-                return response.json();
-            })
-            .then((data) => {
                 if (data.success) {
-                    // Actualizar los elementos del modal con los datos del elemento
-                    descripcion.textContent =
-                        data.elemento.descripcion || "No disponible";
-                    marca.textContent = data.elemento.marca || "No disponible";
-                    modelo.textContent =
-                        data.elemento.modelo || "No disponible";
-                    serie.textContent = data.elemento.serie || "No disponible";
-                    especificaciones.textContent =
-                        data.elemento.especificaciones || "No disponible";
-                    categoria.textContent =
-                        data.elemento.categoria || "No disponible";
-
-                    // Generar la ruta de la imagen
-                    foto.src = data.elemento.foto
-                        ? `${baseStorageUrl}/${data.elemento.foto}`
-                        : "/path/to/default-image.jpg";
+                    const contenedorId = "contenedor-elementos";
+                    crearYMostrarCards(data.elementos, contenedorId, false); // No permitir eliminar
+                    alert("Lista de elementos actualizada exitosamente.");
                 } else {
-                    alert("No se encontraron detalles para este elemento.");
+                    alert(data.message || "No se encontraron elementos.");
                 }
             })
             .catch((error) => {
-                console.error("Error al obtener detalles:", error);
-                alert("Ocurrió un error al cargar los detalles del elemento.");
+                console.error("Error al actualizar lista:", error);
+                alert("Ocurrió un error al actualizar la lista de elementos.");
             });
+    }
+
+    //destacar fila seleccionada en la tabla de registros
+    function destacarFilaSeleccionada(filaSeleccionada) {
+        const filas = document.querySelectorAll(".registro-fila");
+        filas.forEach((fila) => fila.classList.remove("fila-seleccionada"));
+
+        filaSeleccionada.classList.add("fila-seleccionada");
+    }
+
+    //para la escucha de la tabla
+    const tablaBody = document.getElementById("tabla-reportes-body");
+
+    if (tablaBody) {
+        tablaBody.addEventListener("click", (e) => {
+            const fila = e.target.closest(".registro-fila");
+            if (!fila) return;
+
+            const registroId = fila.getAttribute("data-registro-id");
+            console.log(`Fila clicada, ID Registro: ${registroId}`);
+            destacarFilaSeleccionada(fila);
+            mostrarElementosPorRegistro(registroId);
+        });
+    } else {
+        console.error("No se encontró el contenedor de la tabla.");
+    }
+
+    //le da diseño a los cards que salen cuando se selecciona un registro (osea una fila)
+    function mostrarElementos(elementos) {
+        const contenedorElementos = document.getElementById(
+            "contenedor-elementos"
+        ); // Contenedor de las tarjetas
+        contenedorElementos.innerHTML = ""; // Limpiar el contenedor antes de agregar nuevos elementos
+
+        elementos.forEach((elemento) => {
+            // Aquí usamos la función crearCardElemento para cada elemento
+            const cardElemento = crearCardElemento(elemento);
+            contenedorElementos.innerHTML += cardElemento; // Agregar la card al contenedor
+        });
+    }
+
+    // Función para mostrar los detalles de un elemento en el modal
+    window.mostrarDetallesElemento = function (elementoId) {
+        try {
+            const elemento = elementos.find((el) => el.id === elementoId);
+
+            if (!elemento) {
+                alert("Elemento no encontrado.");
+                return;
+            }
+
+            // Actualizar el contenido del modal con los datos del elemento(ver mas en los cards del modal de ver elementos)
+            document.getElementById(
+                "fotoElemento"
+            ).src = `${baseStorageUrl}/${elemento.foto}`;
+            document.getElementById("categoriaElemento").textContent =
+                elemento.categoria.nombre || "Sin categoría";
+            document.getElementById("descripcionElemento").textContent =
+                elemento.descripcion || "Sin descripción";
+            document.getElementById("marcaElemento").textContent =
+                elemento.marca || "Sin marca";
+            document.getElementById("modeloElemento").textContent =
+                elemento.modelo || "Sin modelo";
+            document.getElementById("serieElemento").textContent =
+                elemento.serie || "Sin serie";
+            document.getElementById("especificacionesElemento").textContent =
+                elemento.especificaciones || "Sin especificaciones";
+
+            document.getElementById("modalElemento").style.display = "block";
+        } catch (error) {
+            console.error("Error:", error);
+        }
     };
 
     // Función para cerrar el modal
-    function cerrarModal() {
-        const modal = document.getElementById("modalElemento");
-        if (modal) {
-            modal.style.display = "none"; // Oculta el modal
-        }
-    }
-
-    // Asegúrate de que el evento de clic esté correctamente asignado
-    document
-        .getElementById("closeModal")
-        .addEventListener("click", cerrarModal);
-
-    // Cerrar el modal si el usuario hace clic fuera de la ventana
-    window.onclick = function (event) {
-        const modal = document.getElementById("modal-elementos-usuario");
-        if (modal && event.target === modal) {
-            cerrarModalElementos();
-        }
+    window.cerrarModal = function () {
+        document.getElementById("modalElemento").style.display = "none";
     };
 
-    // Manejo de clics fuera del modal para cerrarlo
-    window.addEventListener("click", function (event) {
-        const modal = document.getElementById("modal-elementos-usuario");
-        if (modal && event.target === modal) {
-            cerrarModal();
+    //de aqui hasta la linea 375 es para el registro de sub_control osea el de los elementos
+    window.actualizarElementos = function (
+        elementoId = null,
+        registroId = null
+    ) {
+        if (!registroId) {
+            registroId = document.getElementById("control_ingreso_id")?.value;
+            if (!registroId) {
+                alert("No se ha seleccionado un registro.");
+                return;
+            }
         }
-    });
 
-    // Función para registrar el control de ingreso
-    document
-        .getElementById("agregar-registro")
-        .addEventListener("click", function (event) {
-            event.preventDefault(); // Evita recargar la página
-
-            const documentoVigilante = document.getElementById(
-                "documento_vigilante"
-            ).value; // Asegúrate de obtener el valor correcto
-            const usuarioId =
-                document.getElementById("usuario-id-oculto").value; // Asegúrate de obtener el valor correcto
-
-            if (!usuarioId) {
-                alert("No se ha encontrado información del usuario.");
-                return;
-            }
-
-            fetch(registroUrl, {
-                // Asegúrate de que registroUrl esté definido correctamente
+        if (elementoId) {
+            // Registrar un nuevo elemento
+            fetch("/sub_control_ingreso", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": document
-                        .querySelector('meta[name="csrf-token"]')
-                        .getAttribute("content"),
+                    "X-CSRF-TOKEN": csrfToken,
                 },
                 body: JSON.stringify({
-                    documento_vigilante: documentoVigilante,
-                    usuario_id: usuarioId,
-                }),
-            })
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error("Error en la respuesta de la red");
-                    }
-                    return response.json();
-                })
-                .then((data) => {
-                    if (data.success) {
-                        // Actualizar la tabla automáticamente sin alertas
-                        limpiarTabla();
-                        agregarRegistrosATabla(data.registros);
-                    } else {
-                        alert("Error: " + data.message);
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error:", error);
-                });
-        });
-
-    // Función para limpiar la tabla
-    function limpiarTabla() {
-        const tablaBody = document.getElementById("tabla-reportes-body");
-        tablaBody.innerHTML = ""; // Limpia todo el contenido de la tabla
-    }
-
-    // Función para agregar registros a la tabla
-    function agregarRegistrosATabla(registros) {
-        const tablaBody = document.getElementById("tabla-reportes-body");
-
-        registros.forEach((registro) => {
-            const fila = document.createElement("tr");
-            fila.classList.add("registro-fila");
-            fila.setAttribute("data-registro-id", registro.id);
-            fila.innerHTML = `
-            <td>${registro.id}</td>
-            <td>${registro.centro?.nombre ?? "Centro no definido"}</td>
-            <td>${registro.fecha_ingreso}</td>
-            <td>${registro.fecha_salida ?? "N/A"}</td>
-            <td>${registro.estado == 0 ? "Abierto" : "Cerrado"}</td>
-        `;
-
-            // Insertar la nueva fila al inicio de la tabla
-            tablaBody.insertBefore(fila, tablaBody.firstChild);
-        });
-
-        aplicarEventListeners(); // Asegúrate de que las nuevas filas tengan los eventos de clic
-    }
-
-    // Función sub_control_ingresos para registrar y asociar los elementos al control de ingreso
-    document.querySelectorAll(".btn-ingresa").forEach((button) => {
-        button.addEventListener("click", function () {
-            const elementoId = this.getAttribute("data-elemento-id");
-            const controlIngresoId =
-                document.getElementById("control_ingreso_id").value; // Captura el ID
-
-            // Verificar que ambos valores estén presentes
-            if (!controlIngresoId) {
-                alert("No se ha encontrado un registro de control de ingreso.");
-                return;
-            }
-
-            if (!elementoId) {
-                alert("No se ha seleccionado un elemento para ingresar.");
-                return;
-            }
-
-            // Hacer la solicitud al servidor
-            fetch(subControlIngresoUrl, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": document
-                        .querySelector('meta[name="csrf-token"]')
-                        .getAttribute("content"),
-                },
-                body: JSON.stringify({
-                    control_ingreso_id: controlIngresoId,
+                    control_ingreso_id: registroId,
                     elemento_id: elementoId,
                 }),
             })
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error(
-                            `Error en la respuesta de la red: ${response.statusText}`
+                            `Error ${response.status}: ${response.statusText}`
                         );
                     }
                     return response.json();
                 })
                 .then((data) => {
-                    if (data.success) {
-                        // Mostrar mensaje de éxito
-                        mostrarMensajeExito(
-                            "Elemento registrado exitosamente."
+                    if (data.success && data.elemento) {
+                        alert("¡Elemento registrado exitosamente!");
+
+                        // Agregar el nuevo elemento al contenedor
+                        crearYMostrarCards(
+                            [data.elemento],
+                            "contenedor-elementos",
+                            true
                         );
 
-                        // Actualizar los elementos asociados al control de ingreso
-                        actualizarElementosAsociados(controlIngresoId);
-
-                        // Agregar el nuevo elemento al contenedor de elementos
-                        agregarElementoAlContenedor(data.elemento);
+                        // Deshabilitar el botón del elemento registrado
+                        const boton = document.querySelector(
+                            `.btn-ingresar[data-id="${elementoId}"]`
+                        );
+                        if (boton) boton.setAttribute("disabled", true);
                     } else {
-                        alert("Error: " + data.message);
+                        alert(
+                            data.message || "No se pudo registrar el elemento."
+                        );
                     }
                 })
                 .catch((error) => {
-                    console.error("Error:", error);
+                    console.error("Error en la solicitud:", error);
+                    alert("Ocurrió un error al registrar el elemento.");
+                });
+        } else {
+            // Actualizar la lista de elementos
+            fetch(`/vigilante/obtenerElementosPorRegistro/${registroId}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        crearYMostrarCards(
+                            data.elementos,
+                            "contenedor-elementos",
+                            true
+                        );
+                        alert("Lista de elementos actualizada exitosamente.");
+                    } else {
+                        alert(data.message || "No se encontraron elementos.");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error al actualizar lista:", error);
                     alert(
-                        "Se produjo un error al registrar el elemento: " +
-                            error.message
+                        "Ocurrió un error al actualizar la lista de elementos."
                     );
                 });
+        }
+    };
+
+    /**
+     * Función para crear y mostrar cards en el contenedor especificado.
+     * @param {Array} elementos - Lista de elementos para crear los cards.
+     * @param {string} contenedorId - ID del contenedor donde se mostrarán los cards.
+     * @param {boolean} permitirEliminar - Indica si los cards deben incluir el botón de eliminar.
+     */
+    function crearYMostrarCards(
+        elementos,
+        contenedorId,
+        permitirEliminar = false
+    ) {
+        const contenedor = document.getElementById(contenedorId);
+
+        if (!contenedor) {
+            console.error("No se encontró el contenedor con ID:", contenedorId);
+            return;
+        }
+
+        // Mostrar el contenedor por si está oculto
+        contenedor.style.display = "flex";
+
+        // Verificar los IDs ya presentes en el contenedor para evitar duplicados
+        const idsExistentes = new Set(
+            Array.from(contenedor.querySelectorAll(".card")).map(
+                (card) => card.dataset.elementId
+            )
+        );
+
+        elementos.forEach((elemento) => {
+            if (idsExistentes.has(String(elemento.id))) {
+                console.log(
+                    `Elemento con ID ${elemento.id} ya existe en el contenedor.`
+                );
+                return; // Evita duplicar elementos existentes
+            }
+
+            // Crear el contenedor principal del card
+            const card = document.createElement("div");
+            card.classList.add("card");
+            card.dataset.elementId = elemento.id; // Asignar el ID del elemento para identificar duplicados
+
+            // Crear y añadir el título
+            const cabeza = document.createElement("h3");
+            cabeza.classList.add("cabeza");
+            cabeza.textContent = elemento.categoria.nombre;
+            card.appendChild(cabeza);
+
+            // Crear y añadir la imagen
+            const img = document.createElement("img");
+            img.classList.add("img-fluid", "mt-3", "elemento-foto");
+            img.src = `/storage/${elemento.foto}`;
+            img.alt = "Foto del elemento";
+            card.appendChild(img);
+
+            // Crear y añadir el párrafo para la serie
+            const serie = document.createElement("p");
+            serie.innerHTML = `<strong>Serie:</strong> ${elemento.serie}`;
+            card.appendChild(serie);
+
+            // Crear y añadir el párrafo para la marca
+            const marca = document.createElement("p");
+            marca.innerHTML = `<strong>Marca:</strong> ${elemento.marca}`;
+            card.appendChild(marca);
+
+            // Crear y añadir el enlace "Ver más"
+            const linkVerMas = document.createElement("a");
+            linkVerMas.href = "javascript:void(0)";
+            linkVerMas.classList.add("link-ver-mas");
+            linkVerMas.dataset.elementId = elemento.id;
+            linkVerMas.textContent = "Ver más";
+            linkVerMas.onclick = function () {
+                mostrarDetallesElemento(elemento.id);
+            };
+            card.appendChild(linkVerMas);
+
+            // Si permitirEliminar es verdadero, agregar el botón de eliminar
+            if (permitirEliminar) {
+                const btnEliminar = document.createElement("button");
+                btnEliminar.classList.add("btn", "btn-danger", "btn-destroy");
+                btnEliminar.dataset.elementId = elemento.id;
+                btnEliminar.textContent = "Eliminar";
+
+                // **Agregamos el evento para medir el tiempo y eliminar**
+                btnEliminar.addEventListener("click", async function () {
+                    const startTime = performance.now(); // Inicia el contador de tiempo
+                    await eliminarElemento(elemento.id); // Llama a la función de eliminación
+                    const endTime = performance.now(); // Finaliza el contador de tiempo
+                    console.log(
+                        `Tiempo total para eliminar elemento: ${
+                            endTime - startTime
+                        } ms`
+                    );
+                });
+
+                card.appendChild(btnEliminar);
+            }
+
+            // Añadir el card al contenedor
+            contenedor.appendChild(card);
+        });
+
+        console.log("Cards generados y añadidos al contenedor:", contenedorId);
+    }
+
+    async function eliminarElemento(id) {
+        try {
+            console.log(`Intentando eliminar elemento con ID: ${id}`);
+
+            const response = await fetch(
+                `/vigilante/sub_control_ingreso/${id}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": csrfToken,
+                    },
+                }
+            );
+
+            console.log("Respuesta del servidor:", response);
+
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log("Datos recibidos:", data);
+
+            if (data.success) {
+                console.log(`Elemento con ID ${id} eliminado.`);
+                document.querySelector(`[data-element-id='${id}']`)?.remove();
+            } else {
+                console.warn(
+                    data.message || "No se pudo eliminar el elemento."
+                );
+            }
+        } catch (error) {
+            console.error("Error al eliminar el elemento:", error);
+        }
+    }
+
+    // Función global para manejar "ver más" (definir si no existe)
+    window.verMasElemento = function (id) {
+        alert(`Función Ver Más no implementada aún para el ID: ${id}`);
+    };
+
+    // Corrección de eventos globales y eliminación de consola innecesaria
+    document.addEventListener("DOMContentLoaded", function () {
+        const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+        const baseStorageUrlMeta = document.querySelector(
+            'meta[name="base-storage-url"]'
+        );
+
+        if (!csrfTokenMeta || !baseStorageUrlMeta) {
+            console.error(
+                "Faltan las meta etiquetas 'csrf-token' o 'base-storage-url'."
+            );
+            return;
+        }
+
+        csrfToken = csrfTokenMeta.getAttribute("content");
+        baseStorageUrl = baseStorageUrlMeta.getAttribute("content");
+
+        // Eliminar eventos y mensajes innecesarios
+    });
+
+    // Escucha de eventos global para botones
+    document.addEventListener("DOMContentLoaded", function () {
+        console.log(
+            "Documento cargado. Iniciando la configuración de eventos."
+        );
+
+        const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+        const baseStorageUrlMeta = document.querySelector(
+            'meta[name="base-storage-url"]'
+        );
+
+        if (!csrfTokenMeta || !baseStorageUrlMeta) {
+            console.error(
+                "Las meta etiquetas 'csrf-token' o 'base-storage-url' no se encontraron."
+            );
+            return;
+        }
+
+        const csrfToken = csrfTokenMeta.getAttribute("content");
+        const baseStorageUrl = baseStorageUrlMeta.getAttribute("content");
+
+        // Añadir eventos a botones de forma específica
+        const botonesIngresar = document.querySelectorAll(".btn-ingresar");
+
+        botonesIngresar.forEach((boton) => {
+            boton.addEventListener("click", function () {
+                const elementoId = this.getAttribute("data-id");
+                if (!elementoId) return;
+
+                const registroId =
+                    document.getElementById("control_ingreso_id")?.value;
+                if (!registroId) {
+                    alert(
+                        "Por favor, selecciona un registro válido antes de continuar."
+                    );
+                    return;
+                }
+
+                actualizarElementoPorAPI(elementoId, registroId);
+            });
+        });
+
+        async function actualizarElementoPorAPI(elementoId, registroId) {
+            try {
+                const response = await fetch("/sub_control_ingreso", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": csrfToken,
+                    },
+                    body: JSON.stringify({
+                        elemento_id: elementoId,
+                        control_ingreso_id: registroId,
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert("Elemento registrado exitosamente.");
+                    cargarElementos(); // Sincronizar DOM tras la actualización
+                } else {
+                    alert(data.message || "Error desconocido.");
+                }
+            } catch (error) {
+                console.error("Error en la solicitud:", error);
+                alert("Ocurrió un error al intentar registrar el elemento.");
+            }
+        }
+
+        function cargarElementos() {
+            const registroId =
+                document.getElementById("control_ingreso_id")?.value;
+
+            if (!registroId) {
+                console.error("No se encontró el ID del registro.");
+                return;
+            }
+
+            fetch(`/vigilante/elementos/${registroId}`)
+                .then((response) => {
+                    if (!response.ok)
+                        throw new Error("Error al obtener elementos");
+                    return response.text();
+                })
+                .then((html) => {
+                    const contenedor = document.getElementById(
+                        "contenedor-elementos"
+                    );
+                    contenedor.innerHTML = ""; // Limpia los elementos existentes
+                    contenedor.innerHTML = html;
+                })
+                .catch((error) =>
+                    console.error("Error al cargar elementos:", error)
+                );
+        }
+    });
+
+    // Función para eliminar un registro de sub_control_ingreso
+    document.querySelectorAll(".btn-destroy").forEach((button) => {
+        button.addEventListener("click", function (event) {
+            event.preventDefault();
+            const subControlId = this.getAttribute("data-subcontrol-id");
+
+            console.log("SubControl ID encontrado:", subControlId); // Depuración
+
+            if (subControlId) {
+                eliminarSubControl(subControlId);
+            } else {
+                console.error("No se encontró un sub_control_id válido.");
+            }
         });
     });
 
-    // Función para mostrar un mensaje de éxito
-    function mostrarMensajeExito(mensaje) {
-        const mensajeElemento = document.createElement("div");
-        mensajeElemento.classList.add("mensaje-exito");
-        mensajeElemento.textContent = mensaje;
-        document.body.appendChild(mensajeElemento);
-        setTimeout(() => mensajeElemento.remove(), 3000); // Eliminar el mensaje después de 3 segundos
+    function eliminarSubControl(subControlId) {
+        if (!confirm("¿Estás seguro de que deseas eliminar este elemento?"))
+            return;
+
+        console.log("Enviando solicitud DELETE para el ID:", subControlId); // Log adicional
+
+        fetch(`/vigilante/sub_control_ingreso/${subControlId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": csrfToken,
+            },
+        })
+            .then((response) => {
+                console.log("Respuesta del servidor:", response); // Log adicional
+                if (!response.ok)
+                    throw new Error("Error en la solicitud de eliminación.");
+                return response.json();
+            })
+            .then((data) => {
+                console.log("Datos recibidos del servidor:", data); // Log adicional
+                if (data.success) {
+                    document.getElementById(`card-${subControlId}`)?.remove();
+                    alert("Elemento eliminado exitosamente.");
+                    cargarElementos(); // Recargar los elementos
+                } else {
+                    alert(data.message || "No se pudo eliminar el elemento.");
+                }
+            })
+            .catch((error) => {
+                console.error("Error en la solicitud de eliminación:", error);
+                alert("Ocurrió un error al eliminar el elemento.");
+            });
     }
 
-    // Función para agregar un elemento al contenedor de elementos
-    function agregarElementoAlContenedor(elemento) {
-        const contenedor = document.getElementById("contenedor-elementos");
-        const elementoDiv = document.createElement("div");
-        elementoDiv.classList.add("elemento");
-        elementoDiv.textContent = `Elemento ID: ${elemento.id}, Nombre: ${elemento.nombre}`;
-        contenedor.appendChild(elementoDiv);
-    }
-
-    // Función para mostrar un mensaje de éxito
-    function mostrarMensajeExito(mensaje) {
-        const mensajeElemento = document.createElement("div");
-        mensajeElemento.classList.add("mensaje-exito");
-        mensajeElemento.textContent = mensaje;
-        document.body.appendChild(mensajeElemento);
-        setTimeout(() => mensajeElemento.remove(), 3000); // Eliminar el mensaje después de 3 segundos
-    }
-
-    // Función para agregar un elemento al contenedor de elementos
-    function agregarElementoAlContenedor(elemento) {
-        const contenedor = document.getElementById("contenedor-elementos");
-        const elementoDiv = document.createElement("div");
-        elementoDiv.classList.add("elemento");
-        elementoDiv.textContent = `Elemento ID: ${elemento.id}, Nombre: ${elemento.nombre}`;
-        contenedor.appendChild(elementoDiv);
-    }
-
-    // Función para limpiar los campos del formulario (si es necesario)
-    function resetFormulario() {
-        document.getElementById("control_ingreso_id").value = ""; // Limpiar el ID del control de ingreso
-        // Limpiar otros campos si los hay, por ejemplo:
-        // document.getElementById("otro-campo").value = '';
-    }
-
-    // Función para mostrar un mensaje de éxito
-    function mostrarMensajeExito(mensaje) {
-        const mensajeElemento = document.createElement("div");
-        mensajeElemento.classList.add("mensaje-exito");
-        mensajeElemento.textContent = mensaje;
-        document.body.appendChild(mensajeElemento);
-        setTimeout(() => mensajeElemento.remove(), 3000); // Eliminar el mensaje después de 3 segundos
-    }
-
-    // Función para agregar un elemento al contenedor de elementos
-    function agregarElementoAlContenedor(elemento) {
-        const contenedor = document.getElementById("contenedor-elementos");
-        const elementoDiv = document.createElement("div");
-        elementoDiv.classList.add("elemento");
-        elementoDiv.textContent = `Elemento ID: ${elemento.id}, Nombre: ${elemento.nombre}`;
-        contenedor.appendChild(elementoDiv);
-    }
-
-    // Función para mostrar mensajes de éxito
-    function mostrarMensajeExito(mensaje) {
-        const mensajeContainer = document.createElement("div");
-        mensajeContainer.className = "alert alert-success";
-        mensajeContainer.textContent = mensaje;
-
-        // Insertar el mensaje después del contenedor del buscador
-        const buscador = document.querySelector(".buscador");
-        buscador.insertAdjacentElement("afterend", mensajeContainer);
-
-        setTimeout(() => {
-            mensajeContainer.style.opacity = "0";
-            setTimeout(() => mensajeContainer.remove(), 500);
-        }, 5000);
-    }
-
-    // Función para agregar un elemento al contenedor
-    function agregarElementoAlContenedor(elemento) {
-        const contenedorElementos = document.querySelector(".elementos");
-        const card = document.createElement("div");
-        card.classList.add("card");
-        card.innerHTML = `
-<h3 class="cabeza">${elemento.categoria.nombre}</h3>
-<img src="${baseStorageUrl}/${elemento.foto}" alt="Foto del elemento" class="img-fluid mt-3 elemento-foto">
-<p><strong>Serie:</strong> ${elemento.serie}</p>
-<p><strong>Marca:</strong> ${elemento.marca}</p>
-<a href="#" class="link-ver-mas" style="margin-top:-10px" onclick="mostrarDetallesElemento('${elemento.id}')">Ver más</a>
-<button type="button" class="btn-destroy" onclick="eliminarElemento('${elemento.id}')">Eliminar</button>
-`;
-        contenedorElementos.appendChild(card);
-    }
-
-    // Función para mostrar el modal de elementos del usuario
-    window.mostrarModalElementos = function () {
-        const modal = document.getElementById("modal-elementos-usuario");
-        if (modal) {
-            modal.style.display = "block"; // Muestra el modal
-        } else {
-            console.error("Modal no encontrado");
-        }
-    };
-
-    // Función para cerrar el modal
-    window.cerrarModal = function () {
-        const modal = document.getElementById("modalElemento");
-        if (modal) {
-            modal.style.display = "none"; // Oculta el modal
-        }
-    };
-
-    // Función para cerrar el modal de elementos
-    function cerrarModalElementos() {
-        const modal = document.getElementById("modal-elementos-usuario");
-        if (modal) {
-            modal.style.display = "none"; // Oculta el modal
-        }
-    }
-});
-
-//cerrar modal de elementos
-document.addEventListener("DOMContentLoaded", function () {
-    // Aquí van tus funciones JavaScript
-    window.cerrarModalElementos = function () {
-        const modal = document.getElementById("modal-elementos-usuario");
-        if (modal) {
-            modal.style.display = "none"; // Oculta el modal
-        }
-    };
-});
-
-//esta es la funcion para eliminar elementos del contenedor de elementos
-document.addEventListener("click", function (event) {
-    if (event.target.classList.contains("btn-destroy")) {
-        const elementRow = event.target.closest("tr"); // Encuentra la fila del elemento
-        const elementId = elementRow.getAttribute("data-element-id"); // Obtén el ID del elemento si existe
-
-        if (elementId) {
-            // Realiza una solicitud AJAX para eliminar el elemento de la base de datos
-            fetch(`/elementos/${elementId}`, {
-                method: "DELETE",
+    // Cerrar un registro
+    if (btnCerrarRegistro) {
+        btnCerrarRegistro.addEventListener("click", function () {
+            const registroId = document.getElementById("registro-id").value;
+            if (!registroId) {
+                alert("No se ha seleccionado un registro.");
+                return;
+            }
+            fetch(`/vigilante/cerrarRegistro/${registroId}`, {
+                method: "PUT",
                 headers: {
-                    "X-CSRF-TOKEN": document
-                        .querySelector('meta[name="csrf-token"]')
-                        .getAttribute("content"),
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": csrfToken,
                 },
             })
-                .then((response) => {
-                    if (response.ok) {
-                        elementRow.remove(); // Elimina la fila de la tabla en la vista
-                        alert("Elemento eliminado correctamente.");
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        alert("Registro cerrado.");
+                        location.reload();
                     } else {
-                        alert(
-                            "No se pudo eliminar el elemento. Inténtalo nuevamente."
-                        );
+                        alert(data.message);
                     }
                 })
                 .catch((error) => console.error("Error:", error));
-        } else {
-            // Elimina la fila localmente si no tiene ID asociado en la base de datos
-            elementRow.remove();
-            alert("Elemento eliminado localmente.");
-        }
-    }
-});
-
-// Esta es la función para guardar los registros
-document.addEventListener("DOMContentLoaded", function () {
-    const guardarRegistrosButton = document.getElementById("guardar-registros");
-
-    if (guardarRegistrosButton) {
-        guardarRegistrosButton.addEventListener("click", function () {
-            // Obtener el id del registro desde el atributo data-id del botón
-            const activeRecordId =
-                guardarRegistrosButton.getAttribute("data-id");
-
-            console.log("ID del registro:", activeRecordId); // DEPURACIÓN
-
-            if (activeRecordId) {
-                // Fecha actual para pruebas (no es usada en el backend)
-                const fechaEgreso = new Date().toISOString();
-
-                console.log(
-                    "Intentando cerrar el registro con fecha:",
-                    fechaEgreso
-                ); // DEPURACIÓN
-
-                // Realizar la solicitud PUT
-                fetch(`/vigilante/control_ingreso/${activeRecordId}/cerrar`, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": document
-                            .querySelector('meta[name="csrf-token"]')
-                            .getAttribute("content"),
-                    },
-                    body: JSON.stringify({ registro_id: activeRecordId }),
-                })
-                    .then((response) => {
-                        console.log("Respuesta del servidor:", response); // DEPURACIÓN
-
-                        if (response.ok) {
-                            alert("Registro cerrado correctamente.");
-                            location.reload();
-                        } else {
-                            return response.json().then((data) => {
-                                alert(
-                                    `No se pudo cerrar el registro: ${
-                                        data.message || "Error desconocido"
-                                    }`
-                                );
-                            });
-                        }
-                    })
-                    .catch((error) =>
-                        console.error("Error en la solicitud:", error)
-                    ); // DEPURACIÓN
-            } else {
-                alert("No se encontró un ID de registro válido.");
-            }
         });
     }
 });
 
-//Funciones para resetear el formulario
-function resetFormulario() {
-    // Limpiar los campos del formulario
-    document.getElementById("documento_vigilante").value = "";
-    document.getElementById("usuario-id-oculto").value = "";
-    // Limpiar cualquier otro campo que sea necesario
+// Función global para crear un nuevo registro control_ingresos
+async function crearRegistro() {
+    console.log("creando registro");
+
+    // Obtener los valores de los inputs ocultos
+    const documentoVigilante = document.getElementById(
+        "documento_vigilante"
+    ).value;
+    const usuarioId = document.getElementById("usuario-id-oculto").value;
+
+    try {
+        const response = await fetch("/nuevoRegistro", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document
+                    .querySelector('meta[name="csrf-token"]')
+                    .getAttribute("content"),
+            },
+            body: JSON.stringify({
+                documento_vigilante: documentoVigilante,
+                usuario_id: usuarioId,
+            }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert("Registro creado exitosamente.");
+            console.log("Nuevo registro:", data.nuevoRegistroId);
+
+            // Aquí hacemos el reload de la página completa
+            location.reload();
+        } else {
+            alert(data.message || "Error al crear el registro.");
+        }
+    } catch (error) {
+        console.error("Error al crear el registro:", error);
+    }
 }
-function cerrarRegistro() {
-    // Resetear el formulario
-    resetFormulario();
-    // Otros pasos para cerrar el registro
+
+// Función para agregar una nueva fila a la tabla
+function agregarFilaATabla(registro) {
+    if (!registro || !registro.id) {
+        console.error("El registro es inválido o no tiene ID:", registro);
+        return;
+    }
+
+    const tablaBody = document.getElementById("tabla-reportes-body");
+    if (!tablaBody) {
+        console.error(
+            "No se encontró el cuerpo de la tabla (tbody) con ID 'tabla-reportes-body'."
+        );
+        return;
+    }
+
+    // Eliminar la fila de mensaje "No se ha encontrado un registro"
+    const filaNoRegistros = tablaBody.querySelector("tr");
+    if (
+        filaNoRegistros &&
+        filaNoRegistros.children.length === 1 &&
+        filaNoRegistros.textContent.trim() ===
+            "No se ha encontrado un registro de control de ingreso."
+    ) {
+        filaNoRegistros.remove();
+        console.log(
+            "Fila 'No se ha encontrado un registro de control de ingreso' eliminada."
+        );
+    }
+
+    // Crear una nueva fila
+    const fila = document.createElement("tr");
+    fila.classList.add("registro-fila");
+    fila.setAttribute("data-registro-id", registro.id);
+
+    // Llenar la fila con los datos
+    fila.innerHTML = `
+        <td>${registro.id}</td>
+        <td>${registro.centro?.nombre || "Centro no definido"}</td>
+        <td>${registro.fecha_ingreso}</td>
+        <td>${registro.fecha_salida || "N/A"}</td>
+        <td>${registro.estado === 0 ? "Abierto" : "Cerrado"}</td>
+    `;
+
+    // Agregar la fila al inicio del tbody
+    tablaBody.prepend(fila);
+    console.log("Nueva fila agregada:", fila);
+
+    // Verificar si no hay registros y mostrar el mensaje
+    verificarYMostrarMensajeNoRegistros();
 }
+
+// Verificar si la tabla está vacía y mostrar el mensaje adecuado
+function verificarYMostrarMensajeNoRegistros() {
+    const tablaBody = document.getElementById("tabla-reportes-body");
+    const filas = tablaBody.querySelectorAll("tr");
+
+    // Si no hay filas (exceptuando el mensaje de "No hay registros disponibles")
+    if (filas.length === 0) {
+        const mensajeNoRegistros = document.createElement("tr");
+        mensajeNoRegistros.innerHTML = `<td colspan="5">No se ha encontrado un registro de control de ingreso.</td>`;
+        tablaBody.appendChild(mensajeNoRegistros);
+    }
+}
+
+// Ejecutar todo cuando el DOM se haya cargado
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("DOM fully loaded and parsed");
+
+    // Verificar si la tabla está vacía al cargar la página
+    verificarYMostrarMensajeNoRegistros();
+
+    // Asociar el evento al botón
+    const botonAgregarRegistro = document.getElementById("agregar-registro");
+    if (botonAgregarRegistro) {
+        botonAgregarRegistro.addEventListener("click", crearRegistro);
+        console.log("Evento de clic asociado al botón agregar-registro.");
+    } else {
+        console.error("No se encontró el botón con ID 'agregar-registro'.");
+    }
+});

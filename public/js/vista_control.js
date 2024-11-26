@@ -761,27 +761,16 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-//funcion para cerrar el registro osea la salida
-document.addEventListener("DOMContentLoaded", function () {
-    const btnCerrarRegistro = document.getElementById("guardar-registros");
-
-    if (btnCerrarRegistro) {
-        btnCerrarRegistro.addEventListener("click", function () {
-            const registroId = btnCerrarRegistro.dataset.id;
-
-            if (!registroId) {
-                alert("El ID del registro no está definido.");
-                return;
-            }
-
-            cerrarRegistro(registroId);
-        });
-    }
-});
-
-// Función para cerrar el registro
+//funcion para cerrar el registro
 async function cerrarRegistro(id) {
     try {
+        console.log("Cerrando registro con ID:", id); // Verifica si el ID está siendo recibido correctamente
+
+        const confirmacion = confirm(
+            "¿Estás seguro de que deseas cerrar este registro? No podrás agregar más elementos."
+        );
+        if (!confirmacion) return;
+
         const response = await fetch(
             `/vigilante/control_ingreso/${id}/cerrar`,
             {
@@ -795,29 +784,13 @@ async function cerrarRegistro(id) {
             }
         );
 
-        if (!response.ok) {
-            throw new Error(
-                `Error al cerrar el registro: ${response.statusText}`
-            );
-        }
-
         const data = await response.json();
 
-        if (data.success) {
+        if (response.ok) {
+            console.log("Registro cerrado exitosamente:", data);
             alert(data.message || "Registro cerrado exitosamente.");
 
-            // Actualizar el botón
-            const btnCerrarRegistro =
-                document.getElementById("guardar-registros");
-            if (
-                btnCerrarRegistro &&
-                btnCerrarRegistro.dataset.id === String(id)
-            ) {
-                btnCerrarRegistro.textContent = "Registro cerrado";
-                btnCerrarRegistro.disabled = true;
-            }
-
-            // Llamar a la función para actualizar la tabla
+            // Actualizar la tabla
             actualizarTabla(id);
         } else {
             console.error("Error desde el servidor:", data);
@@ -825,33 +798,55 @@ async function cerrarRegistro(id) {
         }
     } catch (error) {
         console.error("Error al cerrar el registro:", error);
-        alert("Ocurrió un error inesperado. Intente nuevamente.");
+        alert("Ocurrió un error inesperado. Por favor, inténtalo de nuevo.");
     }
 }
 
-function actualizarTabla(idRegistro) {
-    const tabla = document.getElementById("tabla-reportes");
+function actualizarTabla(id) {
+    console.log("Actualizando tabla para el registro con ID:", id); // Verificar si se llama a esta función
+
+    const tabla = document.getElementById("tabla-reportes"); // Cambié el id de la tabla a "tabla-reportes", ya que así lo tienes en el HTML
 
     if (!tabla) {
-        console.error("No se encontró la tabla con ID: tabla-reportes.");
+        console.error("No se encontró la tabla para actualizar.");
         return;
     }
 
-    console.log("Tabla encontrada:", tabla);
+    const fila = tabla.querySelector(`tr[data-registro-id="${id}"]`); // Usar el ID del registro para encontrar la fila
+    if (fila) {
+        // Actualizar el estado en la fila de la tabla
+        const celdaEstado = fila.querySelector("td:last-child"); // Asegurémonos de que estamos seleccionando la celda correcta para el estado
+        if (celdaEstado) {
+            celdaEstado.textContent = "Cerrado"; // Cambiar a "Cerrado"
+        }
 
-    const fila = tabla.querySelector(`tr[data-registro-id="${idRegistro}"]`);
-    if (!fila) {
-        console.warn(
-            `No se encontró la fila para el registro con ID: ${idRegistro}`
-        );
-        return;
-    }
+        // Opcional: Desactivar acciones adicionales en esa fila
+        const acciones = fila.querySelectorAll(".btn-accion"); // Botones u otras acciones
+        acciones.forEach((btn) => {
+            btn.disabled = true;
+        });
 
-    console.log("Fila encontrada:", fila);
-
-    // Actualizar el estado de la fila
-    const celdaEstado = fila.querySelector("td:last-child");
-    if (celdaEstado) {
-        celdaEstado.textContent = "Cerrado";
+        console.log("Tabla actualizada para el registro cerrado.");
+    } else {
+        console.warn("No se encontró la fila para actualizar en la tabla.");
     }
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    const btnCerrarRegistro = document.getElementById("guardar-registros");
+
+    if (btnCerrarRegistro) {
+        console.log("Botón de cierre encontrado.");
+        btnCerrarRegistro.addEventListener("click", function () {
+            const id = btnCerrarRegistro.dataset.id; // Obtener el ID del botón
+            console.log("ID del registro:", id); // Asegúrate de que el ID está correctamente recuperado
+            if (id) {
+                cerrarRegistro(id); // Llamar a la función de cerrar el registro
+            } else {
+                console.error("No se encontró el ID para cerrar el registro.");
+            }
+        });
+    } else {
+        console.error("El botón de cerrar registro no se encontró.");
+    }
+});

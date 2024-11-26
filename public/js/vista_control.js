@@ -141,17 +141,42 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Función para mostrar los detalles de un elemento en el modal
+    // Función para mostrar detalles del elemento y abrir el modal
     window.mostrarDetallesElemento = function (elementoId) {
         try {
-            const elemento = elementos.find((el) => el.id === elementoId);
+            console.log("ID del elemento recibido: ", elementoId); // Verifica el ID recibido
 
+            // Verifica que 'elementos' esté disponible y tiene datos
+            if (!Array.isArray(elementos) || elementos.length === 0) {
+                console.error(
+                    "El array 'elementos' no está disponible o está vacío."
+                );
+                alert("No se encontraron elementos para mostrar.");
+                return;
+            }
+
+            // Verificar los ids de los elementos
+            console.log(
+                "Array de elementos disponible: ",
+                elementos.map((el) => el.id)
+            ); // Ver todos los IDs de los elementos
+
+            // Buscar el elemento en el array por su ID
+            const elemento = elementos.find(
+                (el) => String(el.id) === String(elementoId)
+            ); // Asegurarnos de que el tipo coincida
+
+            // Verifica si el elemento fue encontrado
             if (!elemento) {
+                console.error("Elemento no encontrado con ID: ", elementoId);
                 alert("Elemento no encontrado.");
                 return;
             }
 
-            // Actualizar el contenido del modal con los datos del elemento(ver mas en los cards del modal de ver elementos)
+            // Si se encuentra el elemento, mostrarlo en el modal
+            console.log("Elemento encontrado: ", elemento); // Muestra el objeto elemento
+
+            // Actualizar el contenido del modal con los datos del elemento
             document.getElementById(
                 "fotoElemento"
             ).src = `${baseStorageUrl}/${elemento.foto}`;
@@ -168,9 +193,10 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("especificacionesElemento").textContent =
                 elemento.especificaciones || "Sin especificaciones";
 
-            document.getElementById("modalElemento").style.display = "block";
+            // Llamar a la función de abrir el modal
+            abrirModal("modalElemento");
         } catch (error) {
-            console.error("Error:", error);
+            console.error("Error al mostrar el detalle del elemento: ", error);
         }
     };
 
@@ -270,8 +296,8 @@ document.addEventListener("DOMContentLoaded", function () {
      * @param {string} contenedorId - ID del contenedor donde se mostrarán los cards.
      * @param {boolean} permitirEliminar - Indica si los cards deben incluir el botón de eliminar.
      */
-    function crearYMostrarCards(
-        elementos,
+    async function crearYMostrarCards(
+        elementosNuevos,
         contenedorId,
         permitirEliminar = false
     ) {
@@ -285,6 +311,10 @@ document.addEventListener("DOMContentLoaded", function () {
         // Mostrar el contenedor por si está oculto
         contenedor.style.display = "flex";
 
+        // Actualizar el array global `elementos` para sincronizarlo con los nuevos datos
+        elementos.push(...elementosNuevos); // Agregar nuevos elementos al array global
+        console.log("Array global de elementos actualizado:", elementos);
+
         // Verificar los IDs ya presentes en el contenedor para evitar duplicados
         const idsExistentes = new Set(
             Array.from(contenedor.querySelectorAll(".card")).map(
@@ -292,7 +322,7 @@ document.addEventListener("DOMContentLoaded", function () {
             )
         );
 
-        elementos.forEach((elemento) => {
+        elementosNuevos.forEach((elemento) => {
             if (idsExistentes.has(String(elemento.id))) {
                 console.log(
                     `Elemento con ID ${elemento.id} ya existe en el contenedor.`
@@ -335,7 +365,8 @@ document.addEventListener("DOMContentLoaded", function () {
             linkVerMas.dataset.elementId = elemento.id;
             linkVerMas.textContent = "Ver más";
             linkVerMas.onclick = function () {
-                mostrarDetallesElemento(elemento.id);
+                console.log("ID del elemento clickeado:", elemento.id);
+                mostrarDetallesElemento(elemento.id); // Mostrar detalles y abrir el modal
             };
             card.appendChild(linkVerMas);
 
@@ -504,31 +535,27 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
-        function cargarElementos() {
-            const registroId =
-                document.getElementById("control_ingreso_id")?.value;
+        async function cargarElementos() {
+            try {
+                const response = await fetch("/ruta-de-los-elementos");
+                const data = await response.json();
 
-            if (!registroId) {
-                console.error("No se encontró el ID del registro.");
-                return;
-            }
-
-            fetch(`/vigilante/elementos/${registroId}`)
-                .then((response) => {
-                    if (!response.ok)
-                        throw new Error("Error al obtener elementos");
-                    return response.text();
-                })
-                .then((html) => {
-                    const contenedor = document.getElementById(
-                        "contenedor-elementos"
+                if (data.success) {
+                    elementos = data.elementos; // Actualiza el array global
+                    console.log(
+                        "Elementos cargados desde el servidor:",
+                        elementos
                     );
-                    contenedor.innerHTML = ""; // Limpia los elementos existentes
-                    contenedor.innerHTML = html;
-                })
-                .catch((error) =>
-                    console.error("Error al cargar elementos:", error)
-                );
+                    crearYMostrarCards(elementos, "contenedorElementos");
+                } else {
+                    console.error(
+                        "Error al cargar los elementos:",
+                        data.message
+                    );
+                }
+            } catch (error) {
+                console.error("Error en la solicitud de elementos:", error);
+            }
         }
     });
 

@@ -314,13 +314,41 @@ class VigilanteController extends Controller
     {
         try {
             $subControlIngreso = Sub_Control_Ingreso::findOrFail($id);
+
+            // Verificar si el registro asociado está cerrado
+            $registroPadre = $subControlIngreso->controlIngreso; // Relación con ControlIngreso
+
+            if (!$registroPadre) {
+                // Si no se encuentra el registro asociado
+                Log::error("Error: El sub-control ingreso con ID $id no tiene un registro padre asociado.");
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El elemento no está asociado a un registro válido.'
+                ], 500);
+            }
+
+            if ($registroPadre->estado == 1) { // 1 indica cerrado
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se puede eliminar elementos de un registro cerrado.'
+                ], 403);
+            }
+
+            // Proceder a eliminar si el registro no está cerrado
             $subControlIngreso->delete();
 
             return response()->json(['success' => true, 'message' => 'Elemento eliminado correctamente.']);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Error al eliminar el elemento.'], 500);
+            // Registrar el error en los logs
+            Log::error("Error al eliminar el sub-control ingreso con ID $id: " . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error interno del servidor al intentar eliminar el elemento.'
+            ], 500);
         }
     }
+
+
 
 
 

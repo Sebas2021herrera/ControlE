@@ -10,7 +10,6 @@ use App\Http\Controllers\VigilanteController;
 use App\Http\Controllers\AdminController;
 use App\Models\Elemento;
 use App\Models\Categoria;
-use App\Http\Middleware\AdminAccess;
 
 
 // Rutas para autenticación y registro
@@ -18,6 +17,7 @@ Route::get('/', [WelcomeController::class, 'index']);
 Route::get('login', [AuthController::class, 'showLogin'])->name('login');
 Route::get('create', [AuthController::class, 'create'])->name('create');
 Route::post('registrado', [AuthController::class, 'createpost'])->name('createpost');
+Route::post('/createpost', [AdminController::class, 'store'])->name('createpost.admin');
 Route::post('login', [AuthController::class, 'login'])->name('login.post');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -43,45 +43,12 @@ Route::middleware('auth')->group(function () {
             return view('index.vistaadmin', compact('categorias', 'elementos'));
         })->name('admin.panel');
 
-        // Rutas específicas para reportes
-    Route::middleware([AdminAccess::class])->group(function () {
-        Route::get('/admin/reportes/ingresos', function () {
-        return view('PDF.reportes_ingresos'); // Cambia 'vista_reportesingresos' por 'reportes_ingresos'
-    })->name('admin.reportes.ingresos');
-    });
-
-    // Rutas específicas para reportes
-    Route::middleware([AdminAccess::class])->group(function () {
-        Route::get('/admin/reportes/ingresos-elementos', function () {
-        return view('PDF.reportes_elementos'); // Cambia 'vista_reportesingresos' por 'reportes_ingresos'
-    })->name('admin.reportes.elementos');
-    });
-
-    // Rutas específicas para reportes
-    Route::middleware([AdminAccess::class])->group(function () {
-        Route::get('/admin/reportes/ingresos-usuarios', function () {
-        return view('PDF.reportes_usuarios'); // Cambia 'vista_reportesingresos' por 'reportes_ingresos'
-    })->name('admin.reportes.usuarios');
-    });
-
-
         // Ruta para consultar usuarios
         Route::get('/admin/usuarios/consultar', [AdminController::class, 'consultarUsuario'])
             ->name('admin.usuarios.consultar');
-
-        // Ruta para almacenar un nuevo usuario
-        Route::post('/admin/usuarios', [AdminController::class, 'storeUsuario'])->name('admin.usuarios.store');
-
         // Ruta para generar PDF de usuario
         Route::post('/admin/usuarios/pdf', [AdminController::class, 'generarReporteIngresosUsuario'])->name('admin.usuarios.pdf');
-
-         // Rutas para gestionar elementos
-         Route::post('/admin/elementos/store', [AdminController::class, 'storeElemento'])->name('admin.elementos.store');
-         Route::put('/admin/elementos/{id}', [AdminController::class, 'updateElemento'])->name('admin.elementos.update');
-         Route::get('admin/elementos/{id}/edit', [AdminController::class, 'edit'])->name('admin.elementos.edit');
-         Route::delete('/admin/elementos/{id}', [AdminController::class, 'destroyElemento'])->name('admin.elementos.destroy');
     });
-
 
     // Luego, la ruta POST para manejar el envío del formulario y almacenar el elemento
     Route::post('/admin/elementos/store', [AdminController::class, 'storeElemento'])->name('admin.elementos.store');
@@ -98,14 +65,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/vigilante/buscar', [VigilanteController::class, 'buscarPorDocumento'])
             ->name('vigilante.buscar');
         // Rutas para eliminar elementos del contenedor en sub_control_ingresos
-        Route::delete('/vigilante/sub_control_ingreso/{id}', [VigilanteController::class, 'eliminarElemento'])
-            ->name('sub_control_ingreso.destroy');
+        Route::delete('/vigilante/sub_control_ingreso/{id}', [VigilanteController::class, 'destroy']);
 
         // Ruta para actualizar el estado de un registro a "Cerrado"
         Route::put('/vigilante/control_ingreso/{id}/cerrar', [VigilanteController::class, 'cerrarRegistro'])
             ->name('control_ingreso.cerrar');
 
-        Route::post('/vigilante/registro', [VigilanteController::class, 'nuevoRegistro'])->name('vigilante.registro');
+        Route::post('/nuevoRegistro', [VigilanteController::class, 'nuevoRegistro'])->name('vigilante.registro');
+
         Route::post('/sub_control_ingreso', [VigilanteController::class, 'registrarElementoEnSubControl'])->name('sub_control_ingreso.store');
 
         Route::get('/vigilante/elementos/{registroId}', [VigilanteController::class, 'obtenerElementosPorRegistro'])

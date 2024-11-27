@@ -37,9 +37,9 @@
                 <!-- Aquí puedes agregar un dropdown para reportes si es necesario -->
                 <div class="dropdown-menu" id="dropdown-menu" role="menu">
                     <div class="dropdown-content">
-                        <a href="#" class="open-report-ingresos-modal">Reportes ingresos</a>
-                        <a href="#" class="open-report-ingresos-modal">Reportes usuarios</a>
-                        <a href="#" class="open-report-ingresos-modal">Reportes elementos</a>
+                        <a href="{{ route('admin.reportes.ingresos') }}" class="dropdown-item">Reportes ingresos</a> 
+                        <a href="{{ route('admin.reportes.usuarios') }}" class="dropdown-item">Reportes usuarios</a>
+                        <a href="{{ route('admin.reportes.elementos') }}" class="dropdown-item">Reportes elementos</a>
                     </div>
                 </div>
             </div>

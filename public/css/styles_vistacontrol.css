@@ -298,6 +298,17 @@ body {
 }
 
 .contenido .elementos {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+    align-items: flex-start;
+    overflow-y: auto;
+    max-height: 345px;
+}
+
+.contenido .elementos {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 20px;
@@ -319,9 +330,6 @@ body {
     flex: 0 0 auto; /* Evita que los cards se estiren */
     width: 220px; /* Ancho fijo para cada card */
     margin: 0 10px; /* Espacio horizontal entre cards */
-}
-
-.contenido .elementos .card {
     overflow-y: scroll;
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -346,7 +354,7 @@ body {
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     width: 220px; /* ancho fijo para mantener consistencia */
-    height: 350px;
+    height: 320px;
     padding: 15px;
     text-align: center;
     box-sizing: border-box;
@@ -541,10 +549,6 @@ body {
     color: white;
 }
 
-.contenido {
-    position: static;
-}
-
 .contenido .elementos .card {
     flex-direction: column;
     max-height: 290px;
@@ -684,17 +688,6 @@ body {
     justify-content: center;
 }
 
-.contenido .elementos {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 20px;
-    padding: 20px;
-    align-items: flex-start;
-    overflow-y: auto;
-    max-height: 345px;
-}
-
 #abrir-modal-elementos {
     margin-bottom: 0;
     width: auto;
@@ -743,14 +736,6 @@ body {
     transition: border 0.3s ease;
 }
 
-.registro-fila:hover {
-    border: 2px solid rgb(125, 125, 125);
-}
-
-.fila-seleccionada {
-    border: 2px solid rgb(67, 189, 33); /* Cambia a negro si prefieres */
-}
-
 #modalElemento .modal-content {
     margin: auto; /* Centra el modal horizontalmente */
     margin-top: 4%; /* Añadir margen superior para centrar verticalmente */
@@ -778,12 +763,12 @@ body {
     border-radius: 8px;
 }
 
-#modalElemento .btn-cerrar-modal{
+#modalElemento .btn-cerrar-modal {
     margin-right: -10px;
     margin-bottom: -10px;
 }
 
-.btn-destroy{
+.btn-destroy {
     display: inline-block;
     margin: 0;
     margin-left: 24px;
@@ -791,12 +776,26 @@ body {
     font-size: 15px;
     border: none;
     background-color: #39a900;
-    color:white;
+    color: white;
     border-radius: 6px;
     padding: 8px;
     transition: background-color 0.4s ease;
 }
 
-.btn-destroy:hover{
+.btn-destroy:hover {
     background-color: #00324d;
+}
+
+.fila-seleccionada {
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    background-color: #c3c3c3; /* Color de hover */
+}
+
+.fila-seleccionada:hover {
+    background-color: #f0f0f0; /* Color de hover */
+}
+
+.fila-seleccionada.seleccionado {
+    background-color: #d0d0d0; /* Color cuando está seleccionada */
 }

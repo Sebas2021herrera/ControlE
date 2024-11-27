@@ -14,6 +14,7 @@ body {
     color: #ffffff;
     font-size: 1.25rem;
     padding: 10px 0;
+    font-family: 'Work Sans', sans-serif;
 }
 
 .container {
@@ -390,8 +391,6 @@ body {
     gap: 21px;
     justify-content: center;
 }
-
-/* ... código existente ... */
 
 /* Estilos para los cards */
 .card {

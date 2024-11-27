@@ -32,7 +32,7 @@
                 </div>
                 <div class="column">
                     <label for="numeroDocumento" class="label">Número de Documento</label>
-                    <input type="text" id="numeroDocumento" name="numeroDocumento" class="input" placeholder="Opcional">
+                    <input type="text" id="numeroDocumento" name="numeroDocumento" class="input" placeholder="Buscar usuario específico">
                 </div>
             </div>
             <div class="field is-grouped is-justify-content-flex-end">

@@ -22,6 +22,10 @@ Route::post('registrado', [AuthController::class, 'createpost'])->name('createpo
 Route::post('login', [AuthController::class, 'login'])->name('login.post');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
+//ruta apra restablecer contraseña
+Route::get('resetpass', [AuthController::class, 'resetpass'])->name('resetpass');
+Route::post('/password/manual-reset', [AuthController::class, 'manualResetPassword'])->name('password.manual-reset');
+
 // Agrupación de rutas protegidas con autenticación
 Route::middleware('auth')->group(function () {
 

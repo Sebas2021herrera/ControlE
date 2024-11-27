@@ -57,7 +57,10 @@
                     <button type="submit" class="btn btn-dark btn-block">Iniciar sesión</button>
                 </form>
                 <div class="text-center mt-3">
-                    <a href="{{ route('create') }}">¡Regístrate!</a>
+                    <a href="{{ route('create') }}">¡Regístrate! </a>
+                </div>
+                <div class="text-center mt-3">
+                    <a href="{{ route('resetpass') }}">  ¿ olvide contraseña ?</a>
                 </div>
             </div>  
         </div>

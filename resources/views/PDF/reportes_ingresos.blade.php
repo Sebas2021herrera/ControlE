@@ -60,12 +60,11 @@
             <table class="table is-striped is-fullwidth">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Fecha</th>
-                        <th>Hora</th>
-                        <th>Usuario</th>
-                        <th>Ingreso/Egreso</th>
-                        <th>Detalles</th>
+                        <th>ID</th>
+                        <th class="centro">NOMBRE CENTRO</th>
+                        <th>FECHA INGRESO</th>
+                        <th>FECHA EGRESO</th>
+                        <th>ESTADO</th>
                     </tr>
                 </thead>
                 <tbody id="resultados">

@@ -6,6 +6,11 @@
 
 body {
     font-family: 'Work Sans', sans-serif;
+    /* display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f5f5; */
 }
 
 /* Estilos del header */
@@ -427,4 +432,92 @@ body {
     margin-bottom: 10px;
 }
 
-/* ... código existente ... */
+.admin-dashboard {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 90%;
+    max-width: 1200px;
+}
+
+.sidebar {
+    width: 25%;
+    background-color: #ffffff;
+    padding: 20px;
+    text-align: center;
+    border-right: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.sidebar h2 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+}
+
+.sidebar p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.foto-perfil {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 20px;
+}
+
+.main-content {
+    width: 70%;
+    text-align: center;
+    padding: 20px;
+}
+
+.logo-container {
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 50px);
+}
+
+.logo-sena {
+    width: 550px;
+    /* max-width: 100%; */
+    animation: logo-entry 2s ease-in-out;
+}
+
+.logo-container img {
+    width: 550px;
+}
+
+/* .logo-container img:hover {
+    transform: scale(1.1) rotate(360deg);
+} */
+
+
+@keyframes logo-entry {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+#admin-content {
+    display: block; /* Asegurar que esté visible inicialmente */
+    text-align: center;
+    margin-top: 20px; /* Ajuste para centrarlo en la página */
+}

@@ -110,6 +110,52 @@
     </div>
 </div>
 
+{{-- <div class="admin-dashboard">
+    <div class="sidebar">
+        <h2>Bienvenido(a), Admin</h2>
+        <p>{{ Auth::user()->nombres }} {{ Auth::user()->apellidos }}</p>
+        <div class="image-container" style="margin: 20px auto;">
+            @if (Auth::user()->foto_perfil && file_exists(storage_path('app/public/fotos_perfil/' . Auth::user()->foto_perfil)))
+                <img src="{{ asset('storage/fotos_perfil/' . Auth::user()->foto_perfil) }}" alt="Foto de perfil" class="foto-perfil">
+            @else
+                <img src="{{ asset('imagenes/sin_foto_perfil.webp') }}" alt="Foto de perfil predeterminada" class="foto-perfil">
+            @endif
+        </div>
+    </div>
+    
+
+    <div class="main-content">
+        <div class="logo-container">
+            <img src="{{ asset('imagenes/Logo-Control-E.png') }}" alt="Control E Logo" class="logo-sena">
+        </div>
+    </div>
+</div> --}}
+
+<div class="admin-dashboard">
+    <div class="sidebar" id="sidebar">
+        <h2>Bienvenido(a), Admin</h2>
+        <p>{{ Auth::user()->nombres }} {{ Auth::user()->apellidos }}</p>
+        <div class="image-container" style="margin: 20px auto;">
+            @if (Auth::user()->foto_perfil && file_exists(storage_path('app/public/fotos_perfil/' . Auth::user()->foto_perfil)))
+                <img src="{{ asset('storage/fotos_perfil/' . Auth::user()->foto_perfil) }}" alt="Foto de perfil" class="foto-perfil">
+            @else
+                <img src="{{ asset('imagenes/sin_foto_perfil.webp') }}" alt="Foto de perfil predeterminada" class="foto-perfil">
+            @endif
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="logo-container" id="logo-container">
+            <img src="{{ asset('imagenes/Logo-Control-E.png') }}" alt="Control E Logo" class="logo-sena">
+        </div>
+
+        <!-- Aquí va el formulario o la sección para consultar un usuario -->
+        <button id="limpiarConsultaBtn" class="btn">Limpiar consulta</button>
+    </div>
+</div>
+
+
+
     <!-- Modal de Registro de Usuarios -->
     <div id="registerModal" class="modal">
         <div class="modal-content">
@@ -829,6 +875,33 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+//     document.addEventListener('DOMContentLoaded', () => {
+//     const logo = document.querySelector('.logo-sena');
+//     logo.style.transform = 'scale(1.1) rotate(360deg)';
+// });
+
+document.addEventListener('DOMContentLoaded', function () {
+    const sidebar = document.getElementById('sidebar');
+    const logoContainer = document.getElementById('logo-container');
+    const limpiarConsultaBtn = document.getElementById('limpiarConsultaBtn');
+
+    // Supongamos que este botón de consulta se encuentra en tu formulario
+    const consultarBtn = document.getElementById('consultarUsuarioBtn');
+
+    consultarBtn.addEventListener('click', function () {
+        // Ocultar sidebar y logo al consultar un usuario
+        sidebar.style.display = 'none';
+        logoContainer.style.display = 'none';
+    });
+
+    limpiarConsultaBtn.addEventListener('click', function () {
+        // Mostrar nuevamente sidebar y logo al limpiar la consulta
+        sidebar.style.display = 'block';
+        logoContainer.style.display = 'block';
+    });
+});
+
  </script>
 </body>
 </html>

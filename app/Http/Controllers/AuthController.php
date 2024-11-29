@@ -10,6 +10,8 @@ use App\Models\Usuario;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -24,6 +26,46 @@ class AuthController extends Controller
     {
         return view('auth.create');
     }
+    public function resetpass()
+    {
+        return view('auth.manual_reset');
+    }
+
+    //funcion para restablecer contraseña
+
+    public function manualResetPassword(Request $request)
+{
+    $request->validate([
+        'correo_personal' => 'required|email|exists:usuarios,correo_personal',
+    ]);
+
+    try {
+        // Buscar el usuario por su correo personal
+        $usuario = Usuario::where('correo_personal', $request->correo_personal)->first();
+
+        if (!$usuario) {
+            return back()->withErrors(['correo_personal' => 'El correo no está registrado.']);
+        }
+
+        // Generar una nueva contraseña
+        $nuevaContraseña = Str::random(8);
+
+        // Actualizar la contraseña en la base de datos
+        $usuario->contraseña = Hash::make($nuevaContraseña);
+        $usuario->save();
+
+        // Enviar la nueva contraseña al correo del usuario
+        Mail::raw("Hola {$usuario->nombres}, tu nueva contraseña es: {$nuevaContraseña}", function ($message) use ($usuario) {
+            $message->to($usuario->correo_personal)
+                    ->subject('Restablecimiento de contraseña');
+        });
+
+        return back()->with('success', 'Se ha enviado la nueva contraseña a tu correo.');
+    } catch (\Exception $e) {
+        return back()->withErrors(['error' => 'Ocurrió un error al restablecer la contraseña.']);
+    }
+}
+
 
     // Manejar el registro de un nuevo usuario
     public function createpost(Request $request)

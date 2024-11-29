@@ -20,7 +20,7 @@
     <!-- Contenido principal -->
     <div class="container">
         <!-- Formulario de búsqueda -->
-        <form id="reportesForm" class="box">
+        <form id="formReporteIngresos" class="box" data-url="{{ route('reportes.ingresos.consulta') }}" data-token="{{ csrf_token() }}">
             <div class="columns">
                 <div class="column">
                     <label for="fechaInicio" class="label">Fecha Inicio</label>
@@ -42,8 +42,18 @@
                 <div class="control">
                     <button type="submit" class="button is-primary">Consultar</button>
                 </div>
+                <div class="mt-4">
+                    <button id="generarPDF" class="button is-primary" data-url="{{ route('admin.reportes.ingresos.pdf') }}">Generar PDF</button>
+                </div>
+                
             </div>
         </form>
+
+        <!-- Mensajes y Spinner -->
+        <div id="spinnerCarga" style="display: none;" class="has-text-centered">
+            <p>Cargando...</p>
+        </div>
+        <div id="mensajeError" class="notification is-danger is-hidden"></div>
 
         <!-- Tabla de resultados -->
         <div class="table-container">

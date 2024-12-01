@@ -72,7 +72,7 @@
     </header>
 
 <!-- Después del header y antes de los modales -->
-<div class="resultado-busqueda" style="display: none;">
+{{-- <div class="resultado-busqueda" style="display: none;">
     <div class="contenido-superior">
         <div class="contenedor-intermedio">
             <div class="usuario-info">
@@ -108,7 +108,7 @@
             <i class="fas fa-redo"></i> Limpiar Consulta
         </button>
     </div>
-</div>
+</div> --}}
 
 {{-- <div class="admin-dashboard">
     <div class="sidebar">
@@ -146,11 +146,49 @@
 
     <div class="main-content">
         <div class="logo-container" id="logo-container">
-            <img src="{{ asset('imagenes/Logo-Control-E.png') }}" alt="Control E Logo" class="logo-sena">
+            <img src="{{ asset('imagenes/Logo-Control-E.png') }}" alt="Control E Logo" class="logo-app">
         </div>
+        <p class="text-control">Control de elementos para la Regional Casanare - SENA.</p>
 
-        <!-- Aquí va el formulario o la sección para consultar un usuario -->
-        <button id="limpiarConsultaBtn" class="btn">Limpiar consulta</button>
+        <!-- Aquí va la sección para consultar un usuario -->
+        <div class="resultado-busqueda" id="resultadoBusqueda" style="display: none;">
+            <div class="contenido-superior">
+                <div class="contenedor-intermedio">
+                    <div class="usuario-info">
+                        <div class="foto-logo">
+                            <img src="{{ asset('imagenes/logo-del-sena-01.png') }}" alt="Logo del SENA" class="logo-sena">
+                            <div class="barra-separadora"></div>
+                        </div>
+                        <div class="info-text">
+                            <p class="verde usuario-nombre"></p>
+                            <p class="verde usuario-apellidos"></p>
+                            <p><strong>Doc: </strong><span class="usuario-documento"></span></p>
+                            <p><strong>Cel: </strong><span class="usuario-telefono"></span></p>
+                            <p><strong>RH: </strong><span class="usuario-rh"></span></p>
+                            <p><strong>Rol: </strong><span class="usuario-rol"></span></p>
+                            <p><strong>Ficha: </strong><span class="usuario-ficha"></span></p>
+                            <p class="verde" id="semifooter">Regional Casanare | Centro Agroindustrial y Fortalecimiento Empresarial del Casanare</p>
+                        </div>
+                        <div class="foto-usuario">
+                            <img src="" alt="Foto de perfil" class="foto-perfil-usuario">
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="contenido-elementos">
+                    <div class="card-container">
+                        <!-- Aquí se cargarán dinámicamente las cards de elementos -->
+                    </div>
+                </div>
+            </div>
+            <!-- Botón para limpiar la consulta -->
+            <div class="field" style="margin-top: 10px;">
+                <button id="limpiarConsultaBtn" class="button is-danger">
+                    <i class="fas fa-redo"></i> Limpiar Consulta
+                </button>
+            </div>
+        </div>
+        {{-- Acá termina la secicón de consultar usuarios --}}
     </div>
 </div>
 
@@ -876,29 +914,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-//     document.addEventListener('DOMContentLoaded', () => {
-//     const logo = document.querySelector('.logo-sena');
-//     logo.style.transform = 'scale(1.1) rotate(360deg)';
-// });
 
-document.addEventListener('DOMContentLoaded', function () {
-    const sidebar = document.getElementById('sidebar');
-    const logoContainer = document.getElementById('logo-container');
+
+    document.addEventListener('DOMContentLoaded', function () {
+    const resultadoBusqueda = document.getElementById('resultadoBusqueda');
+    const sidebar = document.querySelector('.sidebar');
+    const logoContainer = document.querySelector('.logo-container');
     const limpiarConsultaBtn = document.getElementById('limpiarConsultaBtn');
 
-    // Supongamos que este botón de consulta se encuentra en tu formulario
-    const consultarBtn = document.getElementById('consultarUsuarioBtn');
-
-    consultarBtn.addEventListener('click', function () {
-        // Ocultar sidebar y logo al consultar un usuario
-        sidebar.style.display = 'none';
+    document.addEventListener('showResult', function () {
+        resultadoBusqueda.style.display = 'block';
+        sidebar.style.display = 'none'; 
         logoContainer.style.display = 'none';
     });
 
     limpiarConsultaBtn.addEventListener('click', function () {
-        // Mostrar nuevamente sidebar y logo al limpiar la consulta
+        resultadoBusqueda.style.display = 'none';
         sidebar.style.display = 'block';
-        logoContainer.style.display = 'block';
+        logoContainer.style.display = 'flex';
     });
 });
 

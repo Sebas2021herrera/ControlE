@@ -229,7 +229,6 @@ body {
 }
 
 /* Estilos para el formulario de búsqueda */
-/* Estilos para el formulario de búsqueda */
 .search-form {
     width: 300px;
     margin: 0 auto;
@@ -291,7 +290,7 @@ body {
 }
 
 .contenedor-intermedio {
-    width: 39.5%;
+    width: 69.5%;
     background-color: #e0e0e0;
     border-radius: 8px;
     padding: 15px;
@@ -304,6 +303,7 @@ body {
 }
 
 .usuario-info {
+    width: 500px;
     display: flex;
     align-items: center;
     flex: 1;
@@ -341,7 +341,7 @@ body {
     margin-left: -37px;
     height: 140px;
     line-height: 1.2;
-    margin-bottom: 5px;
+    /* margin-bottom: 5px; */
 }
 
 .info-text p {
@@ -370,15 +370,43 @@ body {
 }
 
 /* Estilos para el contenedor de elementos */
-.contenido {
+/* .contenido-elementos {
+    width: 500px;
     display: flex;
     flex-direction: row;
-    gap: 16px;
+    gap: 56px;
     flex: 1 1 auto;
+    background-color: #e0e0e0;
+    border-radius: 8px;
+    padding: 40px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
     overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    flex: 1;
+    overflow-y: auto;
+    max-height: 400px;
+} */
+
+.contenido-elementos {
+    width: 200%; /* Ajusta automáticamente al tamaño disponible */
+    max-width: 1200px; /* Opcional, para limitar el ancho máximo */
+    display: flex;
+    flex-wrap: wrap; /* Permitir que los cards se acomoden en varias filas si es necesario */
+    gap: 20px; /* Espacio entre cards */
+    background-color: #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    overflow-y: auto; /* Scroll vertical si los elementos exceden la altura */
+    overflow-x: hidden; /* Evitar scroll horizontal */
+    max-height: 400px; /* Mantener un límite razonable para la altura */
 }
 
-.elementos {
+
+/* .elementos {
     background-color: #e0e0e0;
     border-radius: 8px;
     padding: 20px;
@@ -388,12 +416,15 @@ body {
     scrollbar-width: none;
     -ms-overflow-style: none;
     flex: 1;
-}
+    overflow-y: auto;
+    max-height: 400px;
+} */
 
 .card-container {
     display: flex;
     flex-wrap: wrap;
     gap: 21px;
+    /* gap: 15px; Ajuste de separación para mayor flexibilidad */
     justify-content: center;
 }
 
@@ -401,17 +432,18 @@ body {
 .card {
     display: flex;
     flex-direction: column;
-    height: 350px; /* Ajustar altura si es necesario */
-    width: 270px; /* Ajustar ancho si es necesario */
+    height: 350px; 
+    width: 270px;  
     margin-bottom: 20px;
-    border-radius: 8px; /* Bordes redondeados */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra suave */
-    transition: box-shadow 0.3s; /* Transición para la sombra */
+    border-radius: 8px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  
+    transition: box-shadow 0.3s;
     overflow: hidden;
     background: #fff;
-    border: 1px solid #ddd; /* Borde del card */
-    text-align: center; /* Centrar texto en el card */
-}
+    border: 1px solid #ddd;
+    text-align: center; 
+} 
+
 
 .card:hover {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); /* Sombra al pasar el cursor */
@@ -436,9 +468,10 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    width: 90%;
-    max-width: 1200px;
+    width: 100%;
+    /* max-width: 1200px; */
 }
+
 
 .sidebar {
     width: 25%;
@@ -482,27 +515,26 @@ body {
     padding: 20px;
 }
 
+
 .logo-container {
+    height: auto;
     margin: auto;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: calc(100vh - 50px);
-}
-
-.logo-sena {
-    width: 550px;
-    /* max-width: 100%; */
-    animation: logo-entry 2s ease-in-out;
+    /* height: calc(100vh - 50px); */
 }
 
 .logo-container img {
     width: 550px;
+    height: auto;
 }
 
-/* .logo-container img:hover {
-    transform: scale(1.1) rotate(360deg);
-} */
+.logo-app {
+    height: auto;
+    margin: 20px auto; /* Centrado vertical y horizontal */
+    animation: logo-entry 2s ease-in-out;
+}
 
 
 @keyframes logo-entry {
@@ -516,8 +548,10 @@ body {
     }
 }
 
-#admin-content {
-    display: block; /* Asegurar que esté visible inicialmente */
-    text-align: center;
-    margin-top: 20px; /* Ajuste para centrarlo en la página */
+.text-control {
+    color: #000;
+    font-size: 20px;
+    position: relative;
+    top: -50px;
+    animation: fadeIn 2s ease-in-out;
 }

@@ -8,13 +8,13 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
 <body>
-    <!-- Navbar 
+    <!-- Navbar
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="#">Control e</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">  
+        <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="#">Inicio</a>
@@ -32,8 +32,8 @@
     <!-- Hero Section -->
     <header class="hero d-flex align-items-center justify-content-center text-center text-white">
         <div class="hero-content">
-            <h1 class="display-4 animated fadeIn">Bienvenido a Control E</h1>
-            {{-- <img src="{{ asset('imagenes/Logo-Control-E.png') }}" alt="Control E Logo" class="img-fluid logo-sena"> --}}
+            <h1 class="display-4 animated fadeIn">Bienvenido</h1>
+            <img src="{{ asset('imagenes/Logo-Control-E.png') }}" alt="Control E Logo" class="img-fluid logo-sena">
             <p class="lead animated fadeIn">Control de elementos para la Regional Casanare - SENA.</p>
             <div class="buttons mt-4">
                 <a class="btn btn-light btn-lg animated bounceIn" href="{{ route('login') }}" role="button">Iniciar sesión</a>

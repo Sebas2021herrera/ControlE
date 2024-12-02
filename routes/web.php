@@ -11,6 +11,7 @@ use App\Http\Controllers\AdminController;
 use App\Models\Elemento;
 use App\Models\Categoria;
 use App\Http\Middleware\AdminAccess;
+use App\Http\Controllers\ReportesIngresosController;
 
 
 // Rutas para autenticación y registro
@@ -48,27 +49,35 @@ Route::middleware('auth')->group(function () {
             return view('index.vistaadmin', compact('categorias', 'elementos'));
         })->name('admin.panel');
 
-        // Rutas específicas para reportes
-    Route::middleware([AdminAccess::class])->group(function () {
-        Route::get('/admin/reportes/ingresos', function () {
-        return view('PDF.reportes_ingresos'); // Cambia 'vista_reportesingresos' por 'reportes_ingresos'
+    // Rutas específicas para reportes, agrupadas con middleware de administrador
+    Route::middleware([AdminAccess::class])->prefix('admin/reportes')->group(function () {
+
+    // Ruta para la vista principal de reportes de ingresos
+    Route::get('/ingresos', function () {
+        return view('PDF.reportes_ingresos'); // Cambiar por la vista correspondiente
     })->name('admin.reportes.ingresos');
-    });
 
-    // Rutas específicas para reportes
-    Route::middleware([AdminAccess::class])->group(function () {
-        Route::get('/admin/reportes/ingresos-elementos', function () {
-        return view('PDF.reportes_elementos'); // Cambia 'vista_reportesingresos' por 'reportes_ingresos'
+    // Ruta para la consulta de ingresos (AJAX)
+    Route::post('admin/reportes/ingresos/consulta', [ReportesIngresosController::class, 'consultaIngresos'])
+        ->name('reportes.ingresos.consulta');
+
+    // Nueva ruta para la generación del PDF
+    Route::get('/ingresos/pdf', [ReportesIngresosController::class, 'generarPDF'])
+        ->name('admin.reportes.ingresos.pdf');
+
+    // Ruta para la vista de reportes de elementos
+    Route::get('/ingresos-elementos', function () {
+        return view('PDF.reportes_elementos'); // Cambiar por la vista correspondiente
     })->name('admin.reportes.elementos');
-    });
 
-    // Rutas específicas para reportes
-    Route::middleware([AdminAccess::class])->group(function () {
-        Route::get('/admin/reportes/ingresos-usuarios', function () {
-        return view('PDF.reportes_usuarios'); // Cambia 'vista_reportesingresos' por 'reportes_ingresos'
+    // Ruta para la vista de reportes de usuarios
+    Route::get('/ingresos-usuarios', function () {
+        return view('PDF.reportes_usuarios'); // Cambiar por la vista correspondiente
     })->name('admin.reportes.usuarios');
-    });
+});
 
+
+    
 
         // Ruta para consultar usuarios
         Route::get('/admin/usuarios/consultar', [AdminController::class, 'consultarUsuario'])

@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         // Realizar solicitud AJAX
-        fetch(console.log('URL:',formReporte.dataset.url), {
+        fetch(formReporte.dataset.url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -72,16 +72,19 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        // Actualización de los encabezados de las columnas
         let html = '<table class="table is-bordered is-striped is-hoverable"><thead><tr>';
-        html += '<th>Fecha Ingreso</th><th>Documento Usuario</th><th>Nombre</th><th>Centro</th>';
+        html += '<th>ID</th><th class="centro">NOMBRE CENTRO</th><th>FECHA INGRESO</th><th>FECHA EGRESO</th><th>ESTADO</th>';
         html += '</tr></thead><tbody>';
 
         ingresos.forEach(ingreso => {
+            // Ajuste de las columnas de acuerdo con los nuevos datos
             html += `<tr>
-                        <td>${ingreso.fecha_ingreso}</td>
-                        <td>${ingreso.usuario.numero_documento}</td>
-                        <td>${ingreso.usuario.nombre} ${ingreso.usuario.apellido}</td>
-                        <td>${ingreso.centro.nombre}</td>
+                        <td>${ingreso.id}</td>  <!-- ID -->
+                        <td>${ingreso.centro.nombre}</td>  <!-- NOMBRE CENTRO -->
+                        <td>${ingreso.fecha_ingreso}</td>  <!-- FECHA INGRESO -->
+                        <td>${ingreso.fecha_egreso}</td>   <!-- FECHA EGRESO -->
+                        <td>${ingreso.estado}</td>  <!-- ESTADO -->
                     </tr>`;
         });
 
@@ -95,8 +98,8 @@ document.addEventListener('DOMContentLoaded', function () {
         mensajeError.style.display = 'block';
     }
 
+    // Generar PDF
     document.getElementById('generarPDF').addEventListener('click', function() {
         window.location.href = this.dataset.url;
     });    
-    
 });

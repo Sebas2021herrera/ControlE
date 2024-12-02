@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Usuario;
 use App\Models\ControlIngreso;
-use App\Models\Sub_Control_Ingreso;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,9 +15,11 @@ class ReportesIngresosController extends Controller
         // Solo muestra los reportes si el usuario está autenticado
         if (Auth::check()) {
             $usuario = Auth::user();
-            
-            // Obtiene los ingresos relacionados con el usuario autenticado
-            $ingresos = ControlIngreso::where('usuario_id', $usuario->id)->with('centro', 'subControlIngresos.elemento')->get();
+
+            // Obtener reportes con las nuevas columnas
+            $ingresos = ControlIngreso::where('usuario_id', $usuario->id)
+                ->select('id', 'nombre_centro', 'fecha_ingreso', 'fecha_egreso', 'estado')
+                ->get();
 
             return view('reportes_ingresos', compact('ingresos'));
         }
@@ -30,8 +31,10 @@ class ReportesIngresosController extends Controller
     {
         if (Auth::check()) {
             $usuario = Auth::user();
-            
-            $ingresos = ControlIngreso::where('usuario_id', $usuario->id)->with('centro', 'subControlIngresos.elemento')->get();
+
+            $ingresos = ControlIngreso::where('usuario_id', $usuario->id)
+                ->select('id', 'nombre_centro', 'fecha_ingreso', 'fecha_egreso', 'estado')
+                ->get();
 
             $pdf = Pdf::loadView('reportes.pdf_ingresos', compact('usuario', 'ingresos'));
             return $pdf->download('reporte_ingresos.pdf');
@@ -49,9 +52,10 @@ class ReportesIngresosController extends Controller
         'documento_usuario' => 'nullable|string|max:20',
     ]);
 
-    // Consultar ingresos con filtros
+    // Consultar ingresos con las nuevas columnas y filtros
     $query = ControlIngreso::whereBetween('fecha_ingreso', [$validated['fecha_inicio'], $validated['fecha_final']])
-        ->with(['usuario:id,numero_documento,nombre,apellido', 'centro:id,nombre', 'subControlIngresos.elemento']);
+        ->select('id', 'nombre_centro', 'fecha_ingreso', 'fecha_egreso', 'estado')
+        ->with(['usuario:id,numero_documento,nombre,apellido']);
 
     // Filtrar por número de documento si se proporciona
     if (!empty($validated['documento_usuario'])) {
@@ -67,27 +71,17 @@ class ReportesIngresosController extends Controller
         return response()->json(['error' => 'No se encontraron resultados para los criterios dados.'], 404);
     }
 
-    // Transformar datos para una mejor estructura en el frontend
+    // Transformar datos para el frontend
     $transformados = $resultados->map(function ($ingreso) {
         return [
+            'id' => $ingreso->id,
+            'nombre_centro' => $ingreso->nombre_centro,
             'fecha_ingreso' => $ingreso->fecha_ingreso,
-            'usuario' => [
-                'numero_documento' => $ingreso->usuario->numero_documento,
-                'nombre' => $ingreso->usuario->nombre,
-                'apellido' => $ingreso->usuario->apellido,
-            ],
-            'centro' => $ingreso->centro->nombre,
-            'elementos' => $ingreso->subControlIngresos->map(function ($subIngreso) {
-                return [
-                    'descripcion' => $subIngreso->elemento->descripcion,
-                    'marca' => $subIngreso->elemento->marca,
-                ];
-            }),
+            'fecha_egreso' => $ingreso->fecha_egreso,
+            'estado' => $ingreso->estado,
         ];
     });
 
     return response()->json(['success' => true, 'ingresos' => $transformados]);
-    
-    }
-
+}
 }

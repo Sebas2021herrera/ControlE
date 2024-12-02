@@ -19,6 +19,7 @@ class ControlIngreso extends Model
         'fecha_ingreso',
         'estado',
         'id_persona_control', // Número de documento del vigilante
+        'observacion', // Valor por defecto si es necesario
     ];
 
     // Relación con el modelo Usuario

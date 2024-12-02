@@ -13,12 +13,15 @@
 <body>
     <div class="container">
         <div class="buscador">
+            <span class="decore">Control
+                E</span>
             <form action="{{ route('vigilante.buscar') }}" method="GET" class="form-busqueda">
                 <input type="text" name="documento" class="input-busqueda" placeholder="Buscar por Documento...">
                 <button type="submit" class="lupa-btn">
                     <img src="{{ asset('imagenes/lupa.png') }}" alt="Buscar" class="lupa-icon">
                 </button>
             </form>
+            <span class="decore2">Control E</span>
         </div>
 
         <div class="contenido-superior">
@@ -107,7 +110,8 @@
                             Ingresa
                         </button>
 
-                        <button type="button" class="boton" id="guardar-registros" data-id="{{ $controlIngresoId ?? '' }}">
+                        <button type="button" class="boton" id="guardar-registros"
+                            data-id="{{ $controlIngresoId ?? '' }}">
                             <img src="{{ asset('imagenes/close.png') }}" alt="Guardar" class="iconos">
                             Egresa
                         </button>

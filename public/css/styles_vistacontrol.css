@@ -18,6 +18,21 @@ body {
     margin-top: 0; /* Quitar el margen superior del container */
 }
 
+.decore {
+    font-size: 22px;
+    margin-left: 0px;
+    margin-right: 440px;
+    font-weight: bold;
+    color: white;
+}
+
+.decore2 {
+    font-size: 22px;
+    font-weight: bold;
+    color: white;
+    margin-left: 440px;
+}
+
 .buscador {
     width: calc(100% + 20px);
     height: 52px;

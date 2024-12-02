@@ -1,3 +1,4 @@
+/* Estilos generales */
 body,
 html {
     height: 100%;
@@ -7,15 +8,18 @@ html {
 
 .container-fluid {
     display: flex;
-    height: 100vh;
-    overflow: hidden;
+    flex-direction: row;
+    height: 100%;
+    /* Ajuste aquí para evitar la ocultación del dropdown */
+    overflow: visible; /* Permite que el contenido desborde si es necesario */
 }
 
 .left-panel {
-    flex: 0 0 350px;
+    flex: 0 0 280px;
     border-right: 1px solid #ccc;
     padding: 20px;
     box-sizing: border-box;
+    overflow-y: auto; /* Permitir scroll independiente para panel izquierdo */
 }
 
 .right-panel {
@@ -25,153 +29,318 @@ html {
     gap: 20px;
     padding: 20px;
     box-sizing: border-box;
-    overflow-y: auto;
+    overflow-y: auto; /* Habilitar scroll para el contenido principal */
+    height: calc(100% - 80px); /* Resta la altura del navbar */
     scroll-behavior: smooth;
 }
 
+.spacer {
+    height: 50px; /* Altura para el espacio adicional */
+}
+
+/* Ocultar barra de scroll visual */
 .right-panel::-webkit-scrollbar {
     width: 0px;
     background: transparent;
 }
 
-.navbar-light.bg-light {
-    background-color: #00324d!important;
+/* Estilos básicos del navbar */
+
+.nav-link dropdown-toggle text-white {
+    font-size: 30px !important;
 }
 
-.navbar-light .navbar-nav .nav-link {
-    color: white !important;
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Espacio entre izquierda y derecha */
+    padding-left: 5px;
+    background-color: #00324d;
+    flex-wrap: nowrap; /* Previene apilamiento */
 }
 
-.navbar-light .navbar-brand {
-    color: white !important;
+.navbar-brand {
+    font-size: 1.2rem;
+    color: white;
 }
 
-.navbar-light .dropdown-menu {
-    background-color: #39a900 !important;
-    color: white !important;
+.navbar-brand text-white {
+    font-size: 30px !important;
 }
 
-.navbar-light .dropdown-menu .dropdown-item {
-    color: white !important;
+.navbar .nav-link {
+    font-size: 1rem;
+    color: white;
+    margin-left: auto; /* Empuja el dropdown hacia la derecha */
 }
 
-.navbar-light .dropdown-menu .dropdown-item:hover {
-    background-color: #429419 !important;
-    color: white !important;
+.dropdown-menu {
+    background-color: #00324d;
+    border: none;
+    margin-top: 5px;
 }
 
+.dropdown-item {
+    color: white;
+    transition: background-color 0.3s;
+}
+
+.dropdown-item:hover {
+    background-color: #39a900;
+}
+
+.dropdown-divider {
+    border-color: #39a900;
+}
+
+/* Cards */
 .card {
     display: flex;
     flex-direction: column;
-    height: 350px;
-    width: 270px;
-    left: 22px;
-    top: -24px;
-    margin-bottom: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: box-shadow 0.3s;
     overflow: hidden;
     background: #fff;
     border: 1px solid #ddd;
+    padding: 15px;
+    height: 380px;
+    width: 300px; /* Altura automática para evitar cortes en contenido */
+    margin-left: 24px;
 }
 
 .card:hover {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
 }
 
+.card img {
+    width: 100%;
+    max-height: 120px; /* Ajuste en altura máxima */
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+
 .card-body {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    padding: 10px 20px;
-    overflow-y: scroll;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    flex: 1;
-}
-
-.card-body::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-}
-
-.card img {
-    width: 100%;
-    height: 150px;
-    object-fit: contain;
-    margin-bottom: 15px;
+    gap: 10px; /* Espacio entre elementos */
+    text-align: center;
+    flex-grow: 1;
 }
 
 .card-title {
-    margin-top: 0;
-    font-size: 24px;
-    text-align: center;
+    font-size: 20px;
+    margin-bottom: 5px;
 }
 
 .card-text {
     font-size: 14px;
-    margin-bottom: 0;
-    text-align: center;
-}
-
-.right-panel {
-    padding-bottom: 60px;
+    margin-bottom: 0px;
 }
 
 .welcome-text {
-    font-size: 30px;
+    font-size: 38px;
+    text-align: initial;
 }
 
 .other-welcome {
     font-size: 20px;
 }
 
-@media (max-width: 768px) {
-    .right-panel {
-        grid-template-columns: 1fr;
-    }
+.nombre-usuario {
+    font-size: 20px;
 }
 
-.modal-body img {
-    width: 100%;
-    max-width: 300px;
+.foto-perfil {
+    width: 150px;
     height: auto;
-    display: block;
-    margin: 0 auto 20px auto;
+    border-radius: 8px;
 }
 
-.modal-dialog {
-    max-width: 500px;
-    margin: 30px auto;
+/* Centrar el modal horizontal y verticalmente */
+/* Ajustar el ancho del modal para ambos */
+.modal-custom-width .modal-dialog {
+    max-width: 800px; /* Definir el ancho máximo del modal */
+    width: 70%; /* Ancho del modal ajustable */
+    margin: auto; /* Centrado horizontal */
 }
 
-.btn-link:focus,
-.btn-link:active {
-    outline: none;
-    box-shadow: none;
-    border: none;
-    color: inherit;
+/* El contenido del modal se mantiene igual que antes */
+.modal-content {
+    border-radius: 10px; /* Bordes redondeados */
+    padding: 20px; /* Espaciado interno */
 }
 
-.alert {
-    transition: opacity 0.5s ease-out;
+/* Si el modal necesita scroll para contenido largo */
+.modal-body {
+    max-height: 80vh; /* Limitar la altura máxima del contenido */
+    overflow-y: auto; /* Activar scroll interno si es necesario */
 }
 
-.d-none {
-    display: none;
+/* Ocultar barra de scroll */
+.modal-body::-webkit-scrollbar {
+    display: none; /* Ocultar barra de scroll en Chrome, Safari y Edge */
 }
 
-.fade-out {
-    animation: fadeOut 1s forwards;
+/* Centrar imágenes dentro del modal */
+.modal-body img {
+    display: block; /* Hace que la imagen se comporte como un bloque */
+    margin-left: auto; /* Alinea a la izquierda automáticamente */
+    margin-right: auto; /* Alinea a la derecha automáticamente */
+    max-width: 100%; /* Limita el tamaño de la imagen para no desbordar el contenedor */
+    height: auto; /* Mantiene la relación de aspecto */
 }
 
-@keyframes fadeOut {
-    from {
-        opacity: 1;
+/* Media Queries para dispositivos móviles */
+@media (max-width: 768px) {
+    /* Contenedor general en diseño vertical */
+    .container-fluid {
+        flex-direction: column; /* Disposición en columna */
+        display: block;
     }
 
-    to {
-        opacity: 0;
+    .navbar {
+        padding-left: -10px;
+        padding: 10px;
+        flex-direction: row; /* Mantener horizontal en móvil */
+    }
+
+    .navbar .d-flex {
+        flex-direction: row; /* Elementos alineados en fila */
+    }
+
+    /* Margen específico para el texto del usuario */
+    .text-white {
+        margin-left: 10px; /* Espaciado entre el logo y el nombre */
+        margin-right: 10px;
+    }
+
+    /* Estilo específico para el logo */
+    .navbar-brand {
+        margin-right: 20px; /* Asegura que el logo no tenga margen extra */
+    }
+
+    /* Panel izquierdo */
+    .left-panel {
+        width: 100%; /* Ocupa todo el ancho */
+        text-align: center;
+        padding: 5px; /* Reducir el padding para maximizar espacio */
+        border-right: none;
+        background-color: #f9f9f9; /* Fondo claro opcional */
+        overflow: hidden; /* Evitar scroll */
+        margin-top: -20px;
+    }
+
+    /* Imagen de perfil en el panel izquierdo */
+    .image-container img {
+        width: 100px; /* Reducir tamaño de la imagen */
+        height: 130px;
+        object-fit: cover; /* Evitar distorsión */
+        border-radius: 8px; /* Imagen circular */
+        margin: 10px auto; /* Centrar y agregar margen inferior */
+        margin-top: -10px;
+    }
+
+    /* Panel derecho */
+    .right-panel {
+        width: 100%; /* Ocupa todo el ancho */
+        height: 60vh; /* 60% de la altura total del viewport */
+        padding: 1px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Dos columnas */
+        gap: 1px; /* Espaciado entre tarjetas */
+        overflow-y: auto; /* Scroll para manejar contenido adicional */
+        margin-bottom: 30px;
+        box-sizing: border-box; /* Asegura que el padding no afecte la altura total */
+        padding-bottom: 40px; /* Agrega un poco de espacio extra al final para asegurarte de que el scroll llegue al fondo */
+    }
+
+    /* Tarjetas */
+    .card {
+        padding: 0;
+        border-radius: 8px;
+        background-color: #ffffff; /* Fondo blanco */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* Distribuir contenido */
+        align-items: center;
+        height: auto; /* Ajuste automático */
+        min-height: 280px; /* Altura mínima suficiente */
+        width: calc(100% - 10px); /* Ajusta el ancho para dos columnas */
+        margin: 5px; /* Espaciado entre tarjetas */
+    }
+
+    .card img {
+        width: 60%; /* Ajustar ancho de la imagen */
+        height: auto; /* Mantener proporción */
+        max-height: 100px; /* Limitar altura máxima */
+        object-fit: contain; /* Evitar distorsión de imagen */
+        margin-bottom: 10px; /* Espaciado inferior */
+    }
+
+    .card-title {
+        font-size: 14px; /* Tamaño del título */
+        text-align: center;
+        word-wrap: break-word; /* Ajustar palabras largas */
+        line-height: 1.2; /* Espaciado entre líneas */
+        margin: 5px 0; /* Espaciado superior e inferior */
+    }
+
+    .card-text {
+        font-size: 12px; /* Tamaño del texto */
+        text-align: center;
+        line-height: 1.2; /* Ajuste del espaciado */
+        margin: 0 5px; /* Espaciado lateral */
+    }
+
+    /* Botones en tarjetas */
+    .card a.btn {
+        font-size: 12px;
+        padding: 5px 10px;
+        align-self: center; /* Centrado horizontal */
+        margin-top: 10px; /* Espaciado superior */
+    }
+
+    /* Contenido dentro de las tarjetas */
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Centrar verticalmente el contenido */
+        align-items: center; /* Centrar horizontalmente el contenido */
+        flex-grow: 1; /* Expandir el contenido uniformemente */
+        text-align: center; /* Asegurar alineación centrada */
+    }
+
+    /* Ajustes de scroll en el panel derecho */
+    .right-panel::-webkit-scrollbar {
+        width: 5px; /* Tamaño del scroll */
+        background: transparent;
+    }
+
+    .right-panel::-webkit-scrollbar-thumb {
+        background: #ccc; /* Color del scroll */
+        border-radius: 10px;
+    }
+
+    /* Texto de bienvenida */
+    .welcome-text {
+        font-size: 25px; /* Reducir tamaño del texto */
+        font-weight: bold;
+        margin: 5px 0; /* Reducir márgenes */
+        text-align: center;
+        margin-bottom: -10px;
+    }
+
+    .nombre-usuario {
+        font-size: 18px; /* Reducir tamaño del texto */
+        margin: 0px 0; /* Reducir márgenes */
+        margin-top: -25px;
+    }
+
+    .other-welcome {
+        font-size: 16px; /* Reducir tamaño del texto */
+        margin: 5px 0; /* Reducir márgenes */
+        margin-top: -25px;
     }
 }

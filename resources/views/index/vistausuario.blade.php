@@ -6,49 +6,59 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Usuario</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/styles_formulario_elementos.css') }}">
     <link rel="stylesheet" href="{{ asset('css/styles_vistausuario.css') }}">
+
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Control E</a>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">{{ Auth::user()->nombres }}</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        Opciones
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                data-bs-target="#registroModal">Registrar Elementos</a></li>
-                        <li>
-                            <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                data-bs-target="#editarPerfilModal">Editar Perfil</a>
-                        </li>
 
-                        <li>
-                            <a class="dropdown-item" href="{{ route('logout') }}"
-                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                Cerrar Sesión
-                            </a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                @csrf
-                            </form>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
+    <nav class="navbar" style="background-color: #00324d;>
+        <div class="container-fluid d-flex align-items-center justify-content-between">
+            <!-- Contenedor del logo y nombre de usuario -->
+            <div class="d-flex align-items-center">
+                <a class="navbar-brand text-white" href="#">Control E</a>
+                <span class="text-white">Hola {{ Auth::user()->nombres }}</span>
+            </div>
+
+            <!-- Dropdown de Opciones -->
+            <div class="dropdown">
+                <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button"
+                    data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 1rem;">
+                    <strong style="font-size: 19px">Opciones</strong>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" style="background-color: #00324d;">
+                    <li>
+                        <a class="dropdown-item text-white" href="#" data-bs-toggle="modal"
+                            data-bs-target="#registroModal" style="transition: background-color 0.3s;">
+                            Registrar Elementos
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-white" href="#" data-bs-toggle="modal"
+                            data-bs-target="#editarPerfilModal" style="transition: background-color 0.3s;">
+                            Editar Perfil
+                        </a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider" style="border-color: #39a900;">
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-white" href="{{ route('logout') }}"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                            style="transition: background-color 0.3s;">
+                            Cerrar Sesión
+                        </a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
+
 
     <!-- Bloque para mostrar mensajes de éxito -->
     @if (session('success'))
@@ -67,18 +77,20 @@
     <div class="container-fluid mt-4">
         <div class="left-panel">
             <div class="welcome-text" id="welcomeMessage">
-                Bienvenido <br />{{ Auth::user()->nombres }} {{ Auth::user()->apellidos }}
+                <strong> Bienvenido</strong> <br />
+            </div><br>
+            <div class="nombre-usuario">
+                {{ Auth::user()->nombres }} {{ Auth::user()->apellidos }}
             </div>
             <!-- Mostrar la foto de perfil -->
             <div class="image-container" style="margin-top: 15px;">
                 @if (isset($usuario) && $usuario->foto && file_exists(storage_path('app/public/fotos_perfil/' . $usuario->foto)))
                     <img id="left-panel-img" src="{{ asset('storage/fotos_perfil/' . $usuario->foto) }}"
-                        alt="Foto de perfil" class="foto-perfil"
-                        style="width: 150px; height: 150px; object-fit: cover; border-radius: 20px;">
+                        alt="Foto de perfil" class="foto-perfil" style="justity-content:center">
                 @else
                     <img id="left-panel-img" src="{{ asset('imagenes/sin_foto_perfil.webp') }}"
                         alt="Foto de perfil predeterminada" class="foto-perfil"
-                        style="width: 150px; height: 150px; object-fit: cover; border-radius: 20px;">
+                        style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px;">
                 @endif
             </div>
 
@@ -103,15 +115,17 @@
                             Ver más
                         </a>
                     </div>
+                    <div class="spacer"></div>
                 </div>
 
                 <!-- Modal para ver más detalles y editar -->
                 <div class="modal fade" id="modal-{{ $elemento->id }}" tabindex="-1"
                     aria-labelledby="modalLabel-{{ $elemento->id }}" aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
+                    <div class="modal-dialog modal-custom-width"> <!-- Clase personalizada para el ancho -->
+                        <div class="modal-content"> <!-- Sin centrado total del texto -->
                             <div class="modal-header">
-                                <h5 class="modal-title" id="modalLabel-{{ $elemento->id }}">Detalles del Elemento</h5>
+                                <h5 class="modal-title" id="modalLabel-{{ $elemento->id }}">Detalles del Elemento
+                                </h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
@@ -122,6 +136,7 @@
                                         <img src="{{ asset('storage/' . $elemento->foto) }}" alt="Foto del elemento"
                                             class="img-fluid mb-3">
                                     @endif
+                                    <!-- Texto alineado a la izquierda -->
                                     <p><strong>Categoría:</strong> {{ $elemento->categoria->nombre }}</p>
                                     <p><strong>Descripción:</strong> {{ $elemento->descripcion }}</p>
                                     <p><strong>Marca:</strong> {{ $elemento->marca }}</p>
@@ -225,7 +240,7 @@
     <!-- Modal para registrar elementos -->
     <div class="modal fade" id="registroModal" tabindex="-1" aria-labelledby="registroModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-custom-width"> <!-- Clase personalizada para el ancho -->
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="registroModalLabel">Registrar Elementos</h5>
@@ -284,7 +299,7 @@
     <!-- Modal para editar perfil -->
     <div class="modal fade" id="editarPerfilModal" tabindex="-1" aria-labelledby="editarPerfilModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-custom-width"> <!-- Mismo ancho personalizado que el modal de registro -->
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editarPerfilModalLabel">Editar Perfil</h5>
@@ -367,11 +382,24 @@
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="{{ asset('js/vista_usuario.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-    
 </body>
+
+<!-- 1. Cargar jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- 2. Luego cargar Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- 3. Cargar tus scripts personalizados -->
+<script src="{{ asset('js/vista_usuario.js') }}"></script>
+
+
+<!-- Script personalizado -->
+<script>
+    $(document).ready(function() {
+        console.log("jQuery cargado");
+    });
+</script>
+<script src="{{ asset('js/vista_usuario.js') }}"></script>
 
 </html>

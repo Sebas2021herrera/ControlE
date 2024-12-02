@@ -190,9 +190,6 @@
                     Ver Elementos
                 </button>
                 @if (isset($controlIngresoId))
-                    <script>
-                        console.log("Control Ingreso ID: {{ $controlIngresoId }}");
-                    </script>
                 @else
                     <p>No se ha encontrado un registro de control de ingreso.</p>
                 @endif
@@ -210,7 +207,6 @@
     const initialControlIngresoId = @json($controlIngresoId);
     if (initialControlIngresoId) {
         document.getElementById("control_ingreso_id").value = initialControlIngresoId;
-        console.log("ID inicial del control de ingreso:", initialControlIngresoId);
     }
 </script>
 <script src="{{ asset('js/vista_control.js') }}" defer></script>

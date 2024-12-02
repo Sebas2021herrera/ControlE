@@ -59,7 +59,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Evento de clic para destacar fila y mostrar elementos
             row.addEventListener("click", () => {
-                console.log(`Fila clicada: ID Registro = ${registro.id}`);
                 destacarFilaSeleccionada(row); // Pasar `row` correctamente a la función
                 mostrarElementosPorRegistro(registro.id); // Mostrar los elementos relacionados
             });
@@ -75,7 +74,6 @@ document.addEventListener("DOMContentLoaded", function () {
      * @param {number} registroId - ID del registro a consultar.
      */
     function mostrarElementosPorRegistro(registroId) {
-        console.log("Obteniendo elementos para registro ID:", registroId);
 
         // Realiza la solicitud al servidor
         fetch(`/vigilante/elementos/${registroId}`)
@@ -91,7 +89,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (data.success) {
                     const contenedorId = "contenedor-elementos";
                     crearYMostrarCards(data.elementos, contenedorId, false); // No permitir eliminar
-                    alert("Lista de elementos actualizada exitosamente.");
                 } else {
                     alert(data.message || "No se encontraron elementos.");
                 }
@@ -119,7 +116,6 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!fila) return;
 
             const registroId = fila.getAttribute("data-registro-id");
-            console.log(`Fila clicada, ID Registro: ${registroId}`);
             destacarFilaSeleccionada(fila);
             mostrarElementosPorRegistro(registroId);
         });
@@ -144,7 +140,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // Función para mostrar detalles del elemento y abrir el modal
     window.mostrarDetallesElemento = function (elementoId) {
         try {
-            console.log("ID del elemento recibido: ", elementoId); // Verifica el ID recibido
 
             // Verifica que 'elementos' esté disponible y tiene datos
             if (!Array.isArray(elementos) || elementos.length === 0) {
@@ -154,12 +149,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 alert("No se encontraron elementos para mostrar.");
                 return;
             }
-
-            // Verificar los ids de los elementos
-            console.log(
-                "Array de elementos disponible: ",
-                elementos.map((el) => el.id)
-            ); // Ver todos los IDs de los elementos
 
             // Buscar el elemento en el array por su ID
             const elemento = elementos.find(
@@ -173,8 +162,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            // Si se encuentra el elemento, mostrarlo en el modal
-            console.log("Elemento encontrado: ", elemento); // Muestra el objeto elemento
 
             // Actualizar el contenido del modal con los datos del elemento
             document.getElementById(
@@ -313,7 +300,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Actualizar el array global `elementos` para sincronizarlo con los nuevos datos
         elementos.push(...elementosNuevos); // Agregar nuevos elementos al array global
-        console.log("Array global de elementos actualizado:", elementos);
 
         // Verificar los IDs ya presentes en el contenedor para evitar duplicados
         const idsExistentes = new Set(
@@ -324,9 +310,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         elementosNuevos.forEach((elemento) => {
             if (idsExistentes.has(String(elemento.id))) {
-                console.log(
-                    `Elemento con ID ${elemento.id} ya existe en el contenedor.`
-                );
                 return; // Evita duplicar elementos existentes
             }
 
@@ -365,7 +348,6 @@ document.addEventListener("DOMContentLoaded", function () {
             linkVerMas.dataset.elementId = elemento.id;
             linkVerMas.textContent = "Ver más";
             linkVerMas.onclick = function () {
-                console.log("ID del elemento clickeado:", elemento.id);
                 mostrarDetallesElemento(elemento.id); // Mostrar detalles y abrir el modal
             };
             card.appendChild(linkVerMas);
@@ -382,11 +364,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     const startTime = performance.now(); // Inicia el contador de tiempo
                     await eliminarElemento(elemento.id); // Llama a la función de eliminación
                     const endTime = performance.now(); // Finaliza el contador de tiempo
-                    console.log(
-                        `Tiempo total para eliminar elemento: ${
-                            endTime - startTime
-                        } ms`
-                    );
                 });
 
                 card.appendChild(btnEliminar);
@@ -396,12 +373,10 @@ document.addEventListener("DOMContentLoaded", function () {
             contenedor.appendChild(card);
         });
 
-        console.log("Cards generados y añadidos al contenedor:", contenedorId);
     }
 
     async function eliminarElemento(id) {
         try {
-            console.log(`Intentando eliminar elemento con ID: ${id}`);
 
             const response = await fetch(
                 `/vigilante/sub_control_ingreso/${id}`,
@@ -414,17 +389,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             );
 
-            console.log("Respuesta del servidor:", response);
 
             if (!response.ok) {
                 throw new Error(`Error HTTP: ${response.status}`);
             }
 
             const data = await response.json();
-            console.log("Datos recibidos:", data);
 
             if (data.success) {
-                console.log(`Elemento con ID ${id} eliminado.`);
                 document.querySelector(`[data-element-id='${id}']`)?.remove();
             } else {
                 console.warn(
@@ -463,9 +435,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Escucha de eventos global para botones
     document.addEventListener("DOMContentLoaded", function () {
-        console.log(
-            "Documento cargado. Iniciando la configuración de eventos."
-        );
 
         const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
         const baseStorageUrlMeta = document.querySelector(
@@ -542,10 +511,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 if (data.success) {
                     elementos = data.elementos; // Actualiza el array global
-                    console.log(
-                        "Elementos cargados desde el servidor:",
-                        elementos
-                    );
                     crearYMostrarCards(elementos, "contenedorElementos");
                 } else {
                     console.error(
@@ -565,8 +530,6 @@ document.addEventListener("DOMContentLoaded", function () {
             event.preventDefault();
             const subControlId = this.getAttribute("data-subcontrol-id");
 
-            console.log("SubControl ID encontrado:", subControlId); // Depuración
-
             if (subControlId) {
                 eliminarSubControl(subControlId);
             } else {
@@ -579,8 +542,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!confirm("¿Estás seguro de que deseas eliminar este elemento?"))
             return;
 
-        console.log("Enviando solicitud DELETE para el ID:", subControlId); // Log adicional
-
         fetch(`/vigilante/sub_control_ingreso/${subControlId}`, {
             method: "DELETE",
             headers: {
@@ -589,13 +550,11 @@ document.addEventListener("DOMContentLoaded", function () {
             },
         })
             .then((response) => {
-                console.log("Respuesta del servidor:", response); // Log adicional
                 if (!response.ok)
                     throw new Error("Error en la solicitud de eliminación.");
                 return response.json();
             })
             .then((data) => {
-                console.log("Datos recibidos del servidor:", data); // Log adicional
                 if (data.success) {
                     document.getElementById(`card-${subControlId}`)?.remove();
                     alert("Elemento eliminado exitosamente.");
@@ -641,7 +600,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Función global para crear un nuevo registro control_ingresos
 async function crearRegistro() {
-    console.log("creando registro");
 
     // Obtener los valores de los inputs ocultos
     const documentoVigilante = document.getElementById(
@@ -668,7 +626,6 @@ async function crearRegistro() {
 
         if (data.success) {
             alert("Registro creado exitosamente.");
-            console.log("Nuevo registro:", data.nuevoRegistroId);
 
             // Aquí hacemos el reload de la página completa
             location.reload();
@@ -704,9 +661,7 @@ function agregarFilaATabla(registro) {
             "No se ha encontrado un registro de control de ingreso."
     ) {
         filaNoRegistros.remove();
-        console.log(
-            "Fila 'No se ha encontrado un registro de control de ingreso' eliminada."
-        );
+
     }
 
     // Crear una nueva fila
@@ -725,8 +680,6 @@ function agregarFilaATabla(registro) {
 
     // Agregar la fila al inicio del tbody
     tablaBody.prepend(fila);
-    console.log("Nueva fila agregada:", fila);
-
     // Verificar si no hay registros y mostrar el mensaje
     verificarYMostrarMensajeNoRegistros();
 }
@@ -746,7 +699,6 @@ function verificarYMostrarMensajeNoRegistros() {
 
 // Ejecutar todo cuando el DOM se haya cargado
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("DOM fully loaded and parsed");
 
     // Verificar si la tabla está vacía al cargar la página
     verificarYMostrarMensajeNoRegistros();
@@ -755,7 +707,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const botonAgregarRegistro = document.getElementById("agregar-registro");
     if (botonAgregarRegistro) {
         botonAgregarRegistro.addEventListener("click", crearRegistro);
-        console.log("Evento de clic asociado al botón agregar-registro.");
     } else {
         console.error("No se encontró el botón con ID 'agregar-registro'.");
     }
@@ -764,8 +715,6 @@ document.addEventListener("DOMContentLoaded", function () {
 //funcion para cerrar el registro
 async function cerrarRegistro(id) {
     try {
-        console.log("Cerrando registro con ID:", id); // Verifica si el ID está siendo recibido correctamente
-
         const confirmacion = confirm(
             "¿Estás seguro de que deseas cerrar este registro? No podrás agregar más elementos."
         );
@@ -787,7 +736,6 @@ async function cerrarRegistro(id) {
         const data = await response.json();
 
         if (response.ok) {
-            console.log("Registro cerrado exitosamente:", data);
             alert(data.message || "Registro cerrado exitosamente.");
 
             // Recargar toda la página después de cerrar el registro
@@ -803,7 +751,6 @@ async function cerrarRegistro(id) {
 }
 
 function actualizarTabla(id) {
-    console.log("Actualizando tabla para el registro con ID:", id); // Verificar si se llama a esta función
 
     const tabla = document.getElementById("tabla-reportes"); // Cambié el id de la tabla a "tabla-reportes", ya que así lo tienes en el HTML
 
@@ -826,7 +773,6 @@ function actualizarTabla(id) {
             btn.disabled = true;
         });
 
-        console.log("Tabla actualizada para el registro cerrado.");
     } else {
         console.warn("No se encontró la fila para actualizar en la tabla.");
     }
@@ -836,10 +782,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const btnCerrarRegistro = document.getElementById("guardar-registros");
 
     if (btnCerrarRegistro) {
-        console.log("Botón de cierre encontrado.");
         btnCerrarRegistro.addEventListener("click", function () {
             const id = btnCerrarRegistro.dataset.id; // Obtener el ID del botón
-            console.log("ID del registro:", id); // Asegúrate de que el ID está correctamente recuperado
             if (id) {
                 cerrarRegistro(id); // Llamar a la función de cerrar el registro
             } else {

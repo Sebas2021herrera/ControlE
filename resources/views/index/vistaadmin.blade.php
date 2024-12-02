@@ -71,44 +71,83 @@
         </div>
     </header>
 
-<!-- Después del header y antes de los modales -->
-<div class="resultado-busqueda" style="display: none;">
-    <div class="contenido-superior">
-        <div class="contenedor-intermedio">
-            <div class="usuario-info">
-                <div class="foto-logo">
-                    <img src="{{ asset('imagenes/logo-del-sena-01.png') }}" alt="Logo del SENA" class="logo-sena">
-                    <div class="barra-separadora"></div>
-                </div>
-                <div class="info-text">
-                    <p class="verde usuario-nombre"></p>
-                    <p class="verde usuario-apellidos"></p>
-                    <p><strong>Doc: </strong><span class="usuario-documento"></span></p>
-                    <p><strong>Cel: </strong><span class="usuario-telefono"></span></p>
-                    <p><strong>RH: </strong><span class="usuario-rh"></span></p>
-                    <p><strong>Rol: </strong><span class="usuario-rol"></span></p>
-                    <p><strong>Ficha: </strong><span class="usuario-ficha"></span></p>
-                    <p class="verde" id="semifooter">Regional Casanare | Centro Agroindustrial y Fortalecimiento Empresarial del Casanare</p>
-                </div>
-                <div class="foto-usuario">
-                    <img src="" alt="Foto de perfil" class="foto-perfil-usuario">
-                </div>
-            </div>
-        </div>
 
-        <div class="contenido elementos">
-            <div class="card-container">
-                <!-- Aquí se cargarán dinámicamente las cards de elementos -->
-            </div>
+<div class="admin-dashboard">
+    <div class="sidebar" id="sidebar">
+        <h2>Bienvenido(a), Admin</h2>
+        <p>{{ Auth::user()->nombres }} {{ Auth::user()->apellidos }}</p>
+        <div class="image-container" style="margin: 20px auto;">
+            @if (Auth::user()->foto_perfil && file_exists(storage_path('app/public/fotos_perfil/' . Auth::user()->foto_perfil)))
+                <img src="{{ asset('storage/fotos_perfil/' . Auth::user()->foto_perfil) }}" alt="Foto de perfil" class="foto-perfil">
+            @else
+                <img src="{{ asset('imagenes/sin_foto_perfil.webp') }}" alt="Foto de perfil predeterminada" class="foto-perfil">
+            @endif
         </div>
     </div>
-    <!-- Botón para limpiar la consulta -->
-    <div class="field" style="margin-top: 10px;">
-        <button id="clearSearch" class="button is-danger">
-            <i class="fas fa-redo"></i> Limpiar Consulta
-        </button>
+
+    <div class="main-content">
+        <div class="logo-container" id="logo-container">
+            <img src="{{ asset('imagenes/Logo-Control-E.png') }}" alt="Control E Logo" class="logo-app">
+        </div>
+        <p class="text-control">Control de elementos para la Regional Casanare - SENA.</p>
+
+        <!-- Aquí va la sección para consultar un usuario -->
+        <div class="resultado-busqueda" id="resultadoBusqueda" style="display: none;">
+            <div class="contenido-superior">
+                <div class="contenedor-intermedio">
+                    <div class="usuario-info">
+                        <div class="foto-logo">
+                            <img src="{{ asset('imagenes/logo-del-sena-01.png') }}" alt="Logo del SENA" class="logo-sena">
+                            <div class="barra-separadora"></div>
+                        </div>
+                        <div class="info-text">
+                            <p class="verde usuario-nombre"></p>
+                            <p class="verde usuario-apellidos"></p>
+                            <p><strong>Doc: </strong><span class="usuario-documento"></span></p>
+                            <p><strong>Cel: </strong><span class="usuario-telefono"></span></p>
+                            <p><strong>RH: </strong><span class="usuario-rh"></span></p>
+                            <p><strong>Rol: </strong><span class="usuario-rol"></span></p>
+                            <p><strong>Ficha: </strong><span class="usuario-ficha"></span></p>
+                            <p class="verde" id="semifooter">Regional Casanare | Centro Agroindustrial y Fortalecimiento Empresarial del Casanare</p>
+                        </div>
+                        <div class="foto-usuario">
+                            <img src="" alt="Foto de perfil" class="foto-perfil-usuario">
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="contenido-elementos">
+                    <div class="card-container">
+                        <!-- Aquí se cargarán dinámicamente las cards de elementos -->
+                    </div>
+                </div>
+            </div>
+            <!-- Botón para limpiar la consulta -->
+            <div class="field" style="margin-top: 10px;">
+                <button id="limpiarConsultaBtn" class="button is-danger">
+                    <i class="fas fa-redo"></i> Limpiar Consulta
+                </button>
+            </div>
+        </div>
+        {{-- Acá termina la secicón de consultar usuarios --}}
     </div>
 </div>
+
+
+<!-- Bloque para mostrar mensajes de éxito -->
+@if (session('success'))
+<div id="success-message" class="alert alert-success text-center">
+    {{ session('success') }}
+</div>
+@endif
+
+<!-- Bloque para mostrar mensajes de error -->
+@if (session('error'))
+<div id="error-message" class="alert alert-danger text-center">
+    {{ session('error') }}
+</div>
+@endif
+
 
     <!-- Modal de Registro de Usuarios -->
     <div id="registerModal" class="modal">
@@ -829,6 +868,28 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+    const resultadoBusqueda = document.getElementById('resultadoBusqueda');
+    const sidebar = document.querySelector('.sidebar');
+    const logoContainer = document.querySelector('.logo-container');
+    const limpiarConsultaBtn = document.getElementById('limpiarConsultaBtn');
+
+    document.addEventListener('showResult', function () {
+        resultadoBusqueda.style.display = 'block';
+        sidebar.style.display = 'none'; 
+        logoContainer.style.display = 'none';
+    });
+
+    limpiarConsultaBtn.addEventListener('click', function () {
+        resultadoBusqueda.style.display = 'none';
+        sidebar.style.display = 'block';
+        logoContainer.style.display = 'flex';
+    });
+});
+
  </script>
 </body>
 </html>

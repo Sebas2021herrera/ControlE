@@ -6,6 +6,11 @@
 
 body {
     font-family: 'Work Sans', sans-serif;
+    /* display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f5f5; */
 }
 
 /* Estilos del header */
@@ -224,7 +229,6 @@ body {
 }
 
 /* Estilos para el formulario de búsqueda */
-/* Estilos para el formulario de búsqueda */
 .search-form {
     width: 300px;
     margin: 0 auto;
@@ -286,7 +290,7 @@ body {
 }
 
 .contenedor-intermedio {
-    width: 39.5%;
+    width: 69.5%;
     background-color: #e0e0e0;
     border-radius: 8px;
     padding: 15px;
@@ -299,6 +303,7 @@ body {
 }
 
 .usuario-info {
+    width: 500px;
     display: flex;
     align-items: center;
     flex: 1;
@@ -336,7 +341,7 @@ body {
     margin-left: -37px;
     height: 140px;
     line-height: 1.2;
-    margin-bottom: 5px;
+    /* margin-bottom: 5px; */
 }
 
 .info-text p {
@@ -365,30 +370,29 @@ body {
 }
 
 /* Estilos para el contenedor de elementos */
-.contenido {
-    display: flex;
-    flex-direction: row;
-    gap: 16px;
-    flex: 1 1 auto;
-    overflow-y: auto;
-}
 
-.elementos {
+.contenido-elementos {
+    width: 200%; /* Ajusta automáticamente al tamaño disponible */
+    max-width: 1200px; /* Opcional, para limitar el ancho máximo */
+    display: flex;
+    flex-wrap: wrap; /* Permitir que los cards se acomoden en varias filas si es necesario */
+    gap: 20px; /* Espacio entre cards */
     background-color: #e0e0e0;
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
-    overflow-y: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    flex: 1;
+    overflow-y: auto; /* Scroll vertical si los elementos exceden la altura */
+    overflow-x: hidden; /* Evitar scroll horizontal */
+    max-height: 400px; /* Mantener un límite razonable para la altura */
 }
+
 
 .card-container {
     display: flex;
     flex-wrap: wrap;
     gap: 21px;
+    /* gap: 15px; Ajuste de separación para mayor flexibilidad */
     justify-content: center;
 }
 
@@ -396,17 +400,18 @@ body {
 .card {
     display: flex;
     flex-direction: column;
-    height: 350px; /* Ajustar altura si es necesario */
-    width: 270px; /* Ajustar ancho si es necesario */
+    height: 350px; 
+    width: 270px;  
     margin-bottom: 20px;
-    border-radius: 8px; /* Bordes redondeados */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra suave */
-    transition: box-shadow 0.3s; /* Transición para la sombra */
+    border-radius: 8px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  
+    transition: box-shadow 0.3s;
     overflow: hidden;
     background: #fff;
-    border: 1px solid #ddd; /* Borde del card */
-    text-align: center; /* Centrar texto en el card */
-}
+    border: 1px solid #ddd;
+    text-align: center; 
+} 
+
 
 .card:hover {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); /* Sombra al pasar el cursor */
@@ -427,4 +432,94 @@ body {
     margin-bottom: 10px;
 }
 
-/* ... código existente ... */
+.admin-dashboard {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    /* max-width: 1200px; */
+}
+
+
+.sidebar {
+    width: 25%;
+    background-color: #ffffff;
+    padding: 20px;
+    text-align: center;
+    border-right: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.sidebar h2 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+}
+
+.sidebar p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.foto-perfil {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 20px;
+}
+
+.main-content {
+    width: 70%;
+    text-align: center;
+    padding: 20px;
+}
+
+
+.logo-container {
+    height: auto;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* height: calc(100vh - 50px); */
+}
+
+.logo-container img {
+    width: 550px;
+    height: auto;
+}
+
+.logo-app {
+    height: auto;
+    margin: 20px auto; /* Centrado vertical y horizontal */
+    animation: logo-entry 2s ease-in-out;
+}
+
+
+@keyframes logo-entry {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.text-control {
+    color: #000;
+    font-size: 20px;
+    position: relative;
+    top: -50px;
+    animation: fadeIn 2s ease-in-out;
+}

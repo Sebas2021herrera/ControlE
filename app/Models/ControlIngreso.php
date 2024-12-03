@@ -4,6 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Usuario;
+use App\Models\Centro;
+use App\Models\Elemento;
+use App\Models\Sub_Control_Ingreso;
 
 class ControlIngreso extends Model
 {
@@ -53,6 +57,6 @@ class ControlIngreso extends Model
 
     public function subControlIngresos()
     {
-        return $this->hasMany(Sub_Control_Ingreso::class);
+        return $this->hasMany(Sub_Control_Ingreso::class, 'control_ingresos_id', 'id');
     }
 }

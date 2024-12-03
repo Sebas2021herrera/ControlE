@@ -24,15 +24,15 @@
             <div class="columns">
                 <div class="column">
                     <label for="fechaInicio" class="label">Fecha Inicio</label>
-                    <input type="datetime-local" id="fechaInicio" name="fechaInicio" class="input" required>
+                    <input type="datetime-local" id="fechaInicio" name="fecha_inicio" class="input" required>
                 </div>
                 <div class="column">
                     <label for="fechaFinal" class="label">Fecha Final</label>
-                    <input type="datetime-local" id="fechaFinal" name="fechaFinal" class="input" required>
+                    <input type="datetime-local" id="fechaFinal" name="fecha_final" class="input" required>
                 </div>
                 <div class="column">
                     <label for="numeroDocumento" class="label">Número de Documento</label>
-                    <input type="text" id="numeroDocumento" name="numeroDocumento" class="input" placeholder="Buscar usuario específico">
+                    <input type="text" id="numeroDocumento" name="documento_usuario" class="input" placeholder="Buscar usuario específico">
                 </div>
             </div>
             <div class="field is-grouped is-justify-content-flex-end">
@@ -45,7 +45,6 @@
                 <div class="mt-4">
                     <button id="generarPDF" method="GET" class="button is-primary" data-url="{{ route('admin.reportes.ingresos.pdf') }}">Generar PDF</button>
                 </div>
-                
             </div>
         </form>
 
@@ -62,13 +61,29 @@
                     <tr>
                         <th>ID</th>
                         <th class="centro">NOMBRE CENTRO</th>
+                        <th>NÚMERO DOCUMENTO</th>
                         <th>FECHA INGRESO</th>
                         <th>FECHA EGRESO</th>
                         <th>ESTADO</th>
                     </tr>
                 </thead>
                 <tbody id="resultados">
-                    <!-- Aquí se cargarán los resultados dinámicamente -->
+                    @if (isset($ingresos) && $ingresos->isNotEmpty())
+                        @foreach ($ingresos as $ingreso)
+                            <tr>
+                                <td>{{ $ingreso->ID }}</td>
+                                <td>{{ $ingreso->NOMBRE_CENTRO }}</td>
+                                <td>{{ $ingreso->NUMERO_DOCUMENTO }}</td>
+                                <td>{{ $ingreso->FECHA_INGRESO }}</td>
+                                <td>{{ $ingreso->FECHA_EGRESO ?? 'N/A' }}</td>
+                                <td>{{ $ingreso->ESTADO }}</td>
+                            </tr>
+                        @endforeach
+                    @else
+                        <tr>
+                            <td colspan="5" class="has-text-centered">No hay registros disponibles.</td>
+                        </tr>
+                    @endif
                 </tbody>
             </table>
         </div>

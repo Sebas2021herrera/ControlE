@@ -814,3 +814,21 @@ body {
 .fila-seleccionada.seleccionado {
     background-color: #d0d0d0; /* Color cuando está seleccionada */
 }
+
+.logout {
+    position: absolute;
+    padding: 8px;
+    top: 7px;
+    right: 10px;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 8px;
+    height: 36px;
+    border: none;
+    color: white;
+    background-color: #39a900;
+}
+.logout:hover {
+    background-color: #349c00;
+}

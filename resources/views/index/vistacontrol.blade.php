@@ -13,15 +13,17 @@
 <body>
     <div class="container">
         <div class="buscador">
-            <span class="decore">Control
-                E</span>
             <form action="{{ route('vigilante.buscar') }}" method="GET" class="form-busqueda">
                 <input type="text" name="documento" class="input-busqueda" placeholder="Buscar por Documento...">
                 <button type="submit" class="lupa-btn">
                     <img src="{{ asset('imagenes/lupa.png') }}" alt="Buscar" class="lupa-icon">
                 </button>
             </form>
-            <span class="decore2">Control E</span>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="logout">Cerrar Sesión</button>
+            </form>
+
         </div>
 
         <div class="contenido-superior">

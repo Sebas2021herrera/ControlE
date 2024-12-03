@@ -202,7 +202,7 @@
     const baseStorageUrl = "{{ asset('storage') }}";
     const registroUrl = "{{ route('vigilante.registro') }}";
     const subControlIngresoUrl = "{{ route('sub_control_ingreso.store') }}";
-    const elementos = @json($elementos);
+    // const elementos = @json($elementos);
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
 
     // Si necesitas establecer un valor inicial para control_ingreso_id

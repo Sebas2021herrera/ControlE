@@ -156,8 +156,7 @@ class VigilanteController extends Controller
 
             // Establecer el estado a cerrado y asignar la fecha de salida
             $registro->estado = 1; // 1 significa cerrado
-            $registro->fecha_salida = now(); // Asignar la fecha y hora de salida
-            $registro->save();
+            $registro->fecha_salida = Carbon::now('America/Bogota');            $registro->save();
 
             Log::info('Registro cerrado exitosamente con ID: ' . $id);
 

@@ -20,7 +20,7 @@
         <!-- Contenedor del logo y nombre de usuario -->
         <div class="d-flex align-items-center">
             <a class="navbar-brand text-white" href="#">Control E</a>
-            <span class="text-white">Hola {{ Auth::user()->nombres }}</span>
+            <span class="text-white"> </span>
         </div>
 
         <!-- Dropdown de Opciones -->

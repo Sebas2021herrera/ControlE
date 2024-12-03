@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
     // Seleccionar elementos del DOM
     const formReporte = document.getElementById('formReporteIngresos');
-    const inputFechaInicio = document.getElementById('fechaInicio');
-    const inputFechaFinal = document.getElementById('fechaFinal');
-    const inputDocumento = document.getElementById('numeroDocumento');
+    const inputFechaInicio = document.getElementById('fecha_inicio');
+    const inputFechaFinal = document.getElementById('fecha_final');
+    const inputDocumento = document.getElementById('documento_usuario');
     const resultadosContainer = document.getElementById('resultados');
     const mensajeError = document.getElementById('mensajeError');
     const spinner = document.getElementById('spinnerCarga');
@@ -32,21 +32,22 @@ document.addEventListener('DOMContentLoaded', function () {
         resultadosContainer.innerHTML = '';
         spinner.style.display = 'block';
 
-        // Preparar datos para la solicitud AJAX
-        const datos = {
-            fecha_inicio: fechaInicio,
-            fecha_final: fechaFinal,
-            documento_usuario: documento
-        };
+        // Construir la URL con parámetros de consulta a partir del atributo 'action'
+        const url = new URL(formReporte.action);
+        url.searchParams.append('fecha_inicio', fechaInicio);
+        url.searchParams.append('fecha_final', fechaFinal);
+        if (documento) {
+            url.searchParams.append('documento_usuario', documento);
+        }
 
-        // Realizar solicitud AJAX
-        fetch(formReporte.dataset.url, {
-            method: 'POST',
+        console.log('URL generada:', url.toString());
+
+        // Realizar solicitud GET con parámetros en la URL
+        fetch(url, {
+            method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': formReporte.dataset.token
-            },
-            body: JSON.stringify(datos)
+                'Content-Type': 'application/json'
+            }
         })
         .then(response => response.json())
         .then(data => {
@@ -55,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (data.success) {
                 mostrarResultados(data.ingresos);
             } else {
-                mostrarMensajeError(data.message || 'No se encontraron registros.');
+                mostrarMensajeError(data.error || 'No se encontraron registros.');
             }
         })
         .catch(error => {
@@ -67,29 +68,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Función para mostrar los resultados
     function mostrarResultados(ingresos) {
-        if (ingresos.length === 0) {
-            resultadosContainer.innerHTML = '<p>No se encontraron registros.</p>';
-            return;
-        }
-
-        // Actualización de los encabezados de las columnas
-        let html = '<table class="table is-bordered is-striped is-hoverable"><thead><tr>';
-        html += '<th>ID</th><th class="centro">NOMBRE CENTRO</th><th>FECHA INGRESO</th><th>FECHA EGRESO</th><th>ESTADO</th>';
-        html += '</tr></thead><tbody>';
+        const tbody = resultadosContainer;
+        tbody.innerHTML = ''; // Limpiar resultados anteriores
 
         ingresos.forEach(ingreso => {
-            // Ajuste de las columnas de acuerdo con los nuevos datos
-            html += `<tr>
-                        <td>${ingreso.id}</td>  <!-- ID -->
-                        <td>${ingreso.centro.nombre}</td>  <!-- NOMBRE CENTRO -->
-                        <td>${ingreso.fecha_ingreso}</td>  <!-- FECHA INGRESO -->
-                        <td>${ingreso.fecha_egreso}</td>   <!-- FECHA EGRESO -->
-                        <td>${ingreso.estado}</td>  <!-- ESTADO -->
-                    </tr>`;
+            const row = `
+                <tr>
+                    <td>${ingreso.ID}</td>
+                    <td>${ingreso.NOMBRE_CENTRO}</td>
+                    <td>${ingreso.FECHA_INGRESO}</td>
+                    <td>${ingreso.FECHA_EGRESO}</td>
+                    <td>${ingreso.ESTADO}</td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
         });
-
-        html += '</tbody></table>';
-        resultadosContainer.innerHTML = html;
     }
 
     // Función para mostrar mensajes de error
@@ -101,5 +94,5 @@ document.addEventListener('DOMContentLoaded', function () {
     // Generar PDF
     document.getElementById('generarPDF').addEventListener('click', function() {
         window.location.href = this.dataset.url;
-    });    
+    });
 });

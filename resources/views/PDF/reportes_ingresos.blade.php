@@ -20,7 +20,7 @@
     <!-- Contenido principal -->
     <div class="container">
         <!-- Formulario de búsqueda -->
-        <form id="formReporteIngresos" method="POST" class="box" data-url="{{ route('reportes.ingresos.consulta') }}" data-token="{{ csrf_token() }}">
+        <form id="formReporteIngresos" method="GET" action="{{ route('reportes.ingresos.consulta') }}">
             <div class="columns">
                 <div class="column">
                     <label for="fechaInicio" class="label">Fecha Inicio</label>

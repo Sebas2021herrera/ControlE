@@ -58,7 +58,7 @@ Route::middleware('auth')->group(function () {
     })->name('admin.reportes.ingresos');
 
     // Ruta para la consulta de ingresos (AJAX)
-    Route::post('admin/reportes/ingresos/consulta', [ReportesIngresosController::class, 'consultaIngresos'])
+    Route::get('admin/reportes/ingresos/consulta', [ReportesIngresosController::class, 'consultaIngresos'])
         ->name('reportes.ingresos.consulta');
 
     // Nueva ruta para la generación del PDF

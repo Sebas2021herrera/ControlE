@@ -57,13 +57,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>
             `;
 
-            // Evento de clic para destacar fila y mostrar elementos
+            // Evento de clic para recargar la página
             row.addEventListener("click", () => {
-                destacarFilaSeleccionada(row); // Pasar `row` correctamente a la función
-                mostrarElementosPorRegistro(registro.id); // Mostrar los elementos relacionados
+                // Almacenar el ID del registro seleccionado en sessionStorage
+                sessionStorage.setItem('selectedRegistroId', registro.id);
+                // Recargar la página
+                window.location.reload();
             });
 
-            contenedorRegistros.appendChild(row); // Agregar la fila al contenedor
+            contenedorRegistros.appendChild(row);
         });
     }
 
@@ -74,37 +76,47 @@ document.addEventListener("DOMContentLoaded", function () {
      * @param {number} registroId - ID del registro a consultar.
      */
     function mostrarElementosPorRegistro(registroId) {
+        // Obtener el contenedor de elementos
+        const contenedorElementos = document.getElementById("contenedor-elementos");
+
+        // Guardar el HTML del botón antes de limpiar
+        const botonHTML = `
+            <button type="button" class="btn-modal" id="abrir-modal-elementos" onclick="abrirModal('modal-elementos-usuario')">
+            <img src="/imagenes/shopping.png" alt="Nuevo Registro" class="iconos">
+            Ver Elementos
+        </button>
+        `;
+
+        // Limpiar el contenedor y mantener el botón
+        if (contenedorElementos) {
+            contenedorElementos.innerHTML = botonHTML;
+        }
 
         // Realiza la solicitud al servidor
         fetch(`/vigilante/elementos/${registroId}`)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(
-                        `Error en la solicitud: ${response.statusText}`
-                    );
-                }
-                return response.json();
-            })
-            .then((data) => {
+            .then(response => response.json())
+            .then(data => {
                 if (data.success) {
-                    const contenedorId = "contenedor-elementos";
-                    crearYMostrarCards(data.elementos, contenedorId, false); // No permitir eliminar
+                    crearYMostrarCards(data.elementos, "contenedor-elementos", false);
                 } else {
                     alert(data.message || "No se encontraron elementos.");
                 }
             })
-            .catch((error) => {
+            .catch(error => {
                 console.error("Error al actualizar lista:", error);
                 alert("Ocurrió un error al actualizar la lista de elementos.");
             });
     }
 
     //destacar fila seleccionada en la tabla de registros
-    function destacarFilaSeleccionada(filaSeleccionada) {
-        const filas = document.querySelectorAll(".registro-fila");
-        filas.forEach((fila) => fila.classList.remove("fila-seleccionada"));
+    function destacarFilaSeleccionada(row) {
+        // Remover la clase 'seleccionada' y 'fila-seleccionada' de todas las filas
+        document.querySelectorAll('.registro-fila').forEach(fila => {
+            fila.classList.remove('seleccionada', 'fila-seleccionada');
+        });
 
-        filaSeleccionada.classList.add("fila-seleccionada");
+        // Agregar las clases a la fila clickeada
+        row.classList.add('fila-seleccionada', 'seleccionada');
     }
 
     //para la escucha de la tabla
@@ -596,6 +608,24 @@ document.addEventListener("DOMContentLoaded", function () {
                 .catch((error) => console.error("Error:", error));
         });
     }
+
+    // Agregar este código después de que se carga el DOM
+    document.addEventListener("DOMContentLoaded", function () {
+        // Verificar si hay un registro seleccionado previamente
+        const selectedRegistroId = sessionStorage.getItem('selectedRegistroId');
+        if (selectedRegistroId) {
+            // Buscar la fila correspondiente
+            const selectedRow = document.querySelector(`[data-registro-id="${selectedRegistroId}"]`);
+            if (selectedRow) {
+                // Destacar la fila seleccionada
+                destacarFilaSeleccionada(selectedRow);
+                // Mostrar los elementos del registro
+                mostrarElementosPorRegistro(selectedRegistroId);
+            }
+            // Limpiar el ID almacenado
+            sessionStorage.removeItem('selectedRegistroId');
+        }
+    });
 });
 
 // Función global para crear un nuevo registro control_ingresos
@@ -658,7 +688,7 @@ function agregarFilaATabla(registro) {
         filaNoRegistros &&
         filaNoRegistros.children.length === 1 &&
         filaNoRegistros.textContent.trim() ===
-            "No se ha encontrado un registro de control de ingreso."
+        "No se ha encontrado un registro de control de ingreso."
     ) {
         filaNoRegistros.remove();
 

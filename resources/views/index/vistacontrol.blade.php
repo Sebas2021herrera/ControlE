@@ -13,15 +13,17 @@
 <body>
     <div class="container">
         <div class="buscador">
-            <span class="decore">Control
-                E</span>
             <form action="{{ route('vigilante.buscar') }}" method="GET" class="form-busqueda">
                 <input type="text" name="documento" class="input-busqueda" placeholder="Buscar por Documento...">
                 <button type="submit" class="lupa-btn">
                     <img src="{{ asset('imagenes/lupa.png') }}" alt="Buscar" class="lupa-icon">
                 </button>
             </form>
-            <span class="decore2">Control E</span>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="logout">Cerrar Sesión</button>
+            </form>
+
         </div>
 
         <div class="contenido-superior">
@@ -200,13 +202,16 @@
     const baseStorageUrl = "{{ asset('storage') }}";
     const registroUrl = "{{ route('vigilante.registro') }}";
     const subControlIngresoUrl = "{{ route('sub_control_ingreso.store') }}";
-    const elementos = @json($elementos);
+    const elementos = @json($elementos ?? collect());
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
 
     // Si necesitas establecer un valor inicial para control_ingreso_id
-    const initialControlIngresoId = @json($controlIngresoId);
+    const initialControlIngresoId = @json($controlIngresoId ?? null);
     if (initialControlIngresoId) {
-        document.getElementById("control_ingreso_id").value = initialControlIngresoId;
+        const controlIngresoIdElement = document.getElementById("control_ingreso_id");
+        if (controlIngresoIdElement) {
+            controlIngresoIdElement.value = initialControlIngresoId;
+        }
     }
 </script>
 <script src="{{ asset('js/vista_control.js') }}" defer></script>

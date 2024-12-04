@@ -18,12 +18,13 @@ class ControlIngreso extends Model
 
     // Campos que pueden ser asignados en masa
     protected $fillable = [
-        'usuario_id', // Relacionado con el modelo Usuario
-        'centros_id', // Relacionado con el modelo Centro
+        'usuario_id',
+        'centros_id',
         'fecha_ingreso',
+        'fecha_salida', // Agregar el campo fecha_salida
         'estado',
-        'id_persona_control', // Número de documento del vigilante
-        'observacion', // Valor por defecto si es necesario
+        'id_persona_control',
+        'observacion',
     ];
 
     // Relación con el modelo Usuario
@@ -45,6 +46,7 @@ class ControlIngreso extends Model
             'usuario' => $this->usuario, // Devuelve el usuario relacionado
             'centro' => $this->centro,    
             'fecha_ingreso' => $this->fecha_ingreso,
+            'fecha_salida' => $this->fecha_salida,
             'estado' => $this->estado,
             'id_persona_control' => $this->id_persona_control,
         ];

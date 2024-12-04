@@ -11,37 +11,55 @@ use Illuminate\Support\Facades\Auth;
 class ReportesIngresosController extends Controller
 {
     public function index()
-    {
-        // Solo muestra los reportes si el usuario está autenticado
-        if (Auth::check()) {
-            $usuario = Auth::user();
+{
+    if (Auth::check()) {
+        $usuario = Auth::user();
 
-            // Obtener todos los reportes de ingresos
-            $ingresos = ControlIngreso::with('centro')
-                ->select('id', 'nombre_centro', 'fecha_ingreso', 'fecha_egreso', 'estado')
-                ->get();
+        // Modificar la consulta para obtener el nombre del centro a través de la relación
+        $ingresos = ControlIngreso::with('centro')
+            ->select('control_ingresos.id', 'centros_id', 'fecha_ingreso', 'fecha_salida', 'estado')
+            ->get()
+            ->map(function($ingreso) {
+                return [
+                    'id' => $ingreso->id,
+                    'nombre_centro' => $ingreso->centro->nombre ?? 'Centro no definido',
+                    'fecha_ingreso' => $ingreso->fecha_ingreso,
+                    'fecha_salida' => $ingreso->fecha_salida,
+                    'estado' => $ingreso->estado
+                ];
+            });
 
-            return view('PDF.reportes_ingresos', compact('ingresos'));
-        }
-
-        return redirect()->route('login')->with('error', 'Debes iniciar sesión para ver los reportes.');
+        return view('PDF.reportes_ingresos', compact('ingresos'));
     }
 
-    public function generarPDF()
-    {
-        if (Auth::check()) {
-            $usuario = Auth::user();
+    return redirect()->route('login')->with('error', 'Debes iniciar sesión para ver los reportes.');
+}
 
-            $ingresos = ControlIngreso::with('centro')
-                ->select('id', 'nombre_centro', 'fecha_ingreso', 'fecha_egreso', 'estado')
-                ->get();
+public function generarPDF()
+{
+    if (Auth::check()) {
+        $usuario = Auth::user();
 
-            $pdf = Pdf::loadView('reportes.pdf_ingresos', compact('usuario', 'ingresos'));
+        $ingresos = ControlIngreso::with(['centro', 'usuario'])
+            ->select('control_ingresos.id', 'centros_id', 'usuario_id', 'fecha_ingreso', 'fecha_salida', 'estado')
+            ->get()
+            ->map(function($ingreso) {
+                return [
+                    'ID' => $ingreso->id,
+                    'NOMBRE_CENTRO' => $ingreso->centro->nombre ?? 'Centro no definido',
+                    'NUMERO_DOCUMENTO' => $ingreso->usuario->numero_documento ?? 'N/A',
+                    'FECHA_INGRESO' => $ingreso->fecha_ingreso,
+                    'FECHA_EGRESO' => $ingreso->fecha_salida ?? 'N/A',
+                    'ESTADO' => $ingreso->estado == 0 ? 'Abierto' : 'Cerrado'
+                ];
+            });
+
+            $pdf = Pdf::loadView('PDF.pdf_ingresos', compact('usuario', 'ingresos'));
             return $pdf->download('reporte_ingresos.pdf');
-        }
-
-        return redirect()->route('login')->with('error', 'Debes iniciar sesión para generar el reporte.');
     }
+
+    return redirect()->route('login')->with('error', 'Debes iniciar sesión para generar el reporte.');
+}
 
     public function consultaIngresos(Request $request)
 {
@@ -74,9 +92,9 @@ class ReportesIngresosController extends Controller
             return [
                 'ID' => $registro->id,
                 'NOMBRE_CENTRO' => $registro->centro->nombre ?? 'Centro no definido',
-                'NUMERO_DOCUMENTO' => $registro->usuario->numero_documento ?? 'N/A', // Agregado número de documento
+                'NUMERO_DOCUMENTO' => $registro->usuario->numero_documento ?? 'N/A',
                 'FECHA_INGRESO' => $registro->fecha_ingreso,
-                'FECHA_EGRESO' => $registro->fecha_egreso ?? 'N/A',
+                'FECHA_EGRESO' => $registro->fecha_salida ?? 'N/A', // Cambiar fecha_egreso por fecha_salida
                 'ESTADO' => $registro->estado == 0 ? 'Abierto' : 'Cerrado',
             ];
         });

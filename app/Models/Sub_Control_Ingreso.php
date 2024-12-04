@@ -11,21 +11,24 @@ class Sub_Control_Ingreso extends Model
 {
     use HasFactory;
 
+    // Actualiza las columnas a los nombres correctos
     protected $fillable = [
-        'control_ingresos_id',  // Nombre correcto de la columna en la BD
-        'elementos_id',
+        'control_ingreso_id',  // Nombre correcto de la columna en la BD
+        'elemento_id',
         'descripcion'
     ];
 
-    protected $table = 'sub__control__ingresos';
+    protected $table = 'sub_control_ingresos'; // Asegúrate que esta tabla exista en la BD
 
+    // Relación con ControlIngreso
     public function controlIngreso()
     {
-        return $this->belongsTo(ControlIngreso::class, 'control_ingresos_id', 'id');
+        return $this->belongsTo(ControlIngreso::class, 'control_ingreso_id', 'id');
     }
 
+    // Relación con Elemento
     public function elemento()
     {
-        return $this->belongsTo(Elemento::class, 'elementos_id', 'id');
+        return $this->belongsTo(Elemento::class, 'elemento_id', 'id');
     }
 }

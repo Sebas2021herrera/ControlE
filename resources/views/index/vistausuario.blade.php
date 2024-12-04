@@ -15,49 +15,58 @@
 <body>
 
     <nav class="navbar" style="background-color: #00324d;>
-        <div class="container-fluid d-flex align-items-center justify-content-between">
-            <!-- Contenedor del logo y nombre de usuario -->
-            <div class="d-flex align-items-center">
-                <a class="navbar-brand text-white" href="#">Control E</a>
-                <span class="text-white">Hola {{ Auth::user()->nombres }}</span>
-            </div>
+        <div class="container-fluid d-flex align-items-center
+        justify-content-between">
+        <!-- Contenedor del logo y nombre de usuario -->
+        <div class="d-flex align-items-center">
+            <a class="navbar-brand text-white" href="#">Control E</a>
+            <span class="text-white"> </span>
+        </div>
 
-            <!-- Dropdown de Opciones -->
-            <div class="dropdown">
-                <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button"
-                    data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 1rem;">
-                    <strong style="font-size: 19px">Opciones</strong>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end" style="background-color: #00324d;">
-                    <li>
-                        <a class="dropdown-item text-white" href="#" data-bs-toggle="modal"
-                            data-bs-target="#registroModal" style="transition: background-color 0.3s;">
-                            Registrar Elementos
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item text-white" href="#" data-bs-toggle="modal"
-                            data-bs-target="#editarPerfilModal" style="transition: background-color 0.3s;">
-                            Editar Perfil
-                        </a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider" style="border-color: #39a900;">
-                    </li>
-                    <li>
-                        <a class="dropdown-item text-white" href="{{ route('logout') }}"
-                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                            style="transition: background-color 0.3s;">
-                            Cerrar Sesión
-                        </a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                            @csrf
-                        </form>
-                    </li>
-                </ul>
-            </div>
+        <!-- Dropdown de Opciones -->
+        <div class="dropdown">
+            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button"
+                data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 1rem;">
+                <strong style="font-size: 19px">Opciones</strong>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" style="background-color: #00324d;">
+                <li>
+                    <a class="dropdown-item text-white" href="#" data-bs-toggle="modal"
+                        data-bs-target="#registroModal" style="transition: background-color 0.3s;">
+                        Registrar Elementos
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item text-white" href="#" data-bs-toggle="modal"
+                        data-bs-target="#editarPerfilModal" style="transition: background-color 0.3s;">
+                        Editar Perfil
+                    </a>
+                </li>
+                <li>
+                    <hr class="dropdown-divider" style="border-color: #39a900;">
+                </li>
+                <li>
+                    <a class="dropdown-item text-white" href="{{ route('logout') }}"
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                        style="transition: background-color 0.3s;">
+                        Cerrar Sesión
+                    </a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                </li>
+            </ul>
+        </div>
         </div>
     </nav>
+
+
+    {{-- mensaje para alertar que la foto debe ser menos de 5 megas --}}
+    @if ($errors->has('foto'))
+        <div class="alert alert-danger">
+            {{ $errors->first('foto') }}
+        </div>
+    @endif
 
 
     <!-- Bloque para mostrar mensajes de éxito -->

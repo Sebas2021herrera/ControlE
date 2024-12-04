@@ -85,7 +85,7 @@ class AuthController extends Controller
             'contraseña' => 'required|string|min:6|confirmed',
             'rol' => 'required|exists:roles,id', // Verificar que el rol exista
             'numero_ficha' => $request->input('rol') == 3 ? 'required|string|max:255' : 'nullable|string|max:255',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:102400' // Validación de la imagen
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120'
         ]);
 
         if ($validator->fails()) {
@@ -194,7 +194,7 @@ class AuthController extends Controller
             'telefono' => 'required|string|max:20',
             'rh' => 'required|string|max:7', // Validación del campo rh en el perfil
             'numero_ficha' => $esAprendiz ? 'required|string|max:255' : 'nullable|string|max:255', // Obligatorio si es Aprendiz
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:102400'
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120'
         ];
 
         // Validar los datos del request

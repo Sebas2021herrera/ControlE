@@ -19,7 +19,7 @@ Route::get('/', [WelcomeController::class, 'index']);
 Route::get('login', [AuthController::class, 'showLogin'])->name('login');
 Route::get('create', [AuthController::class, 'create'])->name('create');
 Route::post('registrado', [AuthController::class, 'createpost'])->name('createpost');
-//Route::post('/createpost', [AdminController::class, 'store'])->name('createpost.admin');
+
 Route::post('login', [AuthController::class, 'login'])->name('login.post');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -58,7 +58,7 @@ Route::middleware('auth')->group(function () {
     })->name('admin.reportes.ingresos');
 
     // Ruta para la consulta de ingresos (AJAX)
-    Route::post('admin/reportes/ingresos/consulta', [ReportesIngresosController::class, 'consultaIngresos'])
+    Route::get('/ingresos/consulta', [ReportesIngresosController::class, 'consultaIngresos'])
         ->name('reportes.ingresos.consulta');
 
     // Nueva ruta para la generación del PDF

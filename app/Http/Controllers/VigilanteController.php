@@ -32,20 +32,28 @@ class VigilanteController extends Controller
         // Buscar el usuario por su número de documento
         $usuario = Usuario::where('numero_documento', $request->input('documento'))->first();
 
-        if (!$usuario) {
-            return view('index.vistacontrol')->with('error', 'Usuario no encontrado.');
+        // Inicializar variables
+        $elementos = collect();
+        $registros = collect();
+        $controlIngresoId = null;
+
+        if ($usuario) {
+            $elementos = $usuario->elementos;
+            $registros = ControlIngreso::where('usuario_id', $usuario->id)
+                ->orderBy('fecha_ingreso', 'asc')
+                ->get();
+            
+            $ultimoRegistro = ControlIngreso::where('usuario_id', $usuario->id)->latest()->first();
+            $controlIngresoId = $ultimoRegistro ? $ultimoRegistro->id : null;
         }
 
-        $elementos = $usuario->elementos;
-
-        $registros = ControlIngreso::where('usuario_id', $usuario->id)
-            ->orderBy('fecha_ingreso', 'asc')
-            ->get();
-
-        $ultimoRegistro = ControlIngreso::where('usuario_id', $usuario->id)->latest()->first();
-        $controlIngresoId = $ultimoRegistro ? $ultimoRegistro->id : null;
-
-        return view('index.vistacontrol', compact('usuario', 'elementos', 'registros', 'vigilante', 'controlIngresoId'));
+        return view('index.vistacontrol', compact(
+            'usuario',
+            'elementos',
+            'registros',
+            'vigilante',
+            'controlIngresoId'
+        ))->with('error', $usuario ? null : 'Usuario no encontrado.');
     }
 
 

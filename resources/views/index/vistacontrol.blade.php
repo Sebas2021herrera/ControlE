@@ -202,13 +202,16 @@
     const baseStorageUrl = "{{ asset('storage') }}";
     const registroUrl = "{{ route('vigilante.registro') }}";
     const subControlIngresoUrl = "{{ route('sub_control_ingreso.store') }}";
-    // const elementos = @json($elementos);
+    const elementos = @json($elementos ?? collect());
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
 
     // Si necesitas establecer un valor inicial para control_ingreso_id
-    const initialControlIngresoId = @json($controlIngresoId);
+    const initialControlIngresoId = @json($controlIngresoId ?? null);
     if (initialControlIngresoId) {
-        document.getElementById("control_ingreso_id").value = initialControlIngresoId;
+        const controlIngresoIdElement = document.getElementById("control_ingreso_id");
+        if (controlIngresoIdElement) {
+            controlIngresoIdElement.value = initialControlIngresoId;
+        }
     }
 </script>
 <script src="{{ asset('js/vista_control.js') }}" defer></script>

@@ -110,13 +110,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     //destacar fila seleccionada en la tabla de registros
     function destacarFilaSeleccionada(row) {
-        // Remover la clase 'seleccionada' de todas las filas
-        document.querySelectorAll('.registro-row').forEach(fila => {
-            fila.classList.remove('seleccionada');
+        // Remover la clase 'seleccionada' y 'fila-seleccionada' de todas las filas
+        document.querySelectorAll('.registro-fila').forEach(fila => {
+            fila.classList.remove('seleccionada', 'fila-seleccionada');
         });
 
-        // Agregar la clase 'seleccionada' a la fila clickeada
-        row.classList.add('seleccionada');
+        // Agregar las clases a la fila clickeada
+        row.classList.add('fila-seleccionada', 'seleccionada');
     }
 
     //para la escucha de la tabla

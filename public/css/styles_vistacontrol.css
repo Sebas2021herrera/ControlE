@@ -803,16 +803,7 @@ body {
 
 .fila-seleccionada {
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    background-color: #c3c3c3; /* Color de hover */
-}
-
-.fila-seleccionada:hover {
-    background-color: #f0f0f0; /* Color de hover */
-}
-
-.fila-seleccionada.seleccionado {
-    background-color: #d0d0d0; /* Color cuando está seleccionada */
+    background-color: #38a900d3;
 }
 
 .logout {
@@ -826,9 +817,7 @@ body {
     border-radius: 8px;
     height: 36px;
     border: none;
-    color: white;
+    color: rgb(236, 236, 236);
     background-color: #39a900;
 }
-.logout:hover {
-    background-color: #349c00;
-}
+

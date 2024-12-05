@@ -803,14 +803,21 @@ body {
 
 .fila-seleccionada {
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    background-color: #c3c3c3; /* Color de hover */
+    background-color: #38a90078;
 }
 
-.fila-seleccionada:hover {
-    background-color: #f0f0f0; /* Color de hover */
+.logout {
+    position: absolute;
+    padding: 8px;
+    top: 7px;
+    right: 10px;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 8px;
+    height: 36px;
+    border: none;
+    color: rgb(236, 236, 236);
+    background-color: #39a900;
 }
 
-.fila-seleccionada.seleccionado {
-    background-color: #d0d0d0; /* Color cuando está seleccionada */
-}

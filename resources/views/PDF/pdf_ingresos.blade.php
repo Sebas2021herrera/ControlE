@@ -11,7 +11,7 @@
     <title>Reportes ingresos PDF</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Work Sans', sans-serif;
             margin: 0;
             padding: 20px;
         }
@@ -19,6 +19,7 @@
         .header {
             text-align: center;
             margin-bottom: 20px;
+            font-size: 18px;
         }
 
         .header h1 {
@@ -29,7 +30,7 @@
         .fecha-generacion {
             text-align: right;
             margin-bottom: 20px;
-            font-size: 12px;
+            font-size: 10px;
             color: #666;
         }
 
@@ -41,14 +42,17 @@
 
         table, th, td {
             border: 1px solid #333;
-            padding: 8px;
+            padding: 6px;
             text-align: center;
+            font-size: 10px; /* Reducido para el contenido de la tabla */
+
         }
 
         thead th {
             background-color: #f2f2f2;
             font-weight: bold;
             color: #333;
+            font-size: 11px;
         }
 
         tbody tr:nth-child(even) {
@@ -58,7 +62,7 @@
         .footer {
             text-align: center;
             margin-top: 30px;
-            font-size: 12px;
+            font-size: 9px;
             color: #666;
             border-top: 1px solid #ddd;
             padding-top: 10px;

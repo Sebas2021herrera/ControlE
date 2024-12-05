@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{ asset('css/styles_vista_admin.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     <!-- Enlaza el archivo CSS de Bulma -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
@@ -434,7 +435,7 @@
 @foreach ($elementos as $elemento)
 <!-- Modal para ver más detalles y editar en vista admin -->
 <div class="modal fade" id="modal-detalles-{{ $elemento->id }}" tabindex="-1" aria-labelledby="modalDetallesLabel-{{ $elemento->id }}" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalDetallesLabel-{{ $elemento->id }}">Detalles del Elemento</h5>
@@ -480,17 +481,17 @@
             </div>
             <div class="modal-footer">
                 <!-- Botón para eliminar elemento -->
-                <form action="{{ route('admin.elementos.destroy', $elemento->id) }}" method="POST">
+                <form action="{{ route('admin.elementos.destroy', $elemento->id) }}" method="POST" class="d-inline">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger">Eliminar</button>
                 </form>
                 <!-- Botón para guardar cambios (oculto por defecto) -->
-                <button type="button" class="btn btn-primary d-none" id="save-changes-btn-admin-{{ $elemento->id }}" onclick="saveChanges({{ $elemento->id }})">Guardar Cambios</button>
+                <button type="button" class="btn btn-primary d-none" id="save-changes-btn-admin-{{ $elemento->id }}" onclick="saveChangesAdmin({{ $elemento->id }})">Guardar Cambios</button>
                 <!-- Botón para editar elementos -->
                 <button type="button" class="btn btn-warning" onclick="editElementAdmin({{ $elemento->id }})">Editar</button>
                 <!-- Botón para cerrar el modal -->
-                <button type="button" class="btn btn-secondary" onclick="closeModalAdmin({{ $elemento->id }})">Cerrar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
@@ -697,6 +698,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 const formData = new FormData(this);
                 const documento = formData.get('documento');
                 
+                // Agregar un console.log para ver la URL
+                console.log(`Consultando: /admin/usuarios/consultar?documento=${documento}`);
+
                 const response = await fetch(`/admin/usuarios/consultar?documento=${documento}`, {
                     method: 'GET',
                     headers: {
@@ -705,28 +709,34 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
 
-                if (response.ok) {
-                    const data = await response.json();
-                    
-                    // Cerrar el modal
-                    if (consultUsersModal) {
-                        consultUsersModal.style.display = 'none';
-                    }
+                // Agregar más información sobre la respuesta
+                console.log('Status:', response.status);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Error response:', errorText);
+                    throw new Error(`Error en la búsqueda: ${response.status}`);
+                }
 
-                    // Mostrar los resultados
-                    if (data.usuario) {
-                        mostrarInformacionUsuario(data.usuario);
-                        mostrarElementosUsuario(data.elementos || []);
-                        resultadoBusqueda.style.display = 'block'; // Asegúrate de que el contenedor sea visible
-                    } else {
-                        alert('Usuario no encontrado');
-                    }
+                const data = await response.json();
+                console.log('Datos recibidos:', data);
+                
+                // Cerrar el modal
+                if (consultUsersModal) {
+                    consultUsersModal.style.display = 'none';
+                }
+
+                // Mostrar los resultados
+                if (data.usuario) {
+                    mostrarInformacionUsuario(data.usuario);
+                    mostrarElementosUsuario(data.elementos || []);
+                    resultadoBusqueda.style.display = 'block';
                 } else {
-                    throw new Error('Error en la búsqueda');
+                    alert('Usuario no encontrado');
                 }
             } catch (error) {
-                console.error('Error:', error);
-                alert('Error al realizar la búsqueda');
+                console.error('Error detallado:', error);
+                alert('Error al realizar la búsqueda: ' + error.message);
             }
         });
     }
@@ -751,11 +761,35 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-function mostrarElementosUsuario(elementos) {
+        function mostrarElementosUsuario(elementos) {
     const container = document.querySelector('.card-container');
+    // const modalesContainer = document.querySelector('#modales-container');
+    
+            // Crear el contenedor de modales si no existe
+    let modalesContainer = document.getElementById('modales-container');
+    if (!modalesContainer) {
+        modalesContainer = document.createElement('div');
+        modalesContainer.id = 'modales-container';
+        document.body.appendChild(modalesContainer);
+    }
+    
+    container.innerHTML = ''; // Limpiar contenedor de cards
+    modalesContainer.innerHTML = ''; // Limpiar contenedor de modales
+
+    if (!elementos || elementos.length === 0) {
+        container.innerHTML = '<p>No hay elementos asociados a este usuario.</p>';
+        return;
+    }
+
+    if (!container) {
+        console.error('No se encontró el contenedor de tarjetas');
+        return;
+    }
+
     if (!container) return;
 
-    container.innerHTML = ''; // Limpiar contenedor
+    container.innerHTML = ''; // Limpiar contenedor de cards
+    modalesContainer.innerHTML = ''; // Limpiar contenedor de modales
 
     if (elementos.length === 0) {
         container.innerHTML = '<p>No hay elementos asociados a este usuario.</p>';
@@ -763,6 +797,7 @@ function mostrarElementosUsuario(elementos) {
     }
 
     elementos.forEach(elemento => {
+        // Generar la card
         const card = `
             <div class="card">
                 <h5 class="cabeza">${elemento.categoria.nombre}</h5>
@@ -777,43 +812,133 @@ function mostrarElementosUsuario(elementos) {
                 </a>
             </div>
         `;
+
+        // Generar el modal
+        const modal = `
+            <div class="modal" id="modal-detalles-${elemento.id}">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Detalles del Elemento</h5>
+                            <button type="button" class="close" onclick="closeModalAdmin(${elemento.id})">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Vista de detalles -->
+                            <div id="details-view-admin-${elemento.id}" class="details-view">
+                                <img src="/storage/${elemento.foto}" 
+                                     alt="Foto del elemento" 
+                                     class="img-fluid mb-3"
+                                     onerror="this.src='/imagenes/sin_foto_elemento.webp'">
+                                <p><strong>Categoría:</strong> ${elemento.categoria.nombre}</p>
+                                <p><strong>Descripción:</strong> ${elemento.descripcion}</p>
+                                <p><strong>Marca:</strong> ${elemento.marca}</p>
+                                <p><strong>Modelo:</strong> ${elemento.modelo}</p>
+                                <p><strong>Serial:</strong> ${elemento.serie}</p>
+                                <p><strong>Especificaciones Técnicas:</strong> ${elemento.especificaciones_tecnicas}</p>
+                            </div>
+
+                            <!-- Vista de edición -->
+                            <div id="edit-view-admin-${elemento.id}" class="edit-view d-none">
+                                <form action="/admin/elementos/${elemento.id}" method="POST" enctype="multipart/form-data">
+                                    @csrf
+                                    @method('PUT')
+                                    <!-- Campos de edición -->
+                                    <!-- ... -->
+                                </form>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-warning" onclick="editElementAdmin(${elemento.id})">
+                                Editar
+                            </button>
+                            <button type="button" class="btn btn-primary d-none" id="save-changes-btn-admin-${elemento.id}" onclick="saveChangesAdmin(${elemento.id})">
+                                Guardar Cambios
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="closeModalAdmin(${elemento.id})">
+                                Cerrar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
         container.insertAdjacentHTML('beforeend', card);
+        modalesContainer.insertAdjacentHTML('beforeend', modal);
     });
-}
 
-// Código JavaScript para el modal de "Detalles del Elemento".
-// Función para alternar entre modos de vista y edición
-function toggleEditView(elementId) {
-    const viewMode = document.getElementById(`view-${elementId}`);
-    const editMode = document.getElementById(`edit-${elementId}`);
-    const editButton = document.getElementById(`edit-button-${elementId}`);
-    const cancelButton = document.getElementById(`cancel-button-${elementId}`);
-
-    // Alternar las clases para ocultar o mostrar las secciones de vista y edición
-    viewMode.classList.toggle('hidden');
-    editMode.classList.toggle('hidden');
-
-    // Alternar la visibilidad de los botones de edición y cancelación
-    if (!viewMode.classList.contains('hidden')) {
-        editButton.style.display = 'inline';
-        cancelButton.style.display = 'none';
-    } else {
-        editButton.style.display = 'none';
-        cancelButton.style.display = 'inline';
-    }
-}
-
-document.addEventListener('DOMContentLoaded', function() {
+    // Reinicializar los event listeners para los nuevos elementos
     const detailLinks = document.querySelectorAll('.link-ver-mas');
     detailLinks.forEach(link => {
         link.addEventListener('click', (event) => {
             event.preventDefault();
             const elementoId = link.getAttribute('data-elemento-id');
-            const modalId = `modal-detalles-${elementoId}`; // Asegúrate de que el ID coincida
+            const modalId = `modal-detalles-${elementoId}`;
             const modal = document.getElementById(modalId);
             if (modal) {
-                modal.style.display = 'block'; // Abre el modal
-                modal.classList.add('show'); // Asegúrate de que se muestre correctamente
+                modal.style.display = 'block';
+                modal.classList.add('show');
+            }
+        });
+    });
+}
+
+window.editElementAdmin = function(id) {
+    const detailsView = document.getElementById('details-view-admin-' + id);
+    const editView = document.getElementById('edit-view-admin-' + id);
+    const saveButton = document.getElementById('save-changes-btn-admin-' + id);
+    
+    if (detailsView && editView && saveButton) {
+        detailsView.classList.add('d-none');
+        editView.classList.remove('d-none');
+        saveButton.classList.remove('d-none');
+    }
+};
+
+window.saveChangesAdmin = function(id) {
+    const editView = document.getElementById('edit-view-admin-' + id);
+    if (editView) {
+        const form = editView.querySelector('form');
+        if (form) {
+            form.submit();
+        }
+    }
+};
+
+window.closeModalAdmin = function(id) {
+    const modal = document.getElementById(`modal-detalles-${id}`);
+    if (modal) {
+        // Usar Bootstrap para cerrar el modal
+        const bootstrapModal = bootstrap.Modal.getInstance(modal);
+        if (bootstrapModal) {
+            bootstrapModal.hide();
+        } else {
+            // Fallback si no se puede usar Bootstrap
+            modal.style.display = 'none';
+            modal.classList.remove('show');
+        }
+    }
+};
+
+// Inicializar los event listeners para los modales cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar los modales de Bootstrap
+    const modales = document.querySelectorAll('.modal');
+    modales.forEach(modal => {
+        new bootstrap.Modal(modal);
+    });
+
+    // Manejar los clicks en los enlaces "Ver más"
+    const detailLinks = document.querySelectorAll('.link-ver-mas');
+    detailLinks.forEach(link => {
+        link.addEventListener('click', (event) => {
+            event.preventDefault();
+            const elementoId = link.getAttribute('data-elemento-id');
+            const modalId = `modal-detalles-${elementoId}`;
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                const bootstrapModal = bootstrap.Modal.getOrCreateInstance(modal);
+                bootstrapModal.show();
             }
         });
     });
@@ -823,24 +948,41 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // ... código existente ...
+    const clearSearch = document.getElementById('clearSearch');
+    
+    if (clearSearch) {
+        clearSearch.addEventListener('click', function() {
+            const elementos = {
+                resultadoBusqueda: document.querySelector('.resultado-busqueda'),
+                nombre: document.querySelector('.usuario-nombre'),
+                apellidos: document.querySelector('.usuario-apellidos'),
+                documento: document.querySelector('.usuario-documento'),
+                telefono: document.querySelector('.usuario-telefono'),
+                rh: document.querySelector('.usuario-rh'),
+                rol: document.querySelector('.usuario-rol'),
+                ficha: document.querySelector('.usuario-ficha'),
+                cardContainer: document.querySelector('.card-container')
+            };
 
-        // Evento para limpiar la consulta
-        document.getElementById('clearSearch').addEventListener('click', function() {
-            // Ocultar el contenedor de resultados
-            document.querySelector('.resultado-busqueda').style.display = 'none';
-            // Limpiar la información del usuario
-            document.querySelector('.usuario-nombre').textContent = '';
-            document.querySelector('.usuario-apellidos').textContent = '';
-            document.querySelector('.usuario-documento').textContent = '';
-            document.querySelector('.usuario-telefono').textContent = '';
-            document.querySelector('.usuario-rh').textContent = '';
-            document.querySelector('.usuario-rol').textContent = '';
-            document.querySelector('.usuario-ficha').textContent = '';
-            // Limpiar los elementos
-            document.querySelector('.card-container').innerHTML = '';
+            // Ocultar resultados
+            if (elementos.resultadoBusqueda) {
+                elementos.resultadoBusqueda.style.display = 'none';
+            }
+
+            // Limpiar campos
+            Object.entries(elementos).forEach(([key, element]) => {
+                if (element && key !== 'resultadoBusqueda') {
+                    element.textContent = '';
+                }
+            });
+
+            // Limpiar contenedor de cards
+            if (elementos.cardContainer) {
+                elementos.cardContainer.innerHTML = '';
+            }
         });
-    });
+    }
+});
 </script>
 
 <script>
@@ -891,5 +1033,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
  </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<div id="modales-container"></div>
 </body>
 </html>

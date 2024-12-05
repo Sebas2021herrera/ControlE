@@ -489,7 +489,9 @@
                 <!-- Botón para guardar cambios (oculto por defecto) -->
                 <button type="button" class="btn btn-primary d-none" id="save-changes-btn-admin-{{ $elemento->id }}" onclick="saveChangesAdmin({{ $elemento->id }})">Guardar Cambios</button>
                 <!-- Botón para editar elementos -->
-                <button type="button" class="btn btn-warning" onclick="editElementAdmin({{ $elemento->id }})">Editar</button>
+                <button type="button" class="btn btn-warning" onclick="console.log('Click en botón editar:', ${elemento.id}); editElementAdmin(${elemento.id})">
+                    Editar
+                </button>
                 <!-- Botón para cerrar el modal -->
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
@@ -695,49 +697,38 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             
             try {
-                const formData = new FormData(this);
-                const documento = formData.get('documento');
-                
-                // Agregar un console.log para ver la URL
-                console.log(`Consultando: /admin/usuarios/consultar?documento=${documento}`);
-
-                const response = await fetch(`/admin/usuarios/consultar?documento=${documento}`, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                });
+            const formData = new FormData(this);
+            const documento = formData.get('documento');
+            
+            const response = await fetch(`/admin/usuarios/consultar?documento=${documento}`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
 
                 // Agregar más información sobre la respuesta
                 console.log('Status:', response.status);
                 
                 if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('Error response:', errorText);
-                    throw new Error(`Error en la búsqueda: ${response.status}`);
-                }
-
-                const data = await response.json();
-                console.log('Datos recibidos:', data);
-                
-                // Cerrar el modal
-                if (consultUsersModal) {
-                    consultUsersModal.style.display = 'none';
-                }
-
-                // Mostrar los resultados
-                if (data.usuario) {
-                    mostrarInformacionUsuario(data.usuario);
-                    mostrarElementosUsuario(data.elementos || []);
-                    resultadoBusqueda.style.display = 'block';
-                } else {
-                    alert('Usuario no encontrado');
-                }
-            } catch (error) {
-                console.error('Error detallado:', error);
-                alert('Error al realizar la búsqueda: ' + error.message);
+                const errorText = await response.text();
+                throw new Error(`Error en la búsqueda: ${response.status}`);
             }
+
+            const data = await response.json();
+            
+            if (data.success && data.usuario) {
+                mostrarInformacionUsuario(data.usuario);
+                mostrarElementosUsuario(data.elementos || [], data.categorias); // Pasamos las categorías
+                resultadoBusqueda.style.display = 'block';
+            } else {
+                alert(data.mensaje || 'Usuario no encontrado');
+            }
+        } catch (error) {
+            console.error('Error detallado:', error);
+            alert('Error al realizar la búsqueda: ' + error.message);
+        }
         });
     }
 });
@@ -761,12 +752,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        function mostrarElementosUsuario(elementos) {
-    const container = document.querySelector('.card-container');
+        function mostrarElementosUsuario(elementos, categorias) {
+            const container = document.querySelector('.card-container');
+            let modalesContainer = document.getElementById('modales-container');
     // const modalesContainer = document.querySelector('#modales-container');
     
             // Crear el contenedor de modales si no existe
-    let modalesContainer = document.getElementById('modales-container');
     if (!modalesContainer) {
         modalesContainer = document.createElement('div');
         modalesContainer.id = 'modales-container';
@@ -797,7 +788,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     elementos.forEach(elemento => {
-        // Generar la card
+        // Generar la card (sin cambios)
         const card = `
             <div class="card">
                 <h5 class="cabeza">${elemento.categoria.nombre}</h5>
@@ -815,53 +806,93 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Generar el modal
         const modal = `
-            <div class="modal" id="modal-detalles-${elemento.id}">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Detalles del Elemento</h5>
-                            <button type="button" class="close" onclick="closeModalAdmin(${elemento.id})">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <!-- Vista de detalles -->
-                            <div id="details-view-admin-${elemento.id}" class="details-view">
-                                <img src="/storage/${elemento.foto}" 
-                                     alt="Foto del elemento" 
-                                     class="img-fluid mb-3"
-                                     onerror="this.src='/imagenes/sin_foto_elemento.webp'">
-                                <p><strong>Categoría:</strong> ${elemento.categoria.nombre}</p>
-                                <p><strong>Descripción:</strong> ${elemento.descripcion}</p>
-                                <p><strong>Marca:</strong> ${elemento.marca}</p>
-                                <p><strong>Modelo:</strong> ${elemento.modelo}</p>
-                                <p><strong>Serial:</strong> ${elemento.serie}</p>
-                                <p><strong>Especificaciones Técnicas:</strong> ${elemento.especificaciones_tecnicas}</p>
+    <div class="modal fade" id="modal-detalles-${elemento.id}" tabindex="-1" aria-labelledby="modalDetallesLabel-${elemento.id}" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detalles del Elemento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Vista de detalles -->
+                    <div id="details-view-admin-${elemento.id}" class="details-view">
+                        <img src="/storage/${elemento.foto}" 
+                             alt="Foto del elemento" 
+                             class="img-fluid mb-3"
+                             onerror="this.src='/imagenes/sin_foto_elemento.webp'">
+                        <p><strong>Categoría:</strong> ${elemento.categoria.nombre}</p>
+                        <p><strong>Descripción:</strong> ${elemento.descripcion}</p>
+                        <p><strong>Marca:</strong> ${elemento.marca}</p>
+                        <p><strong>Modelo:</strong> ${elemento.modelo}</p>
+                        <p><strong>Serial:</strong> ${elemento.serie}</p>
+                        <p><strong>Especificaciones Técnicas:</strong> ${elemento.especificaciones_tecnicas}</p>
+                    </div>
+
+                    <!-- Vista de edición -->
+                    <div id="edit-view-admin-${elemento.id}" class="edit-view d-none">
+                        <form action="/admin/elementos/${elemento.id}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            @method('PUT')
+                            
+                            <div class="mb-3">
+                                <label for="categoria_id-${elemento.id}" class="form-label">Categoría</label>
+                                <select id="categoria_id-${elemento.id}" name="categoria_id" class="form-select" required>
+                                    ${categorias.map(categoria => `
+                                        <option value="${categoria.id}" ${elemento.categoria_id === categoria.id ? 'selected' : ''}>
+                                            ${categoria.nombre}
+                                        </option>
+                                    `).join('')}
+                                </select>
                             </div>
 
-                            <!-- Vista de edición -->
-                            <div id="edit-view-admin-${elemento.id}" class="edit-view d-none">
-                                <form action="/admin/elementos/${elemento.id}" method="POST" enctype="multipart/form-data">
-                                    @csrf
-                                    @method('PUT')
-                                    <!-- Campos de edición -->
-                                    <!-- ... -->
-                                </form>
+                            <div class="mb-3">
+                                <label for="descripcion-${elemento.id}" class="form-label">Descripción</label>
+                                <input type="text" id="descripcion-${elemento.id}" name="descripcion" class="form-control" value="${elemento.descripcion}" required>
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-warning" onclick="editElementAdmin(${elemento.id})">
-                                Editar
-                            </button>
-                            <button type="button" class="btn btn-primary d-none" id="save-changes-btn-admin-${elemento.id}" onclick="saveChangesAdmin(${elemento.id})">
-                                Guardar Cambios
-                            </button>
-                            <button type="button" class="btn btn-secondary" onclick="closeModalAdmin(${elemento.id})">
-                                Cerrar
-                            </button>
-                        </div>
+
+                            <div class="mb-3">
+                                <label for="marca-${elemento.id}" class="form-label">Marca</label>
+                                <input type="text" id="marca-${elemento.id}" name="marca" class="form-control" value="${elemento.marca}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="modelo-${elemento.id}" class="form-label">Modelo</label>
+                                <input type="text" id="modelo-${elemento.id}" name="modelo" class="form-control" value="${elemento.modelo}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="serie-${elemento.id}" class="form-label">Número de Serie</label>
+                                <input type="text" id="serie-${elemento.id}" name="serie" class="form-control" value="${elemento.serie}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="especificaciones-${elemento.id}" class="form-label">Especificaciones Técnicas</label>
+                                <textarea id="especificaciones-${elemento.id}" name="especificaciones_tecnicas" class="form-control" required>${elemento.especificaciones_tecnicas}</textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="foto-${elemento.id}" class="form-label">Foto</label>
+                                <input type="file" id="foto-${elemento.id}" name="foto" class="form-control" accept="image/*" onchange="previewImage(event, 'previewImagen-${elemento.id}')">
+                                <img id="previewImagen-${elemento.id}" src="/storage/${elemento.foto}" alt="Foto del elemento" class="img-fluid mt-3" onerror="this.src='/imagenes/sin_foto_elemento.webp'">
+                            </div>
+                        </form>
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <<button type="button" class="btn btn-warning" onclick="editElementAdmin(${elemento.id})">
+                        Editar
+                    </button>
+                    <button type="button" class="btn btn-primary d-none" id="save-changes-btn-admin-${elemento.id}" onclick="saveChanges(${elemento.id})">
+                        Guardar Cambios
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cerrar
+                    </button>
+                </div>
             </div>
-        `;
+        </div>
+    </div>
+`;
 
         container.insertAdjacentHTML('beforeend', card);
         modalesContainer.insertAdjacentHTML('beforeend', modal);
@@ -876,22 +907,81 @@ document.addEventListener('DOMContentLoaded', function() {
             const modalId = `modal-detalles-${elementoId}`;
             const modal = document.getElementById(modalId);
             if (modal) {
-                modal.style.display = 'block';
-                modal.classList.add('show');
+                const bsModal = new bootstrap.Modal(modal);
+                bsModal.show();
             }
         });
     });
 }
 
 window.editElementAdmin = function(id) {
+    console.log('Click en botón editar - ID:', id);
+
     const detailsView = document.getElementById('details-view-admin-' + id);
     const editView = document.getElementById('edit-view-admin-' + id);
     const saveButton = document.getElementById('save-changes-btn-admin-' + id);
+    const editButton = document.querySelector(`button[onclick="editElementAdmin(${id})"]`);
     
+    console.log('Buscando elementos del DOM:', {
+        'details-view-admin-' + id: detailsView ? '✓' : '✗',
+        'edit-view-admin-' + id: editView ? '✓' : '✗',
+        'save-changes-btn-admin-' + id: saveButton ? '✓' : '✗'
+    });
+
     if (detailsView && editView && saveButton) {
+        console.log('Todos los elementos necesarios encontrados');
+        
+        // Ocultar vista de detalles
         detailsView.classList.add('d-none');
+        console.log('Vista de detalles oculta');
+        
+        // Mostrar vista de edición
         editView.classList.remove('d-none');
+        editView.style.display = 'block';
+        console.log('Vista de edición visible');
+
+        // Cambiar visibilidad de botones
         saveButton.classList.remove('d-none');
+        if (editButton) editButton.classList.add('d-none');
+        console.log('Botones actualizados');
+
+        // Mostrar todos los campos del formulario
+        const formFields = editView.querySelectorAll('.mb-3');
+        console.log(`Encontrados ${formFields.length} campos del formulario`);
+        
+        formFields.forEach((field, index) => {
+            const label = field.querySelector('label');
+            const input = field.querySelector('input, select, textarea');
+            
+            field.style.display = 'block';
+            if (input) input.style.display = 'block';
+            
+            console.log(`Campo ${index + 1}:`, {
+                etiqueta: label ? label.textContent : 'Sin etiqueta',
+                tipo: input ? input.type : 'No encontrado',
+                visible: field.style.display === 'block' ? 'Sí' : 'No'
+            });
+        });
+
+        // Verificar el formulario completo
+        const form = editView.querySelector('form');
+        if (form) {
+            form.style.display = 'block';
+            const inputs = form.querySelectorAll('input, select, textarea');
+            console.log('Formulario:', {
+                campos_totales: inputs.length,
+                campos_visibles: Array.from(inputs).filter(i => i.style.display !== 'none').length,
+                action: form.action
+            });
+        } else {
+            console.error('⚠️ No se encontró el formulario');
+        }
+    } else {
+        console.error('❌ Faltan elementos necesarios:', {
+            detailsView: detailsView ? '✓' : '✗',
+            editView: editView ? '✓' : '✗',
+            saveButton: saveButton ? '✓' : '✗'
+        });
     }
 };
 
@@ -908,17 +998,24 @@ window.saveChangesAdmin = function(id) {
 window.closeModalAdmin = function(id) {
     const modal = document.getElementById(`modal-detalles-${id}`);
     if (modal) {
-        // Usar Bootstrap para cerrar el modal
-        const bootstrapModal = bootstrap.Modal.getInstance(modal);
-        if (bootstrapModal) {
-            bootstrapModal.hide();
-        } else {
-            // Fallback si no se puede usar Bootstrap
-            modal.style.display = 'none';
-            modal.classList.remove('show');
+        // Usar el método hide de Bootstrap
+        const bsModal = bootstrap.Modal.getInstance(modal);
+        if (bsModal) {
+            bsModal.hide();
         }
     }
 };
+
+// Agregar un event listener para el botón de cierre
+document.addEventListener('click', function(event) {
+    if (event.target.matches('[data-bs-dismiss="modal"]')) {
+        const modal = event.target.closest('.modal');
+        const bsModal = bootstrap.Modal.getInstance(modal);
+        if (bsModal) {
+            bsModal.hide();
+        }
+    }
+});
 
 // Inicializar los event listeners para los modales cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
@@ -1034,7 +1131,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
  </script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <div id="modales-container"></div>
 </body>
 </html>

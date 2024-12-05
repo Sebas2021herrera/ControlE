@@ -152,7 +152,6 @@ class AdminController extends Controller
     
     public function consultarUsuario(Request $request)
 {
-    // Validar la solicitud
     $request->validate([
         'documento' => 'required|string|max:255',
     ]);
@@ -163,7 +162,9 @@ class AdminController extends Controller
             ->where('numero_documento', $request->documento)
             ->first();
 
-        // Si no se encuentra el usuario, retornar error en JSON
+        // Obtener todas las categorías
+        $categorias = Categoria::all();
+
         if (!$usuario) {
             return response()->json([
                 'success' => false,
@@ -171,16 +172,43 @@ class AdminController extends Controller
             ], 404);
         }
 
-        // Retornar usuario y elementos en formato JSON
+        // Formatear los elementos para asegurar que todos los campos estén presentes
+        $elementos = $usuario->elementos->map(function ($elemento) {
+            return [
+                'id' => $elemento->id,
+                'categoria' => [
+                    'id' => $elemento->categoria->id,
+                    'nombre' => $elemento->categoria->nombre
+                ],
+                'categoria_id' => $elemento->categoria_id,
+                'descripcion' => $elemento->descripcion,
+                'marca' => $elemento->marca,
+                'modelo' => $elemento->modelo,
+                'serie' => $elemento->serie,
+                'especificaciones_tecnicas' => $elemento->especificaciones_tecnicas,
+                'foto' => $elemento->foto,
+                'usuario_id' => $elemento->usuario_id
+            ];
+        });
+
+        // Formatear las categorías para el select
+        $categoriasFormateadas = $categorias->map(function ($categoria) {
+            return [
+                'id' => $categoria->id,
+                'nombre' => $categoria->nombre
+            ];
+        });
+
+        // Retornar usuario, elementos y categorías en formato JSON
         return response()->json([
             'success' => true,
             'usuario' => $usuario,
-            'elementos' => $usuario->elementos,
+            'elementos' => $elementos,
+            'categorias' => $categoriasFormateadas
         ]);
 
     } catch (\Exception $e) {
         \Log::error('Error al buscar usuario: ' . $e->getMessage());
-
         return response()->json([
             'success' => false,
             'mensaje' => 'Error al buscar el usuario',

@@ -44,7 +44,7 @@ class ControlIngreso extends Model
     {
         return [
             'usuario' => $this->usuario, // Devuelve el usuario relacionado
-            'centro' => $this->centro,    
+            'centro' => $this->centro,
             'fecha_ingreso' => $this->fecha_ingreso,
             'fecha_salida' => $this->fecha_salida,
             'estado' => $this->estado,
@@ -59,6 +59,6 @@ class ControlIngreso extends Model
 
     public function subControlIngresos()
     {
-        return $this->hasMany(Sub_Control_Ingreso::class, 'control_ingresos_id', 'id');
+        return $this->hasMany(Sub_Control_Ingreso::class);
     }
 }

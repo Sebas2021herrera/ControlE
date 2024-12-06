@@ -803,7 +803,7 @@ body {
 
 .fila-seleccionada {
     cursor: pointer;
-    background-color: #38a900d3;
+    background-color: #38a90078;
 }
 
 .logout {

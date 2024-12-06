@@ -8,11 +8,11 @@ use App\Http\Controllers\ElementoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VigilanteController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ReportesElementosController;
 use App\Models\Elemento;
 use App\Models\Categoria;
 use App\Http\Middleware\AdminAccess;
 use App\Http\Controllers\ReportesIngresosController;
-
 
 // Rutas para autenticación y registro
 Route::get('/', [WelcomeController::class, 'index']);
@@ -67,8 +67,15 @@ Route::middleware('auth')->group(function () {
 
     // Ruta para la vista de reportes de elementos
     Route::get('/ingresos-elementos', function () {
-        return view('PDF.reportes_elementos'); // Cambiar por la vista correspondiente
+        return view('PDF.reportes_elementos');
     })->name('admin.reportes.elementos');
+
+    // Ruta para la consulta de elementos (AJAX)
+    Route::get('/elementos/consulta', [ReportesElementosController::class, 'consultaElementos'])
+        ->name('reportes.elementos.consulta');
+    // Nueva ruta para la generación del PDF de elementos
+    Route::get('/elementos/pdf', [ReportesElementosController::class, 'generarPDF'])
+    ->name('admin.reportes.elementos.pdf');
 
     // Ruta para la vista de reportes de usuarios
     Route::get('/ingresos-usuarios', function () {

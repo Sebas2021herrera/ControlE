@@ -8,31 +8,31 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/styles_reportes_ingresos.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/styles_reportes_ingresos_elementos.css') }}">
     <title>Reportes Elementos</title>
 </head>
 <body>
     <!-- Header -->
     <header class="header">
-        Reportes de Ingresos de elementos
+        Reportes de Elementos
     </header>
 
     <!-- Contenido principal -->
     <div class="container">
         <!-- Formulario de búsqueda -->
-        <form id="reportesForm" class="box">
+        <form id="formReporteElementos" method="GET" action="{{ route('reportes.elementos.consulta') }}">
             <div class="columns">
                 <div class="column">
                     <label for="fechaInicio" class="label">Fecha Inicio</label>
-                    <input type="datetime-local" id="fechaInicio" name="fechaInicio" class="input" required>
+                    <input type="datetime-local" id="fechaInicio" name="fecha_inicio" class="input" required>
                 </div>
                 <div class="column">
                     <label for="fechaFinal" class="label">Fecha Final</label>
-                    <input type="datetime-local" id="fechaFinal" name="fechaFinal" class="input" required>
+                    <input type="datetime-local" id="fechaFinal" name="fecha_final" class="input" required>
                 </div>
                 <div class="column">
-                    <label for="numeroDocumento" class="label">Número de Documento</label>
-                    <input type="text" id="numeroDocumento" name="numeroDocumento" class="input" placeholder="Opcional">
+                    <label for="numeroSerie" class="label">Número de Serie</label>
+                    <input type="text" id="numeroSerie" name="serie" class="input" placeholder="Buscar elemento específico">
                 </div>
             </div>
             <div class="field is-grouped is-justify-content-flex-end">
@@ -42,30 +42,58 @@
                 <div class="control">
                     <button type="submit" class="button is-primary">Consultar</button>
                 </div>
+                <div class="mt-4">
+                    <button id="generarPDF" method="GET" class="button is-primary" data-url="{{ route('admin.reportes.elementos.pdf') }}">Generar PDF</button>
+                </div>
             </div>
         </form>
+
+        <!-- Mensajes y Spinner -->
+        <div id="spinnerCarga" style="display: none;" class="has-text-centered">
+            <p>Cargando...</p>
+        </div>
+        <div id="mensajeError" class="notification is-danger is-hidden"></div>
 
         <!-- Tabla de resultados -->
         <div class="table-container">
             <table class="table is-striped is-fullwidth">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Fecha</th>
-                        <th>Hora</th>
-                        <th>Usuario</th>
-                        <th>Ingreso/Egreso</th>
-                        <th>Detalles</th>
+                        <th>ID</th>
+                        <th>NÚMERO DOCUMENTO</th>
+                        <th>CATEGORÍA</th>
+                        <th>SERIAL</th>
+                        <th>MARCA</th>
+                        <th>FECHA INGRESO</th>
+                        <th>FECHA EGRESO</th>
+                        <th>ESTADO</th>
                     </tr>
                 </thead>
                 <tbody id="resultados">
-                    <!-- Aquí se cargarán los resultados dinámicamente -->
+                    @if (isset($elementos) && $elementos->isNotEmpty())
+                        @foreach ($elementos as $elemento)
+                            <tr>
+                                <td>{{ $elemento->ID }}</td>
+                                <td>{{ $elemento->NUMERO_DOCUMENTO }}</td>
+                                <td>{{ $elemento->CATEGORIA }}</td>
+                                <td>{{ $elemento->SERIE }}</td>
+                                <td>{{ $elemento->MARCA }}</td>
+                                <td>{{ $elemento->FECHA_INGRESO }}</td>
+                                <td>{{ $elemento->FECHA_EGRESO ?? 'N/A' }}</td>
+                                <td>{{ $elemento->ESTADO }}</td>
+                            </tr>
+                        @endforeach
+                    @else
+                        <tr>
+                            <td colspan="8" class="has-text-centered">No hay registros disponibles.</td>
+                        </tr>
+                    @endif
                 </tbody>
             </table>
         </div>
     </div>
 
     <!-- Scripts -->
-    <script src="{{ asset('js/reportes_ingresos.js') }}"></script>
+    <script src="{{ asset('js/reportes_ingresos_elementos.js') }}"></script>
 </body>
 </html>

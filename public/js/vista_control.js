@@ -310,7 +310,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Mostrar el contenedor por si está oculto
         contenedor.style.display = "flex";
 
-        // Actualizar el array global `elementos` para sincronizarlo con los nuevos datos
+        // Actualizar el array global elementos para sincronizarlo con los nuevos datos
         elementos.push(...elementosNuevos); // Agregar nuevos elementos al array global
 
         // Verificar los IDs ya presentes en el contenedor para evitar duplicados
@@ -339,7 +339,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Crear y añadir la imagen
             const img = document.createElement("img");
             img.classList.add("img-fluid", "mt-3", "elemento-foto");
-            img.src = `/storage/${elemento.foto}`;
+            img.src = `${baseStorageUrl}/${elemento.foto}`;
             img.alt = "Foto del elemento";
             card.appendChild(img);
 
@@ -371,7 +371,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 btnEliminar.dataset.elementId = elemento.id;
                 btnEliminar.textContent = "Eliminar";
 
-                // **Agregamos el evento para medir el tiempo y eliminar**
+                // *Agregamos el evento para medir el tiempo y eliminar*
                 btnEliminar.addEventListener("click", async function () {
                     const startTime = performance.now(); // Inicia el contador de tiempo
                     await eliminarElemento(elemento.id); // Llama a la función de eliminación
@@ -722,7 +722,7 @@ function verificarYMostrarMensajeNoRegistros() {
     // Si no hay filas (exceptuando el mensaje de "No hay registros disponibles")
     if (filas.length === 0) {
         const mensajeNoRegistros = document.createElement("tr");
-        mensajeNoRegistros.innerHTML = `<td colspan="5">No se ha encontrado un registro de control de ingreso.</td>`;
+        mensajeNoRegistros.innerHTML = <td colspan="5">No se ha encontrado un registro de control de ingreso.</td>;
         tablaBody.appendChild(mensajeNoRegistros);
     }
 }

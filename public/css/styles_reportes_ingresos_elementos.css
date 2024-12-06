@@ -1,0 +1,21 @@
+body {
+    font-family: 'Work Sans', sans-serif;
+}
+.header {
+    background-color: #00304D; /* Color del header */
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+.container {
+    margin-top: 20px;
+}
+.table-container {
+    margin-top: 30px;
+}
+
+.mt-4 {
+    transform: translate(-2px, -16px);
+}

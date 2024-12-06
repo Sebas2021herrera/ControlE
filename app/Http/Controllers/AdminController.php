@@ -116,7 +116,7 @@ class AdminController extends Controller
             'modelo' => 'required|string|max:255',
             'serie' => 'nullable|string|max:255',
             'especificaciones_tecnicas' => 'nullable|string',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240', // 10MB por imagen
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
             // 'usuario_id' => 'required|integer|exists:usuarios,id', Asegúrate de que se reciba el ID del usuario
     ]);
 

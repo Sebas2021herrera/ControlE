@@ -59,6 +59,6 @@ class ControlIngreso extends Model
 
     public function subControlIngresos()
     {
-        return $this->hasMany(Sub_Control_Ingreso::class, 'control_ingresos_id', 'id');
+        return $this->hasMany(Sub_Control_Ingreso::class);
     }
 }

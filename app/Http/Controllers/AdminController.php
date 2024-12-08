@@ -62,7 +62,17 @@ class AdminController extends Controller
             'contraseña' => 'required|string|min:6|confirmed',
             'rol' => 'required|exists:roles,id',
             'numero_ficha' => $request->input('rol') == 3 ? 'required|string|max:255' : 'nullable|string|max:255',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:102400',
+            'foto' => [
+                'nullable',
+                'image',
+                'mimes:jpeg,png,jpg,gif',
+                'max:5120',  // 5MB
+                function ($attribute, $value, $fail) {
+                    if ($value && $value->getSize() > 5120 * 1024) {
+                        $fail('La imagen no debe pesar más de 5MB. Por favor, comprima la imagen o seleccione otra.');
+                    }
+                },
+            ] 
         ]);
     
         if ($validator->fails()) {
@@ -157,13 +167,10 @@ class AdminController extends Controller
     ]);
 
     try {
-        // Buscar el usuario por su número de documento
+        // Buscar el usuario por su número de documento con relaciones
         $usuario = Usuario::with(['role', 'elementos.categoria'])
             ->where('numero_documento', $request->documento)
             ->first();
-
-        // Obtener todas las categorías
-        $categorias = Categoria::all();
 
         if (!$usuario) {
             return response()->json([
@@ -172,7 +179,23 @@ class AdminController extends Controller
             ], 404);
         }
 
-        // Formatear los elementos para asegurar que todos los campos estén presentes
+        // Formatear los datos del usuario de manera más simple
+        $usuarioFormateado = [
+            'id' => $usuario->id,
+            'nombres' => $usuario->nombres,
+            'apellidos' => $usuario->apellidos,
+            'numero_documento' => $usuario->numero_documento,
+            'telefono' => $usuario->telefono,
+            'rh' => $usuario->rh,
+            'role' => $usuario->role ? [
+                'id' => $usuario->role->id,
+                'nombre' => $usuario->role->nombre
+            ] : null,
+            'numero_ficha' => $usuario->numero_ficha,
+            'foto' => $usuario->foto
+        ];
+
+        // Formatear los elementos de manera más simple
         $elementos = $usuario->elementos->map(function ($elemento) {
             return [
                 'id' => $elemento->id,
@@ -180,38 +203,44 @@ class AdminController extends Controller
                     'id' => $elemento->categoria->id,
                     'nombre' => $elemento->categoria->nombre
                 ],
-                'categoria_id' => $elemento->categoria_id,
                 'descripcion' => $elemento->descripcion,
                 'marca' => $elemento->marca,
                 'modelo' => $elemento->modelo,
                 'serie' => $elemento->serie,
                 'especificaciones_tecnicas' => $elemento->especificaciones_tecnicas,
-                'foto' => $elemento->foto,
-                'usuario_id' => $elemento->usuario_id
+                'foto' => $elemento->foto
             ];
         });
 
-        // Formatear las categorías para el select
-        $categoriasFormateadas = $categorias->map(function ($categoria) {
-            return [
-                'id' => $categoria->id,
-                'nombre' => $categoria->nombre
-            ];
-        });
+        // Obtener todas las categorías
+        $categorias = Categoria::select('id', 'nombre')->get();
 
-        // Retornar usuario, elementos y categorías en formato JSON
+        // Agregar logs para depuración
+        \Log::info('Consulta de usuario:', [
+            'documento' => $request->documento,
+            'usuario_encontrado' => $usuario ? 'sí' : 'no',
+            'elementos_count' => $elementos->count(),
+            'categorias_count' => $categorias->count()
+        ]);
+
         return response()->json([
             'success' => true,
-            'usuario' => $usuario,
+            'usuario' => $usuarioFormateado,
             'elementos' => $elementos,
-            'categorias' => $categoriasFormateadas
+            'categorias' => $categorias
         ]);
 
     } catch (\Exception $e) {
-        \Log::error('Error al buscar usuario: ' . $e->getMessage());
+        \Log::error('Error en consultarUsuario:', [
+            'mensaje' => $e->getMessage(),
+            'linea' => $e->getLine(),
+            'archivo' => $e->getFile()
+        ]);
+
         return response()->json([
             'success' => false,
             'mensaje' => 'Error al buscar el usuario',
+            'error' => $e->getMessage()
         ], 500);
     }
 }
@@ -236,70 +265,7 @@ class AdminController extends Controller
         return view('admin.edit', compact('elemento', 'categorias')); // Solo si requieres una vista independiente
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    // Método para actualizar un elemento en AdminController
-public function update(Request $request, $id)
-{
-        // Validación de los datos del formulario
-        $validatedData = $request->validate([
-            'categoria_id' => 'required|integer|exists:categorias,id',
-            'descripcion' => 'required|string|max:255',
-            'marca' => 'required|string|max:255',
-            'modelo' => 'required|string|max:255',
-            'serie' => 'nullable|string|max:255',
-            'especificaciones_tecnicas' => 'nullable|string',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240', // 10MB por imagen
-        ]);
-
-        // Buscar el elemento por su ID
-        $elemento = Elemento::findOrFail($id);
-
-        // Actualizar los campos del elemento
-        $elemento->categoria_id = $validatedData['categoria_id'];
-        $elemento->descripcion = $validatedData['descripcion'];
-        $elemento->marca = $validatedData['marca'];
-        $elemento->modelo = $validatedData['modelo'];
-        $elemento->serie = $validatedData['serie'] ?? null;
-        $elemento->especificaciones_tecnicas = $validatedData['especificaciones_tecnicas'] ?? null;
-
-        // Manejar la foto, si se sube una nueva
-        if ($request->hasFile('foto')) {
-            // Eliminar la foto anterior si existe
-            if ($elemento->foto) {
-                Storage::delete('public/' . $elemento->foto);
-            }
-            // Guardar la nueva foto
-            $elemento->foto = $request->file('foto')->store('fotos', 'public');
-        }
-
-        // Guardar los cambios en la base de datos
-        $elemento->save();
-
-        // Redirigir con mensaje de éxito
-        return redirect()->route('admin.panel')->with('success', '¡Elemento actualizado exitosamente!');
-}
-
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
-    {
-        //
-        $elemento = Elemento::findOrFail($id);
-
-        // Elimina el archivo de la foto si existe
-        if ($elemento->foto) {
-            Storage::delete('public/' . $elemento->foto);
-        }
-
-        $elemento->delete();
-
-        return redirect()->route('admin.panel')->with('success', '¡Elemento eliminado exitosamente!');
-    }
-
+    
     public function generarReporteIngresosUsuario(Request $request)
     {
     $numeroDocumento = $request->input('documento');
@@ -314,6 +280,142 @@ public function update(Request $request, $id)
 
     // Retornar el PDF para descarga o visualizar en el navegador
     return $pdf->download('reportes_' . $numeroDocumento . '.pdf');
+    }
+
+    public function updateElemento(Request $request, $id)
+    {
+        try {
+            // Validación de los datos del formulario
+            $validatedData = $request->validate([
+                'categoria_id' => 'required|integer|exists:categorias,id',
+                'descripcion' => 'required|string|max:255',
+                'marca' => 'required|string|max:255',
+                'modelo' => 'required|string|max:255',
+                'serie' => 'nullable|string|max:255',
+                'especificaciones_tecnicas' => 'nullable|string',
+                'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240',
+            ]);
+
+            // Buscar el elemento
+            $elemento = Elemento::findOrFail($id);
+
+            // Actualizar los campos
+            $elemento->categoria_id = $validatedData['categoria_id'];
+            $elemento->descripcion = $validatedData['descripcion'];
+            $elemento->marca = $validatedData['marca'];
+            $elemento->modelo = $validatedData['modelo'];
+            $elemento->serie = $validatedData['serie'] ?? null;
+            $elemento->especificaciones_tecnicas = $validatedData['especificaciones_tecnicas'] ?? null;
+
+            // Manejar la foto si se subió una nueva
+            if ($request->hasFile('foto')) {
+                // Eliminar la foto anterior
+                if ($elemento->foto) {
+                    Storage::delete('public/' . $elemento->foto);
+                }
+                // Guardar la nueva foto
+                $elemento->foto = $request->file('foto')->store('fotos', 'public');
+            }
+
+            // Guardar cambios
+            $elemento->save();
+
+            // Redirigir de vuelta con mensaje de éxito
+            return redirect()->route('admin.panel')
+                            ->with('success', '¡Elemento actualizado exitosamente!');
+
+        } catch (\Exception $e) {
+            \Log::error('Error al actualizar elemento:', [
+                'id' => $id,
+                'error' => $e->getMessage()
+            ]);
+
+            // Redirigir de vuelta con mensaje de error
+            return redirect()->route('admin.panel')
+                            ->with('error', 'Error al actualizar el elemento: ' . $e->getMessage());
+        }
+    }
+
+    public function destroyElemento($id)
+    {
+        try {
+            // Buscar el elemento
+            $elemento = Elemento::findOrFail($id);
+
+            // Eliminar la foto si existe
+            if ($elemento->foto) {
+                Storage::delete('public/' . $elemento->foto);
+            }
+
+            // Eliminar el elemento
+            $elemento->delete();
+
+            // Redirigir con mensaje de éxito
+            return redirect()->route('admin.panel')
+                            ->with('success', '¡Elemento eliminado exitosamente!');
+
+        } catch (\Exception $e) {
+            \Log::error('Error al eliminar elemento:', [
+                'id' => $id,
+                'error' => $e->getMessage()
+            ]);
+
+            // Redirigir con mensaje de error
+            return redirect()->route('admin.panel')
+                            ->with('error', 'Error al eliminar el elemento: ' . $e->getMessage());
+        }
+    }
+
+    public function updateProfile(Request $request)
+    {
+        try {
+            // Validar los datos del formulario
+            $validatedData = $request->validate([
+                'nombres' => 'required|string|max:255',
+                'apellidos' => 'required|string|max:255',
+                'tipo_documento' => 'required|string|max:255',
+                'telefono' => 'required|string|max:20',
+                'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
+
+            // Obtener el usuario autenticado
+            $usuario = Auth::user();
+
+            // Actualizar los campos básicos
+            $usuario->nombres = $validatedData['nombres'];
+            $usuario->apellidos = $validatedData['apellidos'];
+            $usuario->tipo_documento = $validatedData['tipo_documento'];
+            $usuario->telefono = $validatedData['telefono'];
+
+            // Manejar la foto si se subió una nueva
+            if ($request->hasFile('foto')) {
+                // Eliminar la foto anterior si existe
+                if ($usuario->foto) {
+                    Storage::delete('public/fotos_perfil/' . $usuario->foto);
+                }
+                
+                // Guardar la nueva foto
+                $path = $request->file('foto')->store('public/fotos_perfil');
+                $usuario->foto = basename($path);
+            }
+
+            // Guardar los cambios
+            $usuario->save();
+
+            // Redireccionar con mensaje de éxito
+            return redirect()->route('admin.panel')
+                            ->with('success', '¡Perfil actualizado exitosamente!');
+
+        } catch (\Exception $e) {
+            \Log::error('Error al actualizar perfil:', [
+                'error' => $e->getMessage(),
+                'user_id' => Auth::id()
+            ]);
+
+            // Redireccionar con mensaje de error
+            return redirect()->route('admin.panel')
+                            ->with('error', 'Error al actualizar el perfil: ' . $e->getMessage());
+        }
     }
 
 }

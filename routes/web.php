@@ -49,6 +49,9 @@ Route::middleware('auth')->group(function () {
             return view('index.vistaadmin', compact('categorias', 'elementos'));
         })->name('admin.panel');
 
+    // Ruta para actualizar el perfil del administrador
+    Route::post('/admin/update-profile', [AdminController::class, 'updateProfile'])->name('admin.updateProfile');
+
     // Rutas específicas para reportes, agrupadas con middleware de administrador
     Route::middleware([AdminAccess::class])->prefix('admin/reportes')->group(function () {
 

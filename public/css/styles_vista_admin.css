@@ -672,3 +672,17 @@ body {
     display: block !important;
     width: 100% !important;
 }
+
+.modal-custom-width {
+    max-width: 800px;
+}
+
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
+
+.preview-image {
+    max-height: 200px;
+    width: auto;
+}

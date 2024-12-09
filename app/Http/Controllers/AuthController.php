@@ -170,7 +170,7 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         Auth::logout();
-        return redirect('/');
+        return redirect('/controle');
     }
 
     // Actualizar el perfil del usuario autenticado

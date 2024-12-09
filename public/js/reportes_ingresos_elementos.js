@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
     // Seleccionar elementos del DOM
-    const formReporte = document.getElementById('formReporteIngresos');
+    const formReporte = document.getElementById('formReporteElementos');
     const inputFechaInicio = document.getElementById('fechaInicio');
     const inputFechaFinal = document.getElementById('fechaFinal');
-    const inputDocumento = document.getElementById('numeroDocumento');
+    const inputNumeroDocumento = document.getElementById('numeroDocumento');
     const resultadosContainer = document.getElementById('resultados');
     const mensajeError = document.getElementById('mensajeError');
     const spinner = document.getElementById('spinnerCarga');
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Validar fechas
         const fechaInicio = inputFechaInicio.value;
         const fechaFinal = inputFechaFinal.value;
-        const documento = inputDocumento.value;
+        const numeroDocumento = inputNumeroDocumento.value;
 
         if (!fechaInicio || !fechaFinal) {
             mostrarMensajeError('Por favor, seleccione ambas fechas.');
@@ -38,8 +38,8 @@ document.addEventListener('DOMContentLoaded', function () {
             fecha_final: fechaFinal
         });
 
-        if (documento) {
-            params.append('documento_usuario', documento);
+        if (numeroDocumento) {
+            params.append('numero_documento', numeroDocumento);
         }
 
         // Realizar la consulta al servidor
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
             spinner.style.display = 'none';
             
             if (data.success) {
-                mostrarResultados(data.ingresos);
+                mostrarResultados(data.elementos);
             } else {
                 throw new Error(data.error || 'No se encontraron registros.');
             }
@@ -75,27 +75,29 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Función para mostrar los resultados
-    function mostrarResultados(ingresos) {
+    function mostrarResultados(elementos) {
         resultadosContainer.innerHTML = '';
 
-        if (!ingresos || ingresos.length === 0) {
+        if (!elementos || elementos.length === 0) {
             resultadosContainer.innerHTML = `
                 <tr>
-                    <td colspan="5" class="has-text-centered">No se encontraron registros</td>
+                    <td colspan="8" class="has-text-centered">No se encontraron registros</td>
                 </tr>
             `;
             return;
         }
 
-        ingresos.forEach(ingreso => {
+        elementos.forEach(elemento => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${ingreso.ID}</td>
-                <td>${ingreso.NOMBRE_CENTRO}</td>
-                <td>${ingreso.NUMERO_DOCUMENTO}</td> <!-- Mostrar número de documento -->
-                <td>${ingreso.FECHA_INGRESO}</td>
-                <td>${ingreso.FECHA_EGRESO || 'N/A'}</td>
-                <td>${ingreso.ESTADO}</td>
+                <td>${elemento.ID}</td>
+                <td>${elemento.NUMERO_DOCUMENTO}</td>
+                <td>${elemento.CATEGORIA}</td>
+                <td>${elemento.SERIE}</td>
+                <td>${elemento.MARCA}</td>
+                <td>${elemento.FECHA_INGRESO}</td>
+                <td>${elemento.FECHA_EGRESO || 'N/A'}</td>
+                <td>${elemento.ESTADO}</td>
             `;
             resultadosContainer.appendChild(row);
         });
@@ -107,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function () {
         mensajeError.classList.remove('is-hidden');
     }
 
-    // Generar PDF
+    // Generar PDF - Simplificado como en reportes_ingresos.js
     const btnGenerarPDF = document.getElementById('generarPDF');
     if (btnGenerarPDF) {
         btnGenerarPDF.addEventListener('click', function(e) {

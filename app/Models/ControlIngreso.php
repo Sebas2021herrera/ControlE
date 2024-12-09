@@ -55,4 +55,10 @@ class ControlIngreso extends Model
     {
         return $this->hasMany(Sub_Control_Ingreso::class);
     }
+
+    // Nueva relación para reportes
+    public function reportesIngresos()
+    {
+        return $this->hasMany(ReportesControlIngresos::class, 'control_ingreso_id', 'id');
+    }
 }

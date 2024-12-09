@@ -7,81 +7,113 @@ use App\Models\Usuario;
 use App\Models\ControlIngreso;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
+use App\Models\ReportesControlIngresos;
 
 class ReportesIngresosController extends Controller
 {
     public function index()
-    {
-        // Solo muestra los reportes si el usuario está autenticado
-        if (Auth::check()) {
-            $usuario = Auth::user();
+{
+    if (Auth::check()) {
+        $usuario = Auth::user();
 
-            // Obtener reportes con las nuevas columnas
-            $ingresos = ControlIngreso::where('usuario_id', $usuario->id)
-                ->select('id', 'nombre_centro', 'fecha_ingreso', 'fecha_egreso', 'estado')
-                ->get();
+        // Modificar la consulta para obtener el nombre del centro a través de la relación
+        $ingresos = ControlIngreso::with('centro')
+            ->select('control_ingresos.id', 'centros_id', 'fecha_ingreso', 'fecha_salida', 'estado')
+            ->get()
+            ->map(function($ingreso) {
+                return [
+                    'id' => $ingreso->id,
+                    'nombre_centro' => $ingreso->centro->nombre ?? 'Centro no definido',
+                    'fecha_ingreso' => $ingreso->fecha_ingreso,
+                    'fecha_salida' => $ingreso->fecha_salida,
+                    'estado' => $ingreso->estado
+                ];
+            });
 
-            return view('reportes_ingresos', compact('ingresos'));
-        }
-
-        return redirect()->route('login')->with('error', 'Debes iniciar sesión para ver los reportes.');
+        return view('PDF.reportes_ingresos', compact('ingresos'));
     }
 
-    public function generarPDF()
-    {
-        if (Auth::check()) {
-            $usuario = Auth::user();
+    return redirect()->route('login')->with('error', 'Debes iniciar sesión para ver los reportes.');
+}
 
-            $ingresos = ControlIngreso::where('usuario_id', $usuario->id)
-                ->select('id', 'nombre_centro', 'fecha_ingreso', 'fecha_egreso', 'estado')
-                ->get();
+public function generarPDF()
+{
+    if (Auth::check()) {
+        $usuario = Auth::user();
 
-            $pdf = Pdf::loadView('reportes.pdf_ingresos', compact('usuario', 'ingresos'));
+        $ingresos = ControlIngreso::with(['centro', 'usuario'])
+            ->select('control_ingresos.id', 'centros_id', 'usuario_id', 'fecha_ingreso', 'fecha_salida', 'estado')
+            ->get()
+            ->map(function($ingreso) {
+                return [
+                    'ID' => $ingreso->id,
+                    'NOMBRE_CENTRO' => $ingreso->centro->nombre ?? 'Centro no definido',
+                    'NUMERO_DOCUMENTO' => $ingreso->usuario->numero_documento ?? 'N/A',
+                    'FECHA_INGRESO' => $ingreso->fecha_ingreso,
+                    'FECHA_EGRESO' => $ingreso->fecha_salida ?? 'N/A',
+                    'ESTADO' => $ingreso->estado == 0 ? 'Abierto' : 'Cerrado'
+                ];
+            });
+
+            $pdf = Pdf::loadView('PDF.pdf_ingresos', compact('usuario', 'ingresos'));
             return $pdf->download('reporte_ingresos.pdf');
-        }
-
-        return redirect()->route('login')->with('error', 'Debes iniciar sesión para generar el reporte.');
     }
+
+    return redirect()->route('login')->with('error', 'Debes iniciar sesión para generar el reporte.');
+}
 
     public function consultaIngresos(Request $request)
 {
-    // Validar los datos de entrada
-    $validated = $request->validate([
-        'fecha_inicio' => 'required|date',
-        'fecha_final' => 'required|date|after_or_equal:fecha_inicio',
-        'documento_usuario' => 'nullable|string|max:20',
-    ]);
+    try {
+        $validated = $request->validate([
+            'fecha_inicio' => 'required|date',
+            'fecha_final' => 'required|date|after_or_equal:fecha_inicio',
+            'documento_usuario' => 'nullable|string|max:20',
+        ]);
 
-    // Consultar ingresos con las nuevas columnas y filtros
-    $query = ControlIngreso::whereBetween('fecha_ingreso', [$validated['fecha_inicio'], $validated['fecha_final']])
-        ->select('id', 'nombre_centro', 'fecha_ingreso', 'fecha_egreso', 'estado')
-        ->with(['usuario:id,numero_documento,nombre,apellido']);
+        $query = ControlIngreso::whereBetween('fecha_ingreso', [
+                $validated['fecha_inicio'], 
+                $validated['fecha_final']
+            ])
+            ->with(['centro', 'usuario', 'reportesIngresos.elemento']);
 
-    // Filtrar por número de documento si se proporciona
-    if (!empty($validated['documento_usuario'])) {
-        $query->whereHas('usuario', function ($q) use ($validated) {
-            $q->where('numero_documento', $validated['documento_usuario']);
+        if (!empty($validated['documento_usuario'])) {
+            $query->whereHas('usuario', function ($q) use ($validated) {
+                $q->where('numero_documento', $validated['documento_usuario']);
+            });
+        }
+
+        $resultados = $query->get();
+
+        if ($resultados->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'error' => 'No se encontraron resultados para los criterios dados.'
+            ], 200);
+        }
+
+        $data = $resultados->map(function ($registro) {
+            return [
+                'ID' => $registro->id,
+                'NOMBRE_CENTRO' => $registro->centro->nombre ?? 'Centro no definido',
+                'NUMERO_DOCUMENTO' => $registro->usuario->numero_documento ?? 'N/A',
+                'FECHA_INGRESO' => $registro->fecha_ingreso,
+                'FECHA_EGRESO' => $registro->fecha_salida ?? 'N/A',
+                'ESTADO' => $registro->estado == 0 ? 'Abierto' : 'Cerrado',
+            ];
         });
+
+        return response()->json([
+            'success' => true,
+            'ingresos' => $data
+        ]);
+
+    } catch (\Exception $e) {
+        \Log::error('Error en consultaIngresos: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'error' => 'Error en el servidor: ' . $e->getMessage()
+        ], 500);
     }
-
-    $resultados = $query->get();
-
-    // Verificar si no hay resultados
-    if ($resultados->isEmpty()) {
-        return response()->json(['error' => 'No se encontraron resultados para los criterios dados.'], 404);
-    }
-
-    // Transformar datos para el frontend
-    $transformados = $resultados->map(function ($ingreso) {
-        return [
-            'id' => $ingreso->id,
-            'nombre_centro' => $ingreso->nombre_centro,
-            'fecha_ingreso' => $ingreso->fecha_ingreso,
-            'fecha_egreso' => $ingreso->fecha_egreso,
-            'estado' => $ingreso->estado,
-        ];
-    });
-
-    return response()->json(['success' => true, 'ingresos' => $transformados]);
 }
 }

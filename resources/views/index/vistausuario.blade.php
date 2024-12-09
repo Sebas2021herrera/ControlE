@@ -32,6 +32,12 @@
             <ul class="dropdown-menu dropdown-menu-end" style="background-color: #00324d;">
                 <li>
                     <a class="dropdown-item text-white" href="#" data-bs-toggle="modal"
+                        data-bs-target="#carnetDigital" style="transition: background-color 0.3s;">
+                        Carnet Digital
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item text-white" href="#" data-bs-toggle="modal"
                         data-bs-target="#registroModal" style="transition: background-color 0.3s;">
                         Registrar Elementos
                     </a>
@@ -213,11 +219,8 @@
                                                 <img id="previewImagen-{{ $elemento->id }}"
                                                     src="{{ asset('storage/' . $elemento->foto) }}"
                                                     alt="Foto del elemento" class="img-fluid mt-3">
-
                                             </div>
-
                                         </div>
-
                                     </form>
                                 </div>
                             </div>
@@ -304,6 +307,62 @@
             </div>
         </div>
     </div>
+
+    {{-- modal para ver carnet digital --}}
+    <div class="modal fade" id="carnetDigital" tabindex="-1" aria-labelledby="registroModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-custom-width">
+            <!-- Clase personalizada para altura fija -->
+            <div class="modal-content modal-custom-fixed">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="registroModalLabel">Carnet Digital</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="logoSena">
+                        <img src="{{ asset('imagenes/logo-del-sena-01.png') }}" alt="Logo Sena">
+                    </div>
+                    <div class="image-container" style="margin-top: 15px;">
+                        @if (isset($usuario) && $usuario->foto && file_exists(storage_path('app/public/fotos_perfil/' . $usuario->foto)))
+                            <img id="left-panel-img" src="{{ asset('storage/fotos_perfil/' . $usuario->foto) }}"
+                                alt="Foto de perfil" class="foto-perfil">
+                        @else
+                            <img src="{{ asset('imagenes/sin_foto_perfil.webp') }}"
+                                alt="Foto de perfil predeterminada" class="foto-perfil"
+                                style="width: 170px; height: 170px; object-fit: cover; border-radius: 8px;">
+                        @endif
+                    </div>
+                    <div class="rol">
+                        <h4>
+                            <strong>{{ $usuario->role->nombre }}</strong>
+                        </h4>
+                    </div>
+                    <hr class="linea-separadora-carnet">
+                    <div class="nombre-carnet">
+                        @if (isset($usuario))
+                            <h5><strong>{{ $usuario->nombres }} <br>{{ $usuario->apellidos }}</strong></h5>
+                        @endif
+                    </div><br>
+                    <div class="dni-carnet">
+                        <p><strong>{{ $usuario->tipo_documento }} {{ $usuario->numero_documento }} <br>
+                                RH:{{ $usuario->rh }}</strong></p>
+                    </div>
+                    <div class="qr">
+                        <div id="qr-code">
+                        </div>
+                    </div>
+                    <hr class="separadora-carnet">
+                    <p class="regional">
+                        Regional Casanare
+                    </p>
+                    <p class="cafec">
+                        Centro Agroindustrial y Fortalecimiento del Casanare
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Modal para editar perfil -->
     <div class="modal fade" id="editarPerfilModal" tabindex="-1" aria-labelledby="editarPerfilModalLabel"
@@ -410,5 +469,24 @@
     });
 </script>
 <script src="{{ asset('js/vista_usuario.js') }}"></script>
+<!-- Librería QRCode -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+    // Datos en formato de texto legible
+    const qrData = `
+        Nombre: {{ $usuario->nombres }} {{ $usuario->apellidos }}
+        Documento: {{ $usuario->tipo_documento }} {{ $usuario->numero_documento }}
+        RH: {{ $usuario->rh }}
+        Rol: {{ $usuario->role->nombre }}
+    `.trim();
+
+    // Generar el QR y agregarlo al contenedor
+    const qr = qrcode(0, 'L'); // Crear instancia del generador
+    qr.addData(qrData); // Agregar texto al QR
+    qr.make(); // Generar QR
+
+    // Insertar el QR como HTML en el contenedor
+    document.getElementById('qr-code').innerHTML = qr.createImgTag(6, 6); // Escala ajustable
+</script>
 
 </html>

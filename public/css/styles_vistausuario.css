@@ -191,6 +191,63 @@ html {
     height: auto; /* Mantiene la relación de aspecto */
 }
 
+/* Limita la altura total del modal */
+.modal-custom-fixed {
+    max-height: 100vh;
+    width: 90%; /* Ajusta el modal al 90% del alto de la ventana */
+    overflow: hidden; /* Evita el scroll */
+}
+
+.modal-custom-fixed .modal-body {
+    overflow-y: hidden; /* Habilita el desplazamiento vertical solo dentro de modal-body */
+}
+
+.logoSena {
+    width: 110px;
+    float: left;
+}
+
+#carnetDigital .image-container {
+    margin-right: -115px !important;
+    margin-top: 0px !important;
+    margin-bottom: -25px !important;
+}
+
+.linea-separadora-carnet {
+    color: #39a900;
+}
+
+.nombre-carnet {
+    text-transform: uppercase;
+    color: #39a900;
+}
+
+.dni-carnet {
+    font-size: 13px;
+}
+
+.qr {
+    display: flex;
+    justify-content: flex-end; /* Alinea a la derecha */
+}
+#qr-code {
+    width: 31%;
+    margin-top: -133px !important;
+}
+
+.separadora-carnet {
+    color: #39a900;
+    margin-top: 0px;
+}
+
+.regional {
+    text-align: center;
+}
+
+.cafec {
+    color: #39a900;
+}
+
 /* Media Queries para dispositivos móviles */
 @media (max-width: 768px) {
     /* Contenedor general en diseño vertical */
@@ -252,7 +309,7 @@ html {
         overflow-y: auto; /* Scroll para manejar contenido adicional */
         margin-bottom: 30px;
         box-sizing: border-box; /* Asegura que el padding no afecte la altura total */
-        padding-bottom: 40px; /* Agrega un poco de espacio extra al final para asegurarte de que el scroll llegue al fondo */
+        padding-bottom: 48px; /* Agrega un poco de espacio extra al final para asegurarte de que el scroll llegue al fondo */
     }
 
     /* Tarjetas */
@@ -329,7 +386,7 @@ html {
         font-weight: bold;
         margin: 5px 0; /* Reducir márgenes */
         text-align: center;
-        margin-bottom: 0px;
+        margin-bottom: -5px;
     }
 
     .nombre-usuario {
@@ -342,5 +399,65 @@ html {
         font-size: 16px; /* Reducir tamaño del texto */
         margin: 5px 0; /* Reducir márgenes */
         margin-top: -25px;
+    }
+
+    /* Limita la altura total del modal */
+    .modal-custom-fixed {
+        max-height: 100vh;
+        width: 100%; /* Ajusta el modal al 90% del alto de la ventana */
+        overflow: hidden; /* Evita el scroll */
+    }
+
+    .modal-custom-fixed .modal-body {
+        overflow-y: hidden; /* Habilita el desplazamiento vertical solo dentro de modal-body */
+    }
+
+    .logoSena {
+        width: 90px;
+        float: left;
+    }
+
+    #carnetDigital .image-container {
+        margin-right: -115px !important;
+        margin-top: 10px !important;
+        margin-bottom: -30px !important;
+    }
+
+    .linea-separadora-carnet {
+        color: #39a900;
+    }
+
+    .nombre-carnet {
+        text-transform: uppercase;
+        color: #39a900;
+    }
+
+    .dni-carnet {
+        font-size: 15px;
+        margin-top: -5px;
+    }
+
+    .qr {
+        display: flex;
+        justify-content: flex-end; /* Alinea a la derecha */
+    }
+    #qr-code {
+        width: 38%;
+        margin-top: -133px !important;
+    }
+
+    .separadora-carnet {
+        color: #39a900;
+        margin-top: 0px;
+    }
+
+    .regional {
+        text-align: center;
+    }
+
+    .cafec {
+        color: #39a900;
+        text-align: center;
+        margin-bottom:-10px;
     }
 }

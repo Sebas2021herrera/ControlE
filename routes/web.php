@@ -8,18 +8,18 @@ use App\Http\Controllers\ElementoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VigilanteController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ReportesElementosController;
 use App\Models\Elemento;
 use App\Models\Categoria;
 use App\Http\Middleware\AdminAccess;
 use App\Http\Controllers\ReportesIngresosController;
 
-
 // Rutas para autenticación y registro
-Route::get('/', [WelcomeController::class, 'index']);
+Route::get('/controle', [WelcomeController::class, 'index']);
 Route::get('login', [AuthController::class, 'showLogin'])->name('login');
 Route::get('create', [AuthController::class, 'create'])->name('create');
 Route::post('registrado', [AuthController::class, 'createpost'])->name('createpost');
-//Route::post('/createpost', [AdminController::class, 'store'])->name('createpost.admin');
+
 Route::post('login', [AuthController::class, 'login'])->name('login.post');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -49,6 +49,9 @@ Route::middleware('auth')->group(function () {
             return view('index.vistaadmin', compact('categorias', 'elementos'));
         })->name('admin.panel');
 
+    // Ruta para actualizar el perfil del administrador
+    Route::post('/admin/update-profile', [AdminController::class, 'updateProfile'])->name('admin.updateProfile');
+
     // Rutas específicas para reportes, agrupadas con middleware de administrador
     Route::middleware([AdminAccess::class])->prefix('admin/reportes')->group(function () {
 
@@ -58,7 +61,7 @@ Route::middleware('auth')->group(function () {
     })->name('admin.reportes.ingresos');
 
     // Ruta para la consulta de ingresos (AJAX)
-    Route::post('admin/reportes/ingresos/consulta', [ReportesIngresosController::class, 'consultaIngresos'])
+    Route::get('/ingresos/consulta', [ReportesIngresosController::class, 'consultaIngresos'])
         ->name('reportes.ingresos.consulta');
 
     // Nueva ruta para la generación del PDF
@@ -67,8 +70,15 @@ Route::middleware('auth')->group(function () {
 
     // Ruta para la vista de reportes de elementos
     Route::get('/ingresos-elementos', function () {
-        return view('PDF.reportes_elementos'); // Cambiar por la vista correspondiente
+        return view('PDF.reportes_elementos');
     })->name('admin.reportes.elementos');
+
+    // Ruta para la consulta de elementos (AJAX)
+    Route::get('/elementos/consulta', [ReportesElementosController::class, 'consultaElementos'])
+        ->name('reportes.elementos.consulta');
+    // Nueva ruta para la generación del PDF de elementos
+    Route::get('/elementos/pdf', [ReportesElementosController::class, 'generarPDF'])
+    ->name('admin.reportes.elementos.pdf');
 
     // Ruta para la vista de reportes de usuarios
     Route::get('/ingresos-usuarios', function () {

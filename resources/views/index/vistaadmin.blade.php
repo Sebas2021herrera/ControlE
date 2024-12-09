@@ -9,10 +9,12 @@
     <link rel="stylesheet" href="{{ asset('css/styles_vista_admin.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     <!-- Enlaza el archivo CSS de Bulma -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <header class="main-header">
@@ -38,7 +40,6 @@
                 <div class="dropdown-menu" id="dropdown-menu" role="menu">
                     <div class="dropdown-content">
                         <a href="{{ route('admin.reportes.ingresos') }}" class="dropdown-item">Reportes ingresos</a> 
-                        <a href="{{ route('admin.reportes.usuarios') }}" class="dropdown-item">Reportes usuarios</a>
                         <a href="{{ route('admin.reportes.elementos') }}" class="dropdown-item">Reportes elementos</a>
                     </div>
                 </div>
@@ -64,6 +65,11 @@
                                     Cerrar sesión
                                 </button>
                             </form>
+                            <button type="button" class="dropdown-item" 
+                                    onclick="$('#editarPerfilAdminModal').modal('show')" 
+                                    style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">
+                                Editar perfil
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -77,10 +83,14 @@
         <h2>Bienvenido(a), Admin</h2>
         <p>{{ Auth::user()->nombres }} {{ Auth::user()->apellidos }}</p>
         <div class="image-container" style="margin: 20px auto;">
-            @if (Auth::user()->foto_perfil && file_exists(storage_path('app/public/fotos_perfil/' . Auth::user()->foto_perfil)))
-                <img src="{{ asset('storage/fotos_perfil/' . Auth::user()->foto_perfil) }}" alt="Foto de perfil" class="foto-perfil">
+            @if (Auth::user()->foto && file_exists(storage_path('app/public/fotos_perfil/' . Auth::user()->foto)))
+                <img src="{{ asset('storage/fotos_perfil/' . Auth::user()->foto) }}" 
+                     alt="Foto de perfil" 
+                     class="foto-perfil">
             @else
-                <img src="{{ asset('imagenes/sin_foto_perfil.webp') }}" alt="Foto de perfil predeterminada" class="foto-perfil">
+                <img src="{{ asset('imagenes/sin_foto_perfil.webp') }}" 
+                     alt="Foto de perfil predeterminada" 
+                     class="foto-perfil">
             @endif
         </div>
     </div>
@@ -322,16 +332,13 @@
                             @enderror
                         </div>
                         <div class="field">
-                            <label class="label" for="foto">Foto de Perfil:</label>
-                            <div class="control">
-                                <input class="input" type="file" id="foto" name="foto" accept="image/*">
+                            <label class="label" for="foto">Foto (máximo 5MB):</label>
+                            <input type="file" id="foto" name="foto" class="form-control" accept="image/*">
+                            <small class="text-muted">Formatos permitidos: JPG, JPEG, PNG, GIF. Tamaño máximo: 5MB</small>
+                            <div class="mt-2">
+                                <img id="previewUsuario" src="#" alt="Vista previa de la foto" 
+                                     style="display: none; max-width: 200px; height: auto;">
                             </div>
-                            @error('foto')
-                                <p class="help is-danger">{{ $message }}</p>
-                            @enderror
-                            <!-- Elemento para la previsualización -->
-                            <img id="previewUsuario" src="#" alt="Previsualización de Foto"
-                                 style="display: none; margin-top: 10px; width: 150px; height: 150px; object-fit: cover;">
                         </div>
                         
             
@@ -434,7 +441,7 @@
 @foreach ($elementos as $elemento)
 <!-- Modal para ver más detalles y editar en vista admin -->
 <div class="modal fade" id="modal-detalles-{{ $elemento->id }}" tabindex="-1" aria-labelledby="modalDetallesLabel-{{ $elemento->id }}" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalDetallesLabel-{{ $elemento->id }}">Detalles del Elemento</h5>
@@ -459,7 +466,6 @@
                     <form action="{{ route('admin.elementos.update', $elemento->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
-                        <!-- Campos de edición similares al modal anterior -->
                         <div class="mb-3">
                             <label for="categoria_id-{{ $elemento->id }}" class="form-label">Categoría</label>
                             <select id="categoria_id-{{ $elemento->id }}" name="categoria_id" class="form-select" required>
@@ -474,23 +480,52 @@
                             <label for="descripcion-{{ $elemento->id }}" class="form-label">Descripción</label>
                             <input type="text" id="descripcion-{{ $elemento->id }}" name="descripcion" class="form-control" value="{{ $elemento->descripcion }}" required>
                         </div>
-                        <!-- Similar para los demás campos... -->
+                        <div class="mb-3">
+                            <label for="marca-{{ $elemento->id }}" class="form-label">Marca</label>
+                            <input type="text" id="marca-{{ $elemento->id }}" name="marca" class="form-control" value="{{ $elemento->marca }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modelo-{{ $elemento->id }}" class="form-label">Modelo</label>
+                            <input type="text" id="modelo-{{ $elemento->id }}" name="modelo" class="form-control" value="{{ $elemento->modelo }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="serie-{{ $elemento->id }}" class="form-label">Número de Serie</label>
+                            <input type="text" id="serie-{{ $elemento->id }}" name="serie" class="form-control" value="{{ $elemento->serie }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="especificaciones_tecnicas-{{ $elemento->id }}" class="form-label">Especificaciones Técnicas</label>
+                            <textarea id="especificaciones_tecnicas-{{ $elemento->id }}" name="especificaciones_tecnicas" class="form-control" rows="3" required>{{ $elemento->especificaciones_tecnicas }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="foto-{{ $elemento->id }}" class="form-label">Foto del Elemento</label>
+                            <input type="file" id="foto-{{ $elemento->id }}" name="foto" class="form-control" accept="image/*" onchange="previewImage(event, 'preview-imagen-{{ $elemento->id }}')">
+                            <div class="mt-2">
+                                <img id="preview-imagen-{{ $elemento->id }}" 
+                                     src="{{ asset('storage/' . $elemento->foto) }}" 
+                                     alt="Foto del elemento" 
+                                     class="img-fluid mt-2" 
+                                     style="max-height: 200px"
+                                     onerror="this.src='/imagenes/sin_foto_elemento.webp'">
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>
             <div class="modal-footer">
                 <!-- Botón para eliminar elemento -->
-                <form action="{{ route('admin.elementos.destroy', $elemento->id) }}" method="POST">
+                <form action="{{ route('admin.elementos.destroy', $elemento->id) }}" method="POST" class="d-inline">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger">Eliminar</button>
                 </form>
                 <!-- Botón para guardar cambios (oculto por defecto) -->
-                <button type="button" class="btn btn-primary d-none" id="save-changes-btn-admin-{{ $elemento->id }}" onclick="saveChanges({{ $elemento->id }})">Guardar Cambios</button>
+                <button type="button" class="btn btn-primary d-none" id="save-changes-btn-admin-{{ $elemento->id }}" onclick="saveChangesAdmin({{ $elemento->id }})">Guardar Cambios</button>
                 <!-- Botón para editar elementos -->
-                <button type="button" class="btn btn-warning" onclick="editElementAdmin({{ $elemento->id }})">Editar</button>
+                <button type="button" class="btn btn-warning" onclick="editElementAdmin({{ $elemento->id }})">
+                    Editar
+                </button>
                 <!-- Botón para cerrar el modal -->
-                <button type="button" class="btn btn-secondary" onclick="closeModalAdmin({{ $elemento->id }})">Cerrar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
@@ -520,36 +555,126 @@
     </div>
 </div>
 
+<!-- Modal para editar perfil del admin -->
+<div class="modal fade" id="editarPerfilAdminModal" tabindex="-1" aria-labelledby="editarPerfilAdminModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-custom-width">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editarPerfilAdminModalLabel">Editar Perfil Administrador</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editarPerfilAdminForm" method="POST" action="{{ route('admin.updateProfile') }}" enctype="multipart/form-data">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="nombres" class="form-label">Nombres:</label>
+                        <input type="text" id="nombres" name="nombres" class="form-control" value="{{ Auth::user()->nombres }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="apellidos" class="form-label">Apellidos:</label>
+                        <input type="text" id="apellidos" name="apellidos" class="form-control" value="{{ Auth::user()->apellidos }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tipo_documento" class="form-label">Tipo de Documento:</label>
+                        <select id="tipo_documento" name="tipo_documento" class="form-select" required>
+                            <option value="CC" {{ Auth::user()->tipo_documento == 'CC' ? 'selected' : '' }}>Cédula de Ciudadanía</option>
+                            <option value="TI" {{ Auth::user()->tipo_documento == 'TI' ? 'selected' : '' }}>Tarjeta de Identidad</option>
+                            <option value="CE" {{ Auth::user()->tipo_documento == 'CE' ? 'selected' : '' }}>Cédula de Extranjería</option>
+                            <option value="PP" {{ Auth::user()->tipo_documento == 'PP' ? 'selected' : '' }}>Pasaporte</option>
+                            <option value="RC" {{ Auth::user()->tipo_documento == 'RC' ? 'selected' : '' }}>Registro Civil</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="numero_documento" class="form-label">Número de Documento:</label>
+                        <input type="text" id="numero_documento" name="numero_documento" class="form-control" value="{{ Auth::user()->numero_documento }}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rh" class="form-label">Tipo de Sangre (RH):</label>
+                        <input type="text" id="rh" name="rh" class="form-control" value="{{ Auth::user()->rh }}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="telefono" class="form-label">Teléfono:</label>
+                        <input type="tel" id="telefono" name="telefono" class="form-control" value="{{ Auth::user()->telefono }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="foto" class="form-label">Foto de Perfil:</label>
+                        <div class="mb-3">
+                            @if (Auth::user()->foto && file_exists(storage_path('app/public/fotos_perfil/' . Auth::user()->foto)))
+                                <img id="previewPerfilAdmin" src="{{ asset('storage/fotos_perfil/' . Auth::user()->foto) }}" 
+                                     alt="Foto de perfil actual" style="max-width: 100px; height: auto;">
+                            @else
+                                <img id="previewPerfilAdmin" src="{{ asset('imagenes/sin_foto_perfil.webp') }}" 
+                                     alt="Foto de perfil predeterminada" style="max-width: 100px; height: auto;">
+                            @endif
+                        </div>
+                        <input type="file" id="foto" name="foto" class="form-control" accept="image/*" 
+                               onchange="previewImage(event, 'previewPerfilAdmin')">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 
     <!-- Código Javascripts -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            function previewImage(inputId, previewId) {
-                const input = document.getElementById(inputId);
-                const preview = document.getElementById(previewId);
-        
-                input.addEventListener('change', function(e) {
+            // Función para previsualizar imagen en el registro de usuarios
+            const fotoInput = document.getElementById('foto');
+            if (fotoInput) {
+                fotoInput.addEventListener('change', function(e) {
                     const file = e.target.files[0];
                     if (file) {
                         const reader = new FileReader();
                         reader.onload = function(e) {
-                            preview.src = e.target.result;
-                            preview.style.display = 'block';
+                            const previewUsuario = document.getElementById('previewUsuario');
+                            if (previewUsuario) {
+                                previewUsuario.src = e.target.result;
+                                previewUsuario.style.display = 'block';
+                            }
                         }
                         reader.readAsDataURL(file);
-                    } else {
-                        preview.src = '#';
-                        preview.style.display = 'none';
                     }
                 });
             }
-        
-            // Inicializar la previsualización para ambos formularios
-            previewImage('foto', 'previewUsuario');
-            previewImage('fotoElemento', 'previewElemento');
-        });
-        
 
+            // Función para previsualizar imagen en el registro de elementos
+            const fotoElementoInput = document.getElementById('fotoElemento');
+            if (fotoElementoInput) {
+                fotoElementoInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const previewElemento = document.getElementById('previewElemento');
+                            if (previewElemento) {
+                                previewElemento.src = e.target.result;
+                                previewElemento.style.display = 'block';
+                            }
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+        });
+
+        // Función general para previsualizar imágenes (para otros formularios)
+        function previewImage(event, previewId) {
+            const file = event.target.files[0];
+            const preview = document.getElementById(previewId);
+            
+            if (file && preview) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
     </script>
 
     <script>
@@ -684,163 +809,251 @@
 <script>
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Selección de elementos
     const searchForm = document.querySelector('form[action="{{ route("admin.usuarios.consultar") }}"]');
-    const consultUsersModal = document.getElementById('consultUsersModal');
-    const resultadoBusqueda = document.querySelector('.resultado-busqueda');
-
+    const resultadoBusqueda = document.getElementById('resultadoBusqueda');
+    
     if (searchForm) {
         searchForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            const documento = new FormData(this).get('documento');
+            
             try {
-                const formData = new FormData(this);
-                const documento = formData.get('documento');
+                // Realizar la petición
+                const url = `/admin/usuarios/consultar?documento=${documento}`;
+                console.log('Realizando petición a:', url);
                 
-                const response = await fetch(`/admin/usuarios/consultar?documento=${documento}`, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.success && data.usuario) {
+                    // Ocultar sidebar
+                    document.getElementById('sidebar').style.display = 'none';
                     
-                    // Cerrar el modal
-                    if (consultUsersModal) {
-                        consultUsersModal.style.display = 'none';
+                    // Mostrar resultados
+                    resultadoBusqueda.style.display = 'block';
+                    
+                    // Actualizar información del usuario
+                    document.querySelector('.usuario-nombre').textContent = data.usuario.nombres;
+                    document.querySelector('.usuario-apellidos').textContent = data.usuario.apellidos;
+                    document.querySelector('.usuario-documento').textContent = data.usuario.numero_documento;
+                    document.querySelector('.usuario-telefono').textContent = data.usuario.telefono;
+                    document.querySelector('.usuario-rh').textContent = data.usuario.rh;
+                    document.querySelector('.usuario-rol').textContent = data.usuario.role?.nombre || 'N/A';
+                    document.querySelector('.usuario-ficha').textContent = data.usuario.numero_ficha || 'N/A';
+                    
+                    // Actualizar foto del usuario
+                    const fotoPerfil = document.querySelector('.foto-perfil-usuario');
+                    if (fotoPerfil) {
+                        fotoPerfil.src = data.usuario.foto 
+                            ? `/storage/fotos_perfil/${data.usuario.foto}`
+                            : '/imagenes/sin_foto_perfil.webp';
+                        fotoPerfil.onerror = () => fotoPerfil.src = '/imagenes/sin_foto_perfil.webp';
                     }
+                    
+                    // Actualizar elementos si existen
+                    if (data.elementos && data.elementos.length > 0) {
+                        const cardContainer = document.querySelector('.card-container');
+                        cardContainer.innerHTML = data.elementos.map(elemento => `
+                            <div class="card">
+                                <h5 class="cabeza">${elemento.categoria.nombre}</h5>
+                                <img src="/storage/${elemento.foto}" 
+                                     alt="Foto del elemento" 
+                                     class="elemento-foto"
+                                     onerror="this.src='/imagenes/sin_foto_elemento.webp'">
+                                <p><strong>Serial:</strong> ${elemento.serie}</p>
+                                <p><strong>Marca:</strong> ${elemento.marca}</p>
+                                <button type="button" 
+                                        class="btn btn-link link-ver-mas" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#modal-detalles-${elemento.id}">
+                                    Ver más
+                                </button>
+                            </div>
+                        `).join('');
 
-                    // Mostrar los resultados
-                    if (data.usuario) {
-                        mostrarInformacionUsuario(data.usuario);
-                        mostrarElementosUsuario(data.elementos || []);
-                        resultadoBusqueda.style.display = 'block'; // Asegúrate de que el contenedor sea visible
-                    } else {
-                        alert('Usuario no encontrado');
+                        // Generar modales
+                        const modalesContainer = document.getElementById('modales-container');
+                        modalesContainer.innerHTML = data.elementos.map(elemento => `
+                            <div class="modal fade" id="modal-detalles-${elemento.id}" tabindex="-1">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Detalles del Elemento</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <!-- Vista de detalles -->
+                                            <div id="details-view-${elemento.id}" class="details-view">
+                                                <img src="/storage/${elemento.foto}" alt="Foto del elemento" class="img-fluid mb-3">
+                                                <p><strong>Categoría:</strong> ${elemento.categoria.nombre}</p>
+                                                <p><strong>Descripción:</strong> ${elemento.descripcion}</p>
+                                                <p><strong>Marca:</strong> ${elemento.marca}</p>
+                                                <p><strong>Modelo:</strong> ${elemento.modelo}</p>
+                                                <p><strong>Serial:</strong> ${elemento.serie}</p>
+                                                <p><strong>Especificaciones Técnicas:</strong> ${elemento.especificaciones_tecnicas}</p>
+                                            </div>
+                                            
+                                            <!-- Vista de edición -->
+                                            <div id="edit-view-${elemento.id}" class="edit-view d-none">
+                                                <form id="edit-form-${elemento.id}" action="/admin/elementos/${elemento.id}" method="POST" enctype="multipart/form-data">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Categoría</label>
+                                                        <select name="categoria_id" class="form-select" required>
+                                                            ${elemento.categoria ? `
+                                                                <option value="${elemento.categoria.id}" selected>
+                                                                    ${elemento.categoria.nombre}
+                                                                </option>
+                                                            ` : ''}
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Descripción</label>
+                                                        <input type="text" name="descripcion" class="form-control" value="${elemento.descripcion}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Marca</label>
+                                                        <input type="text" name="marca" class="form-control" value="${elemento.marca}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Modelo</label>
+                                                        <input type="text" name="modelo" class="form-control" value="${elemento.modelo}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Número de Serie</label>
+                                                        <input type="text" name="serie" class="form-control" value="${elemento.serie}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Especificaciones Técnicas</label>
+                                                        <textarea name="especificaciones_tecnicas" class="form-control" rows="3" required>${elemento.especificaciones_tecnicas}</textarea>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Foto</label>
+                                                        <input type="file" name="foto" class="form-control" accept="image/*" onchange="previewImage(event, 'preview-${elemento.id}')">
+                                                        <img id="preview-${elemento.id}" src="/storage/${elemento.foto}" class="img-fluid mt-2" style="max-height: 200px">
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-warning" onclick="editElementAdmin(${elemento.id})">
+                                                Editar
+                                            </button>
+                                            <button type="button" class="btn btn-primary d-none" id="save-changes-btn-${elemento.id}" onclick="saveChangesAdmin(${elemento.id})">
+                                                Guardar Cambios
+                                            </button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                Cerrar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                    
+                    // Cerrar modal de consulta
+                    const consultUsersModal = document.getElementById('consultUsersModal');
+                    if (consultUsersModal) {
+                        const modal = bootstrap.Modal.getInstance(consultUsersModal);
+                        if (modal) modal.hide();
                     }
                 } else {
-                    throw new Error('Error en la búsqueda');
+                    alert(data.mensaje || 'Usuario no encontrado');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error al realizar la búsqueda');
             }
         });
     }
 });
 
-        function mostrarInformacionUsuario(usuario) {
-            // Actualizar la información del usuario
-            document.querySelector('.usuario-nombre').textContent = usuario.nombres;
-            document.querySelector('.usuario-apellidos').textContent = usuario.apellidos;
-            document.querySelector('.usuario-documento').textContent = usuario.numero_documento;
-            document.querySelector('.usuario-telefono').textContent = usuario.telefono;
-            document.querySelector('.usuario-rh').textContent = usuario.rh;
-            document.querySelector('.usuario-rol').textContent = usuario.role.nombre;
-            document.querySelector('.usuario-ficha').textContent = usuario.numero_ficha;
-            
-            // Actualizar foto de perfil
-            const fotoPerfil = document.querySelector('.foto-perfil-usuario');
-            if (fotoPerfil) {
-                fotoPerfil.src = usuario.foto 
-                    ? `/storage/fotos_perfil/${usuario.foto}` 
-                    : '/imagenes/sin_foto_perfil.webp';
-            }
-        }
-
-function mostrarElementosUsuario(elementos) {
-    const container = document.querySelector('.card-container');
-    if (!container) return;
-
-    container.innerHTML = ''; // Limpiar contenedor
-
-    if (elementos.length === 0) {
-        container.innerHTML = '<p>No hay elementos asociados a este usuario.</p>';
+// Funciones auxiliares
+function editElementAdmin(id) {
+    console.log('Editando elemento:', id);
+    
+    // Usar los IDs correctos que están en el HTML
+    const detailsView = document.getElementById(`details-view-admin-${id}`);
+    const editView = document.getElementById(`edit-view-admin-${id}`);
+    const saveBtn = document.getElementById(`save-changes-btn-admin-${id}`);
+    
+    if (!detailsView || !editView) {
+        console.error('No se encontraron las vistas:', {
+            detailsView: !!detailsView,
+            editView: !!editView
+        });
         return;
     }
 
-    elementos.forEach(elemento => {
-        const card = `
-            <div class="card">
-                <h5 class="cabeza">${elemento.categoria.nombre}</h5>
-                <img src="/storage/${elemento.foto}" 
-                     alt="Foto del elemento" 
-                     class="elemento-foto"
-                     onerror="this.src='/imagenes/sin_foto_elemento.webp'">
-                <p><strong>Serial:</strong> ${elemento.serie}</p>
-                <p><strong>Marca:</strong> ${elemento.marca}</p>
-                <a href="#" class="link-ver-mas" data-elemento-id="${elemento.id}">
-                    Ver más
-                </a>
-            </div>
-        `;
-        container.insertAdjacentHTML('beforeend', card);
-    });
+    // Ocultar vista de detalles y mostrar vista de edición
+    detailsView.classList.add('d-none');
+    editView.classList.remove('d-none');
+    
+    // Mostrar botón de guardar
+    if (saveBtn) {
+        saveBtn.classList.remove('d-none');
+    }
+
+    console.log('Vista de edición activada');
 }
 
-// Código JavaScript para el modal de "Detalles del Elemento".
-// Función para alternar entre modos de vista y edición
-function toggleEditView(elementId) {
-    const viewMode = document.getElementById(`view-${elementId}`);
-    const editMode = document.getElementById(`edit-${elementId}`);
-    const editButton = document.getElementById(`edit-button-${elementId}`);
-    const cancelButton = document.getElementById(`cancel-button-${elementId}`);
-
-    // Alternar las clases para ocultar o mostrar las secciones de vista y edición
-    viewMode.classList.toggle('hidden');
-    editMode.classList.toggle('hidden');
-
-    // Alternar la visibilidad de los botones de edición y cancelación
-    if (!viewMode.classList.contains('hidden')) {
-        editButton.style.display = 'inline';
-        cancelButton.style.display = 'none';
-    } else {
-        editButton.style.display = 'none';
-        cancelButton.style.display = 'inline';
+function saveChangesAdmin(id) {
+    console.log('Guardando cambios para elemento:', id);
+    const form = document.getElementById(`edit-view-admin-${id}`).querySelector('form');
+    if (form) {
+        form.submit();
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    const detailLinks = document.querySelectorAll('.link-ver-mas');
-    detailLinks.forEach(link => {
-        link.addEventListener('click', (event) => {
-            event.preventDefault();
-            const elementoId = link.getAttribute('data-elemento-id');
-            const modalId = `modal-detalles-${elementoId}`; // Asegúrate de que el ID coincida
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.style.display = 'block'; // Abre el modal
-                modal.classList.add('show'); // Asegúrate de que se muestre correctamente
+// Función para previsualizar imagen
+function previewImage(event, previewId) {
+        const file = event.target.files[0];
+        const preview = document.getElementById(previewId);
+        
+        if (file && preview) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+            }
+            
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // Inicializar los eventos cuando el documento esté listo
+    document.addEventListener('DOMContentLoaded', function() {
+        // Para el modal de edición de perfil
+        const fotoInput = document.querySelector('#editarPerfilAdminModal input[type="file"]');
+        if (fotoInput) {
+            fotoInput.addEventListener('change', function(e) {
+                previewImage(e, 'previewPerfilAdmin');
+            });
+        }
+
+        // Para otros formularios (si los hay)
+        const otrosInputs = document.querySelectorAll('input[type="file"]');
+        otrosInputs.forEach(input => {
+            const previewId = input.getAttribute('data-preview');
+            if (previewId) {
+                input.addEventListener('change', function(e) {
+                    previewImage(e, previewId);
+                });
             }
         });
     });
+
+// Corregir el onclick en el botón de editar
+document.addEventListener('DOMContentLoaded', function() {
+    // Corregir los botones de editar que usan template literals incorrectamente
+    document.querySelectorAll('[onclick*="${elemento.id}"]').forEach(button => {
+        const id = button.getAttribute('onclick').match(/\d+/)[0];
+        button.setAttribute('onclick', `editElementAdmin(${id})`);
+    });
 });
 
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // ... código existente ...
-
-        // Evento para limpiar la consulta
-        document.getElementById('clearSearch').addEventListener('click', function() {
-            // Ocultar el contenedor de resultados
-            document.querySelector('.resultado-busqueda').style.display = 'none';
-            // Limpiar la información del usuario
-            document.querySelector('.usuario-nombre').textContent = '';
-            document.querySelector('.usuario-apellidos').textContent = '';
-            document.querySelector('.usuario-documento').textContent = '';
-            document.querySelector('.usuario-telefono').textContent = '';
-            document.querySelector('.usuario-rh').textContent = '';
-            document.querySelector('.usuario-rol').textContent = '';
-            document.querySelector('.usuario-ficha').textContent = '';
-            // Limpiar los elementos
-            document.querySelector('.card-container').innerHTML = '';
-        });
-    });
 </script>
 
 <script>
@@ -891,5 +1104,48 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
  </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<div id="modales-container"></div>
+
+<!-- Manejo de mensajes de éxito y error -->
+<script>
+    // Esperar a que el documento esté completamente cargado
+    $(document).ready(function() {
+        // Función para manejar los mensajes
+        function handleMessages() {
+            const successMessage = $('#success-message');
+            const errorMessage = $('#error-message');
+
+            if (successMessage.length > 0) {
+                console.log('Mensaje de éxito encontrado');
+                setTimeout(function() {
+                    successMessage.fadeOut('slow');
+                }, 5000);
+            }
+
+            if (errorMessage.length > 0) {
+                console.log('Mensaje de error encontrado');
+                setTimeout(function() {
+                    errorMessage.fadeOut('slow');
+                }, 5000);
+            }
+        }
+
+        // Ejecutar la función cuando la página carga
+        handleMessages();
+
+        // También ejecutar cuando hay cambios en el DOM (para mensajes dinámicos)
+        const observer = new MutationObserver(function(mutations) {
+            handleMessages();
+        });
+
+        // Observar cambios en el body
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    });
+</script>
 </body>
 </html>

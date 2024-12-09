@@ -51,15 +51,35 @@ $(document).ready(function() {
 $(document).ready(function() {
     $('#editarPerfilForm').on('submit', function(event) {
         event.preventDefault();
-
+        
+        var formData = new FormData(this);
+        
         $.ajax({
             url: $(this).attr('action'),
             method: 'POST',
-            data: $(this).serialize(),
+            data: formData,
+            processData: false,
+            contentType: false,
             success: function(response) {
                 updateUserProfile(response.user);
                 $('#editarPerfilModal').modal('hide');
                 $('#success-message').text(response.success).fadeIn().delay(5000).fadeOut();
+                
+                // Actualizar la imagen del panel izquierdo
+                if (response.user.foto) {
+                    $('#left-panel-img').attr('src', '/storage/fotos_perfil/' + response.user.foto);
+                } else {
+                    $('#left-panel-img').attr('src', '/imagenes/sin_foto_perfil.webp');
+                }
+                
+                // También actualizar la imagen en el carnet digital si existe
+                if ($('#carnetDigital .foto-perfil').length) {
+                    if (response.user.foto) {
+                        $('#carnetDigital .foto-perfil').attr('src', '/storage/fotos_perfil/' + response.user.foto);
+                    } else {
+                        $('#carnetDigital .foto-perfil').attr('src', '/imagenes/sin_foto_perfil.webp');
+                    }
+                }
             },
             error: function(response) {
                 $('#error-message').text('Ocurrió un error al actualizar el perfil.').fadeIn().delay(5000).fadeOut();
@@ -68,8 +88,16 @@ $(document).ready(function() {
     });
 
     function updateUserProfile(user) {
-        $('#welcomeMessage').html(`Bienvenido <br />${user.nombres} ${user.apellidos}`);
-        $('.navbar-nav .nav-link').text(user.nombres);
+        // Actualizar nombre de usuario
+        $('.nombre-usuario').text(user.nombres + ' ' + user.apellidos);
+        
+        // Actualizar mensaje de bienvenida
+        $('#welcomeMessage').html('<strong>Bienvenido</strong><br/>');
+        
+        // Actualizar otros elementos que muestren información del usuario
+        if (user.foto) {
+            $('#left-panel-img, #carnetDigital .foto-perfil').attr('src', '/storage/fotos_perfil/' + user.foto);
+        }
     }
 });
 

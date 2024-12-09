@@ -428,7 +428,6 @@
 
                         <div class="mb-3">
                             <label for="foto" class="form-label">Foto de Perfil:</label>
-                            <!-- Contenedor para la previsualización de la foto -->
                             <div class="mb-3">
                                 @if (Auth::user()->foto && file_exists(storage_path('app/public/fotos_perfil/' . Auth::user()->foto)))
                                     <img id="previewPerfil"
@@ -442,7 +441,6 @@
                             <input type="file" id="foto" name="foto" class="form-control"
                                 accept="image/*" onchange="previewImage(event, 'previewPerfil')">
                         </div>
-
                         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                     </form>
                 </div>
@@ -451,6 +449,16 @@
     </div>
 
 </body>
+<script>
+    function previewImage(event, previewId) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            const preview = document.getElementById(previewId);
+            preview.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>
 
 <!-- 1. Cargar jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

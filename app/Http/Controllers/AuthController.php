@@ -34,37 +34,37 @@ class AuthController extends Controller
     //funcion para restablecer contraseña
 
     public function manualResetPassword(Request $request)
-{
-    $request->validate([
-        'correo_personal' => 'required|email|exists:usuarios,correo_personal',
-    ]);
+    {
+        $request->validate([
+            'correo_personal' => 'required|email|exists:usuarios,correo_personal',
+        ]);
 
-    try {
-        // Buscar el usuario por su correo personal
-        $usuario = Usuario::where('correo_personal', $request->correo_personal)->first();
+        try {
+            // Buscar el usuario por su correo personal
+            $usuario = Usuario::where('correo_personal', $request->correo_personal)->first();
 
-        if (!$usuario) {
-            return back()->withErrors(['correo_personal' => 'El correo no está registrado.']);
-        }
+            if (!$usuario) {
+                return back()->withErrors(['correo_personal' => 'El correo no está registrado.']);
+            }
 
-        // Generar una nueva contraseña
-        $nuevaContraseña = Str::random(8);
+            // Generar una nueva contraseña
+            $nuevaContraseña = Str::random(8);
 
-        // Actualizar la contraseña en la base de datos
-        $usuario->contraseña = Hash::make($nuevaContraseña);
-        $usuario->save();
+            // Actualizar la contraseña en la base de datos
+            $usuario->contraseña = Hash::make($nuevaContraseña);
+            $usuario->save();
 
-        // Enviar la nueva contraseña al correo del usuario
-        Mail::raw("Hola {$usuario->nombres}, tu nueva contraseña es: {$nuevaContraseña}", function ($message) use ($usuario) {
-            $message->to($usuario->correo_personal)
+            // Enviar la nueva contraseña al correo del usuario
+            Mail::raw("Hola {$usuario->nombres}, tu nueva contraseña es: {$nuevaContraseña}", function ($message) use ($usuario) {
+                $message->to($usuario->correo_personal)
                     ->subject('Restablecimiento de contraseña');
-        });
+            });
 
-        return back()->with('success', 'Se ha enviado la nueva contraseña a tu correo.');
-    } catch (\Exception $e) {
-        return back()->withErrors(['error' => 'Ocurrió un error al restablecer la contraseña.']);
+            return back()->with('success', 'Se ha enviado la nueva contraseña a tu correo.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Ocurrió un error al restablecer la contraseña.']);
+        }
     }
-}
 
 
     // Manejar el registro de un nuevo usuario
@@ -173,61 +173,63 @@ class AuthController extends Controller
         return redirect('/');
     }
 
-    // Actualizar el perfil del usuario autenticado
     public function updateProfile(Request $request)
     {
         $usuario = Auth::user();
-        $esAprendiz = $usuario->roles_id == 3; // Verifica si el usuario es Aprendiz
+        $rolesPermitidos = [1, 3, 4, 5]; // Roles que pueden editar
 
-        // Mantén los valores actuales del usuario para los campos que no deben ser editados
-        $request->merge([
-            'numero_documento' => $usuario->numero_documento, // No se puede editar el número de documento
-            'correo_personal' => $usuario->correo_personal,
-            'correo_institucional' => $usuario->correo_institucional,
-        ]);
+        // Verificar permisos
+        if (!in_array($usuario->roles_id, $rolesPermitidos)) {
+            return response()->json(['error' => 'No tiene permiso para editar este perfil.'], 403);
+        }
 
-        // Definir las reglas de validación
+        // Validaciones
         $rules = [
             'nombres' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
-            'tipo_documento' => 'required|string|max:255', // Ahora es editable
+            'tipo_documento' => 'required|string|max:255',
             'telefono' => 'required|string|max:20',
-            'rh' => 'required|string|max:7', // Validación del campo rh en el perfil
-            'numero_ficha' => $esAprendiz ? 'required|string|max:255' : 'nullable|string|max:255', // Obligatorio si es Aprendiz
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120'
+            'rh' => 'required|string|max:7',
+            'numero_ficha' => in_array($usuario->roles_id, [3]) ? 'required|string|max:255' : 'nullable|string|max:255',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120', // Límite de 5 MB
         ];
 
-        // Validar los datos del request
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()->all()], 400);
+            return response()->json(['errors' => $validator->errors()], 422);
         }
 
         try {
+            // Actualizar datos del usuario
+            $data = $request->except(['foto', 'numero_documento', 'correo_personal', 'correo_institucional']);
+            $usuario->fill($data);
+
             // Manejo del archivo de foto
             if ($request->hasFile('foto')) {
-                if ($usuario->foto) {
+                // Eliminar la foto anterior si existe
+                if ($usuario->foto && Storage::exists('public/fotos_perfil/' . $usuario->foto)) {
                     Storage::delete('public/fotos_perfil/' . $usuario->foto);
                 }
 
-                $file = $request->file('foto');
-                $path = $file->store('public/fotos_perfil');
+                // Guardar la nueva foto
+                $path = $request->file('foto')->store('public/fotos_perfil');
                 $usuario->foto = basename($path);
             }
 
-            // Actualizar el perfil del usuario
-            $usuario->update($request->except('foto'));
-            $usuario->rh = $request->rh; // Actualizar el campo rh
+            // Guardar cambios
             $usuario->save();
 
-            // Devolver una respuesta con los datos actualizados
+            // Respuesta
             return response()->json([
                 'success' => 'Perfil actualizado con éxito.',
-                'user' => $usuario,
-                'newPhotoUrl' => $usuario->foto ? Storage::url('public/fotos_perfil/' . $usuario->foto) : null
+                'user' => [
+                    'nombres' => $usuario->nombres,
+                    'apellidos' => $usuario->apellidos,
+                    'foto' => $usuario->foto ? asset('storage/fotos_perfil/' . $usuario->foto) : null,
+                ],
             ]);
-        } catch (QueryException $e) {
+        } catch (\Exception $e) {
             Log::error('Error al actualizar el perfil: ' . $e->getMessage());
             return response()->json(['error' => 'Ha ocurrido un error al actualizar el perfil.'], 500);
         }

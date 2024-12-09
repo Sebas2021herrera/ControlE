@@ -49,35 +49,35 @@ Route::middleware('auth')->group(function () {
             return view('index.vistaadmin', compact('categorias', 'elementos'));
         })->name('admin.panel');
 
-    // Rutas específicas para reportes, agrupadas con middleware de administrador
-    Route::middleware([AdminAccess::class])->prefix('admin/reportes')->group(function () {
+        // Rutas específicas para reportes, agrupadas con middleware de administrador
+        Route::middleware([AdminAccess::class])->prefix('admin/reportes')->group(function () {
 
-    // Ruta para la vista principal de reportes de ingresos
-    Route::get('/ingresos', function () {
-        return view('PDF.reportes_ingresos'); // Cambiar por la vista correspondiente
-    })->name('admin.reportes.ingresos');
+            // Ruta para la vista principal de reportes de ingresos
+            Route::get('/ingresos', function () {
+                return view('PDF.reportes_ingresos'); // Cambiar por la vista correspondiente
+            })->name('admin.reportes.ingresos');
 
-    // Ruta para la consulta de ingresos (AJAX)
-    Route::post('admin/reportes/ingresos/consulta', [ReportesIngresosController::class, 'consultaIngresos'])
-        ->name('reportes.ingresos.consulta');
+            // Ruta para la consulta de ingresos (AJAX)
+            Route::post('admin/reportes/ingresos/consulta', [ReportesIngresosController::class, 'consultaIngresos'])
+                ->name('reportes.ingresos.consulta');
 
-    // Nueva ruta para la generación del PDF
-    Route::get('/ingresos/pdf', [ReportesIngresosController::class, 'generarPDF'])
-        ->name('admin.reportes.ingresos.pdf');
+            // Nueva ruta para la generación del PDF
+            Route::get('/ingresos/pdf', [ReportesIngresosController::class, 'generarPDF'])
+                ->name('admin.reportes.ingresos.pdf');
 
-    // Ruta para la vista de reportes de elementos
-    Route::get('/ingresos-elementos', function () {
-        return view('PDF.reportes_elementos'); // Cambiar por la vista correspondiente
-    })->name('admin.reportes.elementos');
+            // Ruta para la vista de reportes de elementos
+            Route::get('/ingresos-elementos', function () {
+                return view('PDF.reportes_elementos'); // Cambiar por la vista correspondiente
+            })->name('admin.reportes.elementos');
 
-    // Ruta para la vista de reportes de usuarios
-    Route::get('/ingresos-usuarios', function () {
-        return view('PDF.reportes_usuarios'); // Cambiar por la vista correspondiente
-    })->name('admin.reportes.usuarios');
-});
+            // Ruta para la vista de reportes de usuarios
+            Route::get('/ingresos-usuarios', function () {
+                return view('PDF.reportes_usuarios'); // Cambiar por la vista correspondiente
+            })->name('admin.reportes.usuarios');
+        });
 
 
-    
+
 
         // Ruta para consultar usuarios
         Route::get('/admin/usuarios/consultar', [AdminController::class, 'consultarUsuario'])
@@ -89,11 +89,11 @@ Route::middleware('auth')->group(function () {
         // Ruta para generar PDF de usuario
         Route::post('/admin/usuarios/pdf', [AdminController::class, 'generarReporteIngresosUsuario'])->name('admin.usuarios.pdf');
 
-         // Rutas para gestionar elementos
-         Route::post('/admin/elementos/store', [AdminController::class, 'storeElemento'])->name('admin.elementos.store');
-         Route::put('/admin/elementos/{id}', [AdminController::class, 'updateElemento'])->name('admin.elementos.update');
-         Route::get('admin/elementos/{id}/edit', [AdminController::class, 'edit'])->name('admin.elementos.edit');
-         Route::delete('/admin/elementos/{id}', [AdminController::class, 'destroyElemento'])->name('admin.elementos.destroy');
+        // Rutas para gestionar elementos
+        Route::post('/admin/elementos/store', [AdminController::class, 'storeElemento'])->name('admin.elementos.store');
+        Route::put('/admin/elementos/{id}', [AdminController::class, 'updateElemento'])->name('admin.elementos.update');
+        Route::get('admin/elementos/{id}/edit', [AdminController::class, 'edit'])->name('admin.elementos.edit');
+        Route::delete('/admin/elementos/{id}', [AdminController::class, 'destroyElemento'])->name('admin.elementos.destroy');
     });
 
 
@@ -140,4 +140,3 @@ Route::middleware('auth')->group(function () {
 
 // Rutas específicas para admin (a completar si es necesario)
 Route::middleware(['auth', 'checkRole:admin'])->group(function () {});
-

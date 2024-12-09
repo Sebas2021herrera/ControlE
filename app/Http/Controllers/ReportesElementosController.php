@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Elemento;
-use App\Models\Sub_Control_Ingreso;
+use App\Models\ReportesControlIngresos;
 use App\Models\ControlIngreso;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
@@ -34,40 +34,41 @@ class ReportesElementosController extends Controller
                 'marca' => 'nullable|string'
             ]);
 
-            $query = ControlIngreso::with(['usuario', 'subControlIngresos.elemento.categoria'])
+            $query = ControlIngreso::with(['usuario', 'reportesIngresos.elemento.categoria'])
                 ->whereBetween('fecha_ingreso', [
                     $validated['fecha_inicio'],
                     $validated['fecha_final']
                 ]);
 
+            if (!empty($validated['serie'])) {
+                $query->whereHas('usuario', function($q) use ($validated) {
+                    $q->where('numero_documento', 'like', '%' . $validated['serie'] . '%');
+                });
+            }
+
             $ingresos = $query->get();
             $elementosFormateados = collect();
 
             foreach ($ingresos as $ingreso) {
-                foreach ($ingreso->subControlIngresos as $subControl) {
-                    if ($subControl->elemento) {
+                foreach ($ingreso->reportesIngresos as $reporte) {
+                    if ($reporte->elemento) {
                         // Aplicar filtros adicionales
                         if (!empty($validated['categoria_id']) && 
-                            $subControl->elemento->categoria_id != $validated['categoria_id']) {
-                            continue;
-                        }
-
-                        if (!empty($validated['serie']) && 
-                            !str_contains(strtolower($subControl->elemento->serie), strtolower($validated['serie']))) {
+                            $reporte->elemento->categoria_id != $validated['categoria_id']) {
                             continue;
                         }
 
                         if (!empty($validated['marca']) && 
-                            !str_contains(strtolower($subControl->elemento->marca), strtolower($validated['marca']))) {
+                            !str_contains(strtolower($reporte->elemento->marca), strtolower($validated['marca']))) {
                             continue;
                         }
 
                         $elementosFormateados->push([
-                            'ID' => $subControl->elemento->id,
+                            'ID' => $reporte->elemento->id,
                             'NUMERO_DOCUMENTO' => $ingreso->usuario->numero_documento ?? 'N/A',
-                            'CATEGORIA' => $subControl->elemento->categoria->nombre ?? 'N/A',
-                            'SERIE' => $subControl->elemento->serie ?? 'N/A',
-                            'MARCA' => $subControl->elemento->marca ?? 'N/A',
+                            'CATEGORIA' => $reporte->elemento->categoria->nombre ?? 'N/A',
+                            'SERIE' => $reporte->elemento->serie ?? 'N/A',
+                            'MARCA' => $reporte->elemento->marca ?? 'N/A',
                             'FECHA_INGRESO' => $ingreso->fecha_ingreso,
                             'FECHA_EGRESO' => $ingreso->fecha_salida ?? 'N/A',
                             'ESTADO' => $ingreso->estado == 0 ? 'Abierto' : 'Cerrado'
@@ -110,7 +111,7 @@ class ReportesElementosController extends Controller
                 ->with('error', 'No tienes permisos para generar este reporte.');
         }
 
-        $query = ControlIngreso::with(['usuario', 'subControlIngresos.elemento.categoria'])
+        $query = ControlIngreso::with(['usuario', 'reportesIngresos.elemento.categoria'])
             ->select('control_ingresos.*');
 
         if ($request->filled(['fecha_inicio', 'fecha_final'])) {
@@ -125,36 +126,36 @@ class ReportesElementosController extends Controller
             ]);
         }
 
+        if ($request->filled('serie')) {
+            $query->whereHas('usuario', function($q) use ($request) {
+                $q->where('numero_documento', 'like', '%' . $request->serie . '%');
+            });
+        }
+
         $ingresos = $query->get();
         $elementosFormateados = collect();
 
         foreach ($ingresos as $ingreso) {
-            foreach ($ingreso->subControlIngresos as $subControl) {
-                if ($subControl->elemento) {
-                    // Aplicar filtro de serie si se proporciona
-                    if ($request->filled('serie') && 
-                        !str_contains(strtolower($subControl->elemento->serie), strtolower($request->serie))) {
-                        continue;
-                    }
-
+            foreach ($ingreso->reportesIngresos as $reporte) {
+                if ($reporte->elemento) {
                     // Aplicar filtro de categoría si se proporciona
                     if ($request->filled('categoria_id') && 
-                        $subControl->elemento->categoria_id != $request->categoria_id) {
+                        $reporte->elemento->categoria_id != $request->categoria_id) {
                         continue;
                     }
 
                     // Aplicar filtro de marca si se proporciona
                     if ($request->filled('marca') && 
-                        !str_contains(strtolower($subControl->elemento->marca), strtolower($request->marca))) {
+                        !str_contains(strtolower($reporte->elemento->marca), strtolower($request->marca))) {
                         continue;
                     }
 
                     $elementosFormateados->push([
-                        'ID' => $subControl->elemento->id,
+                        'ID' => $reporte->elemento->id,
                         'NUMERO_DOCUMENTO' => $ingreso->usuario->numero_documento ?? 'N/A',
-                        'CATEGORIA' => $subControl->elemento->categoria->nombre ?? 'N/A',
-                        'SERIE' => $subControl->elemento->serie ?? 'N/A',
-                        'MARCA' => $subControl->elemento->marca ?? 'N/A',
+                        'CATEGORIA' => $reporte->elemento->categoria->nombre ?? 'N/A',
+                        'SERIE' => $reporte->elemento->serie ?? 'N/A',
+                        'MARCA' => $reporte->elemento->marca ?? 'N/A',
                         'FECHA_INGRESO' => Carbon::parse($ingreso->fecha_ingreso)->format('Y-m-d H:i:s'),
                         'FECHA_EGRESO' => $ingreso->fecha_salida 
                             ? Carbon::parse($ingreso->fecha_salida)->format('Y-m-d H:i:s')

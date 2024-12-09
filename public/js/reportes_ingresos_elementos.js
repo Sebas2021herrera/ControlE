@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const formReporte = document.getElementById('formReporteElementos');
     const inputFechaInicio = document.getElementById('fechaInicio');
     const inputFechaFinal = document.getElementById('fechaFinal');
-    const inputSerie = document.getElementById('numeroSerie');
+    const inputNumeroDocumento = document.getElementById('numeroDocumento');
     const resultadosContainer = document.getElementById('resultados');
     const mensajeError = document.getElementById('mensajeError');
     const spinner = document.getElementById('spinnerCarga');
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Validar fechas
         const fechaInicio = inputFechaInicio.value;
         const fechaFinal = inputFechaFinal.value;
-        const serie = inputSerie.value;
+        const numeroDocumento = inputNumeroDocumento.value;
 
         if (!fechaInicio || !fechaFinal) {
             mostrarMensajeError('Por favor, seleccione ambas fechas.');
@@ -38,8 +38,8 @@ document.addEventListener('DOMContentLoaded', function () {
             fecha_final: fechaFinal
         });
 
-        if (serie) {
-            params.append('serie', serie);
+        if (numeroDocumento) {
+            params.append('numero_documento', numeroDocumento);
         }
 
         // Realizar la consulta al servidor

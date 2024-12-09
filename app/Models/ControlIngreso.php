@@ -57,8 +57,16 @@ class ControlIngreso extends Model
         return $this->hasMany(Elemento::class);
     }
 
+    // Esta es la relación que estaba causando el problema
     public function subControlIngresos()
     {
         return $this->hasMany(Sub_Control_Ingreso::class);
     }
+
+    // Nueva relación para reportes
+    public function reportesIngresos()
+    {
+        return $this->hasMany(ReportesControlIngresos::class, 'control_ingresos_id', 'id');
+    }
+
 }

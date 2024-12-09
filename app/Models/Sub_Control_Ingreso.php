@@ -16,11 +16,11 @@ class Sub_Control_Ingreso extends Model
         'elemento_id',
     ];
 
-    protected $table = 'sub__control__ingresos'; 
+    protected $table = 'sub_control_ingresos';
 
     public function controlIngreso()
     {
-        return $this->belongsTo(ControlIngreso::class);
+        return $this->belongsTo(ControlIngreso::class, 'id', 'control_ingresos_id');
     }
 
     public function elemento()

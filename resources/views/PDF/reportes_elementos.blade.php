@@ -31,8 +31,8 @@
                     <input type="datetime-local" id="fechaFinal" name="fecha_final" class="input" required>
                 </div>
                 <div class="column">
-                    <label for="numeroSerie" class="label">Número de Serie</label>
-                    <input type="text" id="numeroSerie" name="serie" class="input" placeholder="Buscar elemento específico">
+                    <label for="numeroDocumento" class="label">Número de Documento</label>
+                    <input type="text" id="numeroDocumento" name="numero_documento" class="input" placeholder="Buscar usuario con un elemento específico">
                 </div>
             </div>
             <div class="field is-grouped is-justify-content-flex-end">

@@ -7,6 +7,7 @@ use App\Models\Usuario;
 use App\Models\ControlIngreso;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
+use App\Models\ReportesControlIngresos;
 
 class ReportesIngresosController extends Controller
 {
@@ -70,8 +71,11 @@ public function generarPDF()
             'documento_usuario' => 'nullable|string|max:20',
         ]);
 
-        $query = ControlIngreso::whereBetween('fecha_ingreso', [$validated['fecha_inicio'], $validated['fecha_final']])
-            ->with(['centro', 'usuario', 'subControlIngresos.elemento']);
+        $query = ControlIngreso::whereBetween('fecha_ingreso', [
+                $validated['fecha_inicio'], 
+                $validated['fecha_final']
+            ])
+            ->with(['centro', 'usuario', 'reportesIngresos.elemento']);
 
         if (!empty($validated['documento_usuario'])) {
             $query->whereHas('usuario', function ($q) use ($validated) {
@@ -94,7 +98,7 @@ public function generarPDF()
                 'NOMBRE_CENTRO' => $registro->centro->nombre ?? 'Centro no definido',
                 'NUMERO_DOCUMENTO' => $registro->usuario->numero_documento ?? 'N/A',
                 'FECHA_INGRESO' => $registro->fecha_ingreso,
-                'FECHA_EGRESO' => $registro->fecha_salida ?? 'N/A', // Cambiar fecha_egreso por fecha_salida
+                'FECHA_EGRESO' => $registro->fecha_salida ?? 'N/A',
                 'ESTADO' => $registro->estado == 0 ? 'Abierto' : 'Cerrado',
             ];
         });
@@ -104,11 +108,6 @@ public function generarPDF()
             'ingresos' => $data
         ]);
 
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        return response()->json([
-            'success' => false,
-            'error' => 'Error de validación: ' . $e->getMessage()
-        ], 422);
     } catch (\Exception $e) {
         \Log::error('Error en consultaIngresos: ' . $e->getMessage());
         return response()->json([

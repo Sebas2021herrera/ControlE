@@ -140,7 +140,7 @@
 
                     <!-- Contraseña -->
                     <div class="field">
-                        <label class="label" for="contraseña">Contraseña:</label>
+                        <label class="label" for="contraseña">Contraseña nueva:</label>
                         <div class="control">
                             <input class="input @error('contraseña') is-danger @enderror" type="password"
                                 id="contraseña" name="contraseña" required>
@@ -153,7 +153,7 @@
 
                     <!-- Confirmación de Contraseña -->
                     <div class="field">
-                        <label class="label" for="contraseña_confirmation">Confirmar Contraseña:</label>
+                        <label class="label" for="contraseña_confirmation">Confirmar contraseña nueva:</label>
                         <div class="control">
                             <input class="input @error('contraseña_confirmation') is-danger @enderror" type="password"
                                 id="contraseña_confirmation" name="contraseña_confirmation" required>

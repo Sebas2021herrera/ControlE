@@ -91,13 +91,13 @@
         <tbody>
             @forelse ($elementos as $elemento)
                 <tr>
-                    <td>{{ $elemento['ID'] }}</td>
-                    <td>{{ $elemento['SERIE'] }}</td>
-                    <td>{{ $elemento['MARCA'] }}</td>
-                    <td>{{ $elemento['CATEGORIA'] }}</td>
-                    <td>{{ $elemento['FECHA_INGRESO'] }}</td>
-                    <td>{{ $elemento['FECHA_SALIDA'] }}</td>
-                    <td>{{ $elemento['ESTADO'] }}</td>
+                    <td>{{ $elemento->ID }}</td>
+                    <td>{{ $elemento->SERIE }}</td>
+                    <td>{{ $elemento->MARCA }}</td>
+                    <td>{{ $elemento->CATEGORIA }}</td>
+                    <td>{{ $elemento->FECHA_INGRESO }}</td>
+                    <td>{{ $elemento->FECHA_EGRESO }}</td>
+                    <td>{{ $elemento->ESTADO }}</td>
                 </tr>
             @empty
                 <tr>

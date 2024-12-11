@@ -60,7 +60,7 @@
                     <a href="{{ route('create') }}">¡Regístrate! </a>
                 </div>
                 <div class="text-center mt-3">
-                    <a href="{{ route('resetpass') }}">  ¿ olvide contraseña ?</a>
+                    <a href="{{ route('resetpass') }}">  ¿Olvidaste tu contraseña?</a>
                 </div>
             </div>  
         </div>

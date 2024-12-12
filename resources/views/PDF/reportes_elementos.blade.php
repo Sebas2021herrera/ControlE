@@ -43,9 +43,7 @@
                     <button type="submit" class="button is-primary">Consultar</button>
                 </div>
                 <div class="mt-4">
-                    <button id="generarPDF" type="button" class="button is-primary" data-url="{{ route('admin.reportes.elementos.pdf') }}">
-                        Generar PDF
-                    </button>
+                    <button id="generarPDF" method="GET" class="button is-primary" data-url="{{ route('admin.reportes.elementos.pdf') }}">Generar PDF</button>
                 </div>
             </div>
         </form>

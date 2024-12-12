@@ -72,148 +72,59 @@ class AuthController extends Controller
     {
         Log::info('Datos del formulario:', $request->all());
 
-        // Validar los datos del formulario con reglas más estrictas
+        // Validar los datos del formulario
         $validator = Validator::make($request->all(), [
-            'nombres' => [
-                'required',
-                'string',
-                'max:255',
-                'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'
-            ],
-            'apellidos' => [
-                'required',
-                'string',
-                'max:255',
-                'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'
-            ],
-            'tipo_documento' => [
-                'required',
-                'string',
-                'in:CC,TI,CE,PP,RC'
-            ],
-            'numero_documento' => [
-                'required',
-                'numeric',
-                'digits_between:6,12',
-                'unique:usuarios,numero_documento'
-            ],
-            'rh' => [
-                'required',
-                'string',
-                'in:O+,O-,A+,A-,B+,B-,AB+,AB-'
-            ],
-            'correo_personal' => [
-                'required',
-                'email:rfc,dns',
-                'max:255',
-                'unique:usuarios,correo_personal'
-            ],
-            'correo_institucional' => [
-                'required',
-                'email:rfc,dns',
-                'max:255',
-                'unique:usuarios,correo_institucional',
-                function ($attribute, $value, $fail) use ($request) {
-                    $dominio = substr(strrchr($value, "@"), 1);
-                    $rol = (int)$request->rol;
-                    
-                    if ($rol === 3) { // Aprendiz
-                        if ($dominio !== 'soy.sena.edu.co') {
-                            $fail('Los aprendices deben usar un correo con dominio @soy.sena.edu.co');
-                        }
-                    } else { // Todos los demás roles
-                        if ($dominio !== 'sena.edu.co') {
-                            $fail('Debe usar un correo con dominio @sena.edu.co');
-                        }
-                    }
-                }
-            ],
-            'telefono' => [
-                'required',
-                'numeric',
-                'digits_between:7,10'
-            ],
-            'contraseña' => [
-                'required',
-                'string',
-                'min:6',
-                'confirmed',
-                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/'
-            ],
-            'rol' => [
-                'required',
-                'integer',
-                'exists:roles,id'
-            ],
-            'numero_ficha' => [
-                'required_if:rol,3',
-                'nullable',
-                'string',
-                'max:20',
-                function ($attribute, $value, $fail) use ($request) {
-                    if ($request->rol == 3 && empty($value)) {
-                        $fail('El número de ficha es obligatorio para aprendices');
-                    }
-                }
-            ],
-            'foto' => [
-                'nullable',
-                'image',
-                'mimes:jpeg,png,jpg,gif',
-                'max:6144'
-            ]
-        ], [
-            // Mensajes personalizados de error
-            'nombres.regex' => 'Los nombres solo pueden contener letras y espacios',
-            'apellidos.regex' => 'Los apellidos solo pueden contener letras y espacios',
-            'numero_documento.unique' => 'Este número de documento ya está registrado',
-            'numero_documento.numeric' => 'El número de documento debe contener solo números',
-            'numero_documento.digits_between' => 'El número de documento debe tener entre 6 y 12 dígitos',
-            'correo_institucional.unique' => 'Este correo institucional ya está registrado',
-            'contraseña.regex' => 'La contraseña debe contener al menos una mayúscula, una minúscula, un número y un símbolo (@$!%*?&)',
-            'telefono.numeric' => 'El teléfono debe contener solo números',
-            'telefono.digits_between' => 'El teléfono debe tener entre 7 y 10 dígitos',
-            'foto.max' => 'La foto no debe superar los 6MB'
+            'nombres' => 'required|string|max:255',
+            'apellidos' => 'required|string|max:255',
+            'tipo_documento' => 'required|string|max:255',
+            'numero_documento' => 'required|string|max:255|unique:usuarios',
+            'rh' => 'required|string|max:7', // Validar que el campo rh sea obligatorio
+            'correo_personal' => 'required|email|max:255|unique:usuarios',
+            'correo_institucional' => 'required|email|max:255|unique:usuarios',
+            'telefono' => 'required|string|max:20',
+            'contraseña' => 'required|string|min:6|confirmed',
+            'rol' => 'required|exists:roles,id', // Verificar que el rol exista
+            'numero_ficha' => $request->input('rol') == 3 ? 'required|string|max:255' : 'nullable|string|max:255',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120'
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
+            return redirect()->back()->withErrors($validator)->withInput();
         }
 
         try {
-            // El resto del código permanece igual
+            // Crear una nueva instancia del modelo Usuario
             $usuario = new Usuario();
             $usuario->nombres = $request->nombres;
             $usuario->apellidos = $request->apellidos;
             $usuario->tipo_documento = $request->tipo_documento;
             $usuario->numero_documento = $request->numero_documento;
-            $usuario->rh = $request->rh;
+            $usuario->rh = $request->rh; // Asignar el valor del campo rh
             $usuario->correo_personal = $request->correo_personal;
             $usuario->correo_institucional = $request->correo_institucional;
             $usuario->telefono = $request->telefono;
             $usuario->numero_ficha = $request->input('numero_ficha');
             $usuario->contraseña = Hash::make($request->contraseña);
-            $usuario->roles_id = $request->rol;
+            $usuario->roles_id = $request->rol; // Asigna el rol seleccionado
 
+            // Manejo del archivo de foto si se sube una
             if ($request->hasFile('foto')) {
                 $file = $request->file('foto');
-                $path = $file->store('public/fotos_perfil');
-                $usuario->foto = basename($path);
+                $path = $file->store('public/fotos_perfil'); // Guarda la foto en el almacenamiento público
+                $usuario->foto = basename($path); // Guarda solo el nombre del archivo en la base de datos
             }
 
+            // Guardar el usuario en la base de datos
             $usuario->save();
+
+            // Autenticar al usuario recién registrado
             Auth::login($usuario);
 
-            return redirect()->route('user.panel')
-                ->with('success', 'Registro exitoso. ¡Bienvenido!');
-
+            // Redirigir al panel de usuario con un mensaje de éxito
+            return redirect()->route('user.panel')->with('success', 'Registro exitoso. ¡Bienvenido!');
         } catch (QueryException $e) {
             Log::error('Error al registrar el usuario: ' . $e->getMessage());
-            return redirect()->back()
-                ->withErrors(['error' => 'Ha ocurrido un error al registrar el usuario.'])
-                ->withInput();
+            return redirect()->back()->withErrors(['error' => 'Ha ocurrido un error al registrar el usuario.'])->withInput();
         }
     }
 

@@ -151,7 +151,3 @@ Route::middleware('auth')->group(function () {
 // Rutas específicas para admin (a completar si es necesario)
 Route::middleware(['auth', 'checkRole:admin'])->group(function () {});
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('welcome');
-

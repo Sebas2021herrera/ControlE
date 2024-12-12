@@ -19,33 +19,33 @@
 <body>
     <header class="main-header">
         <div class="container">
-            <div class="nav-left-group">
-                <div class="dropdown is-hoverable">
-                    <div class="dropdown-trigger">
-                        <a href="#" id="registerLink" class="registrar">Registro</a>
-                    </div>
-                    <div class="dropdown-menu" id="dropdown-menu" role="menu">
-                        <div class="dropdown-content">
-                            <a href="#" class="dropdown-item" id="registerUsers">Registrar usuarios</a>
-                            <a href="#" class="dropdown-item" id="registerElements">Registrar elementos</a>
-                            <a href="#" class="dropdown-item" id="consultUsers">Consultar usuarios</a>
-                        </div>
+            <div class="dropdown is-hoverable" style="margin-right: 20px;">
+                <div class="dropdown-trigger">
+                    <a href="#" id="registerLink" class="registrar">Registro</a>
+                </div>
+                <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                    <div class="dropdown-content">
+                        <a href="#" class="dropdown-item" id="registerUsers">Registrar usuarios</a>
+                        <a href="#" class="dropdown-item" id="registerElements">Registrar elementos</a>
+                        <a href="#" class="dropdown-item" id="consultUsers">Consultar usuarios</a>
                     </div>
                 </div>
-
-                <div class="dropdown is-hoverable">
-                    <div class="dropdown-trigger">
-                        <a href="#" id="reportsLink" class="registrar">Reportes</a>
-                    </div>
-                    <div class="dropdown-menu" id="dropdown-menu" role="menu">
-                        <div class="dropdown-content">
-                            <a href="{{ route('admin.reportes.ingresos') }}" class="dropdown-item">Reportes ingresos</a> 
-                            <a href="{{ route('admin.reportes.elementos') }}" class="dropdown-item">Reportes elementos</a>
-                        </div>
+            </div>
+    
+            <div class="dropdown is-hoverable" style="margin-right: 20px;">
+                <div class="dropdown-trigger">
+                    <a href="#" id="reportsLink" class="registrar">Reportes</a>
+                </div>
+                <!-- Aquí puedes agregar un dropdown para reportes si es necesario -->
+                <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                    <div class="dropdown-content">
+                        <a href="{{ route('admin.reportes.ingresos') }}" class="dropdown-item">Reportes ingresos</a> 
+                        <a href="{{ route('admin.reportes.elementos') }}" class="dropdown-item">Reportes elementos</a>
                     </div>
                 </div>
             </div>
 
+            
             <nav class="nav">
                 <div class="dropdown is-hoverable">
                     <div class="dropdown-trigger">

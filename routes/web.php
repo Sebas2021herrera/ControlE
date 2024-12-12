@@ -15,7 +15,7 @@ use App\Http\Middleware\AdminAccess;
 use App\Http\Controllers\ReportesIngresosController;
 
 // Rutas para autenticación y registro
-Route::get('/controle', [WelcomeController::class, 'index']);
+Route::get('/controle', [WelcomeController::class, 'index'])->name('welcome');
 Route::get('login', [AuthController::class, 'showLogin'])->name('login');
 Route::get('create', [AuthController::class, 'create'])->name('create');
 Route::post('registrado', [AuthController::class, 'createpost'])->name('createpost');
@@ -151,7 +151,5 @@ Route::middleware('auth')->group(function () {
 // Rutas específicas para admin (a completar si es necesario)
 Route::middleware(['auth', 'checkRole:admin'])->group(function () {});
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('welcome');
+
 

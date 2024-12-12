@@ -157,7 +157,7 @@
 
                     <!-- Contraseña -->
                     <div class="field">
-                        <label class="label" for="contraseña">Contraseña:</label>
+                        <label class="label" for="contraseña">Nueva Contraseña:</label>
                         <div class="control has-icons-right">
                             <input class="input @error('contraseña') is-danger @enderror" type="password"
                                 id="contraseña" name="contraseña" required
@@ -504,12 +504,13 @@
         const correoInstitucional = document.getElementById('correo_institucional');
 
         correoInstitucional.addEventListener('input', function() {
-            if (!this.value.endsWith('@sena.edu.co')) {
-                this.setCustomValidity('El correo debe terminar en @sena.edu.co');
-            } else {
-                this.setCustomValidity('');
-            }
-        });
+    const validDomains = ['@sena.edu.co', '@soy.sena.edu.co'];
+    if (!validDomains.some(domain => this.value.endsWith(domain))) {
+        this.setCustomValidity('El correo debe terminar en @sena.edu.co o @soy.sena.edu.co');
+    } else {
+        this.setCustomValidity('');
+    }
+});
     });
     </script>
 
@@ -586,6 +587,8 @@
         });
     });
     </script>
+
+
 
 </body>
 

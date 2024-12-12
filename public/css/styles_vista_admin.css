@@ -6,11 +6,6 @@
 
 body {
     font-family: 'Work Sans', sans-serif;
-    /* display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #f5f5f5; */
 }
 
 /* Estilos del header */
@@ -26,7 +21,7 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     padding: 0 20px;
 }
@@ -80,6 +75,7 @@ body {
 /* Estilos de la navegación */
 .nav {
     display: flex;
+    margin-left: auto;
 }
 
 .nav-list {
@@ -280,6 +276,9 @@ body {
 .resultado-busqueda {
     padding: 20px;
     margin-top: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    transition: all 0.3s ease;
 }
 
 .contenido-superior {
@@ -287,6 +286,7 @@ body {
     gap: 16px;
     align-items: flex-start;
     flex-wrap: nowrap;
+    justify-content: center;
 }
 
 .contenedor-intermedio {
@@ -300,6 +300,7 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
     margin-right: -6px;
+    margin: 0 auto;
 }
 
 .usuario-info {
@@ -481,8 +482,15 @@ body {
     width: 70%;
     text-align: center;
     padding: 20px;
+    transition: all 0.3s ease;
 }
 
+/* Nuevo estilo para cuando se muestra el resultado */
+.main-content.centered {
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px 50px;
+}
 
 .logo-container {
     height: auto;
@@ -491,11 +499,18 @@ body {
     justify-content: center;
     align-items: center;
     /* height: calc(100vh - 50px); */
+    transition: all 0.3s ease;
 }
 
 .logo-container img {
     width: 550px;
     height: auto;
+}
+
+.logo-container.centered {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .logo-app {
@@ -522,4 +537,11 @@ body {
     position: relative;
     top: -50px;
     animation: fadeIn 2s ease-in-out;
+}
+
+/* Agregar estilos para el grupo de navegación izquierdo */
+.nav-left-group {
+    display: flex;
+    gap: 20px; /* Espacio entre Registro y Reportes */
+    align-items: center;
 }

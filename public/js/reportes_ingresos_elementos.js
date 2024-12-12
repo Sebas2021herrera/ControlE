@@ -114,7 +114,33 @@ document.addEventListener('DOMContentLoaded', function () {
     if (btnGenerarPDF) {
         btnGenerarPDF.addEventListener('click', function(e) {
             e.preventDefault();
-            window.location.href = this.dataset.url;
+            
+            // Obtener los valores de los campos
+            const fechaInicio = document.getElementById('fechaInicio').value;
+            const fechaFinal = document.getElementById('fechaFinal').value;
+            const numeroDocumento = document.getElementById('numeroDocumento').value;
+
+            // Validar que haya fechas seleccionadas
+            if (!fechaInicio || !fechaFinal) {
+                mostrarMensajeError('Por favor, seleccione ambas fechas antes de generar el PDF.');
+                return;
+            }
+
+            // Construir la URL con los parámetros
+            const params = new URLSearchParams({
+                fecha_inicio: fechaInicio,
+                fecha_final: fechaFinal
+            });
+
+            if (numeroDocumento) {
+                params.append('serie', numeroDocumento);
+            }
+
+            // Construir la URL completa
+            const url = `${this.dataset.url}?${params.toString()}`;
+            
+            // Redirigir a la URL construida
+            window.location.href = url;
         });
     }
 });

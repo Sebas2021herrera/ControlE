@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ asset('css/styles_login.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 
 <body>
@@ -52,7 +53,16 @@
                     </div>
                     <div class="form-group">
                         <label for="contraseña" class="form-label">Contraseña</label>
-                        <input type="password" class="form-control" id="contraseña" name="contraseña" placeholder="*******" required>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="contraseña" name="contraseña" 
+                                placeholder="*******" required>
+                            <div class="input-group-append">
+                                <span class="input-group-text" onclick="togglePassword('contraseña')" 
+                                    style="cursor: pointer;">
+                                    <i class="fas fa-eye" id="contraseña-icon"></i>
+                                </span>
+                            </div>
+                        </div>
                     </div>
                     <button type="submit" class="btn btn-dark btn-block">Iniciar sesión</button>
                 </form>
@@ -60,7 +70,7 @@
                     <a href="{{ route('create') }}">¡Regístrate! </a>
                 </div>
                 <div class="text-center mt-3">
-                    <a href="{{ route('resetpass') }}">  ¿ olvide contraseña ?</a>
+                    <a href="{{ route('resetpass') }}">  ¿Olvidaste tu contraseña?</a>
                 </div>
             </div>  
         </div>
@@ -82,6 +92,21 @@
                 }, 5000); // Mostrar el mensaje por 5 segundos antes de desvanecerlo
             }
         });
+
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(inputId + '-icon');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
     </script>
 </body>
 

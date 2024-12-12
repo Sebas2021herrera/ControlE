@@ -26,6 +26,24 @@
             margin-bottom: 10px;
         }
 
+        .logo-container {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .logo-container img {
+            max-width: 120px;
+            height: auto;
+        }
+
+        .regional-text {
+            text-align: center;
+            font-size: 12px;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
         .fecha-generacion {
             text-align: right;
             margin-bottom: 20px;
@@ -68,21 +86,30 @@
     </style>
 </head>
 <body>
+    <div class="logo-container">
+        <img src="{{ public_path('imagenes/logo-del-sena-01.png') }}" alt="Logo SENA">
+    </div>
+    
+    <div class="regional-text">
+        Regional Casanare | Centro Agroindustrial y Fortalecimiento Empresarial del Casanare
+    </div>
+    
     <div class="header">
         <h1>Reporte de Elementos</h1>
     </div>
 
     <div class="fecha-generacion">
-        <p>Fecha de generación: {{ date('Y-m-d H:i:s') }}</p>
+        <p>Fecha de generación: {{ \Carbon\Carbon::now()->setTimezone('America/Bogota')->isoFormat('DD [de] MMMM [de] YYYY, h:mm A') }}</p>
     </div>
 
     <table>
         <thead>
             <tr>
                 <th>ID</th>
-                <th>SERIE</th>
-                <th>MARCA</th>
+                <th>NÚMERO DOCUMENTO</th>
                 <th>CATEGORÍA</th>
+                <th>SERIAL</th>
+                <th>MARCA</th>
                 <th>FECHA INGRESO</th>
                 <th>FECHA SALIDA</th>
                 <th>ESTADO</th>
@@ -92,16 +119,17 @@
             @forelse ($elementos as $elemento)
                 <tr>
                     <td>{{ $elemento->ID }}</td>
+                    <td>{{ $elemento->NUMERO_DOCUMENTO }}</td>
+                    <td>{{ $elemento->CATEGORIA }}</td>
                     <td>{{ $elemento->SERIE }}</td>
                     <td>{{ $elemento->MARCA }}</td>
-                    <td>{{ $elemento->CATEGORIA }}</td>
                     <td>{{ $elemento->FECHA_INGRESO }}</td>
-                    <td>{{ $elemento->FECHA_EGRESO }}</td>
+                    <td>{{ $elemento->FECHA_EGRESO ?? 'N/A' }}</td>
                     <td>{{ $elemento->ESTADO }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" style="text-align: center;">No hay registros disponibles.</td>
+                    <td colspan="8" style="text-align: center;">No hay registros disponibles.</td>
                 </tr>
             @endforelse
         </tbody>

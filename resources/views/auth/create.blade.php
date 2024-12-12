@@ -140,7 +140,7 @@
 
                     <!-- Contraseña -->
                     <div class="field">
-                        <label class="label" for="contraseña">Contraseña nueva:</label>
+                        <label class="label" for="contraseña">Nueva Contraseña nueva:</label>
                         <div class="control">
                             <input class="input @error('contraseña') is-danger @enderror" type="password"
                                 id="contraseña" name="contraseña" required>
@@ -323,6 +323,217 @@
             toggleNumeroFicha();
         });
     </script>
+
+    <!-- Agregar el modal de la política de privacidad -->
+    <div class="modal" id="privacyPolicyModal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Política de Privacidad de Datos</p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <div class="content">
+                    <h4>Servicio Nacional de Aprendizaje (SENA) Regional Casanare</h4>
+                    
+                    <h5>1. Información que Recolectamos</h5>
+                    <p>Recolectamos la siguiente información personal:</p>
+                    <ul>
+                        <li>Nombres y apellidos</li>
+                        <li>Tipo y número de documento de identidad</li>
+                        <li>Tipo de sangre (RH)</li>
+                        <li>Correos electrónicos (personal e institucional)</li>
+                        <li>Número telefónico</li>
+                        <li>Número de ficha (para aprendices)</li>
+                        <li>Fotografía de perfil</li>
+                    </ul>
+
+                    <h5>2. Uso de la Información</h5>
+                    <p>La información recolectada será utilizada para:</p>
+                    <ul>
+                        <li>Gestión de usuarios en la plataforma institucional</li>
+                        <li>Comunicación institucional</li>
+                        <li>Procesos académicos y administrativos</li>
+                        <li>Atención de emergencias (información médica)</li>
+                    </ul>
+
+                    <h5>3. Derechos del Usuario</h5>
+                    <p>Como titular de los datos personales, usted tiene derecho a:</p>
+                    <ul>
+                        <li>Conocer, actualizar y rectificar sus datos personales</li>
+                        <li>Solicitar la eliminación de sus datos</li>
+                        <li>Revocar la autorización otorgada para el tratamiento de datos</li>
+                        <li>Ser informado sobre el uso dado a sus datos</li>
+                    </ul>
+
+                    <h5>4. Seguridad</h5>
+                    <p>El SENA implementa medidas de seguridad técnicas y administrativas para proteger su información personal.</p>
+
+                    <h5>5. Contacto</h5>
+                    <p>Para ejercer sus derechos o realizar consultas sobre el tratamiento de sus datos, puede contactarnos a través de:</p>
+                    <ul>
+                        <li>Correo electrónico: protecciondatos@sena.edu.co</li>
+                        <li>Dirección: [Dirección de la sede Regional Casanare]</li>
+                        <li>Teléfono: [Número de contacto]</li>
+                    </ul>
+                </div>
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-success" id="closeModal">Entendido</button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Agregar el script para el modal -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('privacyPolicyModal');
+        const showModal = document.getElementById('showPrivacyPolicy');
+        const closeModal = document.getElementById('closeModal');
+        const modalBackground = modal.querySelector('.modal-background');
+        const modalDelete = modal.querySelector('.delete');
+
+        function toggleModal() {
+            modal.classList.toggle('is-active');
+        }
+
+        showModal.addEventListener('click', function(e) {
+            e.preventDefault();
+            toggleModal();
+        });
+
+        [closeModal, modalBackground, modalDelete].forEach(element => {
+            element.addEventListener('click', toggleModal);
+        });
+    });
+    </script>
+
+    <!-- Agregar este script antes del cierre del body -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Validación para nombres y apellidos (solo letras y espacios)
+        const soloLetras = document.querySelectorAll('#nombres, #apellidos');
+        soloLetras.forEach(input => {
+            input.addEventListener('input', function() {
+                this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+            });
+        });
+
+        // Validación para número de documento y teléfono (solo números)
+        const soloNumeros = document.querySelectorAll('#numero_documento, #telefono');
+        soloNumeros.forEach(input => {
+            input.addEventListener('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        });
+
+        // Validación de contraseña
+        const contraseña = document.getElementById('contraseña');
+        const contraseñaConfirm = document.getElementById('contraseña_confirmation');
+        const contraseñaError = document.getElementById('contraseaError');
+
+        contraseña.addEventListener('input', function() {
+            const value = this.value;
+            let mensaje = [];
+
+            if (value.length < 6) mensaje.push('Mínimo 6 caracteres');
+            if (!/[A-Z]/.test(value)) mensaje.push('Al menos una mayúscula');
+            if (!/[a-z]/.test(value)) mensaje.push('Al menos una minúscula');
+            if (!/[0-9]/.test(value)) mensaje.push('Al menos un número');
+            if (!/[!@#$%^&*]/.test(value)) mensaje.push('Al menos un símbolo (!@#$%^&*)');
+
+            contraseñaError.textContent = mensaje.join(', ');
+            contraseñaError.style.color = mensaje.length > 0 ? '#ff3860' : '#48c774';
+        });
+
+        // Validación de correos
+        const correoPersonal = document.getElementById('correo_personal');
+        const correoInstitucional = document.getElementById('correo_institucional');
+
+        correoInstitucional.addEventListener('input', function() {
+            if (!this.value.endsWith('@sena.edu.co')) {
+                this.setCustomValidity('El correo debe terminar en @sena.edu.co');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+    });
+    </script>
+
+    <script>
+    function togglePassword(inputId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(inputId + '-icon');
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+    </script>
+
+    <!-- Agregar este script para la vista previa de la imagen -->
+    <script>
+    document.getElementById('foto').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        const preview = document.getElementById('previewFoto');
+        const maxSize = 5 * 1024 * 1024; // 5MB en bytes
+        
+        if (file) {
+            // Verificar el tamaño del archivo
+            if (file.size > maxSize) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Archivo demasiado grande',
+                    text: 'El archivo seleccionado pesa ' + (file.size / (1024 * 1024)).toFixed(2) + 'MB. El tamaño máximo permitido es 5MB.',
+                    confirmButtonText: 'Entendido'
+                });
+                this.value = ''; // Limpiar el input
+                preview.style.display = 'none';
+                return;
+            }
+
+            // Verificar el tipo de archivo
+            const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            if (!validTypes.includes(file.type)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Formato no válido',
+                    text: 'Por favor, seleccione un archivo en formato JPG, JPEG, PNG o GIF.',
+                    confirmButtonText: 'Entendido'
+                });
+                this.value = '';
+                preview.style.display = 'none';
+                return;
+            }
+
+            // Mostrar vista previa
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            }
+            reader.readAsDataURL(file);
+        } else {
+            preview.style.display = 'none';
+        }
+    });
+    </script>
+
+    <!-- Validación adicional para nombres y apellidos -->
+    <script>
+    document.querySelectorAll('#nombres, #apellidos').forEach(input => {
+        input.addEventListener('input', function() {
+            this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+        });
+    });
+    </script>
+
 
 
 </body>

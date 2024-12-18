@@ -45,6 +45,14 @@
     <!-- Footer -->
     <footer class="footer bg-dark text-center text-white py-4">
         <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Acerca de ControlE</h4>
+                    <p>bla bla bla bla bla </p>
+                    <a href="{{ route('about') }}" class="btn btn-light btn-sm mt-2">Más información</a>
+
+                </div>
+            </div>
             <p class="m-0">© {{ date('Y') }} Control e. Todos los derechos reservados.</p>
         </div>
     </footer>

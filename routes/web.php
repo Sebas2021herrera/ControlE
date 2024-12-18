@@ -153,5 +153,5 @@ Route::middleware(['auth', 'checkRole:admin'])->group(function () {});
 
 // Ruta para la página About
 Route::get('/about', function () {
-    return view('about');
+    return view('index.about');
 })->name('about');

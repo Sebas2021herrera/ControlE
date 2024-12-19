@@ -1,8 +1,7 @@
 .section-content {
-    background-color: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%);
+    background: linear-gradient(145deg, #2e7d32 0%, #39a900 100%);
     color: white;
-    background-color: #0d6efd;
-    padding: 4rem 0;
+    padding: 2.5rem 0;
     margin-bottom: 10px;
     text-align: center;
 }
@@ -16,11 +15,13 @@
 
 .card:hover {
     transform: translateY(-5px);
+    /* box-shadow: 0 6px 12px rgba(46, 125, 50, 0.08); */
+    /* background-color: #f1f8e9; */
 }
 
 .card-icon {
     font-size: 3rem;
-    color: #0d6efd;
+    color: #429419;
     margin-bottom: 1rem;
 }
 
@@ -36,7 +37,7 @@
     transform: translateX(-50%);
     width: 2px;
     height: 100%;
-    background-color: #0d6efd;
+    background-color: #39a900;
 }
 
 .team-member {
@@ -57,4 +58,44 @@
     bottom: 20px;
     right: 20px;
     display: none;
+    background-color: #429419 !important;
+    border-color: #429419 !important;
 }
+.back-to-top:hover {
+    background-color: #39a900 !important;
+    border-color: #39a900 !important;
+}
+
+.fas.mb-3 {
+    color: #429419 !important;
+}
+
+.team-member-placeholder {
+    display: flex;
+    margin: 0 auto;
+    width: 150px;
+    height: 150px;
+    background-color: #39a900;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2.5rem;
+}
+.card .mb-3 {
+    font-size: 2rem;
+    color: #429419;
+}
+
+.section-content .lead {
+    padding: 0 5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    line-height: 1.8;
+}
+/* @media (min-width: 768px) {
+    .section-content .lead {
+        padding: 0 5rem;
+        margin: 1rem auto;
+    }
+} */

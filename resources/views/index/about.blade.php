@@ -14,7 +14,9 @@
             <img src="" alt="">
             <h1 class="display-4 fw-bold mb-3">Acerca de Control E</h1>
         </div>
-        <p class="lead">Lorem ipsum dolor sit amet consectetur adipiscing elit odio dis facilisis, auctor arcu semper nulla eleifend dui gravida porttitor.</p>
+        <p class="lead">El proyecto nace de una necesidad identificada por los aprendices del SENA Regional Casanare, 
+   buscando optimizar y asegurar el proceso de ingreso y egreso de elementos a la institución. 
+   Control E representa una solución innovadora desarrollada por y para la comunidad SENA.</p>
     </div>
 
     <div class="container">
@@ -45,7 +47,9 @@
                     <div class="card-body">
                         <i class="fas fa-chart-line card-icon"></i>
                         <h3 class="card-title">Impacto</h3>
-                        <p class="card-text">Mejoramos la eficiencia operativa, reducimos tiempos de gestión y garantizamos un control preciso de los recursos institucionales.</p>
+                        <p class="card-text">Control E mejora significativamente la eficiencia operativa del SENA, 
+               facilitando el trabajo del personal de seguridad, administrativos y aprendices. El sistema 
+               garantiza un control preciso y transparente de los recursos institucionales. </p>
                     </div>
                 </div>
             </div>
@@ -58,30 +62,30 @@
             </div>
             <div class="col-md-6 col-lg-3 mb-4">
                 <div class="card text-center p-3">
-                    <i class="fas fa-desktop mb-3" style="font-size: 2rem; color: #0d6efd;"></i>
+                    <i class="fas fa-desktop mb-3" ></i>
                     <h4>Lorem ipsum</h4>
                     <p>Lorem ipsum Lorem ipsum</p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3 mb-4">
                 <div class="card text-center p-3">
-                    <i class="fas fa-shield-alt mb-3" style="font-size: 2rem; color: #0d6efd;"></i>
+                    <i class="fas fa-shield-alt mb-3"></i>
                     <h4>Lorem ipsum</h4>
                     <p>Lorem ipsum Lorem ipsum</p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3 mb-4">
                 <div class="card text-center p-3">
-                    <i class="fas fa-chart-pie mb-3" style="font-size: 2rem; color: #0d6efd;"></i>
+                    <i class="fas fa-chart-pie mb-3"></i>
                     <h4>Lorem ipsum</h4>
                     <p>Lorem ipsum Lorem ipsum</p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3 mb-4">
                 <div class="card text-center p-3">
-                    <i class="fas fa-sync mb-3" style="font-size: 2rem; color: #0d6efd;"></i>
-                    <h4>Tiempo Real</h4>
-                    <p>Actualizaciones instantáneas</p>
+                    <i class="fas fa-sync mb-3"></i>
+                    <h4>Lorem ipsum</h4>
+                    <p>Lorem ipsum Lorem ipsum</p>
                 </div>
             </div>
         </div>
@@ -92,9 +96,10 @@
                 <h2 class="fw-bold">Nuestro Equipo</h2>
                 <p class="lead">Desarrollado por aprendices del SENA Regional Casanare</p>
             </div>
+            <div class="row justify-content-center">
             <div class="col-md-4">
                 <div class="team-member">
-                    <div class="team-member-placeholder" style="width: 150px; height: 150px; background-color: #0d6efd; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 2.5rem; margin: 0 auto;">
+                    <div class="team-member-placeholder">
                         DP
                     </div>
                     <h4>Desarrollador</h4>
@@ -103,12 +108,13 @@
             </div>
             <div class="col-md-4">
                 <div class="team-member">
-                    <div class="team-member-placeholder" style="width: 150px; height: 150px; background-color: #198754; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 2.5rem; margin: 0 auto;">
+                    <div class="team-member-placeholder">
                         DP
                     </div>
                     <h4>Desarrollador</h4>
                     <p>Aprendiz SENA Regional Casanare</p>
                 </div>
+            </div>
             </div>
         </div>
     </div>
@@ -121,19 +127,37 @@
                     <p class="mb-0">© {{ date('Y') }} Control E - SENA Regional Casanare</p>
                 </div>
                 <div class="col-md-6 text-center text-md-end">
-                    <a href="{{ url('/') }}" class="btn btn-outline-light">Volver al inicio</a>
+                    <a href="{{ route('welcome') }}" class="btn btn-outline-light">Volver al inicio</a>
                 </div>
             </div>
         </div>
     </footer>
 
     <!-- Botón Volver Arriba -->
-    <button class="btn btn-primary back-to-top" id="backToTop">
+    <button class="btn btn-primary back-to-top" id="backBottom">
         <i class="fas fa-arrow-up"></i>
     </button>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Mostrar/ocultar botón volver arriba
+        window.onscroll = function() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                document.querySelector('.back-to-top').style.display = "block";
+            } else {
+                document.querySelector('.back-to-top').style.display = "none";
+            }
+        };
+
+        // Funcionalidad botón volver arriba
+        document.querySelector('.back-to-top').addEventListener('click', function() {
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        });
+    </script>
+    <script>
+
+    </script>
     
 </body>
 </html>

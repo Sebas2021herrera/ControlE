@@ -47,10 +47,10 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h4>Acerca de ControlE</h4>
-                    <p>bla bla bla bla bla </p>
-                    <a href="{{ route('about') }}" class="btn btn-light btn-sm mt-2">Más información</a>
-
+                    <a href="{{ route('about') }}" class="text-light text-decoration">
+                    <p>Conoce más sobre nuestro sistema</p>
+                </a>
+                    
                 </div>
             </div>
             <p class="m-0">© {{ date('Y') }} Control e. Todos los derechos reservados.</p>

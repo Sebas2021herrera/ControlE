@@ -150,3 +150,6 @@ Route::middleware('auth')->group(function () {
 
 // Rutas específicas para admin (a completar si es necesario)
 Route::middleware(['auth', 'checkRole:admin'])->group(function () {});
+
+// Ruta para la página About
+Route::get('/about', [AboutController::class, 'index'])->name('about');

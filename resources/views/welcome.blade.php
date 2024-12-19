@@ -45,6 +45,14 @@
     <!-- Footer -->
     <footer class="footer bg-dark text-center text-white py-4">
         <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <a href="{{ route('about') }}" class="text-light text-decoration">
+                    <p>Conoce más sobre nuestro sistema</p>
+                </a>
+                    
+                </div>
+            </div>
             <p class="m-0">© {{ date('Y') }} Control e. Todos los derechos reservados.</p>
         </div>
     </footer>

@@ -13,6 +13,7 @@ use App\Models\Elemento;
 use App\Models\Categoria;
 use App\Http\Middleware\AdminAccess;
 use App\Http\Controllers\ReportesIngresosController;
+use App\Http\Controllers\AboutController;
 
 // Rutas para autenticación y registro
 Route::get('/controle', [WelcomeController::class, 'index'])->name('welcome');

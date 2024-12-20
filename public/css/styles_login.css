@@ -37,3 +37,64 @@ body {
 .bombilla {
     max-width: 24px; /* Ajusta el tamaño del ícono */
 }
+
+
+/* Estilos para el interruptor de modo noche */
+.mode-toggle {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    background-color: #f8f9fa;
+    border-radius: 20px;
+    padding: 5px 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.mode-toggle i {
+    margin-right: 8px;
+    font-size: 1.25rem;
+}
+
+.dark-mode {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+.dark-mode .card-header {
+    background-color: #000000;
+    border-color: #ffffff;
+}
+
+.dark-mode .btn-dark {
+    background-color: #000000;
+    border-color: #ffffff;
+}
+
+.dark-mode .footer-text {
+    color: #adb5bd;
+}
+
+.dark-mode .mode-toggle {
+    background-color: #495057;
+}
+
+.dark-mode .mode-toggle i {
+    color: #ffffff;
+}
+
+.dark-mode .custom-card {
+    background-color: #1c1c1c;
+    color: #ffffff;
+    border: 1px solid #343a40;
+}
+
+.dark-mode a {
+    color: #ffffff;
+}
+
+.dark-mode a:hover {
+    color: #adb5bd;
+}

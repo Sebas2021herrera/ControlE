@@ -60,7 +60,7 @@ html {
 }
 
 .navbar-brand {
-    font-size: 1.2rem;
+    /* font-size: 1.2rem; */
     color: white;
 }
 
@@ -460,4 +460,40 @@ html {
         text-align: center;
         margin-bottom:-10px;
     }
+}
+
+
+body.dark-mode {
+    background-color: #121212; /* Fondo oscuro */
+    color: #e0e0e0; /* Texto claro */
+}
+
+body.dark-mode .navbar {
+    background-color: #1e1e1e; /* Navbar oscuro */
+}
+
+body.dark-mode .card {
+    background-color: #2b2b2b; /* Fondo oscuro para tarjetas */
+    color: #e0e0e0; /* Texto claro */
+    box-shadow: none; /* Elimina sombras */
+}
+
+body.dark-mode .dropdown-menu {
+    background-color: #1e1e1e; /* Fondo oscuro del dropdown */
+    color: #e0e0e0;
+}
+
+body.dark-mode .dropdown-item:hover {
+    background-color: #444; /* Resalta la opción activa */
+}
+
+body.dark-mode .qr {
+    filter: invert(1); /* Invierte colores del código QR */
+}
+
+/* Ajustes para otros elementos */
+body.dark-mode .welcome-text,
+body.dark-mode .nombre-usuario,
+body.dark-mode .other-welcome {
+    color: #ffffff; /* Texto claro */
 }

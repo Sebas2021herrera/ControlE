@@ -16,6 +16,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    padding-bottom: 80px; /* Espacio para los botones fijos */
 }
 
 .card {
@@ -48,6 +49,7 @@ form {
 label {
     margin: 10px 0 5px;
     font-weight: bold;
+    color: #333;
 }
 
 input, select {
@@ -73,27 +75,6 @@ button:hover {
     background-color: #0056b3;
 }
 
-.error {
-    color: red;
-    font-size: 14px;
-    margin-top: -10px;
-    margin-bottom: 10px;
-}
-
-@media (max-width: 600px) {
-    .card {
-        width: 100%;
-        border-radius: 0;
-        box-shadow: none;
-        max-height: 100vh;
-    }
-
-    button {
-        font-size: 14px;
-        padding: 8px;
-    }
-}
-
 .buttons-container {
     position: fixed;
     bottom: 0;
@@ -101,15 +82,18 @@ button:hover {
     right: 0;
     background-color: white;
     padding: 1rem;
-    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: center;
     gap: 1rem;
     z-index: 1000;
 }
 
-.container {
-    padding-bottom: 80px; /* Espacio para los botones fijos */
+.error {
+    color: red;
+    font-size: 14px;
+    margin-top: -10px;
+    margin-bottom: 10px;
 }
 
 .modal-card {
@@ -139,22 +123,125 @@ button:hover {
     font-size: 0.95rem;
 }
 
-@media (max-width: 600px) {
-    .checkbox {
-        padding-right: 15px;
-    }
-    
-    .checkbox span {
-        font-size: 0.9rem;
-    }
-}
-
 .image img {
     max-height: 80px;
     width: auto;
 }
 
-/* Asegurar que el modal esté por encima de los botones fijos */
-.modal {
-    z-index: 1001;
+@media (max-width: 600px) {
+    .card {
+        width: 100%;
+        border-radius: 0;
+        box-shadow: none;
+        max-height: 100vh;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .checkbox {
+        padding-right: 15px;
+    }
+
+    .checkbox span {
+        font-size: 0.9rem;
+    }
+
+    .mode-toggle {
+        display: flex;
+        position: relative;
+        margin: 0 auto 10px;
+        justify-content: center;
+    }
+}
+
+/* Estilos para el interruptor de modo noche */
+.mode-toggle {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    background-color: #f8f9fa;
+    border-radius: 20px;
+    padding: 5px 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.mode-toggle i {
+    margin-right: 8px;
+    font-size: 1.25rem;
+}
+
+.dark-mode {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+.dark-mode .card {
+    background-color: #1c1c1c;
+    color: #ffffff;
+    border: 1px solid #343a40;
+}
+
+.dark-mode .buttons-container {
+    background-color: #1c1c1c;
+    box-shadow: 0 -2px 5px rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode button {
+    background-color: #495057;
+    color: #ffffff;
+    border: 1px solid #adb5bd;
+}
+
+.dark-mode button:hover {
+    background-color: #6c757d;
+}
+
+.dark-mode .mode-toggle {
+    background-color: #495057;
+}
+
+.dark-mode .mode-toggle i {
+    color: #ffffff;
+}
+
+.dark-mode a {
+    color: #ffffff;
+}
+
+.dark-mode a:hover {
+    color: #adb5bd;
+}
+
+.dark-mode h2 {
+    color: #f8f9fa;
+}
+
+.dark-mode label {
+    color: #ffffff;
+}
+
+
+/* Estilo específico para el contenido del modal en modo oscuro */
+.dark-mode .modal-card {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.dark-mode .modal-card .modal-card-title {
+    color: #000000;
+}
+
+.dark-mode .modal-card-body p,
+.dark-mode .modal-card-body ul li {
+    color: #000000;
+}
+
+.dark-mode .modal-card-body h5 {
+    color: #333333; /* Mantén un contraste suficiente para encabezados */
 }

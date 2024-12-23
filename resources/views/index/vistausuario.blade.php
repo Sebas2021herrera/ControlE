@@ -19,7 +19,7 @@
         justify-content-between">
         <!-- Contenedor del logo y nombre de usuario -->
         <div class="d-flex align-items-center">
-            <a class="navbar-brand text-white" href="#">Control E</a>
+            <h4 class="navbar-brand text-white" href="#">Control E</h4>
             <span class="text-white"> </span>
         </div>
 
@@ -46,6 +46,14 @@
                     <a class="dropdown-item text-white" href="#" data-bs-toggle="modal"
                         data-bs-target="#editarPerfilModal" style="transition: background-color 0.3s;">
                         Editar Perfil
+                    </a>
+                </li>
+                <li>
+                    <hr class="dropdown-divider" style="border-color: #39a900;">
+                </li>
+                <li>
+                    <a class="dropdown-item text-white" href="#" id="toggle-dark-mode" style="transition: background-color 0.3s;">
+                        Modo Noche
                     </a>
                 </li>
                 <li>
@@ -488,5 +496,22 @@
     // Insertar el QR como HTML en el contenedor
     document.getElementById('qr-code').innerHTML = qr.createImgTag(6, 6); // Escala ajustable
 </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const toggleDarkModeButton = document.getElementById('toggle-dark-mode');
+        toggleDarkModeButton.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+
+            // Cambiar texto del botón
+            if (document.body.classList.contains('dark-mode')) {
+                toggleDarkModeButton.textContent = 'Modo Día';
+            } else {
+                toggleDarkModeButton.textContent = 'Modo Noche';
+            }
+        });
+    });
+</script>
+
 
 </html>

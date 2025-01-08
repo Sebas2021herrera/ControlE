@@ -15,12 +15,6 @@
 
 <body>
 
-    <!-- Botón de modo noche -->
-    {{-- <div class="mode-toggle" id="modeToggle">
-        <i class="fas fa-moon" id="modeIcon"></i>
-        <span id="modeText">Modo Noche</span>
-    </div> --}}
-
     <div class="container">
         <div class="card">
             <div class="mode-toggle" id="modeToggle">
@@ -116,7 +110,7 @@
                         @enderror
                     </div>
 
-                    <!-- tipo de sangre -->
+                    <!-- Tipo de sangre -->
                     <div class="field">
                         <label class="label" for="rh">Tipo de Sangre (RH):</label>
                         <div class="control">

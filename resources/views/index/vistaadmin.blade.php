@@ -164,6 +164,11 @@
         <div class="modal-content">
             <span class="close-btn">&times;</span>
             <div class="ventana-formulario">
+                
+                <figure class="image is-flex is-justify-content-center mb-4">
+                    <img src="{{ asset('imagenes/logo-del-sena-01.png') }}" alt="Logo SENA" style="max-width: 200px;">
+                </figure>
+
                 <h2>Registro de usuarios</h2>
                 <form id="registroForm" method="POST" action="{{ route('admin.usuarios.store') }}" enctype="multipart/form-data">
                     @csrf
@@ -274,6 +279,10 @@
                             <input class="input @error('contraseña') is-danger @enderror" type="password"
                                 id="contraseña" name="contraseña" required
                                 placeholder="Mínimo 6 caracteres, al menos una mayúscula, un número y un símbolo (!@#$%^&*)">
+                                <span class="icon is-small is-right" style="pointer-events: all; cursor: pointer;"
+                                onclick="togglePassword('contraseña')">
+                                <i class="fas fa-eye" id="contraseña-icon"></i>
+                                </span>
                         </div>
                         @error('contraseña')
                             <p class="help is-danger">{{ $message }}</p>
@@ -286,6 +295,10 @@
                             <input class="input @error('contraseña_confirmation') is-danger @enderror" type="password"
                                 id="contraseña_confirmation" name="contraseña_confirmation" required
                                 placeholder="Repita la contraseña">
+                                <span class="icon is-small is-right" style="pointer-events: all; cursor: pointer;"
+                                onclick="togglePassword('contraseña')">
+                                <i class="fas fa-eye" id="contraseña-icon"></i>
+                                </span>
                         </div>
                         @error('contraseña_confirmation')
                             <p class="help is-danger">{{ $message }}</p>
@@ -361,6 +374,11 @@
         <div class="modal-content">
             <span class="close-btn">&times;</span>
             <div class="ventana-formulario">
+
+                <figure class="image is-flex is-justify-content-center mb-4">
+                    <img src="{{ asset('imagenes/logo-del-sena-01.png') }}" alt="Logo SENA" style="max-width: 200px;">
+                </figure>
+
                 <h2>Registro de elementos</h2>
                     <!-- Aquí puedes agregar los campos para registrar elementos -->
                     <!-- Campo de Número Documento Usuario -->
@@ -369,7 +387,7 @@
                         @csrf             
                         <div class="mb-3">
                             <label for="documento" class="form-label">Número documento</label>
-                            <input type="text" id="documento" name="documento" class="form-control" required>
+                            <input type="text" id="documento" name="documento"  required placeholder="Ingresa el número de documento del usuario registrado" oninput="this.value = this.value.replace(/[^0-9]/g, '').substring(0, 11)" class="form-control" required>
                             <label for="categoria_id" class="form-label">Categoría</label>
                             <select id="categoria_id" name="categoria_id" class="form-select" required>
                                 @foreach ($categorias as $categoria)
@@ -379,24 +397,24 @@
                         </div>
                         <div class="mb-3">
                             <label for="descripcion" class="form-label">Descripción</label>
-                            <input type="text" id="descripcion" name="descripcion" class="form-control" required>
+                            <input type="text" id="descripcion" name="descripcion"  placeholder="Haz una descripción del elemento a registrar" class="form-control" required>
                         </div>
                         <div class="mb-3">
                             <label for="marca" class="form-label">Marca</label>
-                            <input type="text" id="marca" name="marca" class="form-control" required>
+                            <input type="text" id="marca" name="marca" required placeholder="Ingresa la marca del elemento" class="form-control" required>
                         </div>
                         <div class="mb-3">
                             <label for="modelo" class="form-label">Modelo</label>
-                            <input type="text" id="modelo" name="modelo" class="form-control" required>
+                            <input type="text" id="modelo" name="modelo" required placeholder="Ingresa el modelo del elemento" class="form-control" required>
                         </div>
                         <div class="mb-3">
                             <label for="serie" class="form-label">Número de Serie</label>
-                            <input type="text" id="serie" name="serie" class="form-control" required>
+                            <input type="text" id="serie" name="serie" required placeholder="Ingresa el número de serie del elemento" class="form-control" required>
                         </div>
                         <div class="mb-3">
                             <label for="especificaciones_tecnicas" class="form-label">Especificaciones
                                 Técnicas</label>
-                            <textarea id="especificaciones_tecnicas" name="especificaciones_tecnicas" class="form-control" rows="3"
+                            <textarea id="especificaciones_tecnicas" name="especificaciones_tecnicas" placeholder="Escribe las especificaciones técnicas del nuevo elemento" class="form-control" rows="3"
                                 required></textarea>
                         </div>
                         

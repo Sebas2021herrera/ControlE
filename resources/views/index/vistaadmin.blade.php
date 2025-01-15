@@ -164,30 +164,35 @@
         <div class="modal-content">
             <span class="close-btn">&times;</span>
             <div class="ventana-formulario">
+                
+                <figure class="image is-flex is-justify-content-center mb-4">
+                    <img src="{{ asset('imagenes/logo-del-sena-01.png') }}" alt="Logo SENA" style="max-width: 200px;">
+                </figure>
+
                 <h2>Registro de usuarios</h2>
-                    <form id="registroForm" method="POST" action="{{ route('admin.usuarios.store') }}" enctype="multipart/form-data">
-                        @csrf
-                        <div class="field">
-                            <label class="label" for="nombres">Nombres:</label>
-                            <div class="control">
-                                <input class="input @error('nombres') is-danger @enderror" type="text" id="nombres"
-                                    name="nombres" value="{{ old('nombres') }}" required>
-                            </div>
-                            @error('nombres')
-                                <p class="help is-danger">{{ $message }}</p>
-                            @enderror
+                <form id="registroForm" method="POST" action="{{ route('admin.usuarios.store') }}" enctype="multipart/form-data">
+                    @csrf
+                    <div class="field">
+                        <label class="label" for="nombres">Nombres:</label>
+                        <div class="control">
+                            <input class="input @error('nombres') is-danger @enderror" type="text" id="nombres"
+                                name="nombres" value="{{ old('nombres') }}" required placeholder="Ingresa los nombres del nuevo usuario">
                         </div>
+                        @error('nombres')
+                            <p class="help is-danger">{{ $message }}</p>
+                        @enderror
+                    </div>
             
-                        <div class="field">
-                            <label class="label" for="apellidos">Apellidos:</label>
-                            <div class="control">
-                                <input class="input @error('apellidos') is-danger @enderror" type="text" id="apellidos"
-                                    name="apellidos" value="{{ old('apellidos') }}" required>
-                            </div>
-                            @error('apellidos')
-                                <p class="help is-danger">{{ $message }}</p>
-                            @enderror
+                    <div class="field">
+                        <label class="label" for="apellidos">Apellidos:</label>
+                        <div class="control">
+                            <input class="input @error('apellidos') is-danger @enderror" type="text" id="apellidos"
+                                name="apellidos" value="{{ old('apellidos') }}" required placeholder="Ingresa los apellidos del nuevo usuario">
                         </div>
+                        @error('apellidos')
+                            <p class="help is-danger">{{ $message }}</p>
+                        @enderror
+                    </div>
             
                         <div class="field">
                             <label class="label" for="tipo_documento">Tipo de Documento:</label>
@@ -231,122 +236,134 @@
                         @enderror
                     </div>
 
-                        <div class="field">
-                            <label class="label" for="numero_documento">Número de Documento:</label>
-                            <div class="control">
-                                <input class="input @error('numero_documento') is-danger @enderror" type="text"
-                                    id="numero_documento" name="numero_documento" value="{{ old('numero_documento') }}"
-                                    required>
-                            </div>
-                            @error('numero_documento')
-                                <p class="help is-danger">{{ $message }}</p>
-                            @enderror
+                    <div class="field">
+                        <label class="label" for="numero_documento">Número de Documento:</label>
+                        <div class="control">
+                            <input class="input @error('numero_documento') is-danger @enderror" type="text"
+                                id="numero_documento" name="numero_documento" value="{{ old('numero_documento') }}"
+                                required maxlength="11" required placeholder="Ingresa el número de documento"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '').substring(0, 11)">
                         </div>
+                        @error('numero_documento')
+                            <p class="help is-danger">{{ $message }}</p>
+                        @enderror
+                    </div>
+    
+                    <div class="field">
+                        <label class="label" for="correo_personal">Correo Personal:</label>
+                        <div class="control">
+                            <input class="input @error('correo_personal') is-danger @enderror" type="email"
+                                id="correo_personal" name="correo_personal" value="{{ old('correo_personal') }}"
+                                required placeholder="Ingresa su correo personal">
+                        </div>
+                        @error('correo_personal')
+                            <p class="help is-danger">{{ $message }}</p>
+                        @enderror
+                    </div>
             
-                        <div class="field">
-                            <label class="label" for="correo_personal">Correo Personal:</label>
-                            <div class="control">
-                                <input class="input @error('correo_personal') is-danger @enderror" type="email"
-                                    id="correo_personal" name="correo_personal" value="{{ old('correo_personal') }}"
-                                    required>
-                            </div>
-                            @error('correo_personal')
-                                <p class="help is-danger">{{ $message }}</p>
-                            @enderror
+                    <div class="field">
+                        <label class="label" for="correo_institucional">Correo Institucional:</label>
+                        <div class="control">
+                            <input class="input @error('correo_institucional') is-danger @enderror" type="email"
+                                id="correo_institucional" name="correo_institucional"
+                                value="{{ old('correo_institucional') }}" required placeholder="Ingresa correo institucional">
                         </div>
+                        @error('correo_institucional')
+                            <p class="help is-danger">{{ $message }}</p>
+                        @enderror
+                    </div>
             
-                        <div class="field">
-                            <label class="label" for="correo_institucional">Correo Institucional:</label>
-                            <div class="control">
-                                <input class="input @error('correo_institucional') is-danger @enderror" type="email"
-                                    id="correo_institucional" name="correo_institucional"
-                                    value="{{ old('correo_institucional') }}" required>
-                            </div>
-                            @error('correo_institucional')
-                                <p class="help is-danger">{{ $message }}</p>
-                            @enderror
+                    <div class="field">
+                        <label class="label" for="contraseña">Nueva Contraseña:</label>
+                        <div class="control">
+                            <input class="input @error('contraseña') is-danger @enderror" type="password"
+                                id="contraseña" name="contraseña" required
+                                placeholder="Mínimo 6 caracteres, al menos una mayúscula, un número y un símbolo (!@#$%^&*)">
+                                <span class="icon is-small is-right" style="pointer-events: all; cursor: pointer;"
+                                onclick="togglePassword('contraseña')">
+                                <i class="fas fa-eye" id="contraseña-icon"></i>
+                                </span>
                         </div>
+                        @error('contraseña')
+                            <p class="help is-danger">{{ $message }}</p>
+                        @enderror
+                    </div>
             
-                        <div class="field">
-                            <label class="label" for="contraseña">Contraseña:</label>
-                            <div class="control">
-                                <input class="input @error('contraseña') is-danger @enderror" type="password"
-                                    id="contraseña" name="contraseña" required>
-                            </div>
-                            <p id="contrasenaError" class="help is-danger"></p>
-                            @error('contraseña')
-                                <p class="help is-danger">{{ $message }}</p>
-                            @enderror
+                    <div class="field">
+                        <label class="label" for="contraseña_confirmation">Confirmar Contraseña:</label>
+                        <div class="control">
+                            <input class="input @error('contraseña_confirmation') is-danger @enderror" type="password"
+                                id="contraseña_confirmation" name="contraseña_confirmation" required
+                                placeholder="Repita la contraseña">
+                                <span class="icon is-small is-right" style="pointer-events: all; cursor: pointer;"
+                                onclick="togglePassword('contraseña')">
+                                <i class="fas fa-eye" id="contraseña-icon"></i>
+                                </span>
                         </div>
+                        @error('contraseña_confirmation')
+                            <p class="help is-danger">{{ $message }}</p>
+                        @enderror
+                    </div>
             
-                        <div class="field">
-                            <label class="label" for="contraseña_confirmation">Confirmar Contraseña:</label>
-                            <div class="control">
-                                <input class="input @error('contraseña_confirmation') is-danger @enderror" type="password"
-                                    id="contraseña_confirmation" name="contraseña_confirmation" required>
-                            </div>
-                            <p id="confirmarContrasenaError" class="help is-danger"></p>
-                            @error('contraseña_confirmation')
-                                <p class="help is-danger">{{ $message }}</p>
-                            @enderror
+                    <div class="field">
+                        <label class="label" for="telefono">Teléfono:</label>
+                        <div class="control">
+                            <input class="input @error('telefono') is-danger @enderror" type="number" id="telefono"
+                                name="telefono" value="{{ old('telefono') }}" required maxlength="10"
+                                placeholder="Ingresa teléfono del nuevo usuario"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '').substring(0, 10)">
                         </div>
+                        <small class="text-muted">Máximo 10 dígitos</small>
+                        @error('telefono')
+                            <p class="help is-danger">{{ $message }}</p>
+                        @enderror
+                    </div>
             
-                        <div class="field">
-                            <label class="label" for="telefono">Teléfono:</label>
-                            <div class="control">
-                                <input class="input @error('telefono') is-danger @enderror" type="tel" id="telefono"
-                                    name="telefono" value="{{ old('telefono') }}" required>
+                    <div class="field">
+                        <label class="label" for="rol">Rol:</label>
+                        <div class="control">
+                            <div class="select @error('rol') is-danger @enderror">
+                                <select id="rol" name="rol" required>
+                                    <option value="1" {{ old('rol') == 1 ? 'selected' : '' }}>Administrador</option>
+                                    <option value="2" {{ old('rol') == 2 ? 'selected' : '' }}>Control</option>
+                                    <option value="3" {{ old('rol') == 3 ? 'selected' : '' }}>Aprendiz</option>
+                                    <option value="4" {{ old('rol') == 4 ? 'selected' : '' }}>Visitante</option>
+                                    <option value="5" {{ old('rol') == 5 ? 'selected' : '' }}>Funcionario</option>
+                                </select>
                             </div>
-                            @error('telefono')
-                                <p class="help is-danger">{{ $message }}</p>
-                            @enderror
                         </div>
+                        @error('rol')
+                            <p class="help is-danger">{{ $message }}</p>
+                        @enderror
+                    </div>
             
-                        <div class="field">
-                            <label class="label" for="rol">Rol:</label>
-                            <div class="control">
-                                <div class="select @error('rol') is-danger @enderror">
-                                    <select id="rol" name="rol" required>
-                                        <option value="1" {{ old('rol') == 1 ? 'selected' : '' }}>Administrador</option>
-                                        <option value="2" {{ old('rol') == 2 ? 'selected' : '' }}>Control</option>
-                                        <option value="3" {{ old('rol') == 3 ? 'selected' : '' }}>Aprendiz</option>
-                                        <option value="4" {{ old('rol') == 4 ? 'selected' : '' }}>Visitante</option>
-                                        <option value="5" {{ old('rol') == 5 ? 'selected' : '' }}>Funcionario
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
-                            @error('rol')
-                                <p class="help is-danger">{{ $message }}</p>
-                            @enderror
+                    <div class="field" id="numeroFichaField">
+                        <label class="label" for="numero_ficha">Número de Ficha:</label>
+                        <div class="control">
+                            <input class="input @error('numero_ficha') is-danger @enderror" type="number"
+                                id="numero_ficha" name="numero_ficha" value="{{ old('numero_ficha') }}"
+                                placeholder="Ingresa número de ficha">
                         </div>
-            
-                        <div class="field" id="numeroFichaField">
-                            <label class="label" for="numero_ficha">Número de Ficha:</label>
-                            <div class="control">
-                                <input class="input @error('numero_ficha') is-danger @enderror" type="text"
-                                    id="numero_ficha" name="numero_ficha" value="{{ old('numero_ficha') }}">
-                            </div>
-                            @error('numero_ficha')
-                                <p class="help is-danger">{{ $message }}</p>
-                            @enderror
+                        @error('numero_ficha')
+                            <p class="help is-danger">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div class="field">
+                        <label class="label" for="foto">Foto (máximo 5MB):</label>
+                        <input type="file" id="foto" name="foto" class="form-control" accept="image/*">
+                        <small class="text-muted">Formatos permitidos: JPG, JPEG, PNG, GIF. Tamaño máximo: 5MB</small>
+                        <div class="mt-2">
+                            <img id="previewUsuario" src="#" alt="Vista previa de la foto"
+                                style="display: none; max-width: 200px; height: auto;">
                         </div>
-                        <div class="field">
-                            <label class="label" for="foto">Foto (máximo 5MB):</label>
-                            <input type="file" id="foto" name="foto" class="form-control" accept="image/*">
-                            <small class="text-muted">Formatos permitidos: JPG, JPEG, PNG, GIF. Tamaño máximo: 5MB</small>
-                            <div class="mt-2">
-                                <img id="previewUsuario" src="#" alt="Vista previa de la foto" 
-                                     style="display: none; max-width: 200px; height: auto;">
-                            </div>
-                        </div>
+                    </div>
                         
             
-                        <div class="field">
-                            <div class="control">
-                                <button class="button is-success" type="submit">Registrar</button>
-                            </div>
+                    <div class="field">
+                        <div class="control">
+                            <button class="button is-success" type="submit">Registrar</button>
                         </div>
+                    </div>
                 </form>
             </div>
         </div>
@@ -357,6 +374,11 @@
         <div class="modal-content">
             <span class="close-btn">&times;</span>
             <div class="ventana-formulario">
+
+                <figure class="image is-flex is-justify-content-center mb-4">
+                    <img src="{{ asset('imagenes/logo-del-sena-01.png') }}" alt="Logo SENA" style="max-width: 200px;">
+                </figure>
+
                 <h2>Registro de elementos</h2>
                     <!-- Aquí puedes agregar los campos para registrar elementos -->
                     <!-- Campo de Número Documento Usuario -->
@@ -365,7 +387,7 @@
                         @csrf             
                         <div class="mb-3">
                             <label for="documento" class="form-label">Número documento</label>
-                            <input type="text" id="documento" name="documento" class="form-control" required>
+                            <input type="text" id="documento" name="documento"  required placeholder="Ingresa el número de documento del usuario registrado" oninput="this.value = this.value.replace(/[^0-9]/g, '').substring(0, 11)" class="form-control" required>
                             <label for="categoria_id" class="form-label">Categoría</label>
                             <select id="categoria_id" name="categoria_id" class="form-select" required>
                                 @foreach ($categorias as $categoria)
@@ -375,24 +397,24 @@
                         </div>
                         <div class="mb-3">
                             <label for="descripcion" class="form-label">Descripción</label>
-                            <input type="text" id="descripcion" name="descripcion" class="form-control" required>
+                            <input type="text" id="descripcion" name="descripcion"  placeholder="Haz una descripción del elemento a registrar" class="form-control" required>
                         </div>
                         <div class="mb-3">
                             <label for="marca" class="form-label">Marca</label>
-                            <input type="text" id="marca" name="marca" class="form-control" required>
+                            <input type="text" id="marca" name="marca" required placeholder="Ingresa la marca del elemento" class="form-control" required>
                         </div>
                         <div class="mb-3">
                             <label for="modelo" class="form-label">Modelo</label>
-                            <input type="text" id="modelo" name="modelo" class="form-control" required>
+                            <input type="text" id="modelo" name="modelo" required placeholder="Ingresa el modelo del elemento" class="form-control" required>
                         </div>
                         <div class="mb-3">
                             <label for="serie" class="form-label">Número de Serie</label>
-                            <input type="text" id="serie" name="serie" class="form-control" required>
+                            <input type="text" id="serie" name="serie" required placeholder="Ingresa el número de serie del elemento" class="form-control" required>
                         </div>
                         <div class="mb-3">
                             <label for="especificaciones_tecnicas" class="form-label">Especificaciones
                                 Técnicas</label>
-                            <textarea id="especificaciones_tecnicas" name="especificaciones_tecnicas" class="form-control" rows="3"
+                            <textarea id="especificaciones_tecnicas" name="especificaciones_tecnicas" placeholder="Escribe las especificaciones técnicas del nuevo elemento" class="form-control" rows="3"
                                 required></textarea>
                         </div>
                         
@@ -1146,6 +1168,81 @@ document.addEventListener('DOMContentLoaded', function() {
             subtree: true
         });
     });
+</script>
+
+<script>
+    // Código Javascript para programar la funcionalidad de escribir solo números en los inputs de número de documento y teléfono
+     const soloNumeros = document.querySelectorAll('#numero_documento, #telefono');
+        soloNumeros.forEach(input => {
+            input.addEventListener('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        });
+</script>
+
+<script>
+    // Validación y mostrar/ocultar contraseñas
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Obtener elementos de la página
+    const nuevaContraseña = document.getElementById("nueva_contraseña");
+    const confirmarContraseña = document.getElementById("confirmar_contraseña");
+    const contraseñaError = document.getElementById("contraseña_error");
+
+    // Función para actualizar el mensaje de validación
+    function validarContraseña(input) {
+        const value = input.value;
+        let mensajes = [];
+
+        if (value.length < 6) mensajes.push("Mínimo 6 caracteres");
+        if (!/[A-Z]/.test(value)) mensajes.push("Al menos una mayúscula");
+        if (!/[0-9]/.test(value)) mensajes.push("Al menos un número");
+        if (!/[!@#$%^&*]/.test(value)) mensajes.push("Al menos un símbolo (!@#$%^&*)");
+
+        // Actualizar el mensaje de error
+        contraseñaError.textContent = mensajes.join(", ");
+        contraseñaError.style.color = mensajes.length > 0 ? "#ff3860" : "#48c774";
+    }
+
+    // Agregar evento para la validación en tiempo real
+    nuevaContraseña.addEventListener("input", function () {
+        validarContraseña(this);
+    });
+
+    // Función para alternar mostrar/ocultar contraseñas
+    function togglePasswordVisibility(input, toggleIcon) {
+        const isPassword = input.type === "password";
+        input.type = isPassword ? "text" : "password";
+
+        // Cambiar el icono según el estado
+        toggleIcon.classList.toggle("fa-eye");
+        toggleIcon.classList.toggle("fa-eye-slash");
+    }
+
+    // Configurar iconos de mostrar/ocultar contraseñas
+    const toggleNuevaContraseña = document.querySelector("#toggle_nueva_contraseña");
+    const toggleConfirmarContraseña = document.querySelector("#toggle_confirmar_contraseña");
+
+    toggleNuevaContraseña.addEventListener("click", function () {
+        togglePasswordVisibility(nuevaContraseña, this);
+    });
+
+    toggleConfirmarContraseña.addEventListener("click", function () {
+        togglePasswordVisibility(confirmarContraseña, this);
+    });
+
+    // Verificar que ambas contraseñas coincidan
+    confirmarContraseña.addEventListener("input", function () {
+        const errorMensaje = document.getElementById("coincidencia_error");
+        if (nuevaContraseña.value !== confirmarContraseña.value) {
+            errorMensaje.textContent = "Las contraseñas no coinciden";
+            errorMensaje.style.color = "#ff3860";
+        } else {
+            errorMensaje.textContent = "";
+        }
+    });
+});
+
 </script>
 </body>
 </html>

@@ -101,22 +101,22 @@ class ReportesElementosController extends Controller
     public function generarPDF(Request $request)
     {
         try {
-            \Log::info('Iniciando generación de PDF con parámetros:', $request->all());
+            Log::info('Iniciando generación de PDF con parámetros:', $request->all());
 
             if (!Auth::check()) {
-                \Log::warning('Usuario no autenticado intentando generar PDF');
+                Log::warning('Usuario no autenticado intentando generar PDF');
                 return redirect()->route('login')
                     ->with('error', 'Debes iniciar sesión para generar el reporte.');
             }
 
             if (Auth::user()->roles_id !== 1) {
-                \Log::warning('Usuario sin permisos intentando generar PDF');
+                Log::warning('Usuario sin permisos intentando generar PDF');
                 return redirect()->back()
                     ->with('error', 'No tienes permisos para generar este reporte.');
             }
 
             $usuario = Auth::user();
-            \Log::info('Usuario autenticado:', ['id' => $usuario->id]);
+            Log::info('Usuario autenticado:', ['id' => $usuario->id]);
 
             $query = ControlIngreso::with(['usuario', 'reportesIngresos.elemento.categoria'])
                 ->select('control_ingresos.*');
@@ -157,21 +157,21 @@ class ReportesElementosController extends Controller
             }
 
             if ($elementos->isEmpty()) {
-                \Log::warning('No se encontraron elementos para generar el PDF');
+                Log::warning('No se encontraron elementos para generar el PDF');
                 return redirect()->back()
                     ->with('error', 'No se encontraron datos para generar el reporte.');
             }
 
-            \Log::info('Elementos encontrados para PDF:', ['count' => $elementos->count()]);
+            Log::info('Elementos encontrados para PDF:', ['count' => $elementos->count()]);
 
             $pdf = PDF::loadView('PDF.pdf_elementos', compact('usuario', 'elementos'));
-            \Log::info('PDF generado correctamente');
+            Log::info('PDF generado correctamente');
             
             return $pdf->download('reporte_elementos.pdf');
             
         } catch (\Exception $e) {
-            \Log::error('Error generando PDF: ' . $e->getMessage());
-            \Log::error($e->getTraceAsString());
+            Log::error('Error generando PDF: ' . $e->getMessage());
+            Log::error($e->getTraceAsString());
             return redirect()->back()
                 ->with('error', 'Error al generar el PDF: ' . $e->getMessage());
         }

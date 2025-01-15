@@ -545,3 +545,8 @@ body {
     gap: 20px; /* Espacio entre Registro y Reportes */
     align-items: center;
 }
+
+.logo-sena-registro {
+    height: 50px;
+    width: 50px;
+}

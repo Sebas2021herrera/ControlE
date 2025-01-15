@@ -14,8 +14,13 @@
 </head>
 
 <body>
+
     <div class="container">
         <div class="card">
+            <div class="mode-toggle" id="modeToggle">
+                <i class="fas fa-moon" id="modeIcon"></i>
+                <span id="modeText">Modo Noche</span>
+            </div>
             <div class="card-content">
                 <!-- Agregar el logo del SENA -->
                 <figure class="image is-flex is-justify-content-center mb-4">
@@ -105,7 +110,7 @@
                         @enderror
                     </div>
 
-                    <!-- tipo de sangre -->
+                    <!-- Tipo de sangre -->
                     <div class="field">
                         <label class="label" for="rh">Tipo de Sangre (RH):</label>
                         <div class="control">
@@ -588,7 +593,35 @@
     });
     </script>
 
+    <script>
+        // Inicializar modo noche si está activado en localStorage
+        document.addEventListener('DOMContentLoaded', () => {
+            const body = document.body;
+            const modeToggle = document.getElementById('modeToggle');
+            const modeIcon = document.getElementById('modeIcon');
+            const modeText = document.getElementById('modeText');
 
+            if (localStorage.getItem('dark-mode') === 'true') {
+                body.classList.add('dark-mode');
+                modeIcon.classList.replace('fa-moon', 'fa-sun');
+                modeText.textContent = 'Modo Claro';
+            }
+
+            modeToggle.addEventListener('click', () => {
+                body.classList.toggle('dark-mode');
+                const isDarkMode = body.classList.contains('dark-mode');
+                localStorage.setItem('dark-mode', isDarkMode);
+
+                if (isDarkMode) {
+                    modeIcon.classList.replace('fa-moon', 'fa-sun');
+                    modeText.textContent = 'Modo Claro';
+                } else {
+                    modeIcon.classList.replace('fa-sun', 'fa-moon');
+                    modeText.textContent = 'Modo Noche';
+                }
+            });
+        });
+    </script>
 
 </body>
 

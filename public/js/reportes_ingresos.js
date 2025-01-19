@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Evento submit del formulario
     formReporte.addEventListener('submit', function (e) {
-        e.preventDefault(); // Evitar recarga de la página
+        e.preventDefault();
 
         // Validar fechas
         const fechaInicio = inputFechaInicio.value;
@@ -28,78 +28,91 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // Limpiar mensajes previos y mostrar spinner
-        mensajeError.textContent = '';
+        mensajeError.classList.add('is-hidden');
         resultadosContainer.innerHTML = '';
         spinner.style.display = 'block';
 
-        // Preparar datos para la solicitud AJAX
-        const datos = {
+        // Construir los parámetros de la consulta
+        const params = new URLSearchParams({
             fecha_inicio: fechaInicio,
-            fecha_final: fechaFinal,
-            documento_usuario: documento
-        };
+            fecha_final: fechaFinal
+        });
 
-        // Realizar solicitud AJAX
-        fetch(formReporte.dataset.url, {
-            method: 'POST',
+        if (documento) {
+            params.append('documento_usuario', documento);
+        }
+
+        // Realizar la consulta al servidor
+        fetch(`${formReporte.action}?${params.toString()}`, {
+            method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': formReporte.dataset.token
-            },
-            body: JSON.stringify(datos)
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => {
+                    throw new Error(err.error || `Error ${response.status}`);
+                });
+            }
+            return response.json();
+        })
         .then(data => {
-            spinner.style.display = 'none'; // Ocultar spinner
-
+            spinner.style.display = 'none';
+            
             if (data.success) {
                 mostrarResultados(data.ingresos);
             } else {
-                mostrarMensajeError(data.message || 'No se encontraron registros.');
+                throw new Error(data.error || 'No se encontraron registros.');
             }
         })
         .catch(error => {
             spinner.style.display = 'none';
-            mostrarMensajeError('Error al realizar la consulta. Inténtalo nuevamente.');
+            mostrarMensajeError(error.message);
             console.error('Error:', error);
         });
     });
 
     // Función para mostrar los resultados
     function mostrarResultados(ingresos) {
-        if (ingresos.length === 0) {
-            resultadosContainer.innerHTML = '<p>No se encontraron registros.</p>';
+        resultadosContainer.innerHTML = '';
+
+        if (!ingresos || ingresos.length === 0) {
+            resultadosContainer.innerHTML = `
+                <tr>
+                    <td colspan="5" class="has-text-centered">No se encontraron registros</td>
+                </tr>
+            `;
             return;
         }
 
-        // Actualización de los encabezados de las columnas
-        let html = '<table class="table is-bordered is-striped is-hoverable"><thead><tr>';
-        html += '<th>ID</th><th class="centro">NOMBRE CENTRO</th><th>FECHA INGRESO</th><th>FECHA EGRESO</th><th>ESTADO</th>';
-        html += '</tr></thead><tbody>';
-
         ingresos.forEach(ingreso => {
-            // Ajuste de las columnas de acuerdo con los nuevos datos
-            html += `<tr>
-                        <td>${ingreso.id}</td>  <!-- ID -->
-                        <td>${ingreso.centro.nombre}</td>  <!-- NOMBRE CENTRO -->
-                        <td>${ingreso.fecha_ingreso}</td>  <!-- FECHA INGRESO -->
-                        <td>${ingreso.fecha_egreso}</td>   <!-- FECHA EGRESO -->
-                        <td>${ingreso.estado}</td>  <!-- ESTADO -->
-                    </tr>`;
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${ingreso.ID}</td>
+                <td>${ingreso.NOMBRE_CENTRO}</td>
+                <td>${ingreso.NUMERO_DOCUMENTO}</td> <!-- Mostrar número de documento -->
+                <td>${ingreso.FECHA_INGRESO}</td>
+                <td>${ingreso.FECHA_EGRESO || 'N/A'}</td>
+                <td>${ingreso.ESTADO}</td>
+            `;
+            resultadosContainer.appendChild(row);
         });
-
-        html += '</tbody></table>';
-        resultadosContainer.innerHTML = html;
     }
 
     // Función para mostrar mensajes de error
     function mostrarMensajeError(mensaje) {
         mensajeError.textContent = mensaje;
-        mensajeError.style.display = 'block';
+        mensajeError.classList.remove('is-hidden');
     }
 
     // Generar PDF
-    document.getElementById('generarPDF').addEventListener('click', function() {
-        window.location.href = this.dataset.url;
-    });    
+    const btnGenerarPDF = document.getElementById('generarPDF');
+    if (btnGenerarPDF) {
+        btnGenerarPDF.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = this.dataset.url;
+        });
+    }
 });

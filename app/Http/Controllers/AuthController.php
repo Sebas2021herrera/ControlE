@@ -170,7 +170,7 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         Auth::logout();
-        return redirect('/');
+        return redirect('/controle');
     }
 
     public function updateProfile(Request $request)

@@ -15,11 +15,11 @@ use App\Http\Controllers\ReportesIngresosController;
 
 
 // Rutas para autenticación y registro
-Route::get('/', [WelcomeController::class, 'index']);
+Route::get('/controle', [WelcomeController::class, 'index']);
 Route::get('login', [AuthController::class, 'showLogin'])->name('login');
 Route::get('create', [AuthController::class, 'create'])->name('create');
 Route::post('registrado', [AuthController::class, 'createpost'])->name('createpost');
-//Route::post('/createpost', [AdminController::class, 'store'])->name('createpost.admin');
+
 Route::post('login', [AuthController::class, 'login'])->name('login.post');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -57,9 +57,15 @@ Route::middleware('auth')->group(function () {
                 return view('PDF.reportes_ingresos'); // Cambiar por la vista correspondiente
             })->name('admin.reportes.ingresos');
 
+<<<<<<< HEAD
             // Ruta para la consulta de ingresos (AJAX)
             Route::post('admin/reportes/ingresos/consulta', [ReportesIngresosController::class, 'consultaIngresos'])
                 ->name('reportes.ingresos.consulta');
+=======
+    // Ruta para la consulta de ingresos (AJAX)
+    Route::get('/ingresos/consulta', [ReportesIngresosController::class, 'consultaIngresos'])
+        ->name('reportes.ingresos.consulta');
+>>>>>>> main
 
             // Nueva ruta para la generación del PDF
             Route::get('/ingresos/pdf', [ReportesIngresosController::class, 'generarPDF'])
@@ -78,6 +84,10 @@ Route::middleware('auth')->group(function () {
 
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> main
 
         // Ruta para consultar usuarios
         Route::get('/admin/usuarios/consultar', [AdminController::class, 'consultarUsuario'])

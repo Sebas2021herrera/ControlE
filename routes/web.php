@@ -17,6 +17,7 @@ use App\Http\Controllers\AboutController;
 
 // Rutas para autenticación y registro
 Route::get('/controle', [WelcomeController::class, 'index'])->name('welcome');
+Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 Route::get('login', [AuthController::class, 'showLogin'])->name('login');
 Route::get('create', [AuthController::class, 'create'])->name('create');
 Route::post('registrado', [AuthController::class, 'createpost'])->name('createpost');
@@ -88,7 +89,7 @@ Route::middleware('auth')->group(function () {
 });
 
 
-    
+
 
         // Ruta para consultar usuarios
         Route::get('/admin/usuarios/consultar', [AdminController::class, 'consultarUsuario'])

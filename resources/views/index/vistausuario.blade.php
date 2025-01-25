@@ -49,10 +49,17 @@
                     </a>
                 </li>
                 <li>
+                    <a class="dropdown-item text-white" href="#" data-bs-toggle="modal"
+                        data-bs-target="#editarContraseñaModal" style="transition: background-color 0.3s;">
+                        Editar Contraseña
+                    </a>
+                </li>
+                <li>
                     <hr class="dropdown-divider" style="border-color: #39a900;">
                 </li>
                 <li>
-                    <a class="dropdown-item text-white" href="#" id="toggle-dark-mode" style="transition: background-color 0.3s;">
+                    <a class="dropdown-item text-white" href="#" id="toggle-dark-mode"
+                        style="transition: background-color 0.3s;">
                         Modo Noche
                     </a>
                 </li>
@@ -451,6 +458,31 @@
                                 accept="image/*" onchange="previewImage(event, 'previewPerfil')">
                         </div>
 
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para editar contraseña -->
+    <div class="modal fade" id="editarContraseñaModal" tabindex="-1" aria-labelledby="editarPerfilModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-custom-width"> <!-- Mismo ancho personalizado que el modal de registro -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editarPerfilModalLabel">Editar Contraseña</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editarPerfilForm" method="POST" action="{{ route('updateProfile') }}"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="nombres" class="form-label">Nombres:</label>
+                            <input type="text" id="nombres" name="nombres" class="form-control"
+                                value="{{ Auth::user()->nombres }}" required>
+                        </div>
                         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                     </form>
                 </div>

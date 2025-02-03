@@ -20,37 +20,9 @@
     <header class="main-header">
         <div class="container">
             <div class="nav-left-group">
-                <div class="dropdown is-hoverable">
-                    <div class="dropdown-trigger">
-                        <a href="#" id="registerLink" class="registrar">
-                            <i class="fas fa-user-plus"></i>Registro</a>
-                    </div>
-                    <div class="dropdown-menu" id="dropdown-menu" role="menu">
-                        <div class="dropdown-content">
-                            <a href="#" class="dropdown-item" id="registerUsers">
-                                <i class="fas fa-users"></i>Registrar usuarios</a>
-                            <a href="#" class="dropdown-item" id="registerElements">
-                                <i class="fas fa-box"></i>Registrar elementos</a>
-                            <a href="#" class="dropdown-item" id="consultUsers">
-                                <i class="fas fa-search"></i>Consultar usuarios</a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Dropdown Informes -->
-                <div class="dropdown is-hoverable">
-                    <div class="dropdown-trigger">
-                        <a href="#" id="reportsLink" class="registrar">
-                            <i class="fas fa-chart-line"></i>Informes</a>
-                    </div>
-                    <div class="dropdown-menu" id="dropdown-menu" role="menu">
-                        <div class="dropdown-content">
-                            <a href="{{ route('admin.reportes.ingresos') }}" class="dropdown-item">
-                                <i class="fas fa-users"></i>Informes de ingresos</a> 
-                            <a href="{{ route('admin.reportes.elementos') }}" class="dropdown-item">
-                                <i class="fas fa-cubes"></i>Informes de elementos</a>
-                        </div>
-                    </div>
+                <div class="logo-header">
+                    <img src="{{ asset('imagenes/Logo-Control-E.png') }}" alt="Control E Logo" class="logo-header-img">
+                    <span class="header-title">Control E Administrador</span>
                 </div>
             </div>
 
@@ -66,11 +38,6 @@
                     </div>
                     <div class="dropdown-menu" id="dropdown-menu4" role="menu">
                         <div class="dropdown-content">
-                            {{-- <button type="button" class="dropdown-item" 
-                                    onclick="$('#editarPerfilAdminModal').modal('show')" 
-                                    style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">
-                                    <i class="fas fa-user-edit"></i>Editar perfil
-                            </button> --}}
                             <form action="{{ route('logout') }}" method="POST" style="display: inline;">
                                 @csrf
                                 <button type="submit" class="dropdown-item" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">
@@ -107,6 +74,57 @@
             <img src="{{ asset('imagenes/Logo-Control-E.png') }}" alt="Control E Logo" class="logo-app">
         </div>
         <p class="text-control">Control de elementos para la Regional Casanare - SENA.</p>        
+
+        <!-- Nueva sección de cards al estilo Google Admin -->
+        <div class="admin-cards-container">
+            <!-- Card para Usuarios -->
+            <div class="admin-card" id="usuarios-card">
+                <div class="card-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Usuarios</h3>
+                <p>Registra y administra usuarios del sistema</p>
+                <div class="card-actions">
+                    <button class="action-btn" onclick="document.getElementById('registerModal').style.display='block'">
+                        <i class="fas fa-user-plus"></i> Registrar
+                    </button>
+                    <button class="action-btn" onclick="document.getElementById('consultUsersModal').style.display='block'">
+                        <i class="fas fa-search"></i> Consultar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card para Elementos -->
+            <div class="admin-card" id="elementos-card">
+                <div class="card-icon">
+                    <i class="fas fa-box"></i>
+                </div>
+                <h3>Elementos</h3>
+                <p>Gestiona el inventario de elementos</p>
+                <div class="card-actions">
+                    <button class="action-btn" onclick="document.getElementById('elementsModal').style.display='block'">
+                        <i class="fas fa-plus-circle"></i> Registrar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card para Informes -->
+            <div class="admin-card" id="informes-card">
+                <div class="card-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Informes</h3>
+                <p>Accede a reportes y estadísticas</p>
+                <div class="card-actions">
+                    <a href="{{ route('admin.reportes.ingresos') }}" class="action-btn">
+                        <i class="fas fa-users"></i> Ingresos
+                    </a>
+                    <a href="{{ route('admin.reportes.elementos') }}" class="action-btn">
+                        <i class="fas fa-cubes"></i> Elementos
+                    </a>
+                </div>
+            </div>
+        </div>
 
         <!-- Aquí va la sección para consultar un usuario -->
         <div class="resultado-busqueda" id="resultadoBusqueda" style="display: none;">
@@ -1360,53 +1378,54 @@
                                             `).join('')}
                                         </select>
                                     </div>
-                            <div class="mb-3">
-                                <label for="descripcion-${elemento.id}" class="form-label">Descripción</label>
-                                <input type="text" id="descripcion-${elemento.id}" name="descripcion" class="form-control" value="${elemento.descripcion}" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="marca-${elemento.id}" class="form-label">Marca</label>
-                                <input type="text" id="marca-${elemento.id}" name="marca" class="form-control" value="${elemento.marca}" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="modelo-${elemento.id}" class="form-label">Modelo</label>
-                                <input type="text" id="modelo-${elemento.id}" name="modelo" class="form-control" value="${elemento.modelo}" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="serie-${elemento.id}" class="form-label">Número de Serie</label>
-                                <input type="text" id="serie-${elemento.id}" name="serie" class="form-control" value="${elemento.serie}" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="especificaciones_tecnicas-${elemento.id}" class="form-label">Especificaciones Técnicas</label>
-                                <textarea id="especificaciones_tecnicas-${elemento.id}" name="especificaciones_tecnicas" class="form-control" rows="3" required>${elemento.especificaciones_tecnicas}</textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label for="foto-${elemento.id}" class="form-label">Foto del Elemento</label>
-                                <input type="file" id="foto-${elemento.id}" name="foto" class="form-control" accept="image/*" onchange="previewImage(event, 'preview-imagen-${elemento.id}')">
-                                <div class="mt-2">
-                                    <img id="preview-imagen-${elemento.id}" 
-                                         src="${elemento.foto ? '/storage/' + elemento.foto : '/imagenes/sin_foto_elemento.webp'}" 
-                                         alt="Foto del elemento" 
-                                         class="img-fluid mt-2" 
-                                         style="max-height: 200px"
-                                         onerror="this.src='/imagenes/sin_foto_elemento.webp'">
+                                <div class="mb-3">
+                                    <label for="descripcion-${elemento.id}" class="form-label">Descripción</label>
+                                    <input type="text" id="descripcion-${elemento.id}" name="descripcion" class="form-control" value="${elemento.descripcion}" required>
                                 </div>
-                            </div>
-                        </form>
+                                <div class="mb-3">
+                                    <label for="marca-${elemento.id}" class="form-label">Marca</label>
+                                    <input type="text" id="marca-${elemento.id}" name="marca" class="form-control" value="${elemento.marca}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="modelo-${elemento.id}" class="form-label">Modelo</label>
+                                    <input type="text" id="modelo-${elemento.id}" name="modelo" class="form-control" value="${elemento.modelo}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="serie-${elemento.id}" class="form-label">Número de Serie</label>
+                                    <input type="text" id="serie-${elemento.id}" name="serie" class="form-control" value="${elemento.serie}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="especificaciones_tecnicas-${elemento.id}" class="form-label">Especificaciones Técnicas</label>
+                                    <textarea id="especificaciones_tecnicas-${elemento.id}" name="especificaciones_tecnicas" class="form-control" rows="3" required>${elemento.especificaciones_tecnicas}</textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="foto-${elemento.id}" class="form-label">Foto del Elemento</label>
+                                    <input type="file" id="foto-${elemento.id}" name="foto" class="form-control" accept="image/*" onchange="previewImage(event, 'preview-imagen-${elemento.id}')">
+                                    <div class="mt-2">
+                                        <img id="preview-imagen-${elemento.id}" 
+                                             src="${elemento.foto ? '/storage/' + elemento.foto : '/imagenes/sin_foto_elemento.webp'}" 
+                                             alt="Foto del elemento" 
+                                             class="img-fluid mt-2" 
+                                             style="max-height: 200px"
+                                             onerror="this.src='/imagenes/sin_foto_elemento.webp'">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <form action="/admin/elementos/${elemento.id}" method="POST" class="d-inline">
-                        <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').content}">
-                        <input type="hidden" name="_method" value="DELETE">
-                        <button type="submit" class="btn btn-danger">Eliminar</button>
-                    </form>
-                    <button type="button" class="btn btn-primary d-none" id="save-changes-btn-admin-${elemento.id}" 
-                            onclick="saveChangesAdmin(${elemento.id})">Guardar Cambios</button>
-                    <button type="button" class="btn btn-warning" onclick="editElementAdmin(${elemento.id})">
-                        Editar
-                    </button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <div class="modal-footer">
+                        <form action="/admin/elementos/${elemento.id}" method="POST" class="d-inline">
+                            <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').content}">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                        </form>
+                        <button type="button" class="btn btn-primary d-none" id="save-changes-btn-admin-${elemento.id}" 
+                                onclick="saveChangesAdmin(${elemento.id})">Guardar Cambios</button>
+                        <button type="button" class="btn btn-warning" onclick="editElementAdmin(${elemento.id})">
+                            Editar
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1427,6 +1446,29 @@
         const modal = new bootstrap.Modal(document.getElementById(`modal-detalles-${elemento.id}`));
         modal.show();
     };
+
+    // Función para cerrar modales
+    document.addEventListener('DOMContentLoaded', function() {
+        // Obtener todos los botones de cierre
+        const closeButtons = document.querySelectorAll('.close-btn');
+        
+        // Agregar evento de click a cada botón
+        closeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const modal = this.closest('.modal');
+                if (modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+
+        // Cerrar modal al hacer click fuera de él
+        window.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        });
+    });
 </script>
 
 <div id="modales-container"></div>

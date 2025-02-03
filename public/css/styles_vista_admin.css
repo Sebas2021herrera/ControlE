@@ -47,8 +47,6 @@ body {
     color: #39A900;
 }
 
-/* color: #00ff2a; */
-
 /* Estilos para los items del dropdown */
 .dropdown-content .dropdown-item {
     color: white !important;
@@ -421,6 +419,146 @@ body {
 }
 
 /* Estilos para los cards */
+.admin-card {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+    min-height: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid #e0e0e0;
+}
+
+.admin-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos para el ícono */
+.card-icon {
+    font-size: 3rem;
+    color: #39a900;
+    margin-bottom: 1.5rem;
+}
+
+/* Estilos para el título */
+.admin-card h3 {
+    color: #333;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+/* Estilos para la descripción */
+.admin-card p {
+    color: #666;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+/* Estilos para los botones de acción */
+.card-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: auto;
+}
+
+.action-btn {
+    background-color: #39a900;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.action-btn:hover {
+    background-color: #2d8000;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.action-btn i {
+    font-size: 1rem;
+}
+
+/* Contenedor de cards */
+.admin-cards-container {
+    width: 100%;
+    max-width: 1200px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 1rem;
+    margin: 0 auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .admin-cards-container {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 1rem;
+    }
+
+    .admin-card {
+        padding: 1.5rem;
+    }
+
+    .card-icon {
+        font-size: 2.5rem;
+    }
+
+    .admin-card h3 {
+        font-size: 1.25rem;
+    }
+
+    .action-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Estilos para el contenedor de elementos */
+.contenido-elementos {
+    width: 200%; /* Ajusta automáticamente al tamaño disponible */
+    max-width: 1200px; /* Opcional, para limitar el ancho máximo */
+    display: flex;
+    flex-wrap: wrap; /* Permitir que los cards se acomoden en varias filas si es necesario */
+    gap: 20px; /* Espacio entre cards */
+    background-color: #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    overflow-y: auto; /* Scroll vertical si los elementos exceden la altura */
+    overflow-x: hidden; /* Evitar scroll horizontal */
+    max-height: 400px; /* Mantener un límite razonable para la altura */
+}
+
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 21px;
+    /* gap: 15px; Ajuste de separación para mayor flexibilidad */
+    justify-content: center;
+}
+
+/* Estilos para los cards */
 .card {
     display: flex;
     flex-direction: column;
@@ -457,116 +595,87 @@ body {
 
 .admin-dashboard {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    width: 100%;
-    /* max-width: 1200px; */
-}
-
-.sidebar {
-    width: 25%;
-    background-color: #ffffff;
-    padding: 20px;
-    text-align: center;
-    border-right: 1px solid #ddd;
-    display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-}
-
-.sidebar h2 {
-    font-size: 1.8rem;
-    margin-bottom: 10px;
-}
-
-.sidebar p {
-    font-size: 1.2rem;
-    margin-bottom: 20px;
-}
-
-.image-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.foto-perfil {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 20px;
+    width: 100%;
+    min-height: calc(100vh - 85px); /* Altura total menos el header */
+    padding: 2rem 1rem;
 }
 
 .main-content {
-    width: 70%;
-    text-align: center;
-    justify-content: center;
-    padding: 20px;
-    transition: all 0.3s ease;
-}
-
-/* Nuevo estilo para cuando se muestra el resultado */
-.main-content.centered {
     width: 100%;
-    margin: 0 auto;
-    padding: 20px 50px;
-}
-
-.logo-container {
-    height: auto;
-    margin: auto;
+    max-width: 1200px;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    /* height: calc(100vh - 50px); */
-    transition: all 0.3s ease;
-}
-
-.logo-container img {
-    width: 550px;
-    height: auto;
-}
-
-.logo-container.centered {
-    width: 100%;
-    max-width: 800px;
     margin: 0 auto;
+}
+
+/* Ajustar el contenedor del logo */
+.logo-container {
+    width: 100%;
+    max-width: 550px;
+    margin: 2rem auto;
+    text-align: center;
 }
 
 .logo-app {
+    width: 100%;
     height: auto;
-    margin: 20px auto; /* Centrado vertical y horizontal */
-    animation: logo-entry 2s ease-in-out;
+    max-width: 550px;
 }
 
-@keyframes logo-entry {
-    from {
-        transform: translateY(-50px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
+/* Ajustar el texto de control */
 .text-control {
-    color: #000;
-    font-size: 20px;
-    position: relative;
-    top: -50px;
-    animation: fadeIn 2s ease-in-out;
+    width: 100%;
+    text-align: center;
+    margin: -2rem 0 2rem;
+    padding: 0 1rem;
 }
 
-/* Agregar estilos para el grupo de navegación izquierdo */
+/* Actualizar estilos existentes del header */
+.logo-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo-header-img {
+    height: 65px;
+    width: auto;
+}
+
+.header-title {
+    color: #ffffff;
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+/* Actualizar el container para el nuevo layout */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+/* Ajustar el nav-left-group */
 .nav-left-group {
     display: flex;
-    gap: 35px; /* Espacio entre Registro y Reportes */
     align-items: center;
 }
 
-.logo-sena-registro {
-    height: 50px;
-    width: 50px;
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .logo-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .header-title {
+        font-size: 1rem;
+    }
 }

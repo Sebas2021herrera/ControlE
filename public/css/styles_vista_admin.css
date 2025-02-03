@@ -21,31 +21,40 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
     padding: 0 20px;
+    flex-wrap: wrap;
+}
+
+.nav-left-group, .nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
 
 /* Estilo del logo */
-.registrar {
-    font-family: 'Work Sans', sans-serif;
-    font-size: 24px;
-    font-weight: bold;
-    color: rgb(255, 255, 255);
+.registrar, .nav-options {
+    color: #ffffff;
     text-decoration: none;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.nav-options{
-    color: white;
+.registrar:hover, .nav-options:hover {
+    color: #39A900;
 }
 
-.nav-options:hover{
-    color: #00ff2a;
-}
+/* color: #00ff2a; */
 
 /* Estilos para los items del dropdown */
 .dropdown-content .dropdown-item {
     color: white !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .dropdown-content {
@@ -56,6 +65,14 @@ body {
 .dropdown-content .dropdown-item:hover {
     background-color: #429419 !important;
     color: white !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .nav-left-group, .nav {
+        flex-direction: column;
+        gap: 10px;
+    }
 }
 
 /* Específicamente para el botón de cerrar sesión */
@@ -290,6 +307,7 @@ body {
 }
 
 .contenedor-intermedio {
+    font-family: 'Work Sans', sans-serif;
     width: 69.5%;
     background-color: #e0e0e0;
     border-radius: 8px;
@@ -340,18 +358,24 @@ body {
     justify-content: space-between;
     gap: 0px;
     margin-left: -37px;
-    height: 140px;
+    height: 160px;
     line-height: 1.2;
-    /* margin-bottom: 5px; */
+    margin-bottom: 25px;
 }
 
 .info-text p {
     margin: 0;
+    font-size: 16px;
+    font-weight: 500;
 }
 
 .info-text p.verde {
     color: #39a900;
     font-weight: bold;
+}
+
+.usuario-documento {
+    font-weight: normal;
 }
 
 #semifooter {
@@ -363,7 +387,7 @@ body {
 }
 
 .foto-perfil-usuario {
-    width: 120px;
+    width: 130px;
     height: 135px;
     border-radius: 8px;
     object-fit: cover;
@@ -388,7 +412,6 @@ body {
     max-height: 400px; /* Mantener un límite razonable para la altura */
 }
 
-
 .card-container {
     display: flex;
     flex-wrap: wrap;
@@ -412,7 +435,6 @@ body {
     border: 1px solid #ddd;
     text-align: center; 
 } 
-
 
 .card:hover {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); /* Sombra al pasar el cursor */
@@ -440,7 +462,6 @@ body {
     width: 100%;
     /* max-width: 1200px; */
 }
-
 
 .sidebar {
     width: 25%;
@@ -470,7 +491,6 @@ body {
     align-items: center;
 }
 
-
 .foto-perfil {
     width: 150px;
     height: 150px;
@@ -481,6 +501,7 @@ body {
 .main-content {
     width: 70%;
     text-align: center;
+    justify-content: center;
     padding: 20px;
     transition: all 0.3s ease;
 }
@@ -519,7 +540,6 @@ body {
     animation: logo-entry 2s ease-in-out;
 }
 
-
 @keyframes logo-entry {
     from {
         transform: translateY(-50px);
@@ -542,7 +562,7 @@ body {
 /* Agregar estilos para el grupo de navegación izquierdo */
 .nav-left-group {
     display: flex;
-    gap: 20px; /* Espacio entre Registro y Reportes */
+    gap: 35px; /* Espacio entre Registro y Reportes */
     align-items: center;
 }
 

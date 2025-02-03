@@ -154,3 +154,6 @@ Route::middleware(['auth', 'checkRole:admin'])->group(function () {});
 
 // Ruta para la página About
 Route::get('/about', [AboutController::class, 'index'])->name('about');
+
+Route::post('/admin/usuarios/actualizar/{id}', [AdminController::class, 'actualizarUsuario'])
+    ->name('admin.usuarios.actualizar');

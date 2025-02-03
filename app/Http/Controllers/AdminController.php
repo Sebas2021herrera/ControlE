@@ -49,39 +49,119 @@ class AdminController extends Controller
         // Registrar la solicitud en los logs
         Log::info('Datos del formulario:', $request->all());
     
-        // Validar los datos del formulario
+        // Validar los datos del formulario con reglas más estrictas
         $validator = Validator::make($request->all(), [
-            'nombres' => 'required|string|max:255',
-            'apellidos' => 'required|string|max:255',
-            'tipo_documento' => 'required|string|max:255',
-            'numero_documento' => 'required|string|max:255|unique:usuarios',
-            'rh' => 'required|string|max:7',
-            'correo_personal' => 'required|email|max:255|unique:usuarios',
-            'correo_institucional' => 'required|email|max:255|unique:usuarios',
-            'telefono' => 'required|string|max:20',
-            'contraseña' => 'required|string|min:6|confirmed',
-            'rol' => 'required|exists:roles,id',
-            'numero_ficha' => $request->input('rol') == 3 ? 'required|string|max:255' : 'nullable|string|max:255',
+            'nombres' => [
+                'required',
+                'string',
+                'max:255',
+                'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'
+            ],
+            'apellidos' => [
+                'required',
+                'string',
+                'max:255',
+                'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'
+            ],
+            'tipo_documento' => [
+                'required',
+                'string',
+                'in:CC,TI,CE,PP,RC'
+            ],
+            'numero_documento' => [
+                'required',
+                'numeric',
+                'digits_between:6,12',
+                'unique:usuarios,numero_documento'
+            ],
+            'rh' => [
+                'required',
+                'string',
+                'in:O+,O-,A+,A-,B+,B-,AB+,AB-'
+            ],
+            'correo_personal' => [
+                'required',
+                'email:rfc,dns',
+                'max:255',
+                'unique:usuarios,correo_personal'
+            ],
+            'correo_institucional' => [
+                'required',
+                'email:rfc,dns',
+                'max:255',
+                'unique:usuarios,correo_institucional',
+                function ($attribute, $value, $fail) use ($request) {
+                    $dominio = substr(strrchr($value, "@"), 1);
+                    $rol = (int)$request->rol;
+    
+                    if ($rol === 3) { // Aprendiz
+                        if ($dominio !== 'soy.sena.edu.co') {
+                            $fail("El correo institucional para aprendices debe terminar en '@soy.sena.edu.co'.");
+                        }
+                    } else { // Otros roles
+                        if ($dominio !== 'sena.edu.co') {
+                            $fail("El correo institucional debe terminar en '@sena.edu.co' para este rol.");
+                        }
+                    }
+                }
+            ],
+            'telefono' => [
+                'required',
+                'numeric',
+                'digits_between:7,10'
+            ],
+            'contraseña' => [
+                'required',
+                'string',
+                'min:6',
+                'confirmed',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/'
+            ],
+            'rol' => [
+                'required',
+                'integer',
+                'exists:roles,id'
+            ],
+            'numero_ficha' => [
+                'required_if:rol,3',
+                'nullable',
+                'string',
+                'max:20',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->rol == 3 && empty($value)) {
+                        $fail('El número de ficha es obligatorio para aprendices.');
+                    }
+                }
+            ],
             'foto' => [
                 'nullable',
                 'image',
                 'mimes:jpeg,png,jpg,gif',
-                'max:5120',  // 5MB
-                function ($attribute, $value, $fail) {
-                    if ($value && $value->getSize() > 5120 * 1024) {
-                        $fail('La imagen no debe pesar más de 5MB. Por favor, comprima la imagen o seleccione otra.');
-                    }
-                },
-            ] 
+                'max:6144' // 6MB
+            ]
+        ], [
+            // Mensajes personalizados de error
+            'nombres.regex' => 'Los nombres solo pueden contener letras y espacios',
+            'apellidos.regex' => 'Los apellidos solo pueden contener letras y espacios',
+            'numero_documento.unique' => 'Este número de documento ya está registrado',
+            'numero_documento.numeric' => 'El número de documento debe contener solo números',
+            'numero_documento.digits_between' => 'El número de documento debe tener entre 6 y 12 dígitos',
+            'correo_institucional.unique' => 'Este correo institucional ya está registrado',
+            'contraseña.regex' => 'La contraseña debe contener al menos una mayúscula, una minúscula, un número y un símbolo (@$!%*?&)',
+            'telefono.numeric' => 'El teléfono debe contener solo números',
+            'telefono.digits_between' => 'El teléfono debe tener entre 7 y 10 dígitos',
+            'foto.max' => 'La foto no debe superar los 6MB'
         ]);
     
         if ($validator->fails()) {
             Log::info('Errores de validación:', $validator->errors()->all());
-            return redirect()->back()->withErrors($validator)->withInput();
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
         }
     
         try {
-            // Crear una nueva instancia del modelo Usuario
+            // Crear el usuario
             $usuario = new Usuario();
             $usuario->nombres = $request->nombres;
             $usuario->apellidos = $request->apellidos;
@@ -93,25 +173,26 @@ class AdminController extends Controller
             $usuario->telefono = $request->telefono;
             $usuario->numero_ficha = $request->input('numero_ficha');
             $usuario->contraseña = Hash::make($request->contraseña);
-            $usuario->roles_id = $request->rol; // Asigna el rol seleccionado
+            $usuario->roles_id = $request->rol;
     
-            // Manejo del archivo de foto si se sube una
             if ($request->hasFile('foto')) {
                 $file = $request->file('foto');
                 $path = $file->store('public/fotos_perfil');
                 $usuario->foto = basename($path);
             }
     
-            // Guardar el usuario en la base de datos
             $usuario->save();
     
-            // Redirigir al administrador a la vista admin con un mensaje de éxito
+            Log::info('Usuario registrado exitosamente:', ['id' => $usuario->id]);
+    
             return redirect()->route('admin.panel')->with('success', '¡Usuario registrado exitosamente!');
         } catch (QueryException $e) {
-            Log::error('Error al registrar el usuario: ' . $e->getMessage());
-            return redirect()->back()->withErrors(['error' => 'Ha ocurrido un error al registrar el usuario.'])->withInput();
+            Log::error('Error al registrar el usuario:', ['mensaje' => $e->getMessage()]);
+            return redirect()->back()
+                ->withErrors(['error' => 'Ha ocurrido un error al registrar el usuario.'])
+                ->withInput();
         }
-    }
+    }    
 
     
     public function storeElemento(Request $request) {
@@ -160,6 +241,8 @@ class AdminController extends Controller
     return redirect()->route('admin.panel')->with('success', '¡Elemento registrado exitosamente!');
     }
     
+
+    // Consultar Usuarios
     public function consultarUsuario(Request $request)
 {
     $request->validate([
@@ -184,6 +267,7 @@ class AdminController extends Controller
             'id' => $usuario->id,
             'nombres' => $usuario->nombres,
             'apellidos' => $usuario->apellidos,
+            'tipo_documento' => $usuario->tipo_documento,
             'numero_documento' => $usuario->numero_documento,
             'telefono' => $usuario->telefono,
             'rh' => $usuario->rh,
@@ -415,6 +499,41 @@ class AdminController extends Controller
             // Redireccionar con mensaje de error
             return redirect()->route('admin.panel')
                             ->with('error', 'Error al actualizar el perfil: ' . $e->getMessage());
+        }
+    }
+
+    public function actualizarUsuario(Request $request, $id)
+    {
+        try {
+            $usuario = Usuario::findOrFail($id);
+            
+            // Validar y actualizar los datos
+            $usuario->update($request->except(['foto']));
+
+            // Manejar la foto si se subió una nueva
+            if ($request->hasFile('foto')) {
+                // Eliminar la foto anterior si existe
+                if ($usuario->foto) {
+                    Storage::delete('public/fotos_perfil/' . $usuario->foto);
+                }
+                
+                // Guardar la nueva foto
+                $foto = $request->file('foto');
+                $nombreFoto = time() . '_' . $foto->getClientOriginalName();
+                $foto->storeAs('public/fotos_perfil', $nombreFoto);
+                $usuario->foto = $nombreFoto;
+                $usuario->save();
+            }
+
+            return response()->json([
+                'success' => true,
+                'mensaje' => 'Usuario actualizado exitosamente'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'Error al actualizar el usuario: ' . $e->getMessage()
+            ], 500);
         }
     }
 

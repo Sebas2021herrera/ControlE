@@ -119,11 +119,11 @@ class AuthController extends Controller
                     
                     if ($rol === 3) { // Aprendiz
                         if ($dominio !== 'soy.sena.edu.co') {
-                            $fail('Los aprendices deben usar un correo con dominio @soy.sena.edu.co');
+                            $fail("El correo institucional para aprendices debe terminar en '@soy.sena.edu.co'.");
                         }
                     } else { // Todos los demás roles
                         if ($dominio !== 'sena.edu.co') {
-                            $fail('Debe usar un correo con dominio @sena.edu.co');
+                            $fail("El correo institucional debe terminar en '@sena.edu.co' para este rol.");
                         }
                     }
                 }

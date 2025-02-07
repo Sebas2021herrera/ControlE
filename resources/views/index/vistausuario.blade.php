@@ -33,70 +33,68 @@
 
 <body>
 
-    <nav class="navbar" style="background-color: #00324d;>
-        <div class="container-fluid d-flex align-items-center
-        justify-content-between">
-        <!-- Contenedor del logo y nombre de usuario -->
-        <div class="d-flex align-items-center">
-            <h4 class="navbar-brand text-white" href="#">Control E</h4>
-            <span class="text-white"> </span>
-        </div>
+    <nav class="navbar" style="background-color: #00324d;">
+        <div class="container-fluid d-flex align-items-center justify-content-between">
+            <!-- Contenedor del logo y nombre de usuario -->
+            <div class="d-flex align-items-center">
+                <img src="{{ asset('imagenes/Logo-Control-E.png') }}" alt="logo" style="height: 50px;">
+            </div>
 
-        <!-- Dropdown de Opciones -->
-        <div class="dropdown">
-            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button"
-                data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 1rem;">
-                <strong style="font-size: 19px">Opciones</strong>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end" style="background-color: #00324d;">
-                <li>
-                    <a class="dropdown-item text-white" href="#" data-bs-toggle="modal"
-                        data-bs-target="#carnetDigital" style="transition: background-color 0.3s;">
-                        Carnet Digital
-                    </a>
-                </li>
-                <li>
-                    <a class="dropdown-item text-white" href="#" data-bs-toggle="modal"
-                        data-bs-target="#registroModal" style="transition: background-color 0.3s;">
-                        Registrar Elementos
-                    </a>
-                </li>
-                <li>
-                    <a class="dropdown-item text-white" href="#" data-bs-toggle="modal"
-                        data-bs-target="#editarPerfilModal" style="transition: background-color 0.3s;">
-                        Editar Perfil
-                    </a>
-                </li>
-                <li>
-                    <a class="dropdown-item text-white" href="#" data-bs-toggle="modal"
-                        data-bs-target="#editarContraseñaModal" style="transition: background-color 0.3s;">
-                        Editar Contraseña
-                    </a>
-                </li>
-                <li>
-                    <hr class="dropdown-divider" style="border-color: #39a900;">
-                </li>
-                <li>
-                    <a class="dropdown-item text-white" href="#" id="toggle-dark-mode"
-                        style="transition: background-color 0.3s;">
-                        Modo Noche
-                    </a>
-                </li>
-                <li>
-                    <hr class="dropdown-divider" style="border-color: #39a900;">
-                </li>
-                <li>
-                    <a class="dropdown-item text-white" href="{{ route('logout') }}"
-                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                        style="transition: background-color 0.3s;">
-                        Cerrar Sesión
-                    </a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                        @csrf
-                    </form>
-                </li>
-            </ul>
-        </div>
+            <!-- Dropdown de Opciones -->
+            <div class="dropdown">
+                <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button"
+                    data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 1rem;">
+                    <strong style="font-size: 19px">Opciones</strong>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" style="background-color: #00324d;">
+                    <li>
+                        <a class="dropdown-item text-white" href="#" data-bs-toggle="modal"
+                            data-bs-target="#carnetDigital" style="transition: background-color 0.3s;">
+                            Carnet Digital
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-white" href="#" data-bs-toggle="modal"
+                            data-bs-target="#registroModal" style="transition: background-color 0.3s;">
+                            Registrar Elementos
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-white" href="#" data-bs-toggle="modal"
+                            data-bs-target="#editarPerfilModal" style="transition: background-color 0.3s;">
+                            Editar Perfil
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-white" href="#" data-bs-toggle="modal"
+                            data-bs-target="#editarContraseñaModal" style="transition: background-color 0.3s;">
+                            Editar Contraseña
+                        </a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider" style="border-color: #39a900;">
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-white" href="#" id="toggle-dark-mode"
+                            style="transition: background-color 0.3s;">
+                            Modo Noche
+                        </a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider" style="border-color: #39a900;">
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-white" href="{{ route('logout') }}"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                            style="transition: background-color 0.3s;">
+                            Cerrar Sesión
+                        </a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
 

@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/styles_formulario_elementos.css') }}">
     <link rel="stylesheet" href="{{ asset('css/styles_vistausuario.css') }}">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
 <body>
@@ -466,22 +466,37 @@
     </div>
 
     <!-- Modal para editar contraseña -->
-    <div class="modal fade" id="editarContraseñaModal" tabindex="-1" aria-labelledby="editarPerfilModalLabel"
+    <div class="modal fade" id="editarContraseñaModal" tabindex="-1" aria-labelledby="editarContraseñaModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-custom-width"> <!-- Mismo ancho personalizado que el modal de registro -->
+        <div class="modal-dialog modal-custom-width">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editarPerfilModalLabel">Editar Contraseña</h5>
+                    <h5 class="modal-title" id="editarContraseñaModalLabel">Editar Contraseña</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="editarPerfilForm" method="POST" action="{{ route('updateProfile') }}"
-                        enctype="multipart/form-data">
+                    <form id="editarContraseñaForm" method="POST" action="{{ route('updatePassword') }}">
                         @csrf
-                        <div class="mb-3">
-                            <label for="nombres" class="form-label">Nombres:</label>
-                            <input type="text" id="nombres" name="nombres" class="form-control"
-                                value="{{ Auth::user()->nombres }}" required>
+                        <div class="mb-3 position-relative">
+                            <label for="current_password" class="form-label">Contraseña Actual:</label>
+                            <input type="password" id="current_password" name="current_password" class="form-control" required>
+                            <span toggle="#current_password" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+                        </div>
+                        <div class="mb-3 position-relative">
+                            <label for="new_password" class="form-label">Nueva Contraseña:</label>
+                            <input type="password" id="new_password" name="new_password" class="form-control" required>
+                            <span toggle="#new_password" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+                            <ul id="password-requirements" class="mt-2">
+                                <li id="length" class="invalid text-danger">Mínimo 6 caracteres</li>
+                                <li id="uppercase" class="invalid text-danger">Al menos una mayúscula</li>
+                                <li id="number" class="invalid text-danger">Al menos un número</li>
+                                <li id="symbol" class="invalid text-danger">Al menos un símbolo (!@#$%^&*)</li>
+                            </ul>
+                        </div>
+                        <div class="mb-3 position-relative">
+                            <label for="new_password_confirmation" class="form-label">Confirmar Nueva Contraseña:</label>
+                            <input type="password" id="new_password_confirmation" name="new_password_confirmation" class="form-control" required>
+                            <span toggle="#new_password_confirmation" class="fa fa-fw fa-eye field-icon toggle-password"></span>
                         </div>
                         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                     </form>
@@ -531,6 +546,48 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        const newPasswordInput = document.getElementById('new_password');
+        const requirements = {
+            length: document.getElementById('length'),
+            uppercase: document.getElementById('uppercase'),
+            number: document.getElementById('number'),
+            symbol: document.getElementById('symbol')
+        };
+
+        newPasswordInput.addEventListener('input', () => {
+            const value = newPasswordInput.value;
+            requirements.length.classList.toggle('invalid', value.length < 6);
+            requirements.length.classList.toggle('text-danger', value.length < 6);
+            requirements.length.classList.toggle('text-success', value.length >= 6);
+
+            requirements.uppercase.classList.toggle('invalid', !/[A-Z]/.test(value));
+            requirements.uppercase.classList.toggle('text-danger', !/[A-Z]/.test(value));
+            requirements.uppercase.classList.toggle('text-success', /[A-Z]/.test(value));
+
+            requirements.number.classList.toggle('invalid', !/\d/.test(value));
+            requirements.number.classList.toggle('text-danger', !/\d/.test(value));
+            requirements.number.classList.toggle('text-success', /\d/.test(value));
+
+            requirements.symbol.classList.toggle('invalid', !/[!@#$%^&*]/.test(value));
+            requirements.symbol.classList.toggle('text-danger', !/[!@#$%^&*]/.test(value));
+            requirements.symbol.classList.toggle('text-success', /[!@#$%^&*]/.test(value));
+        });
+
+        document.querySelectorAll('.toggle-password').forEach(item => {
+            item.addEventListener('click', function () {
+                const input = document.querySelector(this.getAttribute('toggle'));
+                if (input.getAttribute('type') === 'password') {
+                    input.setAttribute('type', 'text');
+                    this.classList.toggle('fa-eye');
+                    this.classList.toggle('fa-eye-slash');
+                } else {
+                    input.setAttribute('type', 'password');
+                    this.classList.toggle('fa-eye');
+                    this.classList.toggle('fa-eye-slash');
+                }
+            });
+        });
+
         const toggleDarkModeButton = document.getElementById('toggle-dark-mode');
         toggleDarkModeButton.addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
@@ -545,5 +602,13 @@
     });
 </script>
 
+<style>
+    .field-icon {
+        position: absolute;
+        right: 10px;
+        top: 35px;
+        cursor: pointer;
+    }
+</style>
 
 </html>

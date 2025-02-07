@@ -9,68 +9,92 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/styles_formulario_elementos.css') }}">
     <link rel="stylesheet" href="{{ asset('css/styles_vistausuario.css') }}">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
+<style>
+    .field-icon {
+        position: absolute;
+        right: 10px;
+        top: 35px;
+        cursor: pointer;
+    }
+
+    /* Estilo para reducir el tamaño del nombre en el carnet digital si es muy largo */
+    .nombre-carnet h5 {
+        font-size: 1.2rem;
+        /* Tamaño de fuente por defecto */
+    }
+
+    .nombre-carnet h5.long-name {
+        font-size: 1rem;
+        /* Tamaño de fuente reducido para nombres largos */
+    }
+</style>
 
 <body>
 
-    <nav class="navbar" style="background-color: #00324d;>
-        <div class="container-fluid d-flex align-items-center
-        justify-content-between">
-        <!-- Contenedor del logo y nombre de usuario -->
-        <div class="d-flex align-items-center">
-            <h4 class="navbar-brand text-white" href="#">Control E</h4>
-            <span class="text-white"> </span>
-        </div>
+    <nav class="navbar" style="background-color: #00324d;">
+        <div class="container-fluid d-flex align-items-center justify-content-between">
+            <!-- Contenedor del logo y nombre de usuario -->
+            <div class="d-flex align-items-center">
+                <img src="{{ asset('imagenes/Logo-Control-E.png') }}" alt="logo" style="height: 50px;">
+            </div>
 
-        <!-- Dropdown de Opciones -->
-        <div class="dropdown">
-            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button"
-                data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 1rem;">
-                <strong style="font-size: 19px">Opciones</strong>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end" style="background-color: #00324d;">
-                <li>
-                    <a class="dropdown-item text-white" href="#" data-bs-toggle="modal"
-                        data-bs-target="#carnetDigital" style="transition: background-color 0.3s;">
-                        Carnet Digital
-                    </a>
-                </li>
-                <li>
-                    <a class="dropdown-item text-white" href="#" data-bs-toggle="modal"
-                        data-bs-target="#registroModal" style="transition: background-color 0.3s;">
-                        Registrar Elementos
-                    </a>
-                </li>
-                <li>
-                    <a class="dropdown-item text-white" href="#" data-bs-toggle="modal"
-                        data-bs-target="#editarPerfilModal" style="transition: background-color 0.3s;">
-                        Editar Perfil
-                    </a>
-                </li>
-                <li>
-                    <hr class="dropdown-divider" style="border-color: #39a900;">
-                </li>
-                <li>
-                    <a class="dropdown-item text-white" href="#" id="toggle-dark-mode" style="transition: background-color 0.3s;">
-                        Modo Noche
-                    </a>
-                </li>
-                <li>
-                    <hr class="dropdown-divider" style="border-color: #39a900;">
-                </li>
-                <li>
-                    <a class="dropdown-item text-white" href="{{ route('logout') }}"
-                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                        style="transition: background-color 0.3s;">
-                        Cerrar Sesión
-                    </a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                        @csrf
-                    </form>
-                </li>
-            </ul>
-        </div>
+            <!-- Dropdown de Opciones -->
+            <div class="dropdown">
+                <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button"
+                    data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 1rem;">
+                    <strong style="font-size: 19px">Opciones</strong>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" style="background-color: #00324d;">
+                    <li>
+                        <a class="dropdown-item text-white" href="#" data-bs-toggle="modal"
+                            data-bs-target="#carnetDigital" style="transition: background-color 0.3s;">
+                            Carnet Digital
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-white" href="#" data-bs-toggle="modal"
+                            data-bs-target="#registroModal" style="transition: background-color 0.3s;">
+                            Registrar Elementos
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-white" href="#" data-bs-toggle="modal"
+                            data-bs-target="#editarPerfilModal" style="transition: background-color 0.3s;">
+                            Editar Perfil
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-white" href="#" data-bs-toggle="modal"
+                            data-bs-target="#editarContraseñaModal" style="transition: background-color 0.3s;">
+                            Editar Contraseña
+                        </a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider" style="border-color: #39a900;">
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-white" href="#" id="toggle-dark-mode"
+                            style="transition: background-color 0.3s;">
+                            Modo Noche
+                        </a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider" style="border-color: #39a900;">
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-white" href="{{ route('logout') }}"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                            style="transition: background-color 0.3s;">
+                            Cerrar Sesión
+                        </a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
 
@@ -458,6 +482,56 @@
         </div>
     </div>
 
+    <!-- Modal para editar contraseña -->
+    <div class="modal fade" id="editarContraseñaModal" tabindex="-1" aria-labelledby="editarContraseñaModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-custom-width">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editarContraseñaModalLabel">Editar Contraseña</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editarContraseñaForm" method="POST" action="{{ route('updatePassword') }}">
+                        @csrf
+                        <div class="mb-3 position-relative">
+                            <label for="current_password" class="form-label">Contraseña Actual:</label>
+                            <input type="password" id="current_password" name="current_password"
+                                class="form-control" required>
+                            <span toggle="#current_password"
+                                class="fa fa-fw fa-eye field-icon toggle-password"></span>
+                        </div>
+                        <div class="mb-3 position-relative">
+                            <label for="new_password" class="form-label">Nueva Contraseña:</label>
+                            <input type="password" id="new_password" name="new_password" class="form-control"
+                                required>
+                            <span toggle="#new_password" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+                            <ul id="password-requirements" class="mt-2">
+                                <li id="length" class="invalid text-danger">Mínimo 6 caracteres</li>
+                                <li id="uppercase" class="invalid text-danger">Al menos una mayúscula</li>
+                                <li id="number" class="invalid text-danger">Al menos un número</li>
+                                <li id="symbol" class="invalid text-danger">Al menos un símbolo (!@#$%^&*)</li>
+                            </ul>
+                        </div>
+                        <div class="mb-3 position-relative">
+                            <label for="new_password_confirmation" class="form-label">Confirmar Nueva
+                                Contraseña:</label>
+                            <input type="password" id="new_password_confirmation" name="new_password_confirmation"
+                                class="form-control" required>
+                            <span toggle="#new_password_confirmation"
+                                class="fa fa-fw fa-eye field-icon toggle-password"></span>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <img src="{{ asset('imagenes/camara.png') }}" alt="camara">
+    </div>
+
 </body>
 
 <!-- 1. Cargar jQuery -->
@@ -499,6 +573,48 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        const newPasswordInput = document.getElementById('new_password');
+        const requirements = {
+            length: document.getElementById('length'),
+            uppercase: document.getElementById('uppercase'),
+            number: document.getElementById('number'),
+            symbol: document.getElementById('symbol')
+        };
+
+        newPasswordInput.addEventListener('input', () => {
+            const value = newPasswordInput.value;
+            requirements.length.classList.toggle('invalid', value.length < 6);
+            requirements.length.classList.toggle('text-danger', value.length < 6);
+            requirements.length.classList.toggle('text-success', value.length >= 6);
+
+            requirements.uppercase.classList.toggle('invalid', !/[A-Z]/.test(value));
+            requirements.uppercase.classList.toggle('text-danger', !/[A-Z]/.test(value));
+            requirements.uppercase.classList.toggle('text-success', /[A-Z]/.test(value));
+
+            requirements.number.classList.toggle('invalid', !/\d/.test(value));
+            requirements.number.classList.toggle('text-danger', !/\d/.test(value));
+            requirements.number.classList.toggle('text-success', /\d/.test(value));
+
+            requirements.symbol.classList.toggle('invalid', !/[!@#$%^&*]/.test(value));
+            requirements.symbol.classList.toggle('text-danger', !/[!@#$%^&*]/.test(value));
+            requirements.symbol.classList.toggle('text-success', /[!@#$%^&*]/.test(value));
+        });
+
+        document.querySelectorAll('.toggle-password').forEach(item => {
+            item.addEventListener('click', function() {
+                const input = document.querySelector(this.getAttribute('toggle'));
+                if (input.getAttribute('type') === 'password') {
+                    input.setAttribute('type', 'text');
+                    this.classList.toggle('fa-eye');
+                    this.classList.toggle('fa-eye-slash');
+                } else {
+                    input.setAttribute('type', 'password');
+                    this.classList.toggle('fa-eye');
+                    this.classList.toggle('fa-eye-slash');
+                }
+            });
+        });
+
         const toggleDarkModeButton = document.getElementById('toggle-dark-mode');
         toggleDarkModeButton.addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
@@ -510,8 +626,15 @@
                 toggleDarkModeButton.textContent = 'Modo Noche';
             }
         });
+
+        // Reducir el tamaño del nombre en el carnet digital si es muy largo
+        const nombreCarnet = document.querySelector('.nombre-carnet h5');
+        if (nombreCarnet && nombreCarnet.textContent.length > 20) {
+            nombreCarnet.classList.add('long-name');
+        }
     });
 </script>
+
 
 
 </html>

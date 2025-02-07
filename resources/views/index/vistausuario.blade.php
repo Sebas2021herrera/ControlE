@@ -11,6 +11,25 @@
     <link rel="stylesheet" href="{{ asset('css/styles_vistausuario.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
+<style>
+    .field-icon {
+        position: absolute;
+        right: 10px;
+        top: 35px;
+        cursor: pointer;
+    }
+
+    /* Estilo para reducir el tamaño del nombre en el carnet digital si es muy largo */
+    .nombre-carnet h5 {
+        font-size: 1.2rem;
+        /* Tamaño de fuente por defecto */
+    }
+
+    .nombre-carnet h5.long-name {
+        font-size: 1rem;
+        /* Tamaño de fuente reducido para nombres largos */
+    }
+</style>
 
 <body>
 
@@ -479,12 +498,15 @@
                         @csrf
                         <div class="mb-3 position-relative">
                             <label for="current_password" class="form-label">Contraseña Actual:</label>
-                            <input type="password" id="current_password" name="current_password" class="form-control" required>
-                            <span toggle="#current_password" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+                            <input type="password" id="current_password" name="current_password"
+                                class="form-control" required>
+                            <span toggle="#current_password"
+                                class="fa fa-fw fa-eye field-icon toggle-password"></span>
                         </div>
                         <div class="mb-3 position-relative">
                             <label for="new_password" class="form-label">Nueva Contraseña:</label>
-                            <input type="password" id="new_password" name="new_password" class="form-control" required>
+                            <input type="password" id="new_password" name="new_password" class="form-control"
+                                required>
                             <span toggle="#new_password" class="fa fa-fw fa-eye field-icon toggle-password"></span>
                             <ul id="password-requirements" class="mt-2">
                                 <li id="length" class="invalid text-danger">Mínimo 6 caracteres</li>
@@ -494,9 +516,12 @@
                             </ul>
                         </div>
                         <div class="mb-3 position-relative">
-                            <label for="new_password_confirmation" class="form-label">Confirmar Nueva Contraseña:</label>
-                            <input type="password" id="new_password_confirmation" name="new_password_confirmation" class="form-control" required>
-                            <span toggle="#new_password_confirmation" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+                            <label for="new_password_confirmation" class="form-label">Confirmar Nueva
+                                Contraseña:</label>
+                            <input type="password" id="new_password_confirmation" name="new_password_confirmation"
+                                class="form-control" required>
+                            <span toggle="#new_password_confirmation"
+                                class="fa fa-fw fa-eye field-icon toggle-password"></span>
                         </div>
                         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                     </form>
@@ -574,7 +599,7 @@
         });
 
         document.querySelectorAll('.toggle-password').forEach(item => {
-            item.addEventListener('click', function () {
+            item.addEventListener('click', function() {
                 const input = document.querySelector(this.getAttribute('toggle'));
                 if (input.getAttribute('type') === 'password') {
                     input.setAttribute('type', 'text');
@@ -599,16 +624,15 @@
                 toggleDarkModeButton.textContent = 'Modo Noche';
             }
         });
+
+        // Reducir el tamaño del nombre en el carnet digital si es muy largo
+        const nombreCarnet = document.querySelector('.nombre-carnet h5');
+        if (nombreCarnet && nombreCarnet.textContent.length > 20) {
+            nombreCarnet.classList.add('long-name');
+        }
     });
 </script>
 
-<style>
-    .field-icon {
-        position: absolute;
-        right: 10px;
-        top: 35px;
-        cursor: pointer;
-    }
-</style>
+
 
 </html>

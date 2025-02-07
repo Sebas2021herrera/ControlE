@@ -320,51 +320,44 @@ body {
 }
 
 .usuario-info {
-    width: 500px;
+    width: 100%;
     display: flex;
-    align-items: center;
-    flex: 1;
-    gap: 20px;
+    align-items: flex-start;
+    gap: 30px;
+    padding: 20px;
+    position: relative;
+    max-height: 300px; /* Controlar la altura del contenedor */
 }
 
 .foto-logo {
+    flex: 0 0 auto;
+    width: 120px;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 20px;
-    margin-right: 20px;
+    gap: 15px;
 }
 
 .logo-sena {
-    width: 140px;
+    width: 100%;
     height: auto;
-    margin-left: 33px;
-    margin-top: 20px;
-    margin-bottom: 30px;
-}
-
-.barra-separadora {
-    width: 7px;
-    height: 135px;
-    background-color: #39a900;
-    margin-top: -7px;
-    margin-left: -6px;
 }
 
 .info-text {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    gap: 0px;
-    margin-left: -37px;
-    height: 160px;
-    line-height: 1.2;
-    margin-bottom: 25px;
+    gap: 8px;
+    padding-right: 20px;
+    max-width: 50%; /* Limitar el ancho del contenedor de información */
 }
 
 .info-text p {
     margin: 0;
-    font-size: 16px;
+    font-size: 14px; /* Reducido el tamaño de fuente */
     font-weight: 500;
+    line-height: 1.4;
+    white-space: nowrap; /* Evitar que el texto se envuelva */
 }
 
 .info-text p.verde {
@@ -372,24 +365,61 @@ body {
     font-weight: bold;
 }
 
-.usuario-documento {
-    font-weight: normal;
-}
-
-#semifooter {
-    position: absolute;
-    bottom: 12px;
-    left: 10px;
-    font-size: 12.5px;
-    line-height: 1.2;
+.foto-usuario {
+    flex: 0 0 auto;
+    width: 160px;
+    margin-left: auto; /* Empujar a la derecha */
 }
 
 .foto-perfil-usuario {
-    width: 130px;
-    height: 135px;
+    width: 160px;
+    height: 180px;
     border-radius: 8px;
     object-fit: cover;
-    border: 10px #ddd;
+    border: 2px solid #ddd;
+}
+
+#semifooter {
+    margin-top: 5px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #39a900;
+    text-align: center;
+    max-width: 120px; /* Mismo ancho que el logo */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .usuario-info {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 20px;
+        max-height: none;
+    }
+
+    .foto-logo {
+        width: 100px;
+    }
+
+    .info-text {
+        padding-right: 0;
+        max-width: 100%;
+    }
+
+    .foto-usuario {
+        margin-left: 0;
+        width: 140px;
+    }
+
+    .foto-perfil-usuario {
+        width: 140px;
+        height: 160px;
+    }
+
+    #semifooter {
+        max-width: 100%;
+    }
 }
 
 /* Estilos para el contenedor de elementos */
@@ -503,8 +533,8 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
-    padding: 1rem;
-    margin: 0 auto;
+    padding: 2rem 1rem;
+    margin-top: 1rem; /* Añadido para dar un pequeño espacio desde el header */
 }
 
 /* Responsive adjustments */
@@ -598,8 +628,8 @@ body {
     flex-direction: column;
     align-items: center;
     width: 100%;
-    min-height: calc(100vh - 85px); /* Altura total menos el header */
-    padding: 2rem 1rem;
+    min-height: calc(100vh - 85px);
+    padding: 1rem; /* Reducido de 2rem a 1rem */
 }
 
 .main-content {

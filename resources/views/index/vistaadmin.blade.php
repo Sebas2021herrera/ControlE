@@ -70,11 +70,6 @@
     </div> --}}
 
     <div class="main-content">
-        <div class="logo-container" id="logo-container">
-            <img src="{{ asset('imagenes/Logo-Control-E.png') }}" alt="Control E Logo" class="logo-app">
-        </div>
-        <p class="text-control">Control de elementos para la Regional Casanare - SENA.</p>        
-
         <!-- Nueva sección de cards al estilo Google Admin -->
         <div class="admin-cards-container">
             <!-- Card para Usuarios -->
@@ -100,7 +95,7 @@
                     <i class="fas fa-box"></i>
                 </div>
                 <h3>Elementos</h3>
-                <p>Gestiona el inventario de elementos</p>
+                <p>Registra elementos a usuarios registrados en el sistema</p>
                 <div class="card-actions">
                     <button class="action-btn" onclick="document.getElementById('elementsModal').style.display='block'">
                         <i class="fas fa-plus-circle"></i> Registrar
@@ -114,7 +109,7 @@
                     <i class="fas fa-chart-line"></i>
                 </div>
                 <h3>Informes</h3>
-                <p>Accede a reportes y estadísticas</p>
+                <p>Accede a reportes de ingresos y elementos</p>
                 <div class="card-actions">
                     <a href="{{ route('admin.reportes.ingresos') }}" class="action-btn">
                         <i class="fas fa-users"></i> Ingresos
@@ -131,10 +126,12 @@
             <div class="contenido-superior">
                 <div class="contenedor-intermedio">
                     <div class="usuario-info">
-                        <!-- Logo del SENA -->
+                        <!-- Logo del SENA y descripción -->
                         <div class="foto-logo">
                             <img src="{{ asset('imagenes/logo-del-sena-01.png') }}" alt="Logo del SENA" class="logo-sena">
-                            <div class="barra-separadora"></div>
+                            <p class="verde" id="semifooter">
+                                <i class="fas fa-map-marker-alt"></i> Regional Casanare | Centro Agroindustrial y Fortalecimiento Empresarial del Casanare
+                            </p>
                         </div>
                 
                         <!-- Información del Usuario -->
@@ -146,9 +143,6 @@
                             <p><i class="fas fa-heart"></i> <strong>RH:</strong> <span class="usuario-rh">O+</span></p>
                             <p><i class="fas fa-user-tag"></i> <strong>Rol:</strong> <span class="usuario-rol">Aprendiz</span></p>
                             <p><i class="fas fa-clipboard"></i> <strong>Ficha:</strong> <span class="usuario-ficha">24680</span></p>
-                            <p class="verde" id="semifooter">
-                                <i class="fas fa-map-marker-alt"></i> Regional Casanare | Centro Agroindustrial y Fortalecimiento Empresarial del Casanare
-                            </p>
                         </div>
                 
                         <!-- Foto del Usuario -->

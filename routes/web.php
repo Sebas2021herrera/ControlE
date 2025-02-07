@@ -147,6 +147,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/usuario/{id}', [UserController::class, 'show'])->name('user.show');
     Route::get('/usuario/panel', [UserController::class, 'mostrarPerfil']);
     Route::get('/perfil', [UserController::class, 'mostrarPerfil'])->name('perfil');
+
+    // Nueva ruta para obtener detalles del usuario por documento
+    Route::get('/usuario/detalles/{documento}', [ReportesIngresosController::class, 'obtenerDetallesUsuario'])
+        ->name('usuario.detalles');
+
+    Route::get('/usuario/{documento}/elementos', [ReportesIngresosController::class, 'obtenerElementosUsuario'])
+        ->name('usuario.elementos');
 });
 
 // Rutas específicas para admin (a completar si es necesario)

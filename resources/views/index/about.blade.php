@@ -102,7 +102,7 @@
                         <img src="{{ asset('imagenes/sin_foto_perfil.jpg') }}" alt="Foto de miembro del equipo" class="img-fluid">
                         <h2>Michael Sebastián Herrera Cristiano</h2>
                         <h4>Ingeniero en Sistemas</h4>
-                        <p>Dinamizador SENA Regional Casanare</p>
+                        <p>Dinamizador TICs SENA Regional Casanare</p>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -216,9 +216,5 @@
             window.scrollTo({top: 0, behavior: 'smooth'});
         });
     </script>
-    <script>
-
-    </script>
-    
 </body>
 </html>

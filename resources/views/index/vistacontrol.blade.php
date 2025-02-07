@@ -13,6 +13,9 @@
 <body>
     <div class="container">
         <div class="buscador">
+            <div>
+                <img src="{{ asset('imagenes/camara.png') }}" alt="camara" style="height: 35px;" class="camara">
+            </div>
             <form action="{{ route('vigilante.buscar') }}" method="GET" class="form-busqueda">
                 <input type="text" name="documento" class="input-busqueda" placeholder="Buscar por Documento...">
                 <button type="submit" class="lupa-btn">

@@ -528,6 +528,10 @@
         </div>
     </div>
 
+    <div>
+        <img src="{{ asset('imagenes/camara.png') }}" alt="camara">
+    </div>
+
 </body>
 
 <!-- 1. Cargar jQuery -->

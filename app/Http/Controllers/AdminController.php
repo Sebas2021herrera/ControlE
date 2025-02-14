@@ -537,4 +537,44 @@ class AdminController extends Controller
         }
     }
 
+    public function destroyUsuario($id)
+    {
+        try {
+            // Buscar el usuario
+            $usuario = Usuario::findOrFail($id);
+
+            // Verificar si el usuario tiene elementos asociados
+            if ($usuario->elementos()->count() > 0) {
+                return response()->json([
+                    'success' => false,
+                    'mensaje' => 'No se puede eliminar el usuario porque tiene elementos asociados.'
+                ], 400);
+            }
+
+            // Eliminar la foto si existe
+            if ($usuario->foto) {
+                Storage::delete('public/fotos_perfil/' . $usuario->foto);
+            }
+
+            // Eliminar el usuario
+            $usuario->delete();
+
+            return response()->json([
+                'success' => true,
+                'mensaje' => 'Usuario eliminado exitosamente'
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error al eliminar usuario:', [
+                'id' => $id,
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'Error al eliminar el usuario: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
 }

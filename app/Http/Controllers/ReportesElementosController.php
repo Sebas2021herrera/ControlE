@@ -176,4 +176,36 @@ class ReportesElementosController extends Controller
                 ->with('error', 'Error al generar el PDF: ' . $e->getMessage());
         }
     }
+
+    /**
+     * Obtener detalles de un elemento específico
+     */
+    public function obtenerDetalles($id)
+    {
+        try {
+            $elemento = Elemento::with('categoria')->findOrFail($id);
+            
+            return response()->json([
+                'success' => true,
+                'elemento' => [
+                    'id' => $elemento->id,
+                    'descripcion' => $elemento->descripcion,
+                    'marca' => $elemento->marca,
+                    'modelo' => $elemento->modelo,
+                    'serie' => $elemento->serie,
+                    'especificaciones_tecnicas' => $elemento->especificaciones_tecnicas,
+                    'foto' => $elemento->foto,
+                    'categoria' => [
+                        'nombre' => $elemento->categoria->nombre
+                    ]
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error al obtener detalles del elemento: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => 'No se pudo encontrar el elemento'
+            ], 404);
+        }
+    }
 }

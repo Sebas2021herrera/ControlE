@@ -372,11 +372,15 @@ body {
 }
 
 .foto-perfil-usuario {
-    width: 160px;
+    /* width: 160px;
     height: 180px;
     border-radius: 8px;
     object-fit: cover;
-    border: 2px solid #ddd;
+    border: 2px solid #ddd; */
+
+    width: 150px;
+    height: auto;
+    border-radius: 8px;
 }
 
 #semifooter {

@@ -150,10 +150,20 @@ button:hover {
     }
 
     .mode-toggle {
-        display: flex;
         position: relative;
-        margin: 0 auto 10px;
-        justify-content: center;
+        top: 0;
+        right: 0;
+        width: fit-content;
+        margin: 10px auto;
+        padding: 10px 20px; /* Aumentar el área clickeable */
+    }
+
+    .mode-toggle i {
+        font-size: 1.5rem; /* Icono más grande en móvil */
+    }
+
+    .mode-toggle span {
+        font-size: 1.1rem; /* Texto más grande en móvil */
     }
 }
 
@@ -164,16 +174,23 @@ button:hover {
     right: 10px;
     display: flex;
     align-items: center;
+    gap: 8px;
     cursor: pointer;
     background-color: #f8f9fa;
     border-radius: 20px;
-    padding: 5px 10px;
+    padding: 8px 15px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    user-select: none; /* Previene la selección de texto */
+    z-index: 1000;
+    transition: all 0.3s ease;
 }
 
 .mode-toggle i {
-    margin-right: 8px;
     font-size: 1.25rem;
+}
+
+.mode-toggle span {
+    white-space: nowrap;
 }
 
 .dark-mode {

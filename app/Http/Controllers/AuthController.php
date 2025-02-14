@@ -343,9 +343,12 @@ class AuthController extends Controller
             return back()->withErrors(['current_password' => 'La contraseña actual no es correcta']);
         }
 
-        $user->contraseña = Hash::make($request->new_password); // Cambiado de 'password' a 'contraseña'
-        $user->save();
-
-        return back()->with('success', 'Contraseña actualizada correctamente');
+        try {
+            $user->contraseña = Hash::make($request->new_password); // Cambiado de 'password' a 'contraseña'
+            $user->save();
+            return back()->with('success', 'Contraseña actualizada correctamente');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Ocurrió un error al actualizar la contraseña.']);
+        }
     }
 }

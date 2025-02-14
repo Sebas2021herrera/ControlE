@@ -115,9 +115,13 @@
     @endif
 
     <!-- Bloque para mostrar mensajes de error -->
-    @if (session('error'))
+    @if ($errors->any())
         <div id="error-message" class="alert alert-danger text-center">
-            {{ session('error') }}
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
         </div>
     @endif
 
@@ -375,6 +379,9 @@
                             <h5><strong>{{ $usuario->nombres }} <br>{{ $usuario->apellidos }}</strong></h5>
                         @endif
                     </div><br>
+                    <div class="ficha">
+                        <p><strong>{{ $usuario->numero_ficha }}</strong></p>
+                    </div>
                     <div class="dni-carnet">
                         <p><strong>{{ $usuario->tipo_documento }} {{ $usuario->numero_documento }} <br>
                                 RH:{{ $usuario->rh }}</strong></p>
@@ -548,6 +555,12 @@
 <script>
     $(document).ready(function() {
         console.log("jQuery cargado");
+
+        // Desvanecer mensajes de éxito y error después de 5 segundos
+        setTimeout(function() {
+            $('#success-message').fadeOut('slow');
+            $('#error-message').fadeOut('slow');
+        }, 5000);
     });
 </script>
 <script src="{{ asset('js/vista_usuario.js') }}"></script>

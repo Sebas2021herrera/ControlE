@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckRole;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\WelcomeController;
-use App\Http\Controllers\ElementoController;
+use App\Http\Controllers\ElementoController; 
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VigilanteController;
 use App\Http\Controllers\AdminController;
@@ -17,6 +17,7 @@ use App\Http\Controllers\AboutController;
 
 // Rutas para autenticación y registro
 Route::get('/controle', [WelcomeController::class, 'index'])->name('welcome');
+// Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 Route::get('login', [AuthController::class, 'showLogin'])->name('login');
 Route::get('create', [AuthController::class, 'create'])->name('create');
 Route::post('registrado', [AuthController::class, 'createpost'])->name('createpost');
@@ -33,6 +34,8 @@ Route::middleware('auth')->group(function () {
 
     // Ruta para actualizar el perfil
     Route::post('/update-profile', [AuthController::class, 'updateProfile'])->name('updateProfile');
+    // Ruta para actualizar la contraseña
+    Route::post('/update-password', [AuthController::class, 'updatePassword'])->name('updatePassword');
 
     // Rutas para la gestión de elementos
     Route::get('elementos/create', [ElementoController::class, 'create'])->name('elementos.create');
@@ -41,6 +44,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/elementos/{id}/edit', [ElementoController::class, 'edit'])->name('elementos.edit');
     Route::put('/elementos/{id}', [ElementoController::class, 'update'])->name('elementos.update');
     Route::get('/elementos/detalles/{id}', [ElementoController::class, 'detalles'])->name('elementos.detalles');
+
+    // Ruta para obtener detalles del elemento
+    Route::get('/elementos/detalles/{id}', [ReportesElementosController::class, 'obtenerDetalles'])
+        ->name('elementos.obtenerDetalles');
 
     // Rutas para los paneles de administración y control
     Route::middleware(CheckRole::class . ':1')->group(function () {
@@ -88,11 +95,14 @@ Route::middleware('auth')->group(function () {
 });
 
 
-    
+
 
         // Ruta para consultar usuarios
         Route::get('/admin/usuarios/consultar', [AdminController::class, 'consultarUsuario'])
             ->name('admin.usuarios.consultar');
+
+        Route::delete('/admin/usuarios/{id}', [AdminController::class, 'destroyUsuario'])
+            ->name('admin.usuarios.destroy');
 
         // Ruta para almacenar un nuevo usuario
         Route::post('/admin/usuarios', [AdminController::class, 'storeUsuario'])->name('admin.usuarios.store');
@@ -147,6 +157,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/usuario/{id}', [UserController::class, 'show'])->name('user.show');
     Route::get('/usuario/panel', [UserController::class, 'mostrarPerfil']);
     Route::get('/perfil', [UserController::class, 'mostrarPerfil'])->name('perfil');
+
+    // Nueva ruta para obtener detalles del usuario por documento
+    Route::get('/usuario/detalles/{documento}', [ReportesIngresosController::class, 'obtenerDetallesUsuario'])
+        ->name('usuario.detalles');
+
+    Route::get('/usuario/{documento}/elementos', [ReportesIngresosController::class, 'obtenerElementosUsuario'])
+        ->name('usuario.elementos');
 });
 
 // Rutas específicas para admin (a completar si es necesario)
@@ -154,3 +171,6 @@ Route::middleware(['auth', 'checkRole:admin'])->group(function () {});
 
 // Ruta para la página About
 Route::get('/about', [AboutController::class, 'index'])->name('about');
+
+Route::post('/admin/usuarios/actualizar/{id}', [AdminController::class, 'actualizarUsuario'])
+    ->name('admin.usuarios.actualizar');

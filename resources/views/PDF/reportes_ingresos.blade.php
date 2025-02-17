@@ -9,12 +9,20 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/styles_reportes_ingresos.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <title>Reportes Ingresos</title>
 </head>
 <body>
     <!-- Header -->
     <header class="header">
-        Reportes de Ingresos
+        <div class="container-header">
+            <div class="nav-left-group">
+                <div class="logo-header">
+                    <img src="{{ asset('imagenes/Logo-Control-E.png') }}" alt="Control E Logo" class="logo-header-img">
+                </div>
+            </div>
+            <span class="header-title">Reportes de Ingresos</span>
+        </div>
     </header>
 
     <!-- Contenido principal -->
@@ -45,6 +53,14 @@
                 <div class="mt-4">
                     <button id="generarPDF" method="GET" class="button is-primary" data-url="{{ route('admin.reportes.ingresos.pdf') }}">Generar PDF</button>
                 </div>
+                <div class="control ml-2">
+                    <button id="limpiarConsulta" class="button is-warning">
+                        <span class="icon">
+                            <i class="fas fa-broom"></i>
+                        </span>
+                        <span>Limpiar Consulta</span>
+                    </button>
+                </div>
             </div>
         </form>
 
@@ -65,6 +81,7 @@
                         <th>FECHA INGRESO</th>
                         <th>FECHA EGRESO</th>
                         <th>ESTADO</th>
+                        <th>ACCIONES</th>
                     </tr>
                 </thead>
                 <tbody id="resultados">
@@ -77,15 +94,92 @@
                                 <td>{{ $ingreso->FECHA_INGRESO }}</td>
                                 <td>{{ $ingreso->FECHA_EGRESO ?? 'N/A' }}</td>
                                 <td>{{ $ingreso->ESTADO }}</td>
+                                <td>
+                                    <button class="button is-small is-info ver-usuario" 
+                                            data-documento="{{ $ingreso->NUMERO_DOCUMENTO }}"
+                                            title="Ver detalles del usuario">
+                                        <span class="icon">
+                                            <i class="fas fa-user-circle"></i>
+                                        </span>
+                                    </button>
+                                </td>
                             </tr>
                         @endforeach
                     @else
                         <tr>
-                            <td colspan="5" class="has-text-centered">No hay registros disponibles.</td>
+                            <td colspan="7" class="has-text-centered">No hay registros disponibles.</td>
                         </tr>
                     @endif
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <!-- Modal para mostrar información del usuario -->
+    <div class="modal" id="modalUsuario">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Información del Usuario</p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <div class="usuario-info">
+                    <!-- Logo del SENA y descripción -->
+                    <div class="foto-logo">
+                        <img src="{{ asset('imagenes/logo-del-sena-01.png') }}" alt="Logo del SENA" class="logo-sena">
+                        <p class="verde" id="semifooter">
+                            <i class="fas fa-map-marker-alt"></i> Regional Casanare | Centro Agroindustrial y Fortalecimiento Empresarial del Casanare
+                        </p>
+                    </div>
+
+                    <!-- Información del Usuario -->
+                    <div class="info-text">
+                        <p class="verde usuario-nombre"><i class="fas fa-user-circle"></i> <span id="nombreUsuario"></span></p>
+                        <p class="verde usuario-apellidos"><i class="fas fa-user-circle"></i> <span id="apellidosUsuario"></span></p>
+                        <p><i class="fas fa-id-card"></i> <strong>Doc:</strong> <span id="documentoUsuario"></span></p>
+                        <p><i class="fas fa-phone"></i> <strong>Cel:</strong> <span id="telefonoUsuario"></span></p>
+                        <p><i class="fas fa-heart"></i> <strong>RH:</strong> <span id="rhUsuario"></span></p>
+                        <p><i class="fas fa-user-tag"></i> <strong>Rol:</strong> <span id="rolUsuario"></span></p>
+                        <p class="ficha-container"><i class="fas fa-clipboard"></i> <strong>Ficha:</strong> <span id="fichaUsuario"></span></p>
+                    </div>
+
+                    <!-- Foto del Usuario -->
+                    <div class="foto-usuario">
+                        <img id="fotoUsuario" src="" alt="Foto de perfil" class="foto-perfil-usuario">
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Agregar después del modal de usuario -->
+    <div class="modal" id="modalElementos">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Elementos del Usuario</p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <div class="table-container">
+                    <table class="table is-striped is-fullwidth">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Nombre</th>
+                                <th>Marca</th>
+                                <th>Descripción</th>
+                                <th>Categoría</th>
+                                <th>Foto</th>
+                            </tr>
+                        </thead>
+                        <tbody id="elementosUsuario">
+                            <!-- Los elementos se cargarán aquí dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
         </div>
     </div>
 

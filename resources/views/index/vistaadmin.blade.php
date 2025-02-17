@@ -20,29 +20,9 @@
     <header class="main-header">
         <div class="container">
             <div class="nav-left-group">
-                <div class="dropdown is-hoverable">
-                    <div class="dropdown-trigger">
-                        <a href="#" id="registerLink" class="registrar">Registro</a>
-                    </div>
-                    <div class="dropdown-menu" id="dropdown-menu" role="menu">
-                        <div class="dropdown-content">
-                            <a href="#" class="dropdown-item" id="registerUsers">Registrar usuarios</a>
-                            <a href="#" class="dropdown-item" id="registerElements">Registrar elementos</a>
-                            <a href="#" class="dropdown-item" id="consultUsers">Consultar usuarios</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="dropdown is-hoverable">
-                    <div class="dropdown-trigger">
-                        <a href="#" id="reportsLink" class="registrar">Reportes</a>
-                    </div>
-                    <div class="dropdown-menu" id="dropdown-menu" role="menu">
-                        <div class="dropdown-content">
-                            <a href="{{ route('admin.reportes.ingresos') }}" class="dropdown-item">Reportes ingresos</a> 
-                            <a href="{{ route('admin.reportes.elementos') }}" class="dropdown-item">Reportes elementos</a>
-                        </div>
-                    </div>
+                <div class="logo-header">
+                    <img src="{{ asset('imagenes/Logo-Control-E.png') }}" alt="Control E Logo" class="logo-header-img">
+                    <span class="header-title">Control E Administrador</span>
                 </div>
             </div>
 
@@ -50,7 +30,7 @@
                 <div class="dropdown is-hoverable">
                     <div class="dropdown-trigger">
                         <a href="#" class="nav-options">
-                            Opciones
+                            <i class="fas fa-cog"></i> Opciones
                             <span class="icon is-small">
                                 <i class="fas fa-angle-down" aria-hidden="true"></i>
                             </span>
@@ -58,18 +38,12 @@
                     </div>
                     <div class="dropdown-menu" id="dropdown-menu4" role="menu">
                         <div class="dropdown-content">
-                            {{-- <a href="#" class="dropdown-item">Editar perfil</a> --}}
                             <form action="{{ route('logout') }}" method="POST" style="display: inline;">
                                 @csrf
                                 <button type="submit" class="dropdown-item" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">
-                                    Cerrar sesión
+                                    <i class="fas fa-sign-out-alt"></i>Cerrar sesión
                                 </button>
                             </form>
-                            <button type="button" class="dropdown-item" 
-                                    onclick="$('#editarPerfilAdminModal').modal('show')" 
-                                    style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">
-                                Editar perfil
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -79,7 +53,7 @@
 
 
 <div class="admin-dashboard">
-    <div class="sidebar" id="sidebar">
+    {{-- <div class="sidebar" id="sidebar">
         <h2>Bienvenido(a), Admin</h2>
         <p>{{ Auth::user()->nombres }} {{ Auth::user()->apellidos }}</p>
         <div class="image-container" style="margin: 20px auto;">
@@ -93,35 +67,87 @@
                      class="foto-perfil">
             @endif
         </div>
-    </div>
+    </div> --}}
 
     <div class="main-content">
-        <div class="logo-container" id="logo-container">
-            <img src="{{ asset('imagenes/Logo-Control-E.png') }}" alt="Control E Logo" class="logo-app">
+        <!-- Nueva sección de cards al estilo Google Admin -->
+        <div class="admin-cards-container">
+            <!-- Card para Usuarios -->
+            <div class="admin-card" id="usuarios-card">
+                <div class="card-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Usuarios</h3>
+                <p>Registra y administra usuarios del sistema</p>
+                <div class="card-actions">
+                    <button class="action-btn" onclick="document.getElementById('registerModal').style.display='block'">
+                        <i class="fas fa-user-plus"></i> Registrar
+                    </button>
+                    <button class="action-btn" onclick="document.getElementById('consultUsersModal').style.display='block'">
+                        <i class="fas fa-search"></i> Consultar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card para Elementos -->
+            <div class="admin-card" id="elementos-card">
+                <div class="card-icon">
+                    <i class="fas fa-box"></i>
+                </div>
+                <h3>Elementos</h3>
+                <p>Registra elementos a usuarios registrados en el sistema</p>
+                <div class="card-actions">
+                    <button class="action-btn" onclick="document.getElementById('elementsModal').style.display='block'">
+                        <i class="fas fa-plus-circle"></i> Registrar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card para Informes -->
+            <div class="admin-card" id="informes-card">
+                <div class="card-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Informes</h3>
+                <p>Accede a reportes de ingresos y elementos</p>
+                <div class="card-actions">
+                    <a href="{{ route('admin.reportes.ingresos') }}" class="action-btn">
+                        <i class="fas fa-users"></i> Ingresos
+                    </a>
+                    <a href="{{ route('admin.reportes.elementos') }}" class="action-btn">
+                        <i class="fas fa-cubes"></i> Elementos
+                    </a>
+                </div>
+            </div>
         </div>
-        <p class="text-control">Control de elementos para la Regional Casanare - SENA.</p>
 
         <!-- Aquí va la sección para consultar un usuario -->
         <div class="resultado-busqueda" id="resultadoBusqueda" style="display: none;">
             <div class="contenido-superior">
                 <div class="contenedor-intermedio">
                     <div class="usuario-info">
+                        <!-- Logo del SENA y descripción -->
                         <div class="foto-logo">
                             <img src="{{ asset('imagenes/logo-del-sena-01.png') }}" alt="Logo del SENA" class="logo-sena">
-                            <div class="barra-separadora"></div>
+                            <p class="verde" id="semifooter">
+                                <i class="fas fa-map-marker-alt"></i> Regional Casanare | Centro Agroindustrial y Fortalecimiento Empresarial del Casanare
+                            </p>
                         </div>
+                
+                        <!-- Información del Usuario -->
                         <div class="info-text">
-                            <p class="verde usuario-nombre"></p>
-                            <p class="verde usuario-apellidos"></p>
-                            <p><strong>Doc: </strong><span class="usuario-documento"></span></p>
-                            <p><strong>Cel: </strong><span class="usuario-telefono"></span></p>
-                            <p><strong>RH: </strong><span class="usuario-rh"></span></p>
-                            <p><strong>Rol: </strong><span class="usuario-rol"></span></p>
-                            <p><strong>Ficha: </strong><span class="usuario-ficha"></span></p>
-                            <p class="verde" id="semifooter">Regional Casanare | Centro Agroindustrial y Fortalecimiento Empresarial del Casanare</p>
+                            <p class="verde usuario-nombre"><i class="fas fa-user-circle"></i> Nombre del Usuario</p>
+                            <p class="verde usuario-apellidos"><i class="fas fa-user-circle"></i> Apellido del Usuario</p>
+                            <p><i class="fas fa-id-card"></i> <strong>Doc:</strong> <span class="usuario-documento">123456789</span></p>
+                            <p><i class="fas fa-phone"></i> <strong>Cel:</strong> <span class="usuario-telefono">3101234567</span></p>
+                            <p><i class="fas fa-heart"></i> <strong>RH:</strong> <span class="usuario-rh">O+</span></p>
+                            <p><i class="fas fa-user-tag"></i> <strong>Rol:</strong> <span class="usuario-rol">Aprendiz</span></p>
+                            <p><i class="fas fa-clipboard"></i> <strong>Ficha:</strong> <span class="usuario-ficha">24680</span></p>
                         </div>
+                
+                        <!-- Foto del Usuario -->
                         <div class="foto-usuario">
-                            <img src="" alt="Foto de perfil" class="foto-perfil-usuario">
+                            <img src="{{ asset('imagenes/sin_foto_perfil.jpg') }}" class="foto-perfil-usuario">
                         </div>
                     </div>
                 </div>
@@ -132,17 +158,22 @@
                     </div>
                 </div>
             </div>
-            <!-- Botón para limpiar la consulta -->
-            <div class="field" style="margin-top: 10px;">
+            <!-- Botones para limpiar la consulta, editar y eliminar usuario -->
+            <div class="field" style="margin-top: 10px; display: flex; gap: 10px; justify-content: flex-start;">
                 <button id="limpiarConsultaBtn" class="button is-danger">
                     <i class="fas fa-redo"></i> Limpiar Consulta
+                </button>
+                <button id="editarUsuarioBtn" class="button is-warning">
+                    <i class="fas fa-edit"></i> Editar Usuario
+                </button>
+                <button id="eliminarUsuarioBtn" class="button is-danger">
+                    <i class="fas fa-trash"></i> Eliminar Usuario
                 </button>
             </div>
         </div>
         {{-- Acá termina la secicón de consultar usuarios --}}
     </div>
 </div>
-
 
 <!-- Bloque para mostrar mensajes de éxito -->
 @if (session('success'))
@@ -175,8 +206,13 @@
                     <div class="field">
                         <label class="label" for="nombres">Nombres:</label>
                         <div class="control">
-                            <input class="input @error('nombres') is-danger @enderror" type="text" id="nombres"
-                                name="nombres" value="{{ old('nombres') }}" required placeholder="Ingresa los nombres del nuevo usuario">
+                            <input class="input @error('nombres') is-danger @enderror" 
+                                type="text" 
+                                id="nombres"
+                                name="nombres" 
+                                value="{{ old('nombres') }}" 
+                                required 
+                                placeholder="Ingresa los nombres del nuevo usuario">
                         </div>
                         @error('nombres')
                             <p class="help is-danger">{{ $message }}</p>
@@ -186,8 +222,13 @@
                     <div class="field">
                         <label class="label" for="apellidos">Apellidos:</label>
                         <div class="control">
-                            <input class="input @error('apellidos') is-danger @enderror" type="text" id="apellidos"
-                                name="apellidos" value="{{ old('apellidos') }}" required placeholder="Ingresa los apellidos del nuevo usuario">
+                            <input class="input @error('apellidos') is-danger @enderror" 
+                                type="text" 
+                                id="apellidos"
+                                name="apellidos" 
+                                value="{{ old('apellidos') }}" 
+                                required 
+                                placeholder="Ingresa los apellidos del nuevo usuario">
                         </div>
                         @error('apellidos')
                             <p class="help is-danger">{{ $message }}</p>
@@ -254,7 +295,7 @@
                         <div class="control">
                             <input class="input @error('correo_personal') is-danger @enderror" type="email"
                                 id="correo_personal" name="correo_personal" value="{{ old('correo_personal') }}"
-                                required placeholder="Ingresa su correo personal">
+                                required placeholder="Ingresar correo personal del nuevo usuario. Ejemplo: juan@gmail.com">
                         </div>
                         @error('correo_personal')
                             <p class="help is-danger">{{ $message }}</p>
@@ -266,7 +307,7 @@
                         <div class="control">
                             <input class="input @error('correo_institucional') is-danger @enderror" type="email"
                                 id="correo_institucional" name="correo_institucional"
-                                value="{{ old('correo_institucional') }}" required placeholder="Ingresa correo institucional">
+                                value="{{ old('correo_institucional') }}" required placeholder="Roles 1, 2 y 4: juan@sena.edu.co. Rol 3 Aprendiz: paul@soy.sena.edu.co">
                         </div>
                         @error('correo_institucional')
                             <p class="help is-danger">{{ $message }}</p>
@@ -275,15 +316,19 @@
             
                     <div class="field">
                         <label class="label" for="contraseña">Nueva Contraseña:</label>
-                        <div class="control">
-                            <input class="input @error('contraseña') is-danger @enderror" type="password"
-                                id="contraseña" name="contraseña" required
-                                placeholder="Mínimo 6 caracteres, al menos una mayúscula, un número y un símbolo (!@#$%^&*)">
+                        <div class="control has-icons-right">
+                            <input class="input @error('contraseña') is-danger @enderror" 
+                                type="password"
+                                id="contraseña" 
+                                name="contraseña" 
+                                required
+                                placeholder="Mínimo 6 caracteres">
                                 <span class="icon is-small is-right" style="pointer-events: all; cursor: pointer;"
-                                onclick="togglePassword('contraseña')">
-                                <i class="fas fa-eye" id="contraseña-icon"></i>
+                                    onclick="togglePassword('contraseña')">
+                                    <i class="fas fa-eye" id="contraseña-icon"></i>
                                 </span>
                         </div>
+                        <p id="contraseaError" class="help is-danger"></p>
                         @error('contraseña')
                             <p class="help is-danger">{{ $message }}</p>
                         @enderror
@@ -291,14 +336,16 @@
             
                     <div class="field">
                         <label class="label" for="contraseña_confirmation">Confirmar Contraseña:</label>
-                        <div class="control">
-                            <input class="input @error('contraseña_confirmation') is-danger @enderror" type="password"
-                                id="contraseña_confirmation" name="contraseña_confirmation" required
-                                placeholder="Repita la contraseña">
-                                <span class="icon is-small is-right" style="pointer-events: all; cursor: pointer;"
-                                onclick="togglePassword('contraseña')">
-                                <i class="fas fa-eye" id="contraseña-icon"></i>
-                                </span>
+                        <div class="control has-icons-right">
+                            <input class="input @error('contraseña_confirmation') is-danger @enderror" 
+                                type="password"
+                                id="contraseña_confirmation" 
+                                name="contraseña_confirmation" 
+                                required
+                                placeholder="Confirmar contraseña">
+                            <span class="icon is-small is-right" style="pointer-events: all; cursor: pointer;">
+                                <i class="fas fa-eye" id="contraseña_confirmation-icon"></i>
+                            </span>
                         </div>
                         @error('contraseña_confirmation')
                             <p class="help is-danger">{{ $message }}</p>
@@ -349,7 +396,7 @@
                         @enderror
                     </div>
                     <div class="field">
-                        <label class="label" for="foto">Foto (máximo 5MB):</label>
+                        <label class="label" for="foto">Foto (máximo 6MB):</label>
                         <input type="file" id="foto" name="foto" class="form-control" accept="image/*">
                         <small class="text-muted">Formatos permitidos: JPG, JPEG, PNG, GIF. Tamaño máximo: 5MB</small>
                         <div class="mt-2">
@@ -381,13 +428,13 @@
 
                 <h2>Registro de elementos</h2>
                     <!-- Aquí puedes agregar los campos para registrar elementos -->
-                    <!-- Campo de Número Documento Usuario -->
-                   
                     <form action="{{ route('admin.elementos.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf             
                         <div class="mb-3">
+                            <!-- Campo de Número Documento Usuario -->
                             <label for="documento" class="form-label">Número documento</label>
                             <input type="text" id="documento" name="documento"  required placeholder="Ingresa el número de documento del usuario registrado" oninput="this.value = this.value.replace(/[^0-9]/g, '').substring(0, 11)" class="form-control" required>
+                            <!-- Campo para seleccionar categoría del elemento -->
                             <label for="categoria_id" class="form-label">Categoría</label>
                             <select id="categoria_id" name="categoria_id" class="form-select" required>
                                 @foreach ($categorias as $categoria)
@@ -414,7 +461,7 @@
                         <div class="mb-3">
                             <label for="especificaciones_tecnicas" class="form-label">Especificaciones
                                 Técnicas</label>
-                            <textarea id="especificaciones_tecnicas" name="especificaciones_tecnicas" placeholder="Escribe las especificaciones técnicas del nuevo elemento" class="form-control" rows="3"
+                            <textarea id="especificaciones_tecnicas" name="especificaciones_tecnicas" placeholder="Escribe las especificaciones técnicas del nuevo elemento" class="form-control" rows="2"
                                 required></textarea>
                         </div>
                         
@@ -577,6 +624,7 @@
     </div>
 </div>
 
+
 <!-- Modal para editar perfil del admin -->
 <div class="modal fade" id="editarPerfilAdminModal" tabindex="-1" aria-labelledby="editarPerfilAdminModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-custom-width">
@@ -625,12 +673,11 @@
                                 <img id="previewPerfilAdmin" src="{{ asset('storage/fotos_perfil/' . Auth::user()->foto) }}" 
                                      alt="Foto de perfil actual" style="max-width: 100px; height: auto;">
                             @else
-                                <img id="previewPerfilAdmin" src="{{ asset('imagenes/sin_foto_perfil.webp') }}" 
+                                <img id="previewPerfilAdmin" src="{{ asset('imagenes/sin_foto_perfil.jpg') }}" 
                                      alt="Foto de perfil predeterminada" style="max-width: 100px; height: auto;">
                             @endif
                         </div>
-                        <input type="file" id="foto" name="foto" class="form-control" accept="image/*" 
-                               onchange="previewImage(event, 'previewPerfilAdmin')">
+                        <input type="file" id="fotoPerfilAdmin" name="foto" class="form-control" accept="image/*">
                     </div>
 
                     <button type="submit" class="btn btn-primary">Guardar Cambios</button>
@@ -641,185 +688,815 @@
 </div>
 
 
-    <!-- Código Javascripts -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Función para previsualizar imagen en el registro de usuarios
-            const fotoInput = document.getElementById('foto');
-            if (fotoInput) {
-                fotoInput.addEventListener('change', function(e) {
-                    const file = e.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            const previewUsuario = document.getElementById('previewUsuario');
-                            if (previewUsuario) {
-                                previewUsuario.src = e.target.result;
-                                previewUsuario.style.display = 'block';
-                            }
-                        }
-                        reader.readAsDataURL(file);
-                    }
-                });
-            }
-
-            // Función para previsualizar imagen en el registro de elementos
-            const fotoElementoInput = document.getElementById('fotoElemento');
-            if (fotoElementoInput) {
-                fotoElementoInput.addEventListener('change', function(e) {
-                    const file = e.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            const previewElemento = document.getElementById('previewElemento');
-                            if (previewElemento) {
-                                previewElemento.src = e.target.result;
-                                previewElemento.style.display = 'block';
-                            }
-                        }
-                        reader.readAsDataURL(file);
-                    }
-                });
-            }
-        });
-
-        // Función general para previsualizar imágenes (para otros formularios)
-        function previewImage(event, previewId) {
-            const file = event.target.files[0];
-            const preview = document.getElementById(previewId);
-            
-            if (file && preview) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                }
-                reader.readAsDataURL(file);
-            }
-        }
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var rolSelect = document.getElementById('rol');
-            var numeroFichaField = document.getElementById('numero_ficha'); // Actualizado
-            var numeroFichaDiv = numeroFichaField.closest('.field');
-
-        function toggleNumeroFicha() {
-            if (rolSelect.value == 3) { // Aprendiz
-                numeroFichaDiv.style.display = 'block';
-                numeroFichaField.setAttribute('required', 'required');
-            } else {
-                numeroFichaDiv.style.display = 'none';
-                numeroFichaField.removeAttribute('required');
-            }
-        }
-
-        rolSelect.addEventListener('change', toggleNumeroFicha);
-
-        // Llamar a la función para inicializar el estado correcto en caso de que el rol esté preseleccionado
-        toggleNumeroFicha();
-    });
-    </script>
+<!-- Mantener la referencia a Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Selección de elementos
-            const registerUsersLink = document.getElementById('registerUsers');
-            const registerElementsLink = document.getElementById('registerElements');
-            const registerModal = document.getElementById('registerModal');
-            const elementsModal = document.getElementById('elementsModal');
-            const closeBtns = document.querySelectorAll('.close-btn');
+    window.categorias = {!! json_encode($categorias) !!};
 
-            // Función para abrir modal
-            function openModal(modal) {
-                if (modal) {
-                    modal.style.display = 'block';
-                }
-            }
+    const AdminForms = {
+        init() {
+            this.initializeInputValidations();
+            this.initializePasswordValidation();
+            this.initializeImagePreviews();
+            this.initializeModals();
+            this.initializeRoleFields();
+            this.initializeFormValidation();
+            this.initializeConsultaUsuarios();
+            this.initializeMessages();
+        },
 
-            // Función para cerrar modal
-            function closeModal(modal) {
-                if (modal) {
-                    modal.style.display = 'none';
-                }
-            }
+        initializeInputValidations() {
+            // Validación para nombres y apellidos (solo letras y espacios)
+            const soloLetras = document.querySelectorAll('#nombres, #apellidos');
+            const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
 
-            // Event listener para abrir modal de usuarios
-            if (registerUsersLink) {
-                registerUsersLink.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    openModal(registerModal);
+            soloLetras.forEach(input => {
+                ['keypress', 'paste'].forEach(event => {
+                    input.addEventListener(event, (e) => {
+                        if (event === 'paste') {
+                            e.preventDefault();
+                            const text = (e.clipboardData || window.clipboardData).getData('text');
+                            if (regex.test(text)) {
+                                input.value = text;
+                            }
+                        } else {
+                            const char = String.fromCharCode(e.keyCode || e.which);
+                            if (!regex.test(char)) {
+                                e.preventDefault();
+                            }
+                        }
+                    });
                 });
-            }
 
-            // Event listener para abrir modal de elementos
-            if (registerElementsLink) {
-                registerElementsLink.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    openModal(elementsModal);
-                });
-            }
-
-            // Event listeners para cerrar modales con el botón X
-            closeBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const modal = btn.closest('.modal');
-                    closeModal(modal);
+                // Limpieza en tiempo real
+                input.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
                 });
             });
 
-            // Event listener para cerrar modales al hacer clic fuera
-            window.addEventListener('click', (event) => {
-                if (event.target.classList.contains('modal')) {
-                    closeModal(event.target);
+            // Validación para documento y teléfono
+            const soloNumeros = {
+                'numero_documento': { min: 6, max: 12 },
+                'telefono': { min: 7, max: 10 }
+            };
+
+            Object.entries(soloNumeros).forEach(([id, limits]) => {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.addEventListener('input', function() {
+                        this.value = this.value.replace(/[^0-9]/g, '').substring(0, limits.max);
+                    });
                 }
             });
+        },
 
-            // Mantener el resto de la funcionalidad de validación de contraseña
-            document.getElementById('registroForm').addEventListener('submit', function (e) {
-                var password = document.getElementById('contraseña').value;
-                var confirmPassword = document.getElementById('contraseña_confirmation').value;
-                var errorElement = document.getElementById('confirmarContrasenaError');
+        initializePasswordValidation() {
+            // Configuración de campos de contraseña
+            const passwordFields = [
+                { inputId: 'contraseña', errorId: 'contraseaError' },
+                { inputId: 'contraseña_confirmation', errorId: 'confirmarContrasenaError' }
+            ];
 
-                if (password !== confirmPassword) {
-                    e.preventDefault();
-                    errorElement.textContent = 'Las contraseñas no coinciden';
+            passwordFields.forEach(field => {
+                const input = document.getElementById(field.inputId);
+                const error = document.getElementById(field.errorId);
+
+                if (input) {
+                    // Validación de contraseña
+                    input.addEventListener('input', function() {
+                        if (field.inputId === 'contraseña') {
+                            const value = this.value;
+                            const requirements = {
+                                length: { met: value.length >= 6, text: 'Mínimo 6 caracteres' },
+                                uppercase: { met: /[A-Z]/.test(value), text: 'Al menos una mayúscula' },
+                                lowercase: { met: /[a-z]/.test(value), text: 'Al menos una minúscula' },
+                                number: { met: /\d/.test(value), text: 'Al menos un número' },
+                                symbol: { met: /[@$!%*?&]/.test(value), text: 'Al menos un símbolo (@$!%*?&)' }
+                            };
+
+                            const failedRequirements = Object.values(requirements)
+                                .filter(req => !req.met)
+                                .map(req => req.text);
+
+                            if (error) {
+                                error.textContent = failedRequirements.join(', ');
+                                error.style.color = failedRequirements.length ? '#ff3860' : '#48c774';
+                            }
+                        }
+                    });
+
+                    // Configurar el toggle de visibilidad para ambos campos
+                    const icon = document.getElementById(`${field.inputId}-icon`);
+                    if (icon) {
+                        icon.parentElement.addEventListener('click', function() {
+                            const type = input.type === 'password' ? 'text' : 'password';
+                            input.type = type;
+                            icon.classList.toggle('fa-eye', type === 'password');
+                            icon.classList.toggle('fa-eye-slash', type === 'text');
+                        });
+                    }
+                }
+            });
+        },
+
+        initializeImagePreviews() {
+            // Configuración de previsualización de imágenes para diferentes formularios
+            const imagePreviewConfig = [
+                { inputId: 'foto', previewId: 'previewUsuario' },
+                { inputId: 'fotoElemento', previewId: 'previewElemento' },
+                { inputId: 'fotoPerfilAdmin', previewId: 'previewPerfilAdmin' }
+            ];
+
+            imagePreviewConfig.forEach(config => {
+                const input = document.getElementById(config.inputId);
+                const preview = document.getElementById(config.previewId);
+
+                if (input && preview) {
+                    input.addEventListener('change', function(e) {
+                        const file = e.target.files[0];
+                        const maxSize = 5 * 1024 * 1024; // 5MB
+
+                        if (file) {
+                            // Validar tamaño
+                            if (file.size > maxSize) {
+                                alert('El archivo no debe superar los 5MB');
+                                this.value = '';
+                                preview.style.display = 'none';
+                                return;
+                            }
+
+                            // Validar tipo
+                            const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
+                            if (!validTypes.includes(file.type)) {
+                                alert('Por favor, seleccione un archivo JPG, JPEG, PNG o GIF');
+                                this.value = '';
+                                preview.style.display = 'none';
+                                return;
+                            }
+
+                            // Mostrar vista previa
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                preview.src = e.target.result;
+                                preview.style.display = 'block';
+                            };
+                            reader.readAsDataURL(file);
+                        } else {
+                            preview.style.display = 'none';
+                        }
+                    });
+                }
+            });
+        },
+
+        initializeModals() {
+            // Configuración de los modales y sus botones
+            const modalConfig = {
+                'registerUsers': 'registerModal',
+                'registerElements': 'elementsModal',
+                'consultUsers': 'consultUsersModal'
+            };
+
+            // Configurar cada modal
+            Object.entries(modalConfig).forEach(([buttonId, modalId]) => {
+                const button = document.getElementById(buttonId);
+                const modal = document.getElementById(modalId);
+                
+                if (button && modal) {
+                    // Abrir modal
+                    button.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        modal.style.display = 'block';
+                    });
+
+                    // Cerrar con X
+                    const closeBtn = modal.querySelector('.close-btn');
+                    if (closeBtn) {
+                        closeBtn.addEventListener('click', () => {
+                            modal.style.display = 'none';
+                        });
+                    }
+
+                    // Cerrar al hacer clic fuera
+                    window.addEventListener('click', (e) => {
+                        if (e.target === modal) {
+                            modal.style.display = 'none';
+                        }
+                    });
                 } else {
-                    errorElement.textContent = '';
+                    console.warn(`Modal setup incomplete: Button: ${buttonId}, Modal: ${modalId}`);
                 }
             });
-        });
-</script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Selección de elementos para el modal de consulta
-        const consultUsersLink = document.getElementById('consultUsers');
-        const consultUsersModal = document.getElementById('consultUsersModal');
-        const closeBtns = document.querySelectorAll('.close-btn');
+            // Manejar el modal de editar perfil (que usa Bootstrap)
+            const editarPerfilBtn = document.querySelector('[onclick*="editarPerfilAdminModal"]');
+            if (editarPerfilBtn) {
+                editarPerfilBtn.onclick = function(e) {
+                    e.preventDefault();
+                    const modal = document.getElementById('editarPerfilAdminModal');
+                    if (modal) {
+                        new bootstrap.Modal(modal).show();
+                    }
+                };
+            }
+        },
 
-        // Event listener para abrir modal de consulta de usuarios
-        if (consultUsersLink) {
-            consultUsersLink.addEventListener('click', function(event) {
-                event.preventDefault();
-                if (consultUsersModal) {
-                    consultUsersModal.style.display = 'block';
-                }
+        initializeRoleFields() {
+            const rolSelect = document.getElementById('rol');
+            const numeroFichaField = document.getElementById('numero_ficha');
+            
+            if (rolSelect && numeroFichaField) {
+                const numeroFichaDiv = numeroFichaField.closest('.field');
+                
+                const toggleNumeroFicha = () => {
+                    const isAprendiz = rolSelect.value == '3';
+                    numeroFichaDiv.style.display = isAprendiz ? 'block' : 'none';
+                    numeroFichaField.required = isAprendiz;
+                };
+    
+                rolSelect.addEventListener('change', toggleNumeroFicha);
+                toggleNumeroFicha(); // Estado inicial
+            }
+        },
+
+        initializeFormValidation() {
+            const form = document.getElementById('registroForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const contraseña = document.getElementById('contraseña');
+                    const contraseñaConfirm = document.getElementById('contraseña_confirmation');
+                    
+                    if (contraseña.value !== contraseñaConfirm.value) {
+                        e.preventDefault();
+                        document.getElementById('confirmarContrasenaError').textContent = 'Las contraseñas no coinciden';
+                        return false;
+                    }
+
+                    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/;
+                    if (!passwordRegex.test(contraseña.value)) {
+                        e.preventDefault();
+                        return false;
+                    }
+                });
+            }
+        },
+
+        initializeConsultaUsuarios() {
+            const searchForm = document.querySelector('#consultUsersModal .search-form');
+            const resultadoBusqueda = document.getElementById('resultadoBusqueda');
+            
+            if (searchForm) {
+                searchForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const documento = searchForm.querySelector('input[name="documento"]').value;
+                    const url = `${searchForm.getAttribute('action')}?documento=${documento}`;
+
+                    // Mostrar que está cargando
+                    const searchButton = searchForm.querySelector('.search-button');
+                    searchButton.disabled = true;
+                    searchButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+                    fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Restaurar el botón
+                        searchButton.disabled = false;
+                        searchButton.innerHTML = '<i class="fas fa-search"></i>';
+
+                        if (data.success) {
+                            // Ocultar el modal de consulta
+                            document.getElementById('consultUsersModal').style.display = 'none';
+                            
+                            const usuarioData = data.usuario;
+                            
+                            // Función para obtener el nombre completo del tipo de documento
+                            const getTipoDocumentoNombre = (tipo) => {
+                                const tipos = {
+                                    'CC': 'Cédula de Ciudadanía',
+                                    'TI': 'Tarjeta de Identidad',
+                                    'CE': 'Cédula de Extranjería',
+                                    'PP': 'Pasaporte',
+                                    'RC': 'Registro Civil'
+                                };
+                                return tipos[tipo] || tipo;
+                            };
+
+                            // Actualizar la información del usuario
+                            document.querySelector('.usuario-nombre').textContent = usuarioData.nombres;
+                            document.querySelector('.usuario-apellidos').textContent = usuarioData.apellidos;
+                            document.querySelector('.usuario-documento').textContent = 
+                                `${getTipoDocumentoNombre(usuarioData.tipo_documento)} ${usuarioData.numero_documento}`;
+                            document.querySelector('.usuario-telefono').textContent = usuarioData.telefono;
+                            document.querySelector('.usuario-rh').textContent = usuarioData.rh;
+                            document.querySelector('.usuario-rol').textContent = usuarioData.role ? usuarioData.role.nombre : 'N/A';
+                            document.querySelector('.usuario-ficha').textContent = usuarioData.numero_ficha || 'N/A';
+                            
+                            // Actualizar la foto del usuario
+                            const fotoUsuario = document.querySelector('.foto-perfil-usuario');
+                            fotoUsuario.src = usuarioData.foto 
+                                ? `/storage/fotos_perfil/${usuarioData.foto}` 
+                                : '/imagenes/sin_foto_perfil.webp';
+
+                            // Mostrar los elementos si existen
+                            const cardContainer = document.querySelector('.card-container');
+                            cardContainer.innerHTML = ''; // Limpiar contenedor
+                            
+                            if (data.elementos && data.elementos.length > 0) {
+                                data.elementos.forEach(elemento => {
+                                    const card = `
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h5 class="card-title"><strong>${elemento.categoria.nombre}</strong></h5>
+                                                <img src="${elemento.foto ? '/storage/' + elemento.foto : '/imagenes/sin_foto_elemento.webp'}" 
+                                                     alt="${elemento.descripcion}"
+                                                     class="img-fluid mt-3">
+                                                <p class="card-text"><strong>Serial:</strong> ${elemento.serie || 'N/A'}</p>
+                                                <p class="card-text"><strong>Marca:</strong> ${elemento.marca}</p>
+                                                <button type="button" class="btn btn-link" 
+                                                        onclick='window.mostrarDetallesElemento(${JSON.stringify(elemento).replace(/'/g, "\\'")})'">
+                                                    Ver más
+                                                </button>
+                                            </div>
+                                            <div class="spacer"></div>
+                                        </div>
+                                    `;
+                                    cardContainer.innerHTML += card;
+                                });
+                            }
+
+                            // Mostrar la sección de resultado
+                            resultadoBusqueda.style.display = 'block';
+
+                            // Configurar el botón de editar usuario
+                            const editarBtn = document.getElementById('editarUsuarioBtn');
+                            if (editarBtn) {
+                                editarBtn.onclick = () => {
+                                    AdminForms.showEditarUsuarioModal(usuarioData);
+                                };
+                            }
+
+                            // Configurar el botón de limpiar consulta
+                            const limpiarBtn = document.getElementById('limpiarConsultaBtn');
+                            if (limpiarBtn) {
+                                limpiarBtn.onclick = () => {
+                                    resultadoBusqueda.style.display = 'none';
+                                    searchForm.reset();
+                                    document.getElementById('consultUsersModal').style.display = 'block';
+                                };
+                            }
+
+                            // Configurar el botón de eliminar usuario
+                            const eliminarBtn = document.getElementById('eliminarUsuarioBtn');
+                            if (eliminarBtn) {
+                                eliminarBtn.onclick = () => {
+                                    if (confirm('¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.')) {
+                                        fetch(`/admin/usuarios/${usuarioData.id}`, {
+                                            method: 'DELETE',
+                                            headers: {
+                                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                                'Accept': 'application/json',
+                                                'Content-Type': 'application/json'
+                                            },
+                                            credentials: 'same-origin'
+                                        })
+                                        .then(response => {
+                                            if (!response.ok) {
+                                                console.error('Status:', response.status);
+                                                console.error('StatusText:', response.statusText);
+                                                return response.text().then(text => {
+                                                    console.error('Response:', text);
+                                                    throw new Error(`Error del servidor: ${response.status}`);
+                                                });
+                                            }
+                                            return response.json();
+                                        })
+                                        .then(data => {
+                                            if (data.success) {
+                                                alert('Usuario eliminado exitosamente');
+                                                resultadoBusqueda.style.display = 'none';
+                                                searchForm.reset();
+                                                document.getElementById('consultUsersModal').style.display = 'block';
+                                            } else {
+                                                throw new Error(data.mensaje || 'Error al eliminar el usuario');
+                                            }
+                                        })
+                                        .catch(error => {
+                                            console.error('Error completo:', error);
+                                            alert(error.message || 'Error al eliminar el usuario');
+                                        });
+                                    }
+                                };
+                            }
+                        } else {
+                            alert(data.mensaje || 'Usuario no encontrado');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        searchButton.disabled = false;
+                        searchButton.innerHTML = '<i class="fas fa-search"></i>';
+                        alert('Error al buscar el usuario');
+                    });
+                }.bind(this));
+            }
+        },
+
+        showEditarUsuarioModal(usuario) {
+            const modalHTML = `
+                <div class="modal fade" id="editarUsuarioConsultadoModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-custom-width">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Editar Usuario</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="editarUsuarioConsultadoForm" method="POST" action="/admin/usuarios/actualizar/${usuario.id}" enctype="multipart/form-data">
+                                    @csrf
+                                    <div class="mb-3">
+                                        <label for="nombres" class="form-label">Nombres:</label>
+                                        <input type="text" id="nombres" name="nombres" class="form-control" value="${usuario.nombres}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="apellidos" class="form-label">Apellidos:</label>
+                                        <input type="text" id="apellidos" name="apellidos" class="form-control" value="${usuario.apellidos}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="tipo_documento" class="form-label">Tipo de Documento:</label>
+                                        <select id="tipo_documento" name="tipo_documento" class="form-select" required>
+                                            <option value="CC" ${usuario.tipo_documento === 'CC' ? 'selected' : ''}>Cédula de Ciudadanía</option>
+                                            <option value="TI" ${usuario.tipo_documento === 'TI' ? 'selected' : ''}>Tarjeta de Identidad</option>
+                                            <option value="CE" ${usuario.tipo_documento === 'CE' ? 'selected' : ''}>Cédula de Extranjería</option>
+                                            <option value="PP" ${usuario.tipo_documento === 'PP' ? 'selected' : ''}>Pasaporte</option>
+                                            <option value="RC" ${usuario.tipo_documento === 'RC' ? 'selected' : ''}>Registro Civil</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="numero_documento" class="form-label">Número de Documento:</label>
+                                        <input type="text" id="numero_documento" name="numero_documento" class="form-control" value="${usuario.numero_documento}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="rh" class="form-label">Tipo de Sangre (RH):</label>
+                                        <select id="rh" name="rh" class="form-select" required>
+                                            <option value="O+" ${usuario.rh === 'O+' ? 'selected' : ''}>O+</option>
+                                            <option value="O-" ${usuario.rh === 'O-' ? 'selected' : ''}>O-</option>
+                                            <option value="A+" ${usuario.rh === 'A+' ? 'selected' : ''}>A+</option>
+                                            <option value="A-" ${usuario.rh === 'A-' ? 'selected' : ''}>A-</option>
+                                            <option value="B+" ${usuario.rh === 'B+' ? 'selected' : ''}>B+</option>
+                                            <option value="B-" ${usuario.rh === 'B-' ? 'selected' : ''}>B-</option>
+                                            <option value="AB+" ${usuario.rh === 'AB+' ? 'selected' : ''}>AB+</option>
+                                            <option value="AB-" ${usuario.rh === 'AB-' ? 'selected' : ''}>AB-</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="telefono" class="form-label">Teléfono:</label>
+                                        <input type="tel" id="telefono" name="telefono" class="form-control" value="${usuario.telefono}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="foto" class="form-label">Foto de Perfil:</label>
+                                        <div class="mb-3">
+                                            <img id="previewPerfilUsuarioConsultado" 
+                                                 src="${usuario.foto ? '/storage/fotos_perfil/' + usuario.foto : '/imagenes/sin_foto_perfil.jpg'}" 
+                                                 alt="Foto de perfil" 
+                                                 style="max-width: 100px; height: auto;">
+                                        </div>
+                                        <input type="file" id="fotoPerfilUsuarioConsultado" name="foto" class="form-control" accept="image/*">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Eliminar cualquier instancia previa del modal
+            const modalAnterior = document.getElementById('editarUsuarioConsultadoModal');
+            if (modalAnterior) {
+                modalAnterior.remove();
+            }
+
+            // Agregar el nuevo modal al DOM
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // Mostrar el modal usando Bootstrap
+            const modal = new bootstrap.Modal(document.getElementById('editarUsuarioConsultadoModal'));
+            modal.show();
+
+            // Configurar la previsualización de la imagen
+            const input = document.getElementById('fotoPerfilUsuarioConsultado');
+            const preview = document.getElementById('previewPerfilUsuarioConsultado');
+            
+            if (input && preview) {
+                input.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            preview.src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+
+            // Manejar el envío del formulario
+            const form = document.getElementById('editarUsuarioConsultadoForm');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        modal.hide();
+                        // Actualizar la vista del usuario
+                        location.reload();
+                    } else {
+                        alert('Error al actualizar el usuario');
+                    }
+                });
             });
+        },
+
+        initializeMessages() {
+            // Manejar mensajes de éxito
+            const successMessage = document.querySelector('.alert-success, .notification.is-success');
+            if (successMessage) {
+                setTimeout(() => {
+                    successMessage.style.transition = 'opacity 0.5s ease-out';
+                    successMessage.style.opacity = '0';
+                    setTimeout(() => {
+                        successMessage.remove();
+                    }, 500);
+                }, 3000);
+            }
+        },
+
+        mostrarDetallesElemento(elemento) {
+            const modalHTML = `
+                <div class="modal fade" id="modal-detalles-${elemento.id}" tabindex="-1" aria-labelledby="modalDetallesLabel-${elemento.id}" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalDetallesLabel-${elemento.id}">Detalles del Elemento</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Vista de detalles -->
+                                <div id="details-view-admin-${elemento.id}" class="details-view">
+                                    ${elemento.foto ? 
+                                        `<img src="/storage/${elemento.foto}" alt="Foto del elemento" class="img-fluid mb-3">` 
+                                        : ''}
+                                    <p><strong>Categoría:</strong> ${elemento.categoria.nombre}</p>
+                                    <p><strong>Descripción:</strong> ${elemento.descripcion}</p>
+                                    <p><strong>Marca:</strong> ${elemento.marca}</p>
+                                    <p><strong>Modelo:</strong> ${elemento.modelo}</p>
+                                    <p><strong>Serial:</strong> ${elemento.serie}</p>
+                                    <p><strong>Especificaciones Técnicas:</strong> ${elemento.especificaciones_tecnicas}</p>
+                                </div>
+
+                                <!-- Vista de edición (oculta por defecto) -->
+                                <div id="edit-view-admin-${elemento.id}" class="edit-view d-none">
+                                    <form action="/admin/elementos/${elemento.id}" method="POST" enctype="multipart/form-data">
+                                        <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').content}">
+                                        <input type="hidden" name="_method" value="PUT">
+                                        <div class="mb-3">
+                                            <label for="categoria_id-${elemento.id}" class="form-label">Categoría</label>
+                                            <select id="categoria_id-${elemento.id}" name="categoria_id" class="form-select" required>
+                                                ${window.categorias.map(categoria => `
+                                                    <option value="${categoria.id}" ${categoria.id === elemento.categoria_id ? 'selected' : ''}>
+                                                        ${categoria.nombre}
+                                                    </option>
+                                                `).join('')}
+                                            </select>
+                                        </div>
+                                <div class="mb-3">
+                                    <label for="descripcion-${elemento.id}" class="form-label">Descripción</label>
+                                    <input type="text" id="descripcion-${elemento.id}" name="descripcion" class="form-control" value="${elemento.descripcion}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="marca-${elemento.id}" class="form-label">Marca</label>
+                                    <input type="text" id="marca-${elemento.id}" name="marca" class="form-control" value="${elemento.marca}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="modelo-${elemento.id}" class="form-label">Modelo</label>
+                                    <input type="text" id="modelo-${elemento.id}" name="modelo" class="form-control" value="${elemento.modelo}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="serie-${elemento.id}" class="form-label">Número de Serie</label>
+                                    <input type="text" id="serie-${elemento.id}" name="serie" class="form-control" value="${elemento.serie}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="especificaciones_tecnicas-${elemento.id}" class="form-label">Especificaciones Técnicas</label>
+                                    <textarea id="especificaciones_tecnicas-${elemento.id}" name="especificaciones_tecnicas" class="form-control" rows="3" required>${elemento.especificaciones_tecnicas}</textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="foto-${elemento.id}" class="form-label">Foto del Elemento</label>
+                                    <input type="file" id="foto-${elemento.id}" name="foto" class="form-control" accept="image/*" onchange="previewImage(event, 'preview-imagen-${elemento.id}')">
+                                    <div class="mt-2">
+                                        <img id="preview-imagen-${elemento.id}" 
+                                             src="${elemento.foto ? '/storage/' + elemento.foto : '/imagenes/sin_foto_elemento.webp'}" 
+                                             alt="Foto del elemento" 
+                                             class="img-fluid mt-2" 
+                                             style="max-height: 200px"
+                                             onerror="this.src='/imagenes/sin_foto_elemento.webp'">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <form action="/admin/elementos/${elemento.id}" method="POST" class="d-inline">
+                            <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').content}">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                        </form>
+                        <button type="button" class="btn btn-primary d-none" id="save-changes-btn-admin-${elemento.id}" 
+                                onclick="saveChangesAdmin(${elemento.id})">Guardar Cambios</button>
+                        <button type="button" class="btn btn-warning" onclick="editElementAdmin(${elemento.id})">
+                            Editar
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Eliminar modal anterior si existe
+    const modalAnterior = document.getElementById(`modal-detalles-${elemento.id}`);
+    if (modalAnterior) {
+        modalAnterior.remove();
+    }
+
+    // Agregar el nuevo modal al DOM
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // Mostrar el modal
+    const modal = new bootstrap.Modal(document.getElementById(`modal-detalles-${elemento.id}`));
+    modal.show();
+}
+    };
+    
+    // Inicializar cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', () => AdminForms.init());
+
+    // También necesitamos estas funciones disponibles globalmente
+    window.editElementAdmin = function(elementoId) {
+        const detailsView = document.getElementById(`details-view-admin-${elementoId}`);
+        const editView = document.getElementById(`edit-view-admin-${elementoId}`);
+        const saveButton = document.getElementById(`save-changes-btn-admin-${elementoId}`);
+        
+        detailsView.classList.add('d-none');
+        editView.classList.remove('d-none');
+        saveButton.classList.remove('d-none');
+    };
+
+    window.saveChangesAdmin = function(elementoId) {
+        const form = document.querySelector(`#edit-view-admin-${elementoId} form`);
+        form.submit();
+    };
+
+    // Asegúrate de que esta función esté definida fuera del objeto AdminForms
+    window.mostrarDetallesElemento = function(elemento) {
+        const modalHTML = `
+            <div class="modal fade" id="modal-detalles-${elemento.id}" tabindex="-1" aria-labelledby="modalDetallesLabel-${elemento.id}" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalDetallesLabel-${elemento.id}">Detalles del Elemento</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Vista de detalles -->
+                            <div id="details-view-admin-${elemento.id}" class="details-view">
+                                ${elemento.foto ? 
+                                    `<img src="/storage/${elemento.foto}" alt="Foto del elemento" class="img-fluid mb-3">` 
+                                    : ''}
+                                <p><strong>Categoría:</strong> ${elemento.categoria.nombre}</p>
+                                <p><strong>Descripción:</strong> ${elemento.descripcion}</p>
+                                <p><strong>Marca:</strong> ${elemento.marca}</p>
+                                <p><strong>Modelo:</strong> ${elemento.modelo}</p>
+                                <p><strong>Serial:</strong> ${elemento.serie}</p>
+                                <p><strong>Especificaciones Técnicas:</strong> ${elemento.especificaciones_tecnicas}</p>
+                            </div>
+
+                            <!-- Vista de edición (oculta por defecto) -->
+                            <div id="edit-view-admin-${elemento.id}" class="edit-view d-none">
+                                <form action="/admin/elementos/${elemento.id}" method="POST" enctype="multipart/form-data">
+                                    <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').content}">
+                                    <input type="hidden" name="_method" value="PUT">
+                                    <div class="mb-3">
+                                        <label for="categoria_id-${elemento.id}" class="form-label">Categoría</label>
+                                        <select id="categoria_id-${elemento.id}" name="categoria_id" class="form-select" required>
+                                            ${window.categorias.map(categoria => `
+                                                <option value="${categoria.id}" ${categoria.id === elemento.categoria_id ? 'selected' : ''}>
+                                                    ${categoria.nombre}
+                                                </option>
+                                            `).join('')}
+                                        </select>
+                                    </div>
+                                <div class="mb-3">
+                                    <label for="descripcion-${elemento.id}" class="form-label">Descripción</label>
+                                    <input type="text" id="descripcion-${elemento.id}" name="descripcion" class="form-control" value="${elemento.descripcion}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="marca-${elemento.id}" class="form-label">Marca</label>
+                                    <input type="text" id="marca-${elemento.id}" name="marca" class="form-control" value="${elemento.marca}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="modelo-${elemento.id}" class="form-label">Modelo</label>
+                                    <input type="text" id="modelo-${elemento.id}" name="modelo" class="form-control" value="${elemento.modelo}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="serie-${elemento.id}" class="form-label">Número de Serie</label>
+                                    <input type="text" id="serie-${elemento.id}" name="serie" class="form-control" value="${elemento.serie}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="especificaciones_tecnicas-${elemento.id}" class="form-label">Especificaciones Técnicas</label>
+                                    <textarea id="especificaciones_tecnicas-${elemento.id}" name="especificaciones_tecnicas" class="form-control" rows="3" required>${elemento.especificaciones_tecnicas}</textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="foto-${elemento.id}" class="form-label">Foto del Elemento</label>
+                                    <input type="file" id="foto-${elemento.id}" name="foto" class="form-control" accept="image/*" onchange="previewImage(event, 'preview-imagen-${elemento.id}')">
+                                    <div class="mt-2">
+                                        <img id="preview-imagen-${elemento.id}" 
+                                             src="${elemento.foto ? '/storage/' + elemento.foto : '/imagenes/sin_foto_elemento.webp'}" 
+                                             alt="Foto del elemento" 
+                                             class="img-fluid mt-2" 
+                                             style="max-height: 200px"
+                                             onerror="this.src='/imagenes/sin_foto_elemento.webp'">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <form action="/admin/elementos/${elemento.id}" method="POST" class="d-inline">
+                            <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').content}">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                        </form>
+                        <button type="button" class="btn btn-primary d-none" id="save-changes-btn-admin-${elemento.id}" 
+                                onclick="saveChangesAdmin(${elemento.id})">Guardar Cambios</button>
+                        <button type="button" class="btn btn-warning" onclick="editElementAdmin(${elemento.id})">
+                            Editar
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+`;
+
+        // Eliminar modal anterior si existe
+        const modalAnterior = document.getElementById(`modal-detalles-${elemento.id}`);
+        if (modalAnterior) {
+            modalAnterior.remove();
         }
 
-        // Event listeners para cerrar modales
-        closeBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const modal = btn.closest('.modal');
+        // Agregar el nuevo modal al DOM
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        
+        // Mostrar el modal
+        const modal = new bootstrap.Modal(document.getElementById(`modal-detalles-${elemento.id}`));
+        modal.show();
+    };
+
+    // Función para cerrar modales
+    document.addEventListener('DOMContentLoaded', function() {
+        // Obtener todos los botones de cierre
+        const closeButtons = document.querySelectorAll('.close-btn');
+        
+        // Agregar evento de click a cada botón
+        closeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const modal = this.closest('.modal');
                 if (modal) {
                     modal.style.display = 'none';
                 }
             });
         });
 
-        // Cerrar modal al hacer clic fuera
+        // Cerrar modal al hacer click fuera de él
         window.addEventListener('click', function(event) {
             if (event.target.classList.contains('modal')) {
                 event.target.style.display = 'none';
@@ -828,421 +1505,7 @@
     });
 </script>
 
-<script>
-
-document.addEventListener('DOMContentLoaded', function() {
-    const searchForm = document.querySelector('form[action="{{ route("admin.usuarios.consultar") }}"]');
-    const resultadoBusqueda = document.getElementById('resultadoBusqueda');
-    
-    if (searchForm) {
-        searchForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const documento = new FormData(this).get('documento');
-            
-            try {
-                // Realizar la petición
-                const url = `/admin/usuarios/consultar?documento=${documento}`;
-                console.log('Realizando petición a:', url);
-                
-                const response = await fetch(url);
-                const data = await response.json();
-                
-                if (data.success && data.usuario) {
-                    // Ocultar sidebar
-                    document.getElementById('sidebar').style.display = 'none';
-                    
-                    // Mostrar resultados
-                    resultadoBusqueda.style.display = 'block';
-                    
-                    // Actualizar información del usuario
-                    document.querySelector('.usuario-nombre').textContent = data.usuario.nombres;
-                    document.querySelector('.usuario-apellidos').textContent = data.usuario.apellidos;
-                    document.querySelector('.usuario-documento').textContent = data.usuario.numero_documento;
-                    document.querySelector('.usuario-telefono').textContent = data.usuario.telefono;
-                    document.querySelector('.usuario-rh').textContent = data.usuario.rh;
-                    document.querySelector('.usuario-rol').textContent = data.usuario.role?.nombre || 'N/A';
-                    document.querySelector('.usuario-ficha').textContent = data.usuario.numero_ficha || 'N/A';
-                    
-                    // Actualizar foto del usuario
-                    const fotoPerfil = document.querySelector('.foto-perfil-usuario');
-                    if (fotoPerfil) {
-                        fotoPerfil.src = data.usuario.foto 
-                            ? `/storage/fotos_perfil/${data.usuario.foto}`
-                            : '/imagenes/sin_foto_perfil.webp';
-                        fotoPerfil.onerror = () => fotoPerfil.src = '/imagenes/sin_foto_perfil.webp';
-                    }
-                    
-                    // Actualizar elementos si existen
-                    if (data.elementos && data.elementos.length > 0) {
-                        const cardContainer = document.querySelector('.card-container');
-                        cardContainer.innerHTML = data.elementos.map(elemento => `
-                            <div class="card">
-                                <h5 class="cabeza">${elemento.categoria.nombre}</h5>
-                                <img src="/storage/${elemento.foto}" 
-                                     alt="Foto del elemento" 
-                                     class="elemento-foto"
-                                     onerror="this.src='/imagenes/sin_foto_elemento.webp'">
-                                <p><strong>Serial:</strong> ${elemento.serie}</p>
-                                <p><strong>Marca:</strong> ${elemento.marca}</p>
-                                <button type="button" 
-                                        class="btn btn-link link-ver-mas" 
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#modal-detalles-${elemento.id}">
-                                    Ver más
-                                </button>
-                            </div>
-                        `).join('');
-
-                        // Generar modales
-                        const modalesContainer = document.getElementById('modales-container');
-                        modalesContainer.innerHTML = data.elementos.map(elemento => `
-                            <div class="modal fade" id="modal-detalles-${elemento.id}" tabindex="-1">
-                                <div class="modal-dialog modal-lg">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Detalles del Elemento</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <!-- Vista de detalles -->
-                                            <div id="details-view-${elemento.id}" class="details-view">
-                                                <img src="/storage/${elemento.foto}" alt="Foto del elemento" class="img-fluid mb-3">
-                                                <p><strong>Categoría:</strong> ${elemento.categoria.nombre}</p>
-                                                <p><strong>Descripción:</strong> ${elemento.descripcion}</p>
-                                                <p><strong>Marca:</strong> ${elemento.marca}</p>
-                                                <p><strong>Modelo:</strong> ${elemento.modelo}</p>
-                                                <p><strong>Serial:</strong> ${elemento.serie}</p>
-                                                <p><strong>Especificaciones Técnicas:</strong> ${elemento.especificaciones_tecnicas}</p>
-                                            </div>
-                                            
-                                            <!-- Vista de edición -->
-                                            <div id="edit-view-${elemento.id}" class="edit-view d-none">
-                                                <form id="edit-form-${elemento.id}" action="/admin/elementos/${elemento.id}" method="POST" enctype="multipart/form-data">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Categoría</label>
-                                                        <select name="categoria_id" class="form-select" required>
-                                                            ${elemento.categoria ? `
-                                                                <option value="${elemento.categoria.id}" selected>
-                                                                    ${elemento.categoria.nombre}
-                                                                </option>
-                                                            ` : ''}
-                                                        </select>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Descripción</label>
-                                                        <input type="text" name="descripcion" class="form-control" value="${elemento.descripcion}" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Marca</label>
-                                                        <input type="text" name="marca" class="form-control" value="${elemento.marca}" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Modelo</label>
-                                                        <input type="text" name="modelo" class="form-control" value="${elemento.modelo}" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Número de Serie</label>
-                                                        <input type="text" name="serie" class="form-control" value="${elemento.serie}" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Especificaciones Técnicas</label>
-                                                        <textarea name="especificaciones_tecnicas" class="form-control" rows="3" required>${elemento.especificaciones_tecnicas}</textarea>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Foto</label>
-                                                        <input type="file" name="foto" class="form-control" accept="image/*" onchange="previewImage(event, 'preview-${elemento.id}')">
-                                                        <img id="preview-${elemento.id}" src="/storage/${elemento.foto}" class="img-fluid mt-2" style="max-height: 200px">
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-warning" onclick="editElementAdmin(${elemento.id})">
-                                                Editar
-                                            </button>
-                                            <button type="button" class="btn btn-primary d-none" id="save-changes-btn-${elemento.id}" onclick="saveChangesAdmin(${elemento.id})">
-                                                Guardar Cambios
-                                            </button>
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                Cerrar
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        `).join('');
-                    }
-                    
-                    // Cerrar modal de consulta
-                    const consultUsersModal = document.getElementById('consultUsersModal');
-                    if (consultUsersModal) {
-                        const modal = bootstrap.Modal.getInstance(consultUsersModal);
-                        if (modal) modal.hide();
-                    }
-                } else {
-                    alert(data.mensaje || 'Usuario no encontrado');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        });
-    }
-});
-
-// Funciones auxiliares
-function editElementAdmin(id) {
-    console.log('Editando elemento:', id);
-    
-    // Usar los IDs correctos que están en el HTML
-    const detailsView = document.getElementById(`details-view-admin-${id}`);
-    const editView = document.getElementById(`edit-view-admin-${id}`);
-    const saveBtn = document.getElementById(`save-changes-btn-admin-${id}`);
-    
-    if (!detailsView || !editView) {
-        console.error('No se encontraron las vistas:', {
-            detailsView: !!detailsView,
-            editView: !!editView
-        });
-        return;
-    }
-
-    // Ocultar vista de detalles y mostrar vista de edición
-    detailsView.classList.add('d-none');
-    editView.classList.remove('d-none');
-    
-    // Mostrar botón de guardar
-    if (saveBtn) {
-        saveBtn.classList.remove('d-none');
-    }
-
-    console.log('Vista de edición activada');
-}
-
-function saveChangesAdmin(id) {
-    console.log('Guardando cambios para elemento:', id);
-    const form = document.getElementById(`edit-view-admin-${id}`).querySelector('form');
-    if (form) {
-        form.submit();
-    }
-}
-
-// Función para previsualizar imagen
-function previewImage(event, previewId) {
-        const file = event.target.files[0];
-        const preview = document.getElementById(previewId);
-        
-        if (file && preview) {
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                preview.src = e.target.result;
-            }
-            
-            reader.readAsDataURL(file);
-        }
-    }
-
-    // Inicializar los eventos cuando el documento esté listo
-    document.addEventListener('DOMContentLoaded', function() {
-        // Para el modal de edición de perfil
-        const fotoInput = document.querySelector('#editarPerfilAdminModal input[type="file"]');
-        if (fotoInput) {
-            fotoInput.addEventListener('change', function(e) {
-                previewImage(e, 'previewPerfilAdmin');
-            });
-        }
-
-        // Para otros formularios (si los hay)
-        const otrosInputs = document.querySelectorAll('input[type="file"]');
-        otrosInputs.forEach(input => {
-            const previewId = input.getAttribute('data-preview');
-            if (previewId) {
-                input.addEventListener('change', function(e) {
-                    previewImage(e, previewId);
-                });
-            }
-        });
-    });
-
-// Corregir el onclick en el botón de editar
-document.addEventListener('DOMContentLoaded', function() {
-    // Corregir los botones de editar que usan template literals incorrectamente
-    document.querySelectorAll('[onclick*="${elemento.id}"]').forEach(button => {
-        const id = button.getAttribute('onclick').match(/\d+/)[0];
-        button.setAttribute('onclick', `editElementAdmin(${id})`);
-    });
-});
-
-</script>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Selecciona el modal y los botones
-        const reportIngresosModal = document.getElementById("reportIngresosModal");
-        const openModalBtn = document.querySelector(".open-report-ingresos-modal"); // Asegúrate que el botón tenga esta clase
-        const closeModalBtn = reportIngresosModal.querySelector(".close-btn");
- 
-        // Función para abrir el modal
-        openModalBtn.addEventListener("click", function(event) {
-            event.preventDefault(); // Evita redireccionamientos
-            reportIngresosModal.style.display = "block";
-        });
- 
-        // Función para cerrar el modal al hacer clic en el botón de cerrar
-        closeModalBtn.addEventListener("click", function() {
-            reportIngresosModal.style.display = "none";
-        });
- 
-        // Cierra el modal si el usuario hace clic fuera del contenido del modal
-        window.addEventListener("click", function(event) {
-            if (event.target === reportIngresosModal) {
-                reportIngresosModal.style.display = "none";
-            }
-        });
-    });
-
-
-
-    document.addEventListener('DOMContentLoaded', function () {
-    const resultadoBusqueda = document.getElementById('resultadoBusqueda');
-    const sidebar = document.querySelector('.sidebar');
-    const logoContainer = document.querySelector('.logo-container');
-    const limpiarConsultaBtn = document.getElementById('limpiarConsultaBtn');
-
-    document.addEventListener('showResult', function () {
-        resultadoBusqueda.style.display = 'block';
-        sidebar.style.display = 'none'; 
-        logoContainer.style.display = 'none';
-    });
-
-    limpiarConsultaBtn.addEventListener('click', function () {
-        resultadoBusqueda.style.display = 'none';
-        sidebar.style.display = 'block';
-        logoContainer.style.display = 'flex';
-    });
-});
-
- </script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <div id="modales-container"></div>
 
-<!-- Manejo de mensajes de éxito y error -->
-<script>
-    // Esperar a que el documento esté completamente cargado
-    $(document).ready(function() {
-        // Función para manejar los mensajes
-        function handleMessages() {
-            const successMessage = $('#success-message');
-            const errorMessage = $('#error-message');
-
-            if (successMessage.length > 0) {
-                console.log('Mensaje de éxito encontrado');
-                setTimeout(function() {
-                    successMessage.fadeOut('slow');
-                }, 5000);
-            }
-
-            if (errorMessage.length > 0) {
-                console.log('Mensaje de error encontrado');
-                setTimeout(function() {
-                    errorMessage.fadeOut('slow');
-                }, 5000);
-            }
-        }
-
-        // Ejecutar la función cuando la página carga
-        handleMessages();
-
-        // También ejecutar cuando hay cambios en el DOM (para mensajes dinámicos)
-        const observer = new MutationObserver(function(mutations) {
-            handleMessages();
-        });
-
-        // Observar cambios en el body
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
-    });
-</script>
-
-<script>
-    // Código Javascript para programar la funcionalidad de escribir solo números en los inputs de número de documento y teléfono
-     const soloNumeros = document.querySelectorAll('#numero_documento, #telefono');
-        soloNumeros.forEach(input => {
-            input.addEventListener('input', function() {
-                this.value = this.value.replace(/[^0-9]/g, '');
-            });
-        });
-</script>
-
-<script>
-    // Validación y mostrar/ocultar contraseñas
-
-document.addEventListener("DOMContentLoaded", function () {
-    // Obtener elementos de la página
-    const nuevaContraseña = document.getElementById("nueva_contraseña");
-    const confirmarContraseña = document.getElementById("confirmar_contraseña");
-    const contraseñaError = document.getElementById("contraseña_error");
-
-    // Función para actualizar el mensaje de validación
-    function validarContraseña(input) {
-        const value = input.value;
-        let mensajes = [];
-
-        if (value.length < 6) mensajes.push("Mínimo 6 caracteres");
-        if (!/[A-Z]/.test(value)) mensajes.push("Al menos una mayúscula");
-        if (!/[0-9]/.test(value)) mensajes.push("Al menos un número");
-        if (!/[!@#$%^&*]/.test(value)) mensajes.push("Al menos un símbolo (!@#$%^&*)");
-
-        // Actualizar el mensaje de error
-        contraseñaError.textContent = mensajes.join(", ");
-        contraseñaError.style.color = mensajes.length > 0 ? "#ff3860" : "#48c774";
-    }
-
-    // Agregar evento para la validación en tiempo real
-    nuevaContraseña.addEventListener("input", function () {
-        validarContraseña(this);
-    });
-
-    // Función para alternar mostrar/ocultar contraseñas
-    function togglePasswordVisibility(input, toggleIcon) {
-        const isPassword = input.type === "password";
-        input.type = isPassword ? "text" : "password";
-
-        // Cambiar el icono según el estado
-        toggleIcon.classList.toggle("fa-eye");
-        toggleIcon.classList.toggle("fa-eye-slash");
-    }
-
-    // Configurar iconos de mostrar/ocultar contraseñas
-    const toggleNuevaContraseña = document.querySelector("#toggle_nueva_contraseña");
-    const toggleConfirmarContraseña = document.querySelector("#toggle_confirmar_contraseña");
-
-    toggleNuevaContraseña.addEventListener("click", function () {
-        togglePasswordVisibility(nuevaContraseña, this);
-    });
-
-    toggleConfirmarContraseña.addEventListener("click", function () {
-        togglePasswordVisibility(confirmarContraseña, this);
-    });
-
-    // Verificar que ambas contraseñas coincidan
-    confirmarContraseña.addEventListener("input", function () {
-        const errorMensaje = document.getElementById("coincidencia_error");
-        if (nuevaContraseña.value !== confirmarContraseña.value) {
-            errorMensaje.textContent = "Las contraseñas no coinciden";
-            errorMensaje.style.color = "#ff3860";
-        } else {
-            errorMensaje.textContent = "";
-        }
-    });
-});
-
-</script>
 </body>
 </html>

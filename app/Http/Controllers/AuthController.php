@@ -51,7 +51,7 @@ class AuthController extends Controller
         $nuevaContraseña = Str::random(8);
 
         // Actualizar la contraseña en la base de datos
-        $usuario->contraseña = Hash::make($nuevaContraseña);
+        $usuario->contraseña = Hash::make($nuevaContraseña); // Cambiado de 'password' a 'contraseña'
         $usuario->save();
 
         // Enviar la nueva contraseña al correo del usuario
@@ -116,14 +116,14 @@ class AuthController extends Controller
                 function ($attribute, $value, $fail) use ($request) {
                     $dominio = substr(strrchr($value, "@"), 1);
                     $rol = (int)$request->rol;
-                    
+
                     if ($rol === 3) { // Aprendiz
                         if ($dominio !== 'soy.sena.edu.co') {
-                            $fail('Los aprendices deben usar un correo con dominio @soy.sena.edu.co');
+                            $fail("El correo institucional para aprendices debe terminar en '@soy.sena.edu.co'.");
                         }
                     } else { // Todos los demás roles
                         if ($dominio !== 'sena.edu.co') {
-                            $fail('Debe usar un correo con dominio @sena.edu.co');
+                            $fail("El correo institucional debe terminar en '@sena.edu.co' para este rol.");
                         }
                     }
                 }
@@ -133,7 +133,7 @@ class AuthController extends Controller
                 'numeric',
                 'digits_between:7,10'
             ],
-            'contraseña' => [
+            'contraseña' => [ // Cambiado de 'password' a 'contraseña'
                 'required',
                 'string',
                 'min:6',
@@ -170,7 +170,7 @@ class AuthController extends Controller
             'numero_documento.numeric' => 'El número de documento debe contener solo números',
             'numero_documento.digits_between' => 'El número de documento debe tener entre 6 y 12 dígitos',
             'correo_institucional.unique' => 'Este correo institucional ya está registrado',
-            'contraseña.regex' => 'La contraseña debe contener al menos una mayúscula, una minúscula, un número y un símbolo (@$!%*?&)',
+            'contraseña.regex' => 'La contraseña debe contener al menos una mayúscula, una minúscula, un número y un símbolo (@$!%*?&)', // Cambiado de 'password' a 'contraseña'
             'telefono.numeric' => 'El teléfono debe contener solo números',
             'telefono.digits_between' => 'El teléfono debe tener entre 7 y 10 dígitos',
             'foto.max' => 'La foto no debe superar los 6MB'
@@ -194,7 +194,7 @@ class AuthController extends Controller
             $usuario->correo_institucional = $request->correo_institucional;
             $usuario->telefono = $request->telefono;
             $usuario->numero_ficha = $request->input('numero_ficha');
-            $usuario->contraseña = Hash::make($request->contraseña);
+            $usuario->contraseña = Hash::make($request->contraseña); // Cambiado de 'password' a 'contraseña'
             $usuario->roles_id = $request->rol;
 
             if ($request->hasFile('foto')) {
@@ -227,7 +227,7 @@ class AuthController extends Controller
 
         $credentials = [
             'correo_institucional' => $request->correo_institucional,
-            'password' => $request->contraseña,
+            'password' => $request->contraseña, // Usar 'password' aquí para la autenticación
         ];
 
         // Verificar credenciales
@@ -319,6 +319,36 @@ class AuthController extends Controller
         } catch (QueryException $e) {
             Log::error('Error al actualizar el perfil: ' . $e->getMessage());
             return response()->json(['error' => 'Ha ocurrido un error al actualizar el perfil.'], 500);
+        }
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => [
+                'required',
+                'string',
+                'min:6',
+                'confirmed',
+                'regex:/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).+$/'
+            ],
+        ], [
+            'new_password.regex' => 'La nueva contraseña debe contener al menos una mayúscula, un número y un símbolo (!@#$%^&*)'
+        ]);
+
+        $user = Auth::user();
+
+        if (!Hash::check($request->current_password, $user->contraseña)) { // Cambiado de 'password' a 'contraseña'
+            return back()->withErrors(['current_password' => 'La contraseña actual no es correcta']);
+        }
+
+        try {
+            $user->contraseña = Hash::make($request->new_password); // Cambiado de 'password' a 'contraseña'
+            $user->save();
+            return back()->with('success', 'Contraseña actualizada correctamente');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Ocurrió un error al actualizar la contraseña.']);
         }
     }
 }

@@ -24,20 +24,20 @@ class Usuario extends Authenticatable
         'telefono',
         'roles_id',
         'numero_ficha',
-        'contraseña',
+        'contraseña', // Cambiado de 'password' a 'contraseña'
         'foto',
     ];
 
     // Campos que deben ser ocultos en los arrays de respuesta
     protected $hidden = [
-        'contraseña',
+        'contraseña', // Cambiado de 'password' a 'contraseña'
         'remember_token',
     ];
 
     // Método para obtener la contraseña
     public function getAuthPassword()
     {
-        return $this->contraseña;
+        return $this->contraseña; // Cambiado de 'password' a 'contraseña'
     }
 
     // Relación con el modelo Role

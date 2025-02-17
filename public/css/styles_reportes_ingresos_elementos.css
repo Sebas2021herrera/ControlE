@@ -1,21 +1,360 @@
 body {
     font-family: 'Work Sans', sans-serif;
 }
+
 .header {
-    background-color: #00304D; /* Color del header */
+    background-color: #00304D;
     color: white;
-    padding: 1rem;
+    padding: 1rem 0;
     text-align: center;
     font-size: 1.5rem;
     font-weight: bold;
+    position: relative;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
+
+.container-header {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px;
+    position: relative;
+}
+
+.nav-left-group {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+}
+
+.logo-header {
+    display: flex;
+    align-items: center;
+}
+
+.logo-header-img {
+    height: 70px;
+    width: auto;
+    margin-right: 25px;
+}
+
+.header-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+}
+
 .container {
     margin-top: 20px;
 }
+
 .table-container {
     margin-top: 30px;
 }
 
+/* Estilos para el modal de foto */
+#modalFotoElemento .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 6px;
+    text-align: center;
+    max-width: 90%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#modalFotoElemento .image {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#modalFotoElemento .image img {
+    max-height: 80vh;
+    max-width: 100%;
+    width: auto;
+    object-fit: contain;
+    margin: 0 auto;
+}
+
+.ver-foto-elemento {
+    color: #485fc7;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.ver-foto-elemento:hover {
+    color: #3850b7;
+}
+
+/* Estilos para el botón de limpiar consulta */
+.ml-2 {
+    margin-left: 0.5rem;
+}
+
+#limpiarConsulta {
+    transition: all 0.3s ease;
+}
+
+#limpiarConsulta:hover {
+    transform: scale(1.05);
+}
+
+/* Ajustes responsive */
+@media (max-width: 768px) {
+    .header {
+        padding: 1rem;
+    }
+
+    .logo-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .header-title {
+        font-size: 1.2rem;
+        position: relative;
+        transform: none;
+        margin-top: 10px;
+    }
+}
+
 .mt-4 {
     transform: translate(-2px, -16px);
+}
+
+/* Estilos para el modal de detalles del elemento */
+.modal-dialog.modal-lg {
+    max-width: 800px;
+    margin: 1.75rem auto;
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.modal-header {
+    background-color: #00304D;
+    color: white;
+    border-radius: 8px 8px 0 0;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.modal-title {
+    color: white;
+    font-weight: bold;
+    margin: 0;
+    font-size: 1.25rem;
+    text-align: center;
+    flex-grow: 1;
+}
+
+.modal-body {
+    background-color: white;
+    padding: 2rem;
+    max-height: calc(100vh - 210px);
+    overflow-y: auto;
+}
+
+.details-view {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background-color: white;
+}
+
+.details-view img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    margin-bottom: 1.5rem;
+    max-height: 400px;
+    object-fit: contain;
+    background-color: white;
+}
+
+.details-view p {
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+    color: #4a4a4a;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: white;
+}
+
+.details-view p strong {
+    color: #363636;
+    min-width: 180px;
+    font-weight: 600;
+}
+
+.modal-footer {
+    background-color: white;
+    border-top: 1px solid #e5e5e5;
+    padding: 1rem;
+    border-radius: 0 0 8px 8px;
+}
+
+.btn-secondary {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: 500;
+}
+
+.btn-secondary:hover {
+    background-color: #9b0101;
+}
+
+.modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.btn-close {
+    background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
+    
+    opacity: 1;
+    padding: 0.5rem;
+    margin-left: auto;
+    position: absolute;
+    right: 1rem;
+}
+
+.btn-close:hover {
+    opacity: 0.75;
+}
+
+/* Ajustes para el modal cuando está activo */
+.modal.fade.show {
+    display: block;
+}
+
+.modal-dialog-centered {
+    display: flex;
+    align-items: center;
+    min-height: calc(100% - 3.5rem);
+}
+
+/* Estilos para dispositivos móviles */
+@media (max-width: 768px) {
+    .modal-dialog.modal-lg {
+        margin: 0.5rem;
+        max-width: calc(100% - 1rem);
+    }
+
+    .modal-body {
+        padding: 1rem;
+    }
+
+    .details-view p {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+
+    .details-view p strong {
+        min-width: auto;
+    }
+
+    .modal-title {
+        font-size: 1.1rem;
+    }
+}
+
+/* Estilos para el modal de usuario */
+.modal-card {
+    background: white;
+    border-radius: 8px;
+    max-width: 800px;
+    width: 90%;
+    margin: 0 auto;
+}
+
+.modal-card-head {
+    background-color: #00304D;
+    color: white;
+    border-radius: 8px 8px 0 0;
+}
+
+.modal-card-title {
+    color: white;
+    font-weight: bold;
+}
+
+.usuario-info {
+    display: flex;
+    justify-content: space-between;
+    padding: 2rem;
+    gap: 2rem;
+    background-color: white;
+}
+
+.info-text {
+    flex: 1;
+}
+
+.info-text h3 {
+    font-size: 1.5rem;
+    color: #363636;
+    margin-bottom: 1.5rem;
+    font-weight: bold;
+}
+
+.info-text p {
+    margin: 1rem 0;
+    font-size: 1rem;
+    color: #4a4a4a;
+    display: flex;
+    align-items: center;
+}
+
+.info-text i {
+    color: #00304D;
+    width: 20px;
+    margin-right: 10px;
+}
+
+.foto-usuario {
+    width: 200px;
+    flex-shrink: 0;
+}
+
+.foto-perfil-usuario {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Ajustes para el modal de elementos */
+.ver-elementos {
+    cursor: pointer;
 }

@@ -4,13 +4,31 @@ body {
 .header {
     background-color: #00304D; /* Color del header */
     color: white;
-    padding: 1rem;
+    padding: 1rem 0; /* Aumentado el padding */
     text-align: center;
     font-size: 1.5rem;
     font-weight: bold;
+    position: relative;
+    min-height: 100px; /* Altura mínima para acomodar el logo más grande */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
+
 .container {
     margin-top: 20px;
+}
+
+.container-header {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px;
+    position: relative;
 }
 .table-container {
     margin-top: 30px;
@@ -18,4 +36,214 @@ body {
 
 .mt-4 {
     transform: translate(-2px, -16px);
+}
+
+/* Estilos para el modal y la información del usuario */
+.modal-card {
+    width: 80%;
+    max-width: 900px;
+}
+
+.usuario-info {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    gap: 30px;
+    padding: 20px;
+    position: relative;
+    max-height: 300px;
+}
+
+.foto-logo {
+    flex: 0 0 auto;
+    width: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo-sena {
+    width: 100%;
+    height: auto;
+}
+
+.info-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-right: 20px;
+    max-width: 50%;
+}
+
+.info-text p {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+.info-text p.verde {
+    color: #39a900;
+    font-weight: bold;
+}
+
+.foto-usuario {
+    flex: 0 0 auto;
+    width: 160px;
+    margin-left: auto;
+}
+
+.foto-perfil-usuario {
+    width: 160px;
+    height: 180px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 2px solid #ddd;
+}
+
+#semifooter {
+    margin-top: 5px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #39a900;
+    text-align: center;
+    max-width: 120px;
+}
+
+/* Estilos para el botón de ver usuario */
+.ver-usuario {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ver-usuario:hover {
+    transform: scale(1.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modal-card {
+        width: 95%;
+    }
+
+    .usuario-info {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 20px;
+        max-height: none;
+    }
+
+    .info-text {
+        max-width: 100%;
+        padding-right: 0;
+    }
+
+    .foto-usuario {
+        margin-left: 0;
+    }
+
+    .header {
+        padding: 1rem;
+    }
+
+    .logo-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .header-title {
+        font-size: 1.2rem;
+        position: relative;
+        transform: none;
+        margin-top: 10px;
+    }
+}
+
+.nav-left-group {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+}
+
+.logo-header {
+    display: flex;
+    align-items: center;
+}
+
+.logo-header-img {
+    height: 70px;
+    width: auto;
+    margin-right: 25px;
+}
+
+/* Estilo para el título */
+.header-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+}
+
+/* Estilos para el modal de foto */
+#modalFotoElemento .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 6px;
+    text-align: center;
+    max-width: 90%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#modalFotoElemento .image {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#modalFotoElemento .image img {
+    max-height: 80vh;
+    max-width: 100%;
+    width: auto;
+    object-fit: contain;
+    margin: 0 auto;
+}
+
+.ver-foto-elemento {
+    color: #485fc7;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.ver-foto-elemento:hover {
+    color: #3850b7;
+}
+
+/* Estilos para el botón de limpiar consulta */
+.ml-2 {
+    margin-left: 0.5rem;
+}
+
+#limpiarConsulta {
+    transition: all 0.3s ease;
+}
+
+#limpiarConsulta:hover {
+    transform: scale(1.05);
 }

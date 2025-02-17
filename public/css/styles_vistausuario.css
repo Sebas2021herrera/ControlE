@@ -226,6 +226,11 @@ html {
     font-size: 13px;
 }
 
+.ficha {
+    margin-top :-18px;
+    font-size: 13px;
+}
+
 .qr {
     display: flex;
     justify-content: flex-end; /* Alinea a la derecha */

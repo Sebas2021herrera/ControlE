@@ -594,20 +594,23 @@
     </script>
 
     <script>
-        // Inicializar modo noche si está activado en localStorage
         document.addEventListener('DOMContentLoaded', () => {
-            const body = document.body;
             const modeToggle = document.getElementById('modeToggle');
+            const body = document.body;
             const modeIcon = document.getElementById('modeIcon');
             const modeText = document.getElementById('modeText');
 
+            // Verificar el modo actual al cargar
             if (localStorage.getItem('dark-mode') === 'true') {
                 body.classList.add('dark-mode');
                 modeIcon.classList.replace('fa-moon', 'fa-sun');
                 modeText.textContent = 'Modo Claro';
             }
 
-            modeToggle.addEventListener('click', () => {
+            // Hacer que todo el contenedor sea clickeable
+            modeToggle.addEventListener('click', function(e) {
+                e.preventDefault(); // Prevenir comportamiento por defecto
+                
                 body.classList.toggle('dark-mode');
                 const isDarkMode = body.classList.contains('dark-mode');
                 localStorage.setItem('dark-mode', isDarkMode);

@@ -178,7 +178,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.log('ID del elemento:', elementoId); // Para debugging
 
                 try {
-                    const response = await fetch(`/elemento/detalles/${elementoId}`);
+                    const response = await fetch(`/elementos/detalles/${elementoId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+                    
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
@@ -204,7 +211,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                                          alt="Foto del elemento" 
                                                          class="img-fluid mb-3"
                                                          onerror="this.src='/imagenes/sin_foto_elemento.webp'">`
-                                                    : ''
+                                                    : '<img src="/imagenes/sin_foto_elemento.webp" alt="Sin foto" class="img-fluid mb-3">'
                                                 }
                                                 <p><strong>Categoría:</strong> ${elemento.categoria.nombre}</p>
                                                 <p><strong>Descripción:</strong> ${elemento.descripcion}</p>

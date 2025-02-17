@@ -139,7 +139,7 @@
                     <img id="left-panel-img" src="{{ asset('storage/fotos_perfil/' . $usuario->foto) }}"
                         alt="Foto de perfil" class="foto-perfil" style="justity-content:center">
                 @else
-                    <img id="left-panel-img" src="{{ asset('imagenes/sin_foto_perfil.webp') }}"
+                    <img id="left-panel-img" src="{{ asset('imagenes/sin_foto_perfil.jpg') }}"
                         alt="Foto de perfil predeterminada" class="foto-perfil"
                         style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px;">
                 @endif

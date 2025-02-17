@@ -17,7 +17,7 @@ use App\Http\Controllers\AboutController;
 
 // Rutas para autenticación y registro
 Route::get('/controle', [WelcomeController::class, 'index'])->name('welcome');
-Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
+// Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 Route::get('login', [AuthController::class, 'showLogin'])->name('login');
 Route::get('create', [AuthController::class, 'create'])->name('create');
 Route::post('registrado', [AuthController::class, 'createpost'])->name('createpost');
@@ -44,6 +44,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/elementos/{id}/edit', [ElementoController::class, 'edit'])->name('elementos.edit');
     Route::put('/elementos/{id}', [ElementoController::class, 'update'])->name('elementos.update');
     Route::get('/elementos/detalles/{id}', [ElementoController::class, 'detalles'])->name('elementos.detalles');
+
+    // Ruta para obtener detalles del elemento
+    Route::get('/elementos/detalles/{id}', [ReportesElementosController::class, 'obtenerDetalles'])
+        ->name('elementos.obtenerDetalles');
 
     // Rutas para los paneles de administración y control
     Route::middleware(CheckRole::class . ':1')->group(function () {
@@ -96,6 +100,9 @@ Route::middleware('auth')->group(function () {
         // Ruta para consultar usuarios
         Route::get('/admin/usuarios/consultar', [AdminController::class, 'consultarUsuario'])
             ->name('admin.usuarios.consultar');
+
+        Route::delete('/admin/usuarios/{id}', [AdminController::class, 'destroyUsuario'])
+            ->name('admin.usuarios.destroy');
 
         // Ruta para almacenar un nuevo usuario
         Route::post('/admin/usuarios', [AdminController::class, 'storeUsuario'])->name('admin.usuarios.store');

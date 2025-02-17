@@ -147,7 +147,7 @@
                 
                         <!-- Foto del Usuario -->
                         <div class="foto-usuario">
-                            <img src="{{ asset('imagenes/foto_usuario_default.png') }}" alt="Foto de perfil" class="foto-perfil-usuario">
+                            <img src="{{ asset('imagenes/sin_foto_perfil.jpg') }}" class="foto-perfil-usuario">
                         </div>
                     </div>
                 </div>
@@ -158,10 +158,16 @@
                     </div>
                 </div>
             </div>
-            <!-- Botón para limpiar la consulta -->
-            <div class="field" style="margin-top: 10px;">
+            <!-- Botones para limpiar la consulta, editar y eliminar usuario -->
+            <div class="field" style="margin-top: 10px; display: flex; gap: 10px; justify-content: flex-start;">
                 <button id="limpiarConsultaBtn" class="button is-danger">
                     <i class="fas fa-redo"></i> Limpiar Consulta
+                </button>
+                <button id="editarUsuarioBtn" class="button is-warning">
+                    <i class="fas fa-edit"></i> Editar Usuario
+                </button>
+                <button id="eliminarUsuarioBtn" class="button is-danger">
+                    <i class="fas fa-trash"></i> Eliminar Usuario
                 </button>
             </div>
         </div>
@@ -667,7 +673,7 @@
                                 <img id="previewPerfilAdmin" src="{{ asset('storage/fotos_perfil/' . Auth::user()->foto) }}" 
                                      alt="Foto de perfil actual" style="max-width: 100px; height: auto;">
                             @else
-                                <img id="previewPerfilAdmin" src="{{ asset('imagenes/sin_foto_perfil.webp') }}" 
+                                <img id="previewPerfilAdmin" src="{{ asset('imagenes/sin_foto_perfil.jpg') }}" 
                                      alt="Foto de perfil predeterminada" style="max-width: 100px; height: auto;">
                             @endif
                         </div>
@@ -1029,6 +1035,14 @@
                             // Mostrar la sección de resultado
                             resultadoBusqueda.style.display = 'block';
 
+                            // Configurar el botón de editar usuario
+                            const editarBtn = document.getElementById('editarUsuarioBtn');
+                            if (editarBtn) {
+                                editarBtn.onclick = () => {
+                                    AdminForms.showEditarUsuarioModal(usuarioData);
+                                };
+                            }
+
                             // Configurar el botón de limpiar consulta
                             const limpiarBtn = document.getElementById('limpiarConsultaBtn');
                             if (limpiarBtn) {
@@ -1039,21 +1053,47 @@
                                 };
                             }
 
-                            // Agregar botón de editar usuario si no existe
-                            let editarBtn = document.querySelector('.button.is-warning');
-                            if (!editarBtn) {
-                                editarBtn = document.createElement('button');
-                                editarBtn.className = 'button is-warning';
-                                editarBtn.innerHTML = '<i class="fas fa-edit"></i> Editar Usuario';
-                                editarBtn.onclick = (e) => {
-                                    e.preventDefault();
-                                    const modalAnterior = document.getElementById('editarUsuarioConsultadoModal');
-                                    if (modalAnterior) {
-                                        modalAnterior.remove();
+                            // Configurar el botón de eliminar usuario
+                            const eliminarBtn = document.getElementById('eliminarUsuarioBtn');
+                            if (eliminarBtn) {
+                                eliminarBtn.onclick = () => {
+                                    if (confirm('¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.')) {
+                                        fetch(`/admin/usuarios/${usuarioData.id}`, {
+                                            method: 'DELETE',
+                                            headers: {
+                                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                                'Accept': 'application/json',
+                                                'Content-Type': 'application/json'
+                                            },
+                                            credentials: 'same-origin'
+                                        })
+                                        .then(response => {
+                                            if (!response.ok) {
+                                                console.error('Status:', response.status);
+                                                console.error('StatusText:', response.statusText);
+                                                return response.text().then(text => {
+                                                    console.error('Response:', text);
+                                                    throw new Error(`Error del servidor: ${response.status}`);
+                                                });
+                                            }
+                                            return response.json();
+                                        })
+                                        .then(data => {
+                                            if (data.success) {
+                                                alert('Usuario eliminado exitosamente');
+                                                resultadoBusqueda.style.display = 'none';
+                                                searchForm.reset();
+                                                document.getElementById('consultUsersModal').style.display = 'block';
+                                            } else {
+                                                throw new Error(data.mensaje || 'Error al eliminar el usuario');
+                                            }
+                                        })
+                                        .catch(error => {
+                                            console.error('Error completo:', error);
+                                            alert(error.message || 'Error al eliminar el usuario');
+                                        });
                                     }
-                                    this.showEditarUsuarioModal(usuarioData);
                                 };
-                                document.querySelector('.field').appendChild(editarBtn);
                             }
                         } else {
                             alert(data.mensaje || 'Usuario no encontrado');
@@ -1124,7 +1164,7 @@
                                         <label for="foto" class="form-label">Foto de Perfil:</label>
                                         <div class="mb-3">
                                             <img id="previewPerfilUsuarioConsultado" 
-                                                 src="${usuario.foto ? '/storage/fotos_perfil/' + usuario.foto : '/imagenes/sin_foto_perfil.webp'}" 
+                                                 src="${usuario.foto ? '/storage/fotos_perfil/' + usuario.foto : '/imagenes/sin_foto_perfil.jpg'}" 
                                                  alt="Foto de perfil" 
                                                  style="max-width: 100px; height: auto;">
                                         </div>

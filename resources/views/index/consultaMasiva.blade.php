@@ -20,13 +20,30 @@
     <div class="container mt-4">
         <h1 class="title">Consulta General de Usuarios</h1>
         
-        <div class="box">
-            <a href="{{ route('admin.panel') }}" class="button is-link mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <a href="{{ route('admin.panel') }}" class="button is-link">
                 <span class="icon">
                     <i class="fas fa-arrow-left"></i>
                 </span>
-                <span>Volver al Panel</span>
+                <span>Volver a Admin</span>
             </a>
+
+            <!-- Formulario de búsqueda -->
+    <form method="GET" action="{{ route('admin.usuarios.consultaMasiva') }}" class="search-form">
+        <div class="field has-addons">
+            <div class="control">
+                <input type="text" name="nombre" class="input" placeholder="Buscar por nombre" value="{{ request('nombre') }}">
+            </div>
+            <div class="control">
+                <input type="text" name="apellido" class="input" placeholder="Buscar por apellido" value="{{ request('apellido') }}">
+            </div>
+            <div class="control">
+                <button type="submit" class="button is-primary">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </form>
 
             <div class="table-container">
                 <table class="table is-fullwidth is-striped is-hoverable">
@@ -37,8 +54,8 @@
                             <th>Apellidos</th>
                             <th>Documento</th>
                             <th>Rol</th>
+                            <th>Correo Institucional</th>
                             <th>Fecha Registro</th>
-                            <th>Última Actualización</th>
                             <th>Elementos</th>
                             <th>Acciones</th>
                         </tr>
@@ -51,22 +68,19 @@
                             <td>{{ $usuario->apellidos }}</td>
                             <td>{{ $usuario->tipo_documento }} {{ $usuario->numero_documento }}</td>
                             <td>{{ $usuario->role->nombre ?? 'Sin rol' }}</td>
+                            <td>{{ $usuario->correo_institucional}}</td>
                             <td>{{ $usuario->created_at->format('d/m/Y H:i') }}</td>
-                            <td>{{ $usuario->updated_at->format('d/m/Y H:i') }}</td>
                             <td>
-                                <button class="button is-info is-small ver-elementos" 
-                                        data-usuario-id="{{ $usuario->id }}">
+                                <button class="button is-info is-small ver-elementos" data-usuario-id="{{ $usuario->id }}">
                                     Ver ({{ $usuario->elementos->count() }})
                                 </button>
                             </td>
                             <td>
                                 <div class="buttons are-small">
-                                    <button class="button is-warning editar-usuario" 
-                                            data-usuario-id="{{ $usuario->id }}">
+                                    <button class="button is-warning editar-usuario" data-usuario-id="{{ $usuario->id }}">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="button is-danger eliminar-usuario" 
-                                            data-usuario-id="{{ $usuario->id }}">
+                                    <button class="button is-danger eliminar-usuario" data-usuario-id="{{ $usuario->id }}">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
@@ -79,6 +93,22 @@
         </div>
     </div>
 
+    <!-- Controles de paginación -->
+<div class="pagination-links mt-4">
+    <div class="pagination-summary">
+        {{ __('pagination.showing', [
+            'from' => $usuarios->firstItem(),
+            'to' => $usuarios->lastItem(),
+            'total' => $usuarios->total()
+        ]) }}
+    </div>
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            {{ $usuarios->links() }}
+        </ul>
+    </nav>
+</div>
+    
     <!-- Modal para mostrar elementos -->
     <div class="modal" id="elementosModal">
         <div class="modal-background"></div>

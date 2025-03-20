@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Arr;
+use Illuminate\Pagination\Paginator;
+Paginator::useBootstrapFive();
 
 class AdminController extends Controller
 {
@@ -564,30 +566,40 @@ class AdminController extends Controller
     /**
      * Mostrar todos los usuarios registrados.
      */
-    public function consultaMasiva()
-    {
-        try {
-            // Obtener todos los usuarios con sus relaciones
-            $usuarios = Usuario::with(['role', 'elementos.categoria'])
-                ->orderBy('created_at', 'desc')
-                ->get();
+    public function consultaMasiva(Request $request)
+{
+    try {
+        // Iniciar la consulta con las relaciones necesarias
+        $query = Usuario::with(['role', 'elementos.categoria']);
 
-            // Agregar log para depuración
-            \Log::info('Consulta masiva ejecutada', [
-                'cantidad_usuarios' => $usuarios->count()
-            ]);
-
-            return view('index.consultaMasiva', compact('usuarios'));
-        } catch (\Exception $e) {
-            \Log::error('Error en consulta masiva:', [
-                'mensaje' => $e->getMessage(),
-                'linea' => $e->getLine()
-            ]);
-
-            return redirect()->route('admin.panel')
-                ->with('error', 'Error al cargar la consulta masiva: ' . $e->getMessage());
+        // Aplicar filtros si se ingresaron nombres o apellidos
+        if ($request->filled('nombre')) {
+            $query->where('nombres', 'like', '%' . $request->nombre . '%');
         }
+        if ($request->filled('apellido')) {
+            $query->where('apellidos', 'like', '%' . $request->apellido . '%');
+        }
+
+        // Obtener los resultados paginados con orden por fecha de creación
+        $usuarios = $query->orderBy('created_at', 'asc')->paginate(10);
+
+        // Agregar log para depuración
+        \Log::info('Consulta masiva ejecutada', [
+            'cantidad_usuarios' => $usuarios->count(),
+            'filtros' => $request->only('nombre', 'apellido')
+        ]);
+
+        return view('index.consultaMasiva', compact('usuarios'));
+    } catch (\Exception $e) {
+        \Log::error('Error en consulta masiva:', [
+            'mensaje' => $e->getMessage(),
+            'linea' => $e->getLine()
+        ]);
+
+        return redirect()->route('admin.panel')
+            ->with('error', 'Error al cargar la consulta masiva: ' . $e->getMessage());
     }
+}
 
     // Agregar este método para obtener los elementos de un usuario
     public function obtenerElementosUsuario($id)

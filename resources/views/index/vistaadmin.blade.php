@@ -505,7 +505,7 @@
             </form>
             <div class="field" style="margin-top: 10px;">
                 <a href="{{ route('admin.usuarios.consultaMasiva') }}" class="button is-info">
-                    <i class="fas fa-users"></i> Consulta masiva
+                    <i class="fas fa-users "></i> Consulta general
                 </a>
             </div>
         </div>

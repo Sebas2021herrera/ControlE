@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                         <p><strong>Descripción:</strong> ${elemento.descripcion}</p>
                                         <p><strong>Marca:</strong> ${elemento.marca}</p>
                                         <p><strong>Modelo:</strong> ${elemento.modelo}</p>
+                                        <p><strong>Foto:</strong> ${elemento.foto}</p>
                                         ${elemento.serie ? `<p><strong>Serie:</strong> ${elemento.serie}</p>` : ''}
                                     </div>
                                 `).join('')}

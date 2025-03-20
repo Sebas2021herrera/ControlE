@@ -38,8 +38,68 @@
     border-radius: 4px;
 }
 
+.pagination-links {
+    display: flex;
+    flex-direction: column; /* Apila el texto y los botones verticalmente */
+    align-items: center;
+    margin-top: 20px;
+}
+
+.pagination-summary {
+    margin-bottom: 10px; /* Agrega espacio entre el texto y los botones */
+    font-size: 14px;
+    color: #555; /* Color gris para que no resalte demasiado */
+}
+
+.pagination {
+    display: flex;
+    gap: 10px; /* Añade espacio entre los botones */
+    align-items: center;
+}
+
+.pagination .page-item {
+    list-style: none;
+}
+
+.pagination .page-link {
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+.pagination .page-link:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+
 @media screen and (max-width: 768px) {
     .buttons.are-small {
         justify-content: flex-start;
     }
+}
+
+
+.search-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.search-form .input {
+    min-width: 180px;
+    border-radius: 5px;
+    padding: 8px;
+}
+
+.search-form .button {
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+}
+
+.search-form .button:hover {
+    background-color: #0056b3;
 }

@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                         <p><strong>Descripción:</strong> ${elemento.descripcion}</p>
                                         <p><strong>Marca:</strong> ${elemento.marca}</p>
                                         <p><strong>Modelo:</strong> ${elemento.modelo}</p>
-                                        <p><strong>Foto:</strong> ${elemento.foto}</p>
+                                        <img src="{{ asset('storage/' . $elemento->foto) }}" alt="Foto del elemento" style="max-width: 100px; max-height: 100px; border-radius: 5px;">
                                         ${elemento.serie ? `<p><strong>Serie:</strong> ${elemento.serie}</p>` : ''}
                                     </div>
                                 `).join('')}

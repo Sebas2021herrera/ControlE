@@ -20,7 +20,7 @@
     <div class="container mt-4">
         <h1 class="title">Consulta General de Usuarios</h1>
         
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
             <a href="{{ route('admin.panel') }}" class="button is-link">
                 <span class="icon">
                     <i class="fas fa-arrow-left"></i>
@@ -29,68 +29,71 @@
             </a>
 
             <!-- Formulario de búsqueda -->
-    <form method="GET" action="{{ route('admin.usuarios.consultaMasiva') }}" class="search-form">
-        <div class="field has-addons">
-            <div class="control">
-                <input type="text" name="nombre" class="input" placeholder="Buscar por nombre" value="{{ request('nombre') }}">
+        <form method="GET" action="{{ route('admin.usuarios.consultaMasiva') }}" class="search-form ms-auto">
+            <div class="field has-addons">
+                <div class="control">
+                    <input type="text" name="nombre" class="input" placeholder="Buscar por nombre" value="{{ request('nombre') }}">
+                </div>
+                <div class="control">
+                    <input type="text" name="apellido" class="input" placeholder="Buscar por apellido" value="{{ request('apellido') }}">
+                </div>
+                    <div class="control">
+                        <button type="submit" class="button is-primary">
+                        <i class="fas fa-search"></i>
+                        </button>
+                    </div>
             </div>
-            <div class="control">
-                <input type="text" name="apellido" class="input" placeholder="Buscar por apellido" value="{{ request('apellido') }}">
-            </div>
-            <div class="control">
-                <button type="submit" class="button is-primary">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-        </div>
-    </form>
+        </form>
 
-            <div class="table-container">
-                <table class="table is-fullwidth is-striped is-hoverable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombres</th>
-                            <th>Apellidos</th>
-                            <th>Documento</th>
-                            <th>Rol</th>
-                            <th>Correo Institucional</th>
-                            <th>Fecha Registro</th>
-                            <th>Elementos</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($usuarios as $usuario)
-                        <tr>
-                            <td>{{ $usuario->id }}</td>
-                            <td>{{ $usuario->nombres }}</td>
-                            <td>{{ $usuario->apellidos }}</td>
-                            <td>{{ $usuario->tipo_documento }} {{ $usuario->numero_documento }}</td>
-                            <td>{{ $usuario->role->nombre ?? 'Sin rol' }}</td>
-                            <td>{{ $usuario->correo_institucional}}</td>
-                            <td>{{ $usuario->created_at->format('d/m/Y H:i') }}</td>
-                            <td>
-                                <button class="button is-info is-small ver-elementos" data-usuario-id="{{ $usuario->id }}">
-                                    Ver ({{ $usuario->elementos->count() }})
-                                </button>
-                            </td>
-                            <td>
-                                <div class="buttons are-small">
-                                    <button class="button is-warning editar-usuario" data-usuario-id="{{ $usuario->id }}">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="button is-danger eliminar-usuario" data-usuario-id="{{ $usuario->id }}">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+            
         </div>
+    </div>
+
+
+    <div class="table-container">
+        <table class="table is-fullwidth is-striped is-hoverable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombres</th>
+                    <th>Apellidos</th>
+                    <th>Documento</th>
+                    <th>Rol</th>
+                    <th>Correo Institucional</th>
+                    <th>Fecha Registro</th>
+                    <th>Elementos</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($usuarios as $usuario)
+                <tr>
+                    <td>{{ $usuario->id }}</td>
+                    <td>{{ $usuario->nombres }}</td>
+                    <td>{{ $usuario->apellidos }}</td>
+                    <td>{{ $usuario->tipo_documento }} {{ $usuario->numero_documento }}</td>
+                    <td>{{ $usuario->role->nombre ?? 'Sin rol' }}</td>
+                    <td>{{ $usuario->correo_institucional}}</td>
+                    <td>{{ $usuario->created_at->format('d/m/Y H:i') }}</td>
+                    <td>
+                        <button class="button is-info is-small ver-elementos" data-usuario-id="{{ $usuario->id }}">
+                            Ver ({{ $usuario->elementos->count() }})
+                        </button>
+                    </td>
+                    <td>
+                        <div class="buttons are-small">
+                            <button class="button is-warning editar-usuario" data-usuario-id="{{ $usuario->id }}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="button is-danger eliminar-usuario" data-usuario-id="{{ $usuario->id }}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
 
     <!-- Controles de paginación -->

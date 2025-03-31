@@ -327,15 +327,25 @@
                             <textarea id="especificaciones_tecnicas" name="especificaciones_tecnicas" class="form-control" rows="3"
                                 required></textarea>
                         </div>
+                        
+
                         <div class="mb-3">
                             <label for="fotoElemento" class="form-label">Foto</label>
-                            <input type="file" id="fotoElemento" name="foto" class="form-control"
-                                accept="image/*" onchange="previewImage(event, 'previewElemento')">
+                        
+                            <div class="input-group">
+                                <input type="file" id="fotoElemento" name="foto" class="form-control"
+                                    accept="image/*" capture="environment" onchange="previewImage(event, 'previewElemento')" required>
+                                <button type="button" class="btn btn-secondary" onclick="document.getElementById('fotoElemento').click()">Subir Foto</button>
+                            </div>
+                        
+                            <p class="help">Puedes tomar una foto o seleccionar una imagen desde la galería.</p>
                         </div>
+                        
                         <div class="mb-3">
                             <img id="previewElemento" src="#" alt="Previsualización de la imagen"
                                 style="display: none; max-width: 100%; height: auto;">
                         </div>
+                        
 
                         <button type="submit" class="btn btn-primary">Registrar</button>
                     </form>

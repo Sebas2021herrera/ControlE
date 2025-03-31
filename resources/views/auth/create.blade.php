@@ -267,6 +267,7 @@
                                  style="display: none; max-width: 200px; height: auto;">
                         </div>
                     </div>
+                    
 
                     <!-- Agregar antes del cierre del formulario -->
                     <div class="field">
@@ -538,51 +539,53 @@
 
     <!-- Agregar este script para la vista previa de la imagen -->
     <script>
-    document.getElementById('foto').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        const preview = document.getElementById('previewFoto');
-        const maxSize = 5 * 1024 * 1024; // 5MB en bytes
-        
-        if (file) {
-            // Verificar el tamaño del archivo
-            if (file.size > maxSize) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Archivo demasiado grande',
-                    text: 'El archivo seleccionado pesa ' + (file.size / (1024 * 1024)).toFixed(2) + 'MB. El tamaño máximo permitido es 5MB.',
-                    confirmButtonText: 'Entendido'
-                });
-                this.value = ''; // Limpiar el input
+        document.getElementById('foto').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('previewFoto');
+            const maxSize = 5 * 1024 * 1024; // 5MB en bytes
+            
+            if (file) {
+                // Verificar el tamaño del archivo
+                if (file.size > maxSize) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Archivo demasiado grande',
+                        text: 'El archivo seleccionado pesa ' + (file.size / (1024 * 1024)).toFixed(2) + 'MB. El tamaño máximo permitido es 5MB.',
+                        confirmButtonText: 'Entendido'
+                    });
+                    this.value = ''; // Limpiar el input
+                    preview.style.display = 'none';
+                    return;
+                }
+    
+                // Verificar el tipo de archivo
+                const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                if (!validTypes.includes(file.type)) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Formato no válido',
+                        text: 'Por favor, seleccione un archivo en formato JPG, JPEG, PNG o GIF.',
+                        confirmButtonText: 'Entendido'
+                    });
+                    this.value = '';
+                    preview.style.display = 'none';
+                    return;
+                }
+    
+                // Mostrar vista previa
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            } else {
                 preview.style.display = 'none';
-                return;
             }
-
-            // Verificar el tipo de archivo
-            const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
-            if (!validTypes.includes(file.type)) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Formato no válido',
-                    text: 'Por favor, seleccione un archivo en formato JPG, JPEG, PNG o GIF.',
-                    confirmButtonText: 'Entendido'
-                });
-                this.value = '';
-                preview.style.display = 'none';
-                return;
-            }
-
-            // Mostrar vista previa
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                preview.src = e.target.result;
-                preview.style.display = 'block';
-            }
-            reader.readAsDataURL(file);
-        } else {
-            preview.style.display = 'none';
-        }
-    });
-    </script>
+        });
+        </script>
+    
+    
 
     <!-- Validación adicional para nombres y apellidos -->
     <script>

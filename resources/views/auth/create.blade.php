@@ -4,35 +4,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulario de Registro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
-    <!-- Enlaza el archivo CSS de Bulma -->
-    <link rel="stylesheet" href="{{ asset('css/styles_create.css') }}"> <!-- Enlaza el archivo CSS personalizado -->
+    <title>Registro de Usuarios</title>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ asset('css/styles_login.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
-<body>
+<body class="has-footer-buttons">
+    <div class="mode-toggle" id="modeToggle">
+        <i class="fas fa-moon" id="modeIcon"></i>
+        <span id="modeText">Modo Noche</span>
+    </div>
 
-    <div class="container">
-        <div class="card">
-            <div class="mode-toggle" id="modeToggle">
-                <i class="fas fa-moon" id="modeIcon"></i>
-                <span id="modeText">Modo Noche</span>
+    <div class="container d-flex flex-column align-items-center justify-content-center min-vh-100 py-5">
+        <div class="logo-container mb-4 text-center">
+            <img src="{{ asset('imagenes/logo-del-sena-01.png') }}" alt="SENA Logo" class="img-fluid logo-sena">
+        </div>
+
+        <div class="card custom-card shadow-sm" style="max-width: 480px; width: 100%;">
+            <div class="card-header text-center font-weight-bold">
+                REGISTRO DE USUARIOS
             </div>
-            <div class="card-content">
-                <!-- Agregar el logo del SENA -->
-                <figure class="image is-flex is-justify-content-center mb-4">
-                    <img src="{{ asset('imagenes/logo-del-sena-01.png') }}" alt="Logo SENA" style="max-width: 200px;">
-                </figure>
-                
-                <h2 class="title is-4">Registro de Usuarios</h2>
+            <div class="card-body card-body-scrollable">
 
-                <!-- Mostrar errores de validación -->
                 @if ($errors->any())
-                    <div class="notification is-danger">
-                        <ul>
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
                             @endforeach
@@ -41,361 +40,206 @@
                 @endif
 
                 <form id="registroForm" method="POST" action="{{ route('createpost') }}" enctype="multipart/form-data">
-                    @csrf <!-- CSRF Token necesario en Laravel -->
+                    @csrf
 
-                    <!-- Nombres -->
-                    <div class="field">
-                        <label class="label" for="nombres">Nombres:</label>
-                        <div class="control">
-                            <input class="input @error('nombres') is-danger @enderror" type="text" id="nombres"
-                                name="nombres" value="{{ old('nombres') }}" required
-                                placeholder="Ingresar nombres">
-                        </div>
-                        @error('nombres')
-                            <p class="help is-danger">{{ $message }}</p>
-                        @enderror
+                    <div class="form-group">
+                        <label for="nombres" class="form-label">Nombres</label>
+                        <input type="text" class="form-control @error('nombres') is-invalid @enderror"
+                               id="nombres" name="nombres" value="{{ old('nombres') }}"
+                               required placeholder="Ingresar nombres">
+                        @error('nombres') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
 
-                    <!-- Apellidos -->
-                    <div class="field">
-                        <label class="label" for="apellidos">Apellidos:</label>
-                        <div class="control">
-                            <input class="input @error('apellidos') is-danger @enderror" type="text" id="apellidos"
-                                name="apellidos" value="{{ old('apellidos') }}" required
-                                placeholder="Ingresar apellidos">
-                        </div>
-                        @error('apellidos')
-                            <p class="help is-danger">{{ $message }}</p>
-                        @enderror
+                    <div class="form-group">
+                        <label for="apellidos" class="form-label">Apellidos</label>
+                        <input type="text" class="form-control @error('apellidos') is-invalid @enderror"
+                               id="apellidos" name="apellidos" value="{{ old('apellidos') }}"
+                               required placeholder="Ingresar apellidos">
+                        @error('apellidos') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
 
-                    <!-- Tipo de Documento -->
-                    <div class="field">
-                        <label class="label" for="tipo_documento">Tipo de Documento:</label>
-                        <div class="control">
-                            <div class="select @error('tipo_documento') is-danger @enderror">
-                                <select id="tipo_documento" name="tipo_documento" required>
-                                    <option value="" disabled selected>Seleccione un tipo de documento</option>
-                                    <option value="CC">Cédula de Ciudadanía</option>
-                                    <option value="TI">Tarjeta de Identidad</option>
-                                    <option value="CE">Cédula de Extranjería</option>
-                                    <option value="PP">Pasaporte</option>
-                                    <option value="RC">Registro Civil</option>
-                                </select>
-                            </div>
-                        </div>
-                        @error('tipo_documento')
-                            <p class="help is-danger">{{ $message }}</p>
-                        @enderror
+                    <div class="form-group">
+                        <label for="tipo_documento" class="form-label">Tipo de Documento</label>
+                        <select class="form-control @error('tipo_documento') is-invalid @enderror"
+                                id="tipo_documento" name="tipo_documento" required>
+                            <option value="" disabled selected>Seleccione un tipo</option>
+                            <option value="CC" {{ old('tipo_documento') == 'CC' ? 'selected' : '' }}>Cédula de Ciudadanía</option>
+                            <option value="TI" {{ old('tipo_documento') == 'TI' ? 'selected' : '' }}>Tarjeta de Identidad</option>
+                            <option value="CE" {{ old('tipo_documento') == 'CE' ? 'selected' : '' }}>Cédula de Extranjería</option>
+                            <option value="PP" {{ old('tipo_documento') == 'PP' ? 'selected' : '' }}>Pasaporte</option>
+                            <option value="RC" {{ old('tipo_documento') == 'RC' ? 'selected' : '' }}>Registro Civil</option>
+                        </select>
+                        @error('tipo_documento') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
 
-                    <!-- Número de Documento -->
-                    <div class="field">
-                        <label class="label" for="numero_documento">Número de Documento:</label>
-                        <div class="control">
-                            <input class="input @error('numero_documento') is-danger @enderror" 
-                                   type="text" 
-                                   id="numero_documento" 
-                                   name="numero_documento" 
-                                   required 
-                                   maxlength="11" 
-                                   oninput="this.value = this.value.replace(/[^0-9]/g, '').substring(0, 11)"
-                                   value="{{ old('numero_documento') }}"
-                                   required
-                                   placeholder="Ingresar número de documento">
-                        </div>
-                        <p class="help">Máximo 11 dígitos</p>
-                        @error('numero_documento')
-                            <p class="help is-danger">{{ $message }}</p>
-                        @enderror
+                    <div class="form-group">
+                        <label for="numero_documento" class="form-label">Número de Documento</label>
+                        <input type="text" class="form-control @error('numero_documento') is-invalid @enderror"
+                               id="numero_documento" name="numero_documento" required
+                               maxlength="12"
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '').substring(0, 12)"
+                               value="{{ old('numero_documento') }}"
+                               placeholder="Ingresar número de documento">
+                        <small class="form-text text-muted">Entre 6 y 12 dígitos</small>
+                        @error('numero_documento') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
 
-                    <!-- Tipo de sangre -->
-                    <div class="field">
-                        <label class="label" for="rh">Tipo de Sangre (RH):</label>
-                        <div class="control">
-                            <div class="select @error('rh') is-danger @enderror">
-                                <select id="rh" name="rh" required>
-                                    <option value="" disabled selected>Seleccione su tipo de sangre</option>
-                                    <option value="O+">O+</option>
-                                    <option value="O-">O-</option>
-                                    <option value="A+">A+</option>
-                                    <option value="A-">A-</option>
-                                    <option value="B+">B+</option>
-                                    <option value="B-">B-</option>
-                                    <option value="AB+">AB+</option>
-                                    <option value="AB-">AB-</option>
-                                </select>
-                            </div>
-                        </div>
-                        @error('rh')
-                            <p class="help is-danger">{{ $message }}</p>
-                        @enderror
+                    <div class="form-group">
+                        <label for="rh" class="form-label">Tipo de Sangre (RH)</label>
+                        <select class="form-control @error('rh') is-invalid @enderror"
+                                id="rh" name="rh" required>
+                            <option value="" disabled selected>Seleccione su tipo de sangre</option>
+                            <option value="O+"  {{ old('rh') == 'O+'  ? 'selected' : '' }}>O+</option>
+                            <option value="O-"  {{ old('rh') == 'O-'  ? 'selected' : '' }}>O-</option>
+                            <option value="A+"  {{ old('rh') == 'A+'  ? 'selected' : '' }}>A+</option>
+                            <option value="A-"  {{ old('rh') == 'A-'  ? 'selected' : '' }}>A-</option>
+                            <option value="B+"  {{ old('rh') == 'B+'  ? 'selected' : '' }}>B+</option>
+                            <option value="B-"  {{ old('rh') == 'B-'  ? 'selected' : '' }}>B-</option>
+                            <option value="AB+" {{ old('rh') == 'AB+' ? 'selected' : '' }}>AB+</option>
+                            <option value="AB-" {{ old('rh') == 'AB-' ? 'selected' : '' }}>AB-</option>
+                        </select>
+                        @error('rh') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
 
-                    <!-- Correo Personal -->
-                    <div class="field">
-                        <label class="label" for="correo_personal">Correo Personal:</label>
-                        <div class="control">
-                            <input class="input @error('correo_personal') is-danger @enderror" type="email"
-                                id="correo_personal" name="correo_personal" value="{{ old('correo_personal') }}"
-                                required placeholder="ejemplo@correo.com">
-                        </div>
-                        @error('correo_personal')
-                            <p class="help is-danger">{{ $message }}</p>
-                        @enderror
+                    <div class="form-group">
+                        <label for="correo_personal" class="form-label">Correo Personal</label>
+                        <input type="email" class="form-control @error('correo_personal') is-invalid @enderror"
+                               id="correo_personal" name="correo_personal"
+                               value="{{ old('correo_personal') }}"
+                               required placeholder="ejemplo@correo.com">
+                        @error('correo_personal') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
 
-                    <!-- Correo Institucional -->
-                    <div class="field">
-                        <label class="label" for="correo_institucional">Correo Institucional:</label>
-                        <div class="control">
-                            <input class="input @error('correo_institucional') is-danger @enderror" type="email"
-                                id="correo_institucional" name="correo_institucional"
-                                value="{{ old('correo_institucional') }}" required
-                                placeholder="ejemplo@sena.edu.co">
-                        </div>
-                        @error('correo_institucional')
-                            <p class="help is-danger">{{ $message }}</p>
-                        @enderror
+                    <div class="form-group">
+                        <label for="correo_institucional" class="form-label">Correo Institucional</label>
+                        <input type="email" class="form-control @error('correo_institucional') is-invalid @enderror"
+                               id="correo_institucional" name="correo_institucional"
+                               value="{{ old('correo_institucional') }}"
+                               required placeholder="ejemplo@sena.edu.co">
+                        @error('correo_institucional') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
 
-                    <!-- Contraseña -->
-                    <div class="field">
-                        <label class="label" for="contraseña">Nueva Contraseña:</label>
-                        <div class="control has-icons-right">
-                            <input class="input @error('contraseña') is-danger @enderror" type="password"
-                                id="contraseña" name="contraseña" required
-                                placeholder="Mínimo 6 caracteres">
-                            <span class="icon is-small is-right" style="pointer-events: all; cursor: pointer;"
-                                onclick="togglePassword('contraseña')">
-                                <i class="fas fa-eye" id="contraseña-icon"></i>
-                            </span>
-                        </div>
-                        <p id="contraseaError" class="help is-danger"></p>
-                        @error('contraseña')
-                            <p class="help is-danger">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Confirmación de Contraseña -->
-                    <div class="field">
-                        <label class="label" for="contraseña_confirmation">Confirmar Contraseña:</label>
-                        <div class="control has-icons-right">
-                            <input class="input @error('contraseña_confirmation') is-danger @enderror" type="password"
-                                id="contraseña_confirmation" name="contraseña_confirmation" required
-                                placeholder="Confirmar contraseña">
-                            <span class="icon is-small is-right" style="pointer-events: all; cursor: pointer;"
-                                onclick="togglePassword('contraseña_confirmation')">
-                                <i class="fas fa-eye" id="contraseña_confirmation-icon"></i>
-                            </span>
-                        </div>
-                        <p id="confirmarContrasenaError" class="help is-danger"></p>
-                        @error('contraseña_confirmation')
-                            <p class="help is-danger">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Teléfono -->
-                    <div class="field">
-                        <label class="label" for="telefono">Teléfono:</label>
-                        <div class="control">
-                            <input class="input @error('telefono') is-danger @enderror" 
-                                   type="text" 
-                                   id="telefono" 
-                                   name="telefono" 
-                                   required 
-                                   maxlength="10" 
-                                   oninput="this.value = this.value.replace(/[^0-9]/g, '').substring(0, 10)"
-                                   value="{{ old('telefono') }}"
-                                   required
-                                   placeholder="Ingresar número de teléfono">
-                        </div>
-                        <p class="help">Máximo 10 dígitos</p>
-                        @error('telefono')
-                            <p class="help is-danger">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Rol -->
-                    <div class="field">
-                        <label class="label" for="rol">Rol:</label>
-                        <div class="control">
-                            <div class="select @error('rol') is-danger @enderror">
-                                <select id="rol" name="rol" required>
-                                    <option value="3" {{ old('rol') == 3 ? 'selected' : '' }}>Aprendiz</option>
-                                    <option value="4" {{ old('rol') == 4 ? 'selected' : '' }}>Visitante</option>
-                                    <option value="5" {{ old('rol') == 5 ? 'selected' : '' }}>Funcionario
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                        @error('rol')
-                            <p class="help is-danger">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Número de Ficha -->
-                    <div class="field" id="numeroFichaField">
-                        <label class="label" for="numero_ficha">Número de Ficha:</label>
-                        <div class="control">
-                            <input class="input @error('numero_ficha') is-danger @enderror" type="text"
-                                id="numero_ficha" name="numero_ficha" value="{{ old('numero_ficha') }}"
-                                placeholder="Ingresar número de ficha">
-                        </div>
-                        @error('numero_ficha')
-                            <p class="help is-danger">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Foto de Perfil -->
-                    <div class="field">
-                        <label class="label" for="foto">Foto:</label>
-                        <div class="control">
-                            <input class="input @error('foto') is-danger @enderror" 
-                                   type="file" 
-                                   id="foto" 
-                                   name="foto" 
-                                   accept="image/jpeg,image/png,image/gif">
-                        </div>
-                        <p class="help">Formatos permitidos: JPG, JPEG, PNG, GIF. Tamaño máximo: 5MB</p>
-                        @error('foto')
-                            <p class="help is-danger">{{ $message }}</p>
-                        @enderror
-                        <div class="mt-2">
-                            <img id="previewFoto" src="#" alt="Vista previa de la foto" 
-                                 style="display: none; max-width: 200px; height: auto;">
-                        </div>
-                    </div>
-
-                    <!-- Agregar antes del cierre del formulario -->
-                    <div class="field">
-                        <div class="control">
-                            <label class="checkbox is-flex is-align-items-center">
-                                <input type="checkbox" required name="accept_terms">
-                                <span style="white-space: nowrap; margin-left: 0.5rem">
-                                    He leído y acepto la: <a href="#" id="showPrivacyPolicy">Política de Privacidad de Datos</a>
+                    <div class="form-group">
+                        <label for="contraseña" class="form-label">Contraseña</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control @error('contraseña') is-invalid @enderror"
+                                   id="contraseña" name="contraseña" required
+                                   placeholder="Mínimo 6 caracteres">
+                            <div class="input-group-append">
+                                <span class="input-group-text" onclick="togglePassword('contraseña')" style="cursor:pointer;">
+                                    <i class="fas fa-eye" id="contraseña-icon"></i>
                                 </span>
+                            </div>
+                        </div>
+                        <small id="contraseaError" class="form-text" style="color:#dc3545;"></small>
+                        @error('contraseña') <div class="text-danger" style="font-size:.875rem;">{{ $message }}</div> @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contraseña_confirmation" class="form-label">Confirmar Contraseña</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control"
+                                   id="contraseña_confirmation" name="contraseña_confirmation" required
+                                   placeholder="Repetir contraseña">
+                            <div class="input-group-append">
+                                <span class="input-group-text" onclick="togglePassword('contraseña_confirmation')" style="cursor:pointer;">
+                                    <i class="fas fa-eye" id="contraseña_confirmation-icon"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <small id="confirmarContrasenaError" class="form-text" style="color:#dc3545;"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telefono" class="form-label">Teléfono</label>
+                        <input type="text" class="form-control @error('telefono') is-invalid @enderror"
+                               id="telefono" name="telefono" required
+                               maxlength="10"
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '').substring(0, 10)"
+                               value="{{ old('telefono') }}"
+                               placeholder="Ingresar número de teléfono">
+                        <small class="form-text text-muted">Máximo 10 dígitos</small>
+                        @error('telefono') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rol" class="form-label">Rol</label>
+                        <select class="form-control @error('rol') is-invalid @enderror"
+                                id="rol" name="rol" required>
+                            <option value="3" {{ old('rol') == 3 ? 'selected' : '' }}>Aprendiz</option>
+                            <option value="4" {{ old('rol') == 4 ? 'selected' : '' }}>Visitante</option>
+                            <option value="5" {{ old('rol') == 5 ? 'selected' : '' }}>Funcionario</option>
+                        </select>
+                        @error('rol') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+
+                    <div class="form-group" id="numeroFichaField">
+                        <label for="numero_ficha" class="form-label">Número de Ficha</label>
+                        <input type="text" class="form-control @error('numero_ficha') is-invalid @enderror"
+                               id="numero_ficha" name="numero_ficha"
+                               value="{{ old('numero_ficha') }}"
+                               placeholder="Ingresar número de ficha">
+                        @error('numero_ficha') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="foto" class="form-label">Foto de Perfil</label>
+                        <input type="file" class="form-control-file @error('foto') is-invalid @enderror"
+                               id="foto" name="foto"
+                               accept="image/jpeg,image/png,image/gif">
+                        <small class="form-text text-muted">JPG, PNG o GIF. Máximo 5MB</small>
+                        @error('foto') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        <div class="mt-2">
+                            <img id="previewFoto" src="#" alt="Vista previa"
+                                 style="display:none; max-width:150px; border-radius:4px; border:1px solid #dee2e6;">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" required
+                                   name="accept_terms" id="accept_terms">
+                            <label class="form-check-label" for="accept_terms">
+                                He leído y acepto la
+                                <a href="#" id="showPrivacyPolicy">Política de Privacidad de Datos</a>
                             </label>
                         </div>
                     </div>
+
                 </form>
             </div>
         </div>
 
-        <div class="buttons-container">
-            <button class="button is-success" type="submit" form="registroForm">Registrar</button>
-            <a href="{{ route('welcome') }}" class="button is-success">Volver a inicio</a>
-        </div>
+        <p class="text-center footer-text mt-4">
+            <img src="{{ asset('imagenes/logo_copyrigth.png') }}" class="bombilla">
+            Derechos reservados al SENA Regional Casanare, 2024.
+        </p>
     </div>
 
-    <script>
-        function previewImage(event) {
-            var input = event.target;
-            var preview = document.getElementById('preview');
+    <!-- Botones fijos en la parte inferior -->
+    <div class="buttons-footer">
+        <button class="btn btn-dark" type="submit" form="registroForm">
+            <i class="fas fa-user-plus mr-1"></i> Registrar
+        </button>
+        <a href="{{ route('login') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left mr-1"></i> Volver al inicio
+        </a>
+    </div>
 
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
+    <!-- Modal Política de Privacidad -->
+    <div class="modal fade" id="privacyPolicyModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Política de Privacidad de Datos</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h6>Servicio Nacional de Aprendizaje (SENA) Regional Casanare</h6>
 
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                }
-
-                reader.readAsDataURL(input.files[0]);
-            } else {
-                preview.src = '#';
-                preview.style.display = 'none';
-            }
-        }
-    </script>
-
-    <script>
-        document.getElementById('registroForm').addEventListener('submit', function(event) {
-            var contrasena = document.getElementById('contrasena').value;
-            var confirmarContrasena = document.getElementById('contrasena_confirmation').value;
-            var contrasenaError = document.getElementById('contrasenaError');
-            var confirmarContrasenaError = document.getElementById('confirmarContrasenaError');
-
-            // Limpiar mensajes de error
-            contrasenaError.textContent = '';
-            confirmarContrasenaError.textContent = '';
-
-            if (contrasena.length < 6) {
-                contrasenaError.textContent = 'La contraseña debe tener al menos 6 caracteres.';
-                event.preventDefault(); // Evita el envío del formulario
-                return;
-            }
-
-            if (contrasena !== confirmarContrasena) {
-                confirmarContrasenaError.textContent = 'Las contraseñas no coinciden.';
-                event.preventDefault(); // Evita el envío del formulario
-                return;
-            }
-        });
-    </script>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-
-    <script>
-        $(document).ready(function() {
-            const successMessage = $('.alert-success');
-            if (successMessage.length) {
-                setTimeout(() => {
-                    successMessage.fadeOut(500); // Desvanecer el mensaje en 0.5 segundos
-                }, 5000); // Mostrar el mensaje por 5 segundos antes de desvanecerlo
-            }
-        });
-    </script>
-    <script>
-        function validateFileSize(event) {
-            const file = event.target.files[0];
-            const maxSize = 6 * 1024 * 1024; // 6 MB en bytes
-
-            if (file && file.size > maxSize) {
-                alert('El tamaño del archivo no debe superar los 6 MB.');
-                event.target.value = ''; // Limpia el campo de archivo
-            }
-        }
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var rolSelect = document.getElementById('rol');
-            var numeroFichaField = document.getElementById('numero_ficha'); // Actualizado
-            var numeroFichaDiv = numeroFichaField.closest('.field');
-
-            function toggleNumeroFicha() {
-                if (rolSelect.value == 3) { // Aprendiz
-                    numeroFichaDiv.style.display = 'block';
-                    numeroFichaField.setAttribute('required', 'required');
-                } else {
-                    numeroFichaDiv.style.display = 'none';
-                    numeroFichaField.removeAttribute('required');
-                }
-            }
-
-            rolSelect.addEventListener('change', toggleNumeroFicha);
-
-            // Llamar a la función para inicializar el estado correcto en caso de que el rol esté preseleccionado
-            toggleNumeroFicha();
-        });
-    </script>
-
-    <!-- Agregar el modal de la política de privacidad -->
-    <div class="modal" id="privacyPolicyModal">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title">Política de Privacidad de Datos</p>
-                <button class="delete" aria-label="close"></button>
-            </header>
-            <section class="modal-card-body">
-                <div class="content">
-                    <h4>Servicio Nacional de Aprendizaje (SENA) Regional Casanare</h4>
-                    
-                    <h5>1. Información que Recolectamos</h5>
-                    <p>Recolectamos la siguiente información personal:</p>
+                    <h6 class="mt-3">1. Información que Recolectamos</h6>
                     <ul>
                         <li>Nombres y apellidos</li>
                         <li>Tipo y número de documento de identidad</li>
@@ -406,8 +250,7 @@
                         <li>Fotografía de perfil</li>
                     </ul>
 
-                    <h5>2. Uso de la Información</h5>
-                    <p>La información recolectada será utilizada para:</p>
+                    <h6 class="mt-3">2. Uso de la Información</h6>
                     <ul>
                         <li>Gestión de usuarios en la plataforma institucional</li>
                         <li>Comunicación institucional</li>
@@ -415,206 +258,52 @@
                         <li>Atención de emergencias (información médica)</li>
                     </ul>
 
-                    <h5>3. Derechos del Usuario</h5>
-                    <p>Como titular de los datos personales, usted tiene derecho a:</p>
+                    <h6 class="mt-3">3. Derechos del Usuario</h6>
                     <ul>
                         <li>Conocer, actualizar y rectificar sus datos personales</li>
                         <li>Solicitar la eliminación de sus datos</li>
-                        <li>Revocar la autorización otorgada para el tratamiento de datos</li>
+                        <li>Revocar la autorización otorgada</li>
                         <li>Ser informado sobre el uso dado a sus datos</li>
                     </ul>
 
-                    <h5>4. Seguridad</h5>
+                    <h6 class="mt-3">4. Seguridad</h6>
                     <p>El SENA implementa medidas de seguridad técnicas y administrativas para proteger su información personal.</p>
 
-                    <h5>5. Contacto</h5>
-                    <p>Para ejercer sus derechos o realizar consultas sobre el tratamiento de sus datos, puede contactarnos a través de:</p>
+                    <h6 class="mt-3">5. Contacto</h6>
                     <ul>
-                        <li>Correo electrónico: protecciondatos@sena.edu.co</li>
-                        <li>Dirección: [Dirección de la sede Regional Casanare]</li>
-                        <li>Teléfono: [Número de contacto]</li>
+                        <li>Correo: protecciondatos@sena.edu.co</li>
+                        <li>Dirección: Sede Regional Casanare</li>
                     </ul>
                 </div>
-            </section>
-            <footer class="modal-card-foot">
-                <button class="button is-success" id="closeModal">Entendido</button>
-            </footer>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" data-dismiss="modal">Entendido</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Agregar el script para el modal -->
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const modal = document.getElementById('privacyPolicyModal');
-        const showModal = document.getElementById('showPrivacyPolicy');
-        const closeModal = document.getElementById('closeModal');
-        const modalBackground = modal.querySelector('.modal-background');
-        const modalDelete = modal.querySelector('.delete');
-
-        function toggleModal() {
-            modal.classList.toggle('is-active');
-        }
-
-        showModal.addEventListener('click', function(e) {
-            e.preventDefault();
-            toggleModal();
-        });
-
-        [closeModal, modalBackground, modalDelete].forEach(element => {
-            element.addEventListener('click', toggleModal);
-        });
-    });
-    </script>
-
-    <!-- Agregar este script antes del cierre del body -->
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Validación para nombres y apellidos (solo letras y espacios)
-        const soloLetras = document.querySelectorAll('#nombres, #apellidos');
-        soloLetras.forEach(input => {
-            input.addEventListener('input', function() {
-                this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
-            });
-        });
-
-        // Validación para número de documento y teléfono (solo números)
-        const soloNumeros = document.querySelectorAll('#numero_documento, #telefono');
-        soloNumeros.forEach(input => {
-            input.addEventListener('input', function() {
-                this.value = this.value.replace(/[^0-9]/g, '');
-            });
-        });
-
-        // Validación de contraseña
-        const contraseña = document.getElementById('contraseña');
-        const contraseñaConfirm = document.getElementById('contraseña_confirmation');
-        const contraseñaError = document.getElementById('contraseaError');
-
-        contraseña.addEventListener('input', function() {
-            const value = this.value;
-            let mensaje = [];
-
-            if (value.length < 6) mensaje.push('Mínimo 6 caracteres');
-            if (!/[A-Z]/.test(value)) mensaje.push('Al menos una mayúscula');
-            if (!/[a-z]/.test(value)) mensaje.push('Al menos una minúscula');
-            if (!/[0-9]/.test(value)) mensaje.push('Al menos un número');
-            if (!/[!@#$%^&*]/.test(value)) mensaje.push('Al menos un símbolo (!@#$%^&*)');
-
-            contraseñaError.textContent = mensaje.join(', ');
-            contraseñaError.style.color = mensaje.length > 0 ? '#ff3860' : '#48c774';
-        });
-
-        // Validación de correos
-        const correoPersonal = document.getElementById('correo_personal');
-        const correoInstitucional = document.getElementById('correo_institucional');
-
-        correoInstitucional.addEventListener('input', function() {
-    const validDomains = ['@sena.edu.co', '@soy.sena.edu.co'];
-    if (!validDomains.some(domain => this.value.endsWith(domain))) {
-        this.setCustomValidity('El correo debe terminar en @sena.edu.co o @soy.sena.edu.co');
-    } else {
-        this.setCustomValidity('');
-    }
-});
-    });
-    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
-    function togglePassword(inputId) {
-        const input = document.getElementById(inputId);
-        const icon = document.getElementById(inputId + '-icon');
-        
-        if (input.type === 'password') {
-            input.type = 'text';
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
-        } else {
-            input.type = 'password';
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
-        }
-    }
-    </script>
-
-    <!-- Agregar este script para la vista previa de la imagen -->
-    <script>
-    document.getElementById('foto').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        const preview = document.getElementById('previewFoto');
-        const maxSize = 5 * 1024 * 1024; // 5MB en bytes
-        
-        if (file) {
-            // Verificar el tamaño del archivo
-            if (file.size > maxSize) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Archivo demasiado grande',
-                    text: 'El archivo seleccionado pesa ' + (file.size / (1024 * 1024)).toFixed(2) + 'MB. El tamaño máximo permitido es 5MB.',
-                    confirmButtonText: 'Entendido'
-                });
-                this.value = ''; // Limpiar el input
-                preview.style.display = 'none';
-                return;
-            }
-
-            // Verificar el tipo de archivo
-            const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
-            if (!validTypes.includes(file.type)) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Formato no válido',
-                    text: 'Por favor, seleccione un archivo en formato JPG, JPEG, PNG o GIF.',
-                    confirmButtonText: 'Entendido'
-                });
-                this.value = '';
-                preview.style.display = 'none';
-                return;
-            }
-
-            // Mostrar vista previa
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                preview.src = e.target.result;
-                preview.style.display = 'block';
-            }
-            reader.readAsDataURL(file);
-        } else {
-            preview.style.display = 'none';
-        }
-    });
-    </script>
-
-    <!-- Validación adicional para nombres y apellidos -->
-    <script>
-    document.querySelectorAll('#nombres, #apellidos').forEach(input => {
-        input.addEventListener('input', function() {
-            this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
-        });
-    });
-    </script>
-
-    <script>
+        // Modo noche
         document.addEventListener('DOMContentLoaded', () => {
-            const modeToggle = document.getElementById('modeToggle');
             const body = document.body;
+            const modeToggle = document.getElementById('modeToggle');
             const modeIcon = document.getElementById('modeIcon');
             const modeText = document.getElementById('modeText');
 
-            // Verificar el modo actual al cargar
             if (localStorage.getItem('dark-mode') === 'true') {
                 body.classList.add('dark-mode');
                 modeIcon.classList.replace('fa-moon', 'fa-sun');
                 modeText.textContent = 'Modo Claro';
             }
 
-            // Hacer que todo el contenedor sea clickeable
-            modeToggle.addEventListener('click', function(e) {
-                e.preventDefault(); // Prevenir comportamiento por defecto
-                
+            modeToggle.addEventListener('click', () => {
                 body.classList.toggle('dark-mode');
                 const isDarkMode = body.classList.contains('dark-mode');
                 localStorage.setItem('dark-mode', isDarkMode);
-
                 if (isDarkMode) {
                     modeIcon.classList.replace('fa-moon', 'fa-sun');
                     modeText.textContent = 'Modo Claro';
@@ -624,8 +313,127 @@
                 }
             });
         });
-    </script>
 
+        // Ver/ocultar contraseña
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(inputId + '-icon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // Modal política de privacidad
+            document.getElementById('showPrivacyPolicy').addEventListener('click', function (e) {
+                e.preventDefault();
+                $('#privacyPolicyModal').modal('show');
+            });
+
+            // Solo letras en nombres y apellidos
+            document.querySelectorAll('#nombres, #apellidos').forEach(input => {
+                input.addEventListener('input', function () {
+                    this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+                });
+            });
+
+            // Validación de contraseña en tiempo real
+            const contraseña = document.getElementById('contraseña');
+            const contraseñaError = document.getElementById('contraseaError');
+
+            contraseña.addEventListener('input', function () {
+                const v = this.value;
+                let msgs = [];
+                if (v.length < 6)        msgs.push('Mínimo 6 caracteres');
+                if (!/[A-Z]/.test(v))    msgs.push('una mayúscula');
+                if (!/[a-z]/.test(v))    msgs.push('una minúscula');
+                if (!/[0-9]/.test(v))    msgs.push('un número');
+                if (!/[!@#$%^&*]/.test(v)) msgs.push('un símbolo (!@#$%^&*)');
+                contraseñaError.textContent = msgs.length ? 'Falta: ' + msgs.join(', ') : '';
+                contraseñaError.style.color = msgs.length ? '#dc3545' : '#28a745';
+            });
+
+            // Validación correo institucional
+            document.getElementById('correo_institucional').addEventListener('input', function () {
+                const validDomains = ['@sena.edu.co', '@soy.sena.edu.co'];
+                this.setCustomValidity(
+                    validDomains.some(d => this.value.endsWith(d))
+                        ? ''
+                        : 'El correo debe terminar en @sena.edu.co o @soy.sena.edu.co'
+                );
+            });
+
+            // Toggle número de ficha según rol
+            const rolSelect  = document.getElementById('rol');
+            const fichaField = document.getElementById('numero_ficha');
+            const fichaDiv   = document.getElementById('numeroFichaField');
+
+            function toggleFicha() {
+                const esAprendiz = rolSelect.value == 3;
+                fichaDiv.style.display = esAprendiz ? 'block' : 'none';
+                esAprendiz
+                    ? fichaField.setAttribute('required', 'required')
+                    : fichaField.removeAttribute('required');
+            }
+            rolSelect.addEventListener('change', toggleFicha);
+            toggleFicha();
+
+            // Vista previa foto
+            document.getElementById('foto').addEventListener('change', function (e) {
+                const file    = e.target.files[0];
+                const preview = document.getElementById('previewFoto');
+                const maxSize = 5 * 1024 * 1024;
+
+                if (!file) { preview.style.display = 'none'; return; }
+
+                if (file.size > maxSize) {
+                    Swal.fire({ icon: 'error', title: 'Archivo demasiado grande',
+                        text: `El archivo pesa ${(file.size/(1024*1024)).toFixed(2)} MB. Máximo: 5 MB.`,
+                        confirmButtonText: 'Entendido' });
+                    this.value = '';
+                    preview.style.display = 'none';
+                    return;
+                }
+                if (!['image/jpeg', 'image/png', 'image/gif'].includes(file.type)) {
+                    Swal.fire({ icon: 'error', title: 'Formato no válido',
+                        text: 'Seleccione un archivo JPG, PNG o GIF.',
+                        confirmButtonText: 'Entendido' });
+                    this.value = '';
+                    preview.style.display = 'none';
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = e => { preview.src = e.target.result; preview.style.display = 'block'; };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        // Validación al enviar
+        document.getElementById('registroForm').addEventListener('submit', function (event) {
+            const contrasena         = document.getElementById('contraseña').value;
+            const confirmar          = document.getElementById('contraseña_confirmation').value;
+            const errorPass          = document.getElementById('contraseaError');
+            const errorConfirmar     = document.getElementById('confirmarContrasenaError');
+
+            errorPass.textContent = '';
+            errorConfirmar.textContent = '';
+
+            const errores = [];
+            if (contrasena.length < 6)          errores.push('Mínimo 6 caracteres');
+            if (!/[A-Z]/.test(contrasena))       errores.push('Al menos una mayúscula');
+            if (!/[a-z]/.test(contrasena))       errores.push('Al menos una minúscula');
+            if (!/[0-9]/.test(contrasena))       errores.push('Al menos un número');
+            if (!/[!@#$%^&*]/.test(contrasena))  errores.push('Al menos un símbolo (!@#$%^&*)');
+
+            if (errores.length) { errorPass.textContent = errores.join(', '); event.preventDefault(); return; }
+            if (contrasena !== confirmar) { errorConfirmar.textContent = 'Las contraseñas no coinciden.'; event.preventDefault(); }
+        });
+    </script>
 </body>
 
 </html>

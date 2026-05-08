@@ -16,8 +16,8 @@ use App\Http\Controllers\ReportesIngresosController;
 use App\Http\Controllers\AboutController;
 
 // Rutas para autenticación y registro
-Route::get('/controle', [WelcomeController::class, 'index'])->name('welcome');
-// Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
+Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
+Route::get('/controle', fn() => redirect()->route('welcome')); // alias para compatibilidad
 Route::get('login', [AuthController::class, 'showLogin'])->name('login');
 Route::get('create', [AuthController::class, 'create'])->name('create');
 Route::post('registrado', [AuthController::class, 'createpost'])->name('createpost');

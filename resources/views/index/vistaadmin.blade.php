@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+</html>
+</body>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -62,8 +64,8 @@
                      alt="Foto de perfil" 
                      class="foto-perfil">
             @else
-                <img src="{{ asset('imagenes/sin_foto_perfil.webp') }}" 
-                     alt="Foto de perfil predeterminada" 
+                <img src="{{ asset('imagenes/sin_foto_perfil.jpg') }}"
+                     alt="Foto de perfil predeterminada"
                      class="foto-perfil">
             @endif
         </div>
@@ -282,8 +284,8 @@
                         <div class="control">
                             <input class="input @error('numero_documento') is-danger @enderror" type="text"
                                 id="numero_documento" name="numero_documento" value="{{ old('numero_documento') }}"
-                                required maxlength="11" required placeholder="Ingresa el número de documento"
-                                oninput="this.value = this.value.replace(/[^0-9]/g, '').substring(0, 11)">
+                                required maxlength="12" placeholder="Ingresa el número de documento"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '').substring(0, 12)">
                         </div>
                         @error('numero_documento')
                             <p class="help is-danger">{{ $message }}</p>
@@ -347,15 +349,16 @@
                                 <i class="fas fa-eye" id="contraseña_confirmation-icon"></i>
                             </span>
                         </div>
+                        <p id="confirmarContrasenaError" class="help is-danger"></p>
                         @error('contraseña_confirmation')
                             <p class="help is-danger">{{ $message }}</p>
                         @enderror
                     </div>
-            
+
                     <div class="field">
                         <label class="label" for="telefono">Teléfono:</label>
                         <div class="control">
-                            <input class="input @error('telefono') is-danger @enderror" type="number" id="telefono"
+                            <input class="input @error('telefono') is-danger @enderror" type="text" id="telefono"
                                 name="telefono" value="{{ old('telefono') }}" required maxlength="10"
                                 placeholder="Ingresa teléfono del nuevo usuario"
                                 oninput="this.value = this.value.replace(/[^0-9]/g, '').substring(0, 10)">
@@ -579,7 +582,7 @@
                                      alt="Foto del elemento" 
                                      class="img-fluid mt-2" 
                                      style="max-height: 200px"
-                                     onerror="this.src='/imagenes/sin_foto_elemento.webp'">
+                                     onerror="this.onerror=null;this.src=assetBase+'/imagenes/camara.png'">
                             </div>
                         </div>
                     </form>
@@ -697,6 +700,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+    const assetBase = '{{ rtrim(asset(''), '/') }}';
     window.categorias = {!! json_encode($categorias) !!};
 
     const AdminForms = {
@@ -714,7 +718,7 @@
         initializeInputValidations() {
             // Validación para nombres y apellidos (solo letras y espacios)
             const soloLetras = document.querySelectorAll('#nombres, #apellidos');
-            const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+            const regex = /^[a-zA-ZáéíóúÁ??Í????ñ??\s]+$/;
 
             soloLetras.forEach(input => {
                 ['keypress', 'paste'].forEach(event => {
@@ -736,7 +740,7 @@
 
                 // Limpieza en tiempo real
                 input.addEventListener('input', function() {
-                    this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+                    this.value = this.value.replace(/[^a-zA-ZáéíóúÁ??Í????ñ??\s]/g, '');
                 });
             });
 
@@ -1006,9 +1010,9 @@
                             
                             // Actualizar la foto del usuario
                             const fotoUsuario = document.querySelector('.foto-perfil-usuario');
-                            fotoUsuario.src = usuarioData.foto 
-                                ? `/storage/fotos_perfil/${usuarioData.foto}` 
-                                : '/imagenes/sin_foto_perfil.webp';
+                            fotoUsuario.src = usuarioData.foto
+                                ? `${assetBase}/storage/fotos_perfil/${usuarioData.foto}`
+                                : `${assetBase}/imagenes/sin_foto_perfil.jpg`;
 
                             // Mostrar los elementos si existen
                             const cardContainer = document.querySelector('.card-container');
@@ -1020,7 +1024,7 @@
                                         <div class="card">
                                             <div class="card-body">
                                                 <h5 class="card-title"><strong>${elemento.categoria.nombre}</strong></h5>
-                                                <img src="${elemento.foto ? '/storage/' + elemento.foto : '/imagenes/sin_foto_elemento.webp'}" 
+                                                <img src="${elemento.foto ? assetBase+'/storage/'+elemento.foto : assetBase+'/imagenes/camara.png'}" 
                                                      alt="${elemento.descripcion}"
                                                      class="img-fluid mt-3">
                                                 <p class="card-text"><strong>Serial:</strong> ${elemento.serie || 'N/A'}</p>
@@ -1063,7 +1067,7 @@
                             if (eliminarBtn) {
                                 eliminarBtn.onclick = () => {
                                     if (confirm('¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.')) {
-                                        fetch(`/admin/usuarios/${usuarioData.id}`, {
+                                        fetch(`${assetBase}/admin/usuarios/${usuarioData.id}`, {
                                             method: 'DELETE',
                                             headers: {
                                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -1115,67 +1119,133 @@
         },
 
         showEditarUsuarioModal(usuario) {
+            const rolId = usuario.role ? usuario.role.id : '';
+            const esAprendiz = rolId == 3;
             const modalHTML = `
                 <div class="modal fade" id="editarUsuarioConsultadoModal" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-custom-width">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title">Editar Usuario</h5>
+                                <h5 class="modal-title"><i class="fas fa-user-edit me-2"></i>Editar Usuario</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <form id="editarUsuarioConsultadoForm" method="POST" action="/admin/usuarios/actualizar/${usuario.id}" enctype="multipart/form-data">
-                                    @csrf
-                                    <div class="mb-3">
-                                        <label for="nombres" class="form-label">Nombres:</label>
-                                        <input type="text" id="nombres" name="nombres" class="form-control" value="${usuario.nombres}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="apellidos" class="form-label">Apellidos:</label>
-                                        <input type="text" id="apellidos" name="apellidos" class="form-control" value="${usuario.apellidos}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="tipo_documento" class="form-label">Tipo de Documento:</label>
-                                        <select id="tipo_documento" name="tipo_documento" class="form-select" required>
-                                            <option value="CC" ${usuario.tipo_documento === 'CC' ? 'selected' : ''}>Cédula de Ciudadanía</option>
-                                            <option value="TI" ${usuario.tipo_documento === 'TI' ? 'selected' : ''}>Tarjeta de Identidad</option>
-                                            <option value="CE" ${usuario.tipo_documento === 'CE' ? 'selected' : ''}>Cédula de Extranjería</option>
-                                            <option value="PP" ${usuario.tipo_documento === 'PP' ? 'selected' : ''}>Pasaporte</option>
-                                            <option value="RC" ${usuario.tipo_documento === 'RC' ? 'selected' : ''}>Registro Civil</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="numero_documento" class="form-label">Número de Documento:</label>
-                                        <input type="text" id="numero_documento" name="numero_documento" class="form-control" value="${usuario.numero_documento}">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="rh" class="form-label">Tipo de Sangre (RH):</label>
-                                        <select id="rh" name="rh" class="form-select" required>
-                                            <option value="O+" ${usuario.rh === 'O+' ? 'selected' : ''}>O+</option>
-                                            <option value="O-" ${usuario.rh === 'O-' ? 'selected' : ''}>O-</option>
-                                            <option value="A+" ${usuario.rh === 'A+' ? 'selected' : ''}>A+</option>
-                                            <option value="A-" ${usuario.rh === 'A-' ? 'selected' : ''}>A-</option>
-                                            <option value="B+" ${usuario.rh === 'B+' ? 'selected' : ''}>B+</option>
-                                            <option value="B-" ${usuario.rh === 'B-' ? 'selected' : ''}>B-</option>
-                                            <option value="AB+" ${usuario.rh === 'AB+' ? 'selected' : ''}>AB+</option>
-                                            <option value="AB-" ${usuario.rh === 'AB-' ? 'selected' : ''}>AB-</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="telefono" class="form-label">Teléfono:</label>
-                                        <input type="tel" id="telefono" name="telefono" class="form-control" value="${usuario.telefono}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="foto" class="form-label">Foto de Perfil:</label>
-                                        <div class="mb-3">
-                                            <img id="previewPerfilUsuarioConsultado" 
-                                                 src="${usuario.foto ? '/storage/fotos_perfil/' + usuario.foto : '/imagenes/sin_foto_perfil.jpg'}" 
-                                                 alt="Foto de perfil" 
-                                                 style="max-width: 100px; height: auto;">
+                                <div id="editarUsuarioAlert" class="alert d-none mb-3"></div>
+                                <form id="editarUsuarioConsultadoForm" method="POST"
+                                      action="${assetBase}/admin/usuarios/actualizar/${usuario.id}"
+                                      enctype="multipart/form-data">
+                                    <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').content}">
+
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Nombres</label>
+                                            <input type="text" name="nombres" class="form-control" value="${usuario.nombres}" required>
                                         </div>
-                                        <input type="file" id="fotoPerfilUsuarioConsultado" name="foto" class="form-control" accept="image/*">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Apellidos</label>
+                                            <input type="text" name="apellidos" class="form-control" value="${usuario.apellidos}" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Tipo de Documento</label>
+                                            <select name="tipo_documento" class="form-select" required>
+                                                <option value="CC" ${usuario.tipo_documento === 'CC' ? 'selected' : ''}>Cédula de Ciudadanía</option>
+                                                <option value="TI" ${usuario.tipo_documento === 'TI' ? 'selected' : ''}>Tarjeta de Identidad</option>
+                                                <option value="CE" ${usuario.tipo_documento === 'CE' ? 'selected' : ''}>Cédula de Extranjería</option>
+                                                <option value="PP" ${usuario.tipo_documento === 'PP' ? 'selected' : ''}>Pasaporte</option>
+                                                <option value="RC" ${usuario.tipo_documento === 'RC' ? 'selected' : ''}>Registro Civil</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Número de Documento</label>
+                                            <input type="text" class="form-control" value="${usuario.numero_documento}" readonly disabled>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Tipo de Sangre (RH)</label>
+                                            <select name="rh" class="form-select" required>
+                                                ${['O+','O-','A+','A-','B+','B-','AB+','AB-'].map(g =>
+                                                    `<option value="${g}" ${usuario.rh === g ? 'selected' : ''}>${g}</option>`
+                                                ).join('')}
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Teléfono</label>
+                                            <input type="text" name="telefono" class="form-control"
+                                                   value="${usuario.telefono}" required
+                                                   oninput="this.value=this.value.replace(/[^0-9]/g,'').substring(0,10)">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Rol</label>
+                                            <select name="roles_id" id="editRolSelect" class="form-select" required>
+                                                <option value="1" ${rolId==1?'selected':''}>Administrador</option>
+                                                <option value="2" ${rolId==2?'selected':''}>Control</option>
+                                                <option value="3" ${rolId==3?'selected':''}>Aprendiz</option>
+                                                <option value="4" ${rolId==4?'selected':''}>Visitante</option>
+                                                <option value="5" ${rolId==5?'selected':''}>Funcionario</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6" id="editFichaGroup" style="display:${esAprendiz?'block':'none'}">
+                                            <label class="form-label">Número de Ficha</label>
+                                            <input type="text" name="numero_ficha" id="editNumeroFicha" class="form-control"
+                                                   value="${usuario.numero_ficha || ''}"
+                                                   ${esAprendiz ? 'required' : ''}>
+                                        </div>
                                     </div>
-                                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+
+                                    <hr class="my-3">
+                                    <h6 class="mb-3"><i class="fas fa-lock me-1"></i>Cambiar Contraseña <small class="text-muted">(opcional)</small></h6>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Nueva Contraseña</label>
+                                            <div class="input-group">
+                                                <input type="password" name="nueva_contraseña" id="editNuevaContrasena"
+                                                       class="form-control" placeholder="Dejar vacío para no cambiar"
+                                                       autocomplete="new-password">
+                                                <button class="btn btn-outline-secondary" type="button"
+                                                        onclick="toggleEditPass('editNuevaContrasena','iconEditPass1')">
+                                                    <i class="fas fa-eye" id="iconEditPass1"></i>
+                                                </button>
+                                            </div>
+                                            <small id="editPassError" class="text-danger"></small>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Confirmar Contraseña</label>
+                                            <div class="input-group">
+                                                <input type="password" name="nueva_contraseña_confirmation"
+                                                       id="editConfirmContrasena" class="form-control"
+                                                       placeholder="Repetir contraseña"
+                                                       autocomplete="new-password">
+                                                <button class="btn btn-outline-secondary" type="button"
+                                                        onclick="toggleEditPass('editConfirmContrasena','iconEditPass2')">
+                                                    <i class="fas fa-eye" id="iconEditPass2"></i>
+                                                </button>
+                                            </div>
+                                            <small id="editConfirmError" class="text-danger"></small>
+                                        </div>
+                                        <div class="col-12">
+                                            <small class="text-muted">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                Mínimo 6 caracteres · mayúscula · minúscula · número · símbolo (@$!%*?&)
+                                            </small>
+                                        </div>
+                                    </div>
+
+                                    <hr class="my-3">
+                                    <div class="mb-3">
+                                        <label class="form-label">Foto de Perfil</label>
+                                        <div class="mb-2">
+                                            <img id="previewPerfilUsuarioConsultado"
+                                                 src="${usuario.foto ? assetBase+'/storage/fotos_perfil/'+usuario.foto : assetBase+'/imagenes/sin_foto_perfil.jpg'}"
+                                                 alt="Foto" style="max-width:90px;border-radius:50%;border:2px solid #dee2e6;">
+                                        </div>
+                                        <input type="file" name="foto" id="fotoPerfilUsuarioConsultado" class="form-control" accept="image/*">
+                                    </div>
+
+                                    <div class="d-flex gap-2 mt-3">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save me-1"></i>Guardar Cambios
+                                        </button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -1183,58 +1253,81 @@
                 </div>
             `;
 
-            // Eliminar cualquier instancia previa del modal
             const modalAnterior = document.getElementById('editarUsuarioConsultadoModal');
-            if (modalAnterior) {
-                modalAnterior.remove();
-            }
+            if (modalAnterior) { bootstrap.Modal.getInstance(modalAnterior)?.hide(); modalAnterior.remove(); }
 
-            // Agregar el nuevo modal al DOM
             document.body.insertAdjacentHTML('beforeend', modalHTML);
-            
-            // Mostrar el modal usando Bootstrap
             const modal = new bootstrap.Modal(document.getElementById('editarUsuarioConsultadoModal'));
             modal.show();
 
-            // Configurar la previsualización de la imagen
-            const input = document.getElementById('fotoPerfilUsuarioConsultado');
-            const preview = document.getElementById('previewPerfilUsuarioConsultado');
-            
-            if (input && preview) {
-                input.addEventListener('change', function(e) {
-                    const file = e.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            preview.src = e.target.result;
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                });
-            }
+            // Toggle ficha según rol
+            document.getElementById('editRolSelect').addEventListener('change', function() {
+                const fichaGroup = document.getElementById('editFichaGroup');
+                const fichaInput = document.getElementById('editNumeroFicha');
+                const show = this.value == '3';
+                fichaGroup.style.display = show ? 'block' : 'none';
+                fichaInput.required = show;
+            });
 
-            // Manejar el envío del formulario
-            const form = document.getElementById('editarUsuarioConsultadoForm');
-            form.addEventListener('submit', function(e) {
+            // Preview foto
+            document.getElementById('fotoPerfilUsuarioConsultado').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = e => { document.getElementById('previewPerfilUsuarioConsultado').src = e.target.result; };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Validación en tiempo real de contraseña
+            document.getElementById('editNuevaContrasena').addEventListener('input', function() {
+                const v = this.value;
+                if (!v) { document.getElementById('editPassError').textContent = ''; return; }
+                const errores = [];
+                if (v.length < 6)          errores.push('mínimo 6 caracteres');
+                if (!/[A-Z]/.test(v))      errores.push('mayúscula');
+                if (!/[a-z]/.test(v))      errores.push('minúscula');
+                if (!/[0-9]/.test(v))      errores.push('número');
+                if (!/[@$!%*?&]/.test(v))  errores.push('símbolo');
+                document.getElementById('editPassError').textContent = errores.length ? 'Falta: ' + errores.join(', ') : '';
+            });
+
+            // Envío vía fetch
+            document.getElementById('editarUsuarioConsultadoForm').addEventListener('submit', function(e) {
                 e.preventDefault();
-                const formData = new FormData(this);
-                
+                const pass  = document.getElementById('editNuevaContrasena').value;
+                const pass2 = document.getElementById('editConfirmContrasena').value;
+                if (pass && pass !== pass2) {
+                    document.getElementById('editConfirmError').textContent = 'Las contraseñas no coinciden.';
+                    return;
+                }
+                document.getElementById('editConfirmError').textContent = '';
+
+                const btn = this.querySelector('button[type="submit"]');
+                btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Guardando...';
+
                 fetch(this.action, {
                     method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    }
+                    body: new FormData(this),
+                    headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
                 })
-                .then(response => response.json())
+                .then(r => r.json())
                 .then(data => {
                     if (data.success) {
                         modal.hide();
-                        // Actualizar la vista del usuario
                         location.reload();
                     } else {
-                        alert('Error al actualizar el usuario');
+                        const alert = document.getElementById('editarUsuarioAlert');
+                        alert.className = 'alert alert-danger';
+                        alert.textContent = data.mensaje || 'Error al actualizar el usuario.';
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-save me-1"></i>Guardar Cambios';
                     }
+                })
+                .catch(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-save me-1"></i>Guardar Cambios';
+                    alert('Error de conexión al actualizar el usuario.');
                 });
             });
         },
@@ -1251,9 +1344,25 @@
                     }, 500);
                 }, 3000);
             }
-        },
+        }
 
-        mostrarDetallesElemento(elemento) {
+    };
+
+    // Inicializar cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', () => AdminForms.init());
+
+    // Funciones globales de elementos
+    window.editElementAdmin = function(elementoId) {
+        document.getElementById(`details-view-admin-${elementoId}`).classList.add('d-none');
+        document.getElementById(`edit-view-admin-${elementoId}`).classList.remove('d-none');
+        document.getElementById(`save-changes-btn-admin-${elementoId}`).classList.remove('d-none');
+    };
+
+    window.saveChangesAdmin = function(elementoId) {
+        document.querySelector(`#edit-view-admin-${elementoId} form`).submit();
+    };
+
+    window.mostrarDetallesElemento = function(elemento) {
             const modalHTML = `
                 <div class="modal fade" id="modal-detalles-${elemento.id}" tabindex="-1" aria-labelledby="modalDetallesLabel-${elemento.id}" aria-hidden="true">
                     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -1266,7 +1375,7 @@
                                 <!-- Vista de detalles -->
                                 <div id="details-view-admin-${elemento.id}" class="details-view">
                                     ${elemento.foto ? 
-                                        `<img src="/storage/${elemento.foto}" alt="Foto del elemento" class="img-fluid mb-3">` 
+                                        `<img src="${assetBase}/storage/${elemento.foto}" alt="Foto del elemento" class="img-fluid mb-3">` 
                                         : ''}
                                     <p><strong>Categoría:</strong> ${elemento.categoria.nombre}</p>
                                     <p><strong>Descripción:</strong> ${elemento.descripcion}</p>
@@ -1278,7 +1387,7 @@
 
                                 <!-- Vista de edición (oculta por defecto) -->
                                 <div id="edit-view-admin-${elemento.id}" class="edit-view d-none">
-                                    <form action="/admin/elementos/${elemento.id}" method="POST" enctype="multipart/form-data">
+                                    <form action="${assetBase}/admin/elementos/${elemento.id}" method="POST" enctype="multipart/form-data">
                                         <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').content}">
                                         <input type="hidden" name="_method" value="PUT">
                                         <div class="mb-3">
@@ -1316,18 +1425,18 @@
                                     <input type="file" id="foto-${elemento.id}" name="foto" class="form-control" accept="image/*" onchange="previewImage(event, 'preview-imagen-${elemento.id}')">
                                     <div class="mt-2">
                                         <img id="preview-imagen-${elemento.id}" 
-                                             src="${elemento.foto ? '/storage/' + elemento.foto : '/imagenes/sin_foto_elemento.webp'}" 
+                                             src="${elemento.foto ? assetBase+'/storage/'+elemento.foto : assetBase+'/imagenes/camara.png'}" 
                                              alt="Foto del elemento" 
                                              class="img-fluid mt-2" 
                                              style="max-height: 200px"
-                                             onerror="this.src='/imagenes/sin_foto_elemento.webp'">
+                                             onerror="this.onerror=null;this.src=assetBase+'/imagenes/camara.png'">
                                     </div>
                                 </div>
                             </form>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <form action="/admin/elementos/${elemento.id}" method="POST" class="d-inline">
+                        <form action="${assetBase}/admin/elementos/${elemento.id}" method="POST" class="d-inline">
                             <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').content}">
                             <input type="hidden" name="_method" value="DELETE">
                             <button type="submit" class="btn btn-danger">Eliminar</button>
@@ -1346,41 +1455,14 @@
 
     // Eliminar modal anterior si existe
     const modalAnterior = document.getElementById(`modal-detalles-${elemento.id}`);
-    if (modalAnterior) {
-        modalAnterior.remove();
-    }
+    if (modalAnterior) { modalAnterior.remove(); }
 
-    // Agregar el nuevo modal al DOM
     document.body.insertAdjacentHTML('beforeend', modalHTML);
-    
-    // Mostrar el modal
-    const modal = new bootstrap.Modal(document.getElementById(`modal-detalles-${elemento.id}`));
-    modal.show();
-}
-    };
-    
-    // Inicializar cuando el DOM esté listo
-    document.addEventListener('DOMContentLoaded', () => AdminForms.init());
-
-    // También necesitamos estas funciones disponibles globalmente
-    window.editElementAdmin = function(elementoId) {
-        const detailsView = document.getElementById(`details-view-admin-${elementoId}`);
-        const editView = document.getElementById(`edit-view-admin-${elementoId}`);
-        const saveButton = document.getElementById(`save-changes-btn-admin-${elementoId}`);
-        
-        detailsView.classList.add('d-none');
-        editView.classList.remove('d-none');
-        saveButton.classList.remove('d-none');
+    new bootstrap.Modal(document.getElementById(`modal-detalles-${elemento.id}`)).show();
     };
 
-    window.saveChangesAdmin = function(elementoId) {
-        const form = document.querySelector(`#edit-view-admin-${elementoId} form`);
-        form.submit();
-    };
-
-    // Asegúrate de que esta función esté definida fuera del objeto AdminForms
-    window.mostrarDetallesElemento = function(elemento) {
-        const modalHTML = `
+    // bloque eliminado (dead code ??? función duplicada)
+    void function() { const modalHTML = `
             <div class="modal fade" id="modal-detalles-${elemento.id}" tabindex="-1" aria-labelledby="modalDetallesLabel-${elemento.id}" aria-hidden="true">
                 <div class="modal-dialog modal-lg modal-dialog-centered">
                     <div class="modal-content">
@@ -1392,7 +1474,7 @@
                             <!-- Vista de detalles -->
                             <div id="details-view-admin-${elemento.id}" class="details-view">
                                 ${elemento.foto ? 
-                                    `<img src="/storage/${elemento.foto}" alt="Foto del elemento" class="img-fluid mb-3">` 
+                                    `<img src="${assetBase}/storage/${elemento.foto}" alt="Foto del elemento" class="img-fluid mb-3">` 
                                     : ''}
                                 <p><strong>Categoría:</strong> ${elemento.categoria.nombre}</p>
                                 <p><strong>Descripción:</strong> ${elemento.descripcion}</p>
@@ -1442,18 +1524,18 @@
                                     <input type="file" id="foto-${elemento.id}" name="foto" class="form-control" accept="image/*" onchange="previewImage(event, 'preview-imagen-${elemento.id}')">
                                     <div class="mt-2">
                                         <img id="preview-imagen-${elemento.id}" 
-                                             src="${elemento.foto ? '/storage/' + elemento.foto : '/imagenes/sin_foto_elemento.webp'}" 
+                                             src="${elemento.foto ? assetBase+'/storage/'+elemento.foto : assetBase+'/imagenes/camara.png'}" 
                                              alt="Foto del elemento" 
                                              class="img-fluid mt-2" 
                                              style="max-height: 200px"
-                                             onerror="this.src='/imagenes/sin_foto_elemento.webp'">
+                                             onerror="this.onerror=null;this.src=assetBase+'/imagenes/camara.png'">
                                     </div>
                                 </div>
                             </form>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <form action="/admin/elementos/${elemento.id}" method="POST" class="d-inline">
+                        <form action="${assetBase}/admin/elementos/${elemento.id}" method="POST" class="d-inline">
                             <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').content}">
                             <input type="hidden" name="_method" value="DELETE">
                             <button type="submit" class="btn btn-danger">Eliminar</button>
@@ -1484,6 +1566,26 @@
         // Mostrar el modal
         const modal = new bootstrap.Modal(document.getElementById(`modal-detalles-${elemento.id}`));
         modal.show();
+    };
+
+    // Toggle visibilidad contraseña en modal editar usuario
+    window.toggleEditPass = function(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon  = document.getElementById(iconId);
+        if (!input) return;
+        input.type = input.type === 'password' ? 'text' : 'password';
+        icon.classList.toggle('fa-eye');
+        icon.classList.toggle('fa-eye-slash');
+    };
+
+    // Función para preview de imágenes en modales de elementos
+    window.previewImage = function(event, previewId) {
+        const file    = event.target.files[0];
+        const preview = document.getElementById(previewId);
+        if (!file || !preview) return;
+        const reader = new FileReader();
+        reader.onload = e => { preview.src = e.target.result; preview.style.display = 'block'; };
+        reader.readAsDataURL(file);
     };
 
     // Función para cerrar modales

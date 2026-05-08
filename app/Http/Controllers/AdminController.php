@@ -492,30 +492,61 @@ class AdminController extends Controller
     {
         try {
             $usuario = Usuario::findOrFail($id);
-            
-            // Validar y actualizar los datos
-            $usuario->update($request->except(['foto']));
 
-            // Manejar la foto si se subió una nueva
+            $validator = Validator::make($request->all(), [
+                'nombres'          => ['required', 'string', 'max:255', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
+                'apellidos'        => ['required', 'string', 'max:255', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
+                'tipo_documento'   => ['required', 'string', 'in:CC,TI,CE,PP,RC'],
+                'rh'               => ['required', 'string', 'in:O+,O-,A+,A-,B+,B-,AB+,AB-'],
+                'telefono'         => ['required', 'numeric', 'digits_between:7,10'],
+                'roles_id'         => ['required', 'integer', 'exists:roles,id'],
+                'numero_ficha'     => ['nullable', 'string', 'max:20'],
+                'foto'             => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:6144'],
+                'nueva_contraseña' => [
+                    'nullable', 'string', 'min:6', 'confirmed',
+                    'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/'
+                ],
+            ], [
+                'nueva_contraseña.regex' => 'La contraseña debe tener mayúscula, minúscula, número y símbolo (@$!%*?&)',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'mensaje' => $validator->errors()->first()
+                ], 422);
+            }
+
+            $usuario->nombres        = $request->nombres;
+            $usuario->apellidos      = $request->apellidos;
+            $usuario->tipo_documento = $request->tipo_documento;
+            $usuario->rh             = $request->rh;
+            $usuario->telefono       = $request->telefono;
+            $usuario->roles_id       = $request->roles_id;
+            $usuario->numero_ficha   = $request->numero_ficha;
+
+            if ($request->filled('nueva_contraseña')) {
+                $usuario->contraseña = Hash::make($request->nueva_contraseña);
+            }
+
             if ($request->hasFile('foto')) {
-                // Eliminar la foto anterior si existe
                 if ($usuario->foto) {
                     Storage::delete('public/fotos_perfil/' . $usuario->foto);
                 }
-                
-                // Guardar la nueva foto
                 $foto = $request->file('foto');
                 $nombreFoto = time() . '_' . $foto->getClientOriginalName();
                 $foto->storeAs('public/fotos_perfil', $nombreFoto);
                 $usuario->foto = $nombreFoto;
-                $usuario->save();
             }
+
+            $usuario->save();
 
             return response()->json([
                 'success' => true,
                 'mensaje' => 'Usuario actualizado exitosamente'
             ]);
         } catch (\Exception $e) {
+            Log::error('Error al actualizar usuario:', ['id' => $id, 'error' => $e->getMessage()]);
             return response()->json([
                 'success' => false,
                 'mensaje' => 'Error al actualizar el usuario: ' . $e->getMessage()

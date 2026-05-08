@@ -6,6 +6,11 @@
     <title>Control e - Bienvenida</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <style>
+        .hero {
+            background-image: url('{{ asset('imagenes/backia-transformed.jpeg') }}');
+        }
+    </style>
 </head>
 <body>
     <!-- Navbar
